@@ -25,16 +25,10 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     final apiService = HobbyAPIService();
     final response = await apiService.getHobbyAlbum(year, month, 1);
 
-    print(response.statusCode);
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
-      //List<HobbyAlbum> hobbyGallery = [];
-      // for (dynamic data in jsonData) {
-      //   HobbyAlbum hobbyRecord = HobbyAlbum.fromJson(data);
-      //   _hobbyAlbums.add(hobbyRecord);
-      //   //_hobbyGallery = hobbyGallery;
-      // }
+
       // 서버에서 객체로 반환될 경우 처리
       if (jsonData is Map<String, dynamic>) {
         // 예시에서 'albums' 키로 리스트가 들어있는 경우
@@ -67,7 +61,12 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
       selectedDate = date;
     });
 
-    await _fetchHobbyAlbum(selectedDate.year, selectedDate.month);
+    final hobbyAlbums =
+        await _fetchHobbyAlbum(selectedDate.year, selectedDate.month);
+
+    setState(() {
+      _hobbyAlbums = hobbyAlbums;
+    });
   }
 
   @override
@@ -105,16 +104,17 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                   crossAxisSpacing: screenWidth * 0.02,
                   mainAxisSpacing: screenWidth * 0.02,
                 ),
-                itemCount: _hobbyAlbums.length,
+                itemCount: 5, //_hobbyAlbums.length,
                 itemBuilder: (context, index) {
                   final hobbyAlbum =
-                      _hobbyAlbums[_hobbyAlbums.length - 1 - index];
+                    _hobbyAlbums[_hobbyAlbums.length - 1 - index];
                   return _buildHobbyRecord(
                     context: context,
                     imageUrl: hobbyAlbum.photoUrl,
                     date: hobbyAlbum.date,
                     title: hobbyAlbum.hobbyName,
                     description: hobbyAlbum.recordBody,
+                    recordId: hobbyAlbum.recordId,
                   );
                 },
               ),
@@ -133,6 +133,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     required DateTime date,
     required String title,
     required String description,
+    required int recordId,
   }) {
     final textTheme = Theme.of(context).textTheme;
 
@@ -147,6 +148,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
               date: date,
               imageUrl: imageUrl,
               description: description,
+              recordId: recordId,
             );
           },
         );
@@ -211,8 +213,11 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     required DateTime date,
     required String imageUrl,
     required String description,
+    required int recordId,
   }) {
     final textTheme = Theme.of(context).textTheme;
+  final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -221,9 +226,9 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
           color: IVORY,
           borderRadius: BorderRadius.circular(20.0),
         ),
-        padding: const EdgeInsets.all(16.0),
-        width: 400,
-        height: 500,
+        padding: EdgeInsets.all(screenHeight*0.02),
+        width: screenWidth*0.9,
+        height: screenHeight*0.6,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -232,7 +237,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
             Align(
                 alignment: Alignment.center,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: EdgeInsets.symmetric(vertical: screenHeight*0.008),
                   decoration: BoxDecoration(
                     color: BLUE_PURPLE,
                     border: Border.all(color: Colors.black),
@@ -247,7 +252,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                     ),
                   ),
                 )),
-            const SizedBox(height: 12.0),
+            SizedBox(height: screenHeight*0.015),
             // 날짜
             Container(
               alignment: Alignment.centerLeft,
@@ -256,19 +261,19 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                 style: textTheme.bodyMedium,
               ),
             ),
-            const SizedBox(height: 10.0),
+            SizedBox(height: screenHeight*0.015),
             // 이미지 영역
 
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Image.network(
                 imageUrl,
-                height: 200,
+                height: screenHeight*0.22,
                 fit: BoxFit.contain,
               ),
             ),
 
-            const SizedBox(height: 10.0),
+            SizedBox(height: screenHeight*0.015),
             // 설명 텍스트
             Expanded(
               child: Container(
@@ -286,11 +291,10 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 12.0),
+            SizedBox(height: screenHeight*0.015),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -310,7 +314,28 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                   ),
                 ),
                 IconButton(
-                    onPressed: () {}, icon: Icon(Icons.delete_forever)),
+                  onPressed: () async {
+                    final responseCode =
+                        await HobbyAPIService().deleteHobbyRecord(recordId, 1);
+                    if (responseCode == 200) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('기록이 삭제되었습니다.')),
+                      );
+                      // 저장된 리스트에서 삭제
+                      setState(() {
+                        _hobbyAlbums.removeWhere((album) =>
+                            album.recordId == recordId); // recordId와 일치하는 항목 삭제
+                      });
+                      Navigator.of(context).pop();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('기록이 삭제되지 않았습니다 ')),
+                      );
+                      print(responseCode);
+                    }
+                  },
+                  icon: Icon(Icons.delete_forever, size: 25),
+                ),
                 //SizedBox(width: 20),
               ],
             ),
@@ -321,8 +346,11 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
   }
 
   // //Todo: 취미 사진 불러오기
-  // Widget _buildHobbyRecord({required BuildContext context}) {
+  // Widget _buildHobbyRecord({
+  //   required BuildContext context,
+  // }) {
   //   final textTheme = Theme.of(context).textTheme;
+  //
   //
   //   return GestureDetector(
   //     onTap: () {
@@ -366,7 +394,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
   //                       Colors.black.withOpacity(0.05),
   //                       Colors.black.withOpacity(0.3),
   //                       Colors.black.withOpacity(0.6)
-  //                     ], // 시작 색상과 끝 색상
+  //                     ],
   //                     stops: [0.0, 0.15, 0.5, 1.0],
   //                     begin: Alignment.topCenter,
   //                     end: Alignment.bottomCenter,
@@ -390,6 +418,8 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
   // //Todo: 취미기록 상세 보기
   // Widget _customPopup(BuildContext context) {
   //   final textTheme = Theme.of(context).textTheme;
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   final screenHeight = MediaQuery.of(context).size.height;
   //
   //   return Dialog(
   //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -398,9 +428,9 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
   //         color: IVORY,
   //         borderRadius: BorderRadius.circular(20.0),
   //       ),
-  //       padding: EdgeInsets.all(16.0),
-  //       width: 400,
-  //       height: 500,
+  //       padding: EdgeInsets.all(screenHeight*0.02),
+  //       width: screenWidth*0.9,
+  //       height: screenHeight*0.6,
   //       child: Column(
   //         mainAxisAlignment: MainAxisAlignment.start,
   //         //crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -409,7 +439,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
   //           Align(
   //               alignment: Alignment.center,
   //               child: Container(
-  //                 padding: const EdgeInsets.symmetric(vertical: 8),
+  //                 padding: EdgeInsets.symmetric(vertical: screenHeight*0.008),
   //                 decoration: BoxDecoration(
   //                   color: BLUE_PURPLE,
   //                   border: Border.all(color: Colors.black),
@@ -424,7 +454,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
   //                   ),
   //                 ),
   //               )),
-  //           SizedBox(height: 12.0),
+  //           SizedBox(height: screenHeight*0.015),
   //           // 날짜
   //           Container(
   //             alignment: Alignment.centerLeft,
@@ -433,19 +463,16 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
   //               style: textTheme.bodyMedium,
   //             ),
   //           ),
-  //           SizedBox(height: 10.0),
+  //           SizedBox(height: screenHeight*0.015),
   //           // 이미지 영역
   //
-  //           ClipRRect(
-  //             borderRadius: BorderRadius.circular(15),
-  //             child: Image.asset(
-  //               "assets/imgs/background/hobby_image.png",
-  //               height: 200,
-  //               fit: BoxFit.contain,
-  //             ),
+  //           Image.asset(
+  //             "assets/imgs/background/hobby_image.png",
+  //             height: screenHeight*0.22,
+  //             fit: BoxFit.contain,
   //           ),
   //
-  //           SizedBox(height: 10.0),
+  //           SizedBox(height: screenHeight*0.015),
   //           // 설명 텍스트
   //           Expanded(
   //             child: Container(
@@ -457,18 +484,18 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
   //               padding: EdgeInsets.all(8),
   //               child: SingleChildScrollView(
   //                 child: Text(
-  //                   '친구들과 도시락 들고 피크닉 갔다. 즐거웠다.\n'
-  //                   '친구들과 도시락 들고 피크닉 갔다. 즐거웠다.\n'
+  //                   '친구들과 도시락 들고 피크닉 갔다.\n'
+  //                   '친구들과 도시락 들고 피크닉 갔다. 즐거웠다'
   //                   '친구들과 도시락 들고 피크닉 갔다. 즐거웠다.'
   //                   '친구들과 도시락 들고 피크닉 갔다. 즐거웠다.\n'
   //                   '친구들과 도시락 들고 피크닉 갔다. 즐거웠다.\n'
   //                   '친구들과 도시락 들고 피크닉 갔다. 즐거웠다.\n',
-  //                   style: TextStyle(fontSize: 14.0),
+  //                   style: textTheme.bodySmall,
   //                 ),
   //               ),
   //             ),
   //           ),
-  //           SizedBox(height: 12.0),
+  //           SizedBox(height: screenHeight*0.015),
   //           ElevatedButton(
   //             onPressed: () {
   //               Navigator.of(context).pop();

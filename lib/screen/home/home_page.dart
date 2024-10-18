@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
                 _buildCancelConfirmButton(context, textTheme),
                 _buildAlertmButton(context, textTheme),
                 _buildAlertReportImageButton(context, textTheme),
-                _buildAlertLetterImageButton(context, textTheme)
+                _buildAlertLetterImageButton(context, textTheme),
               ],
             ),
           ),
