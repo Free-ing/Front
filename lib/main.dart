@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/screen/chart/chart_page.dart';
 import 'package:freeing/screen/home_page.dart';
 import 'package:freeing/screen/member/login.dart';
+import 'package:freeing/screen/routine/routine_page.dart';
 
 
 void main() {
@@ -53,9 +55,7 @@ void main() {
           ),
         ),
       ),
-      home: Login(),
-      //home: Login(),
-      // home: HomePage(),
+      home: RoutinePage(),
     ),
   );
 }

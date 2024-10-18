@@ -31,12 +31,14 @@ class _HobbyTabBarViewState extends State<HobbyTabBarView> {
       // }
       // return _hobbyList;
 
+      if (jsonData is Map<String, dynamic>) {
         List<dynamic> hobbyList = jsonData['result'];
         _hobbyList.clear();
         for (dynamic data in hobbyList) {
           HobbyList hobbyCard = HobbyList.fromJson(data);
           _hobbyList.add(hobbyCard);
         }
+      }
 
       return _hobbyList;
     } else if (response.statusCode == 404) {
