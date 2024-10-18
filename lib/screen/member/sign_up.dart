@@ -14,7 +14,9 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  final TextEditingController _grayController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordVerificationController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +55,7 @@ class _SignUpState extends State<SignUp> {
               child: Column(
                 children: [
                   GrayTextFormField(
-                    controller: _grayController,
+                    controller: _nameController,
                     width: 320,
                     labelText: '이름',
                     hintText: '이름을 입력해주세요',
@@ -68,12 +70,14 @@ class _SignUpState extends State<SignUp> {
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.015),
                   GrayTextFormFieldWithEye(
+                    controller: _passwordController,
                     labelText: '비밀번호',
                     hintText: '비밀번호를 입력해주세요.',
                     width: 320,
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.015),
                   GrayTextFormFieldWithEye(
+                    controller: _passwordVerificationController,
                     labelText: '비밀번호 확인',
                     hintText: '비밀번호를 한번 더 입력해주세요.',
                     width: 320,
@@ -89,7 +93,12 @@ class _SignUpState extends State<SignUp> {
             ),
           ),
           Image.asset(
-            'assets/imgs/background/signup.png',
+            "assets/imgs/login/login_bottom.png",
+            width: MediaQuery.of(context).size.width,
+            fit: BoxFit.fitWidth,
+          ),
+          Image.asset(
+            "assets/imgs/login/login_top.png",
             width: MediaQuery.of(context).size.width,
             fit: BoxFit.fitWidth,
           ),

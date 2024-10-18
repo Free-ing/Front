@@ -346,7 +346,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 }
 
 class GrayTextFormField extends StatelessWidget {
-  final TextEditingController? controller;
+  final TextEditingController controller;
   final FormFieldValidator<String>? validator;
   final TextInputType? keyboardType;
   final double? width;
@@ -356,7 +356,7 @@ class GrayTextFormField extends StatelessWidget {
 
   const GrayTextFormField({
     Key? key,
-    this.controller,
+    required this.controller,
     this.validator,
     this.keyboardType,
     this.width, // 필요 시 커스터마이즈 가능하도록
@@ -381,7 +381,7 @@ class GrayTextFormField extends StatelessWidget {
 }
 
 class GrayTextFormFieldWithEye extends StatefulWidget {
-  final TextEditingController? controller;
+  final TextEditingController controller;
   final FormFieldValidator<String>? validator;
   final TextInputType? keyboardType;
   final double? width;
@@ -393,7 +393,7 @@ class GrayTextFormFieldWithEye extends StatefulWidget {
   final Function()? onSuffixIconTap;
 
   const GrayTextFormFieldWithEye({
-    this.controller,
+    required this.controller,
     this.validator,
     this.keyboardType,
     this.width,
