@@ -211,6 +211,7 @@ class CustomTextFormField extends StatefulWidget {
   final Function()? onSuffixIconTap;
   final bool showSuffixIcon;
   final Widget? suffixIcon;
+  final bool enabled;
 
   const CustomTextFormField({
     Key? key,
@@ -226,6 +227,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onSuffixIconTap,
     this.showSuffixIcon = false,
     this.suffixIcon,
+    this.enabled = true,
   }) : super(key: key);
 
   @override
@@ -317,6 +319,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               boxShadow: boxShadows,
             ),
             child: TextFormField(
+              enabled: widget.enabled,
               obscureText: widget.isPassword,
               style: TextStyle(
                 fontSize: 12,
@@ -353,6 +356,7 @@ class GrayTextFormField extends StatelessWidget {
   final double? height;
   final String? labelText;
   final String? hintText;
+  final bool enabled;
 
   const GrayTextFormField({
     Key? key,
@@ -363,6 +367,7 @@ class GrayTextFormField extends StatelessWidget {
     this.height, // 필요 시 커스터마이즈 가능하도록
     this.labelText,
     this.hintText,
+    this.enabled = true,
   }) : super(key: key);
 
   @override
@@ -376,6 +381,7 @@ class GrayTextFormField extends StatelessWidget {
       // validator: validator,
       keyboardType: keyboardType ?? TextInputType.text,
       shadowStyle: ShadowStyle.grayInner, // 포커스 시 회색 내부 그림자
+      enabled: enabled,
     );
   }
 }
@@ -391,6 +397,7 @@ class GrayTextFormFieldWithEye extends StatefulWidget {
   final bool showSuffixIcon;
   final bool isPassword;
   final Function()? onSuffixIconTap;
+  final bool enabled;
 
   const GrayTextFormFieldWithEye({
     required this.controller,
@@ -403,6 +410,7 @@ class GrayTextFormFieldWithEye extends StatefulWidget {
     this.showSuffixIcon = false,
     this.isPassword = false,
     this.onSuffixIconTap,
+    this.enabled = true,
     super.key,
   });
 
@@ -431,6 +439,7 @@ class _GrayTextFormFieldWithEyeState extends State<GrayTextFormFieldWithEye> {
       keyboardType: widget.keyboardType ?? TextInputType.text,
       shadowStyle: ShadowStyle.grayInner, // 포커스 시 회색 내부 그림자
       isPassword: _isObscured,
+      enabled: widget.enabled,
       suffixIcon: GestureDetector(
         onTap: _togglePasswordVisibility,
         child: Icon(
@@ -456,6 +465,7 @@ class GrayTextFormFieldWithButton extends StatelessWidget {
   final TextInputType? keyboardType;
   final VoidCallback onButtonPressed;
   final String buttonText;
+  final bool enabled;
 
   const GrayTextFormFieldWithButton({
     Key? key,
@@ -469,6 +479,7 @@ class GrayTextFormFieldWithButton extends StatelessWidget {
     this.keyboardType,
     required this.onButtonPressed,
     required this.buttonText,
+    this.enabled = true,
   }) : super(key: key);
 
   @override
@@ -482,6 +493,7 @@ class GrayTextFormFieldWithButton extends StatelessWidget {
       width: width ?? 260,
       height: height ?? 40,
       keyboardType: keyboardType,
+      enabled: enabled,
       suffixIcon: Padding(
         padding: const EdgeInsets.all(4.0),
         child: ElevatedButton(
@@ -514,11 +526,15 @@ class GrayTextFormFieldWihTimerButton extends StatefulWidget {
   final TextEditingController? controller;
   final double? width;
   final VoidCallback onButtonPressed;
+  final bool enabled;
+  final bool isVisible;
 
   const GrayTextFormFieldWihTimerButton({
     this.controller,
     this.width,
     required this.onButtonPressed,
+    this.enabled = true,
+    this.isVisible = true,
     super.key,
   });
 
@@ -538,17 +554,12 @@ class _GrayTextFormFieldWihTimerButtonState
     startTimer();
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
   void startTimer() {
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(oneSec, (Timer timer) {
       if (_start == 0) {
         setState(() {
+          bool isVisible = false;
           timer.cancel();
         });
       } else {
@@ -559,6 +570,21 @@ class _GrayTextFormFieldWihTimerButtonState
     });
   }
 
+  void stopTimer(){
+    if(_timer != null && _timer!.isActive){
+      _timer!.cancel();
+      setState(() {
+        bool isVisible = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -567,14 +593,19 @@ class _GrayTextFormFieldWihTimerButtonState
       child: Row(
         children: [
           CustomTextFormField(
+            controller: widget.controller,
             hintText: '인증번호를 입력해주세요.',
             width: 254,
             keyboardType: TextInputType.number,
+            enabled: widget.enabled,
             suffixIcon: Padding(
               padding: const EdgeInsets.only(top:8.0, right: 15.0),
-              child: Text(
-                '${(_start ~/ 60).toString().padLeft(2, '0')}:${(_start % 60).toString().padLeft(2, '0')}',
-                style: const TextStyle(fontSize: 14.0, color: Colors.black),
+              child: Visibility(
+                visible: widget.isVisible,
+                child: Text(
+                  '${(_start ~/ 60).toString().padLeft(2, '0')}:${(_start % 60).toString().padLeft(2, '0')}',
+                  style: const TextStyle(fontSize: 14.0, color: Colors.black),
+                ),
               ),
             ),
           ),
@@ -585,7 +616,7 @@ class _GrayTextFormFieldWihTimerButtonState
             width: 57.5,
             height: 30,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: widget.onButtonPressed,
               child: Text(
                 '확인',
                 style: TextStyle(
@@ -619,6 +650,7 @@ class YellowTextFormField extends StatelessWidget {
   final double? width;
   final double? height;
   final String? hintText;
+  final bool enabled;
 
   const YellowTextFormField({
     Key? key,
@@ -628,6 +660,7 @@ class YellowTextFormField extends StatelessWidget {
     this.width, // 필요 시 커스터마이즈 가능하도록
     this.height, // 필요 시 커스터마이즈 가능하도록
     this.hintText,
+    this.enabled = true,
   }) : super(key: key);
 
   @override
@@ -637,6 +670,7 @@ class YellowTextFormField extends StatelessWidget {
       height: height ?? 76,
       controller: controller,
       // validator: validator,
+      enabled: enabled,
       keyboardType: keyboardType ?? TextInputType.text,
       shadowStyle: ShadowStyle.yellowOuter, // 포커스 시 회색 내부 그림자
     );

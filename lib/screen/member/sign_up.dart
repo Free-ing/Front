@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/common/service/sign_up_service.dart';
 import 'package:freeing/layout/default_layout.dart';
-import 'package:page_transition/page_transition.dart';
-
 import '../../common/component/buttons.dart';
+import '../../common/component/dialog_manager.dart';
 import '../../common/component/text_form_fields.dart';
 import 'login.dart';
 
@@ -15,8 +15,147 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordVerificationController = TextEditingController();
+  final TextEditingController _passwordVerificationController =
+      TextEditingController();
+  final TextEditingController _codeController = TextEditingController();
+
+  bool _isEmailVerified = false;
+  bool _isEmailSent = false;
+  bool _isEmailFieldEnabled = true;
+  bool _isCodeFieldEnabled = true;
+  bool _isTimerVisible = true;
+
+  void checkEmail() {
+    SignUpService.checkEmail(_emailController.text).then((success) {
+      if (success) {
+        DialogManager.showAlertDialog(
+            context: context,
+            title: '이메일 중복 확인',
+            content: '이미 사용중인 이메일입니다.\n다른 이메일을 입력해주세요.');
+      } else {
+        DialogManager.showConfirmDialog(
+          context: context,
+          title: '이메일 중복 확인',
+          content: '이메일을 사용할 수 있어요.\n이 이메일로 인증하시겠어요?',
+          confirmButtonText: '이메일 전송',
+          onConfirm: () {
+            SignUpService.sendVerificationEmail(_emailController.text)
+                .then((success) {
+              if (success) {
+                setState(() {
+                  _isEmailSent = true;
+                });
+                Navigator.pop(context);
+                DialogManager.showAlertDialog(
+                  context: context,
+                  title: '이메일 인증',
+                  content: '이메일로 인증번호를 보내드렸어요!\n인증번호를 입력해주세요.',
+                );
+              } else {
+                DialogManager.showAlertDialog(
+                    context: context,
+                    title: '이메일 전송 실패',
+                    content: '이메일 전송에 실패했습니다.\n다시 시도해주세요.',
+                    onConfirm: () {
+                      Navigator.of(context).pop();
+                    });
+              }
+            });
+          },
+        );
+      }
+    });
+  }
+
+  void verifyCode() {
+    SignUpService.verifyCode(_emailController.text, _codeController.text)
+        .then((status) {
+      switch (status) {
+        case VerificationStatus.success:
+          DialogManager.showAlertDialog(
+              context: context, title: '인증 성공', content: '인증 성공했습니다.');
+          setState(() {
+            _isTimerVisible = false;
+            _isEmailFieldEnabled = false;
+            _isCodeFieldEnabled = false;
+            _isEmailVerified = true;
+          });
+
+          break;
+        case VerificationStatus.codeNotFound:
+          DialogManager.showAlertDialog(
+              context: context, title: '인증 실패', content: '인증 기록이 존재하지 않습니다.');
+          break;
+        case VerificationStatus.codeExpired:
+          DialogManager.showAlertDialog(
+              context: context,
+              title: '인증 코드 만료',
+              content: '인증 코드가 만료되었습니다. 새 인증 코드를 요청해주세요.');
+          break;
+        case VerificationStatus.invalidCode:
+          DialogManager.showAlertDialog(
+            context: context,
+            title: '인증 실패',
+            content: '입력한 인증 코드가 올바르지 않습니다.',
+          );
+          break;
+        case VerificationStatus.serverError:
+          DialogManager.showAlertDialog(
+            context: context,
+            title: '서버 오류',
+            content: '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+          );
+          break;
+      }
+    });
+  }
+
+  bool validateInputs() {
+    return _nameController.text.isNotEmpty &&
+        (_passwordController.text == _passwordVerificationController.text) &&
+        _isEmailVerified &&
+        (_passwordController.text.length >= 8);
+  }
+
+  void attemptSignUp() {
+    if (validateInputs()) {
+      SignUpService.registerUser(
+        email: _emailController.text,
+        password: _passwordController.text,
+        name: _nameController.text,
+        role: 1,
+      ).then((success) {
+        if (success) {
+          DialogManager.showAlertDialog(
+              context: context,
+              title: '회원가입 성공',
+              content: '축하드립니다! \n\n회원가입에 성공하셨습니다! \n\n로그인해주세요.',
+              onConfirm: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => Login(),
+                ));
+              });
+        } else {
+          DialogManager.showAlertDialog(
+              context: context,
+              title: '회원가입에 실패하셨습니다.',
+              content: '회원가입에 실패하셨습니다.\n\n다시 시도해주세요',
+              onConfirm: () {
+                Navigator.of(context).pop();
+              });
+        }
+      });
+    } else {
+      DialogManager.showAlertDialog(
+        context: context,
+        title: '알림',
+        content: '모든 필드를 올바르게 입력해주세요.',
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +171,6 @@ class _SignUpState extends State<SignUp> {
           icon: Icon(Icons.chevron_left),
           iconSize: 35.0,
           onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   PageTransition(
-            //     type: PageTransitionType.topToBottom,
-            //     alignment: Alignment.topCenter,
-            //     curve: Curves.bounceOut,
-            //     duration: Duration(milliseconds: 900),
-            //     child: Login(),
-            //   ),
-            // );
             Navigator.of(context).pop();
           },
         ),
@@ -49,7 +178,7 @@ class _SignUpState extends State<SignUp> {
       child: Column(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.463,
+            height: MediaQuery.of(context).size.height * 0.6,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Column(
@@ -62,11 +191,36 @@ class _SignUpState extends State<SignUp> {
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.015),
                   GrayTextFormFieldWithButton(
+                    controller: _emailController,
                     labelText: '이메일',
                     hintText: '이메일을 입력해주세요.',
                     buttonText: '중복 확인',
                     width: 320,
-                    onButtonPressed: () {},
+                    onButtonPressed: checkEmail,
+                    enabled: _isEmailFieldEnabled,
+                  ),
+                  // Visibility(
+                  //   visible: _isEmailSent,
+                  //   child: GrayTextFormFieldWihTimerButton(
+                  //     controller: _codeController,
+                  //     onButtonPressed: verifyCode,
+                  //     enabled: _isCodeFieldEnabled,
+                  //   ),
+                  // ),
+                  Visibility(
+                    visible: _isEmailSent,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.015),
+                        GrayTextFormFieldWihTimerButton(
+                          controller: _codeController,
+                          onButtonPressed: verifyCode,
+                          enabled: _isCodeFieldEnabled,
+                          isVisible: _isTimerVisible,
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.015),
                   GrayTextFormFieldWithEye(
@@ -86,7 +240,7 @@ class _SignUpState extends State<SignUp> {
                   GreenButton(
                     text: '가입 하기',
                     width: 260,
-                    onPressed: () => print('버튼 눌림'),
+                    onPressed: attemptSignUp,
                   ),
                 ],
               ),
