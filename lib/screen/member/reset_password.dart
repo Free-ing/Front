@@ -12,6 +12,9 @@ class ResetPassword extends StatefulWidget {
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordVerificationController = TextEditingController();
+
   bool isTransmissionSuccessful = false;
 
   @override
@@ -61,12 +64,14 @@ class _ResetPasswordState extends State<ResetPassword> {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             GrayTextFormFieldWithEye(
+              controller: _passwordController,
               labelText: '새 비밀번호',
               hintText: '새로운 비밀번호를 입력해주세요.',
               width: 320,
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             GrayTextFormFieldWithEye(
+              controller: _passwordVerificationController,
               labelText: '새 비밀번호 확인',
               hintText: '비밀번호를 한번 더 입력해주세요.',
               width: 320,
@@ -77,7 +82,7 @@ class _ResetPasswordState extends State<ResetPassword> {
               width: 260,
               text: '변경하기',
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.0),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             Image.asset(
               'assets/imgs/login_bottom.png',
               width: MediaQuery.of(context).size.width,
