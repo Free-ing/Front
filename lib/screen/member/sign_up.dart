@@ -89,12 +89,7 @@ class _SignUpState extends State<SignUp> {
             ),
           ),
           Image.asset(
-            'assets/imgs/login_bottom.png',
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.fitWidth,
-          ),
-          Image.asset(
-            'assets/imgs/login_top.png',
+            'assets/imgs/background/signup.png',
             width: MediaQuery.of(context).size.width,
             fit: BoxFit.fitWidth,
           ),

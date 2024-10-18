@@ -23,6 +23,7 @@ class ShowChartDate extends StatelessWidget {
             onDateChanged(DateTime(selectedDate.year, selectedDate.month - 1));
           },
           icon: Icon(Icons.arrow_back_ios_new_rounded, size: 16),
+
         ),
         Text(
           "${selectedDate.year}년 ${selectedDate.month}월", // 선택된 날짜 표시

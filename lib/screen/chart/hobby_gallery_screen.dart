@@ -23,17 +23,37 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     print("Fetching hobby albums for $year-$month");
 
     final apiService = HobbyAPIService();
-    final response = await apiService.getHobbyAlbum(year, month);
+    final response = await apiService.getHobbyAlbum(year, month, 1);
 
+    print(response.statusCode);
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
       //List<HobbyAlbum> hobbyGallery = [];
-      for (dynamic data in jsonData) {
-        HobbyAlbum hobbyRecord = HobbyAlbum.fromJson(data);
-        _hobbyAlbums.add(hobbyRecord);
-        //_hobbyGallery = hobbyGallery;
+      // for (dynamic data in jsonData) {
+      //   HobbyAlbum hobbyRecord = HobbyAlbum.fromJson(data);
+      //   _hobbyAlbums.add(hobbyRecord);
+      //   //_hobbyGallery = hobbyGallery;
+      // }
+      // 서버에서 객체로 반환될 경우 처리
+      if (jsonData is Map<String, dynamic>) {
+        // 예시에서 'albums' 키로 리스트가 들어있는 경우
+        List<dynamic> albumList = jsonData['result'];
+
+        _hobbyAlbums.clear(); // 기존 앨범을 초기화
+        for (dynamic data in albumList) {
+          HobbyAlbum hobbyRecord = HobbyAlbum.fromJson(data);
+          _hobbyAlbums.add(hobbyRecord);
+        }
+      } else if (jsonData is List) {
+        // 만약 JSON이 리스트로 바로 반환되었다면
+        _hobbyAlbums.clear();
+        for (dynamic data in jsonData) {
+          HobbyAlbum hobbyRecord = HobbyAlbum.fromJson(data);
+          _hobbyAlbums.add(hobbyRecord);
+        }
       }
+      _hobbyAlbums.sort((a, b) => b.date.compareTo(a.date));
       return _hobbyAlbums;
     } else if (response.statusCode == 404) {
       return _hobbyAlbums = [];
@@ -46,14 +66,18 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     setState(() {
       selectedDate = date;
     });
-    _hobbyAlbums =
-        await _fetchHobbyAlbum(selectedDate.year, selectedDate.month);
+
+    await _fetchHobbyAlbum(selectedDate.year, selectedDate.month);
   }
 
   @override
   void initState() {
     super.initState();
-    _fetchHobbyAlbum(selectedDate.year, selectedDate.month);
+    _fetchHobbyAlbum(selectedDate.year, selectedDate.month).then((albums) {
+      setState(() {
+        _hobbyAlbums = albums;
+      });
+    });
   }
 
   @override
@@ -83,7 +107,8 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                 ),
                 itemCount: _hobbyAlbums.length,
                 itemBuilder: (context, index) {
-                  final hobbyAlbum = _hobbyAlbums[index];
+                  final hobbyAlbum =
+                      _hobbyAlbums[_hobbyAlbums.length - 1 - index];
                   return _buildHobbyRecord(
                     context: context,
                     imageUrl: hobbyAlbum.photoUrl,
@@ -201,7 +226,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
         height: 500,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          //crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             // 상단 타이틀
             Align(
@@ -262,23 +287,32 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
               ),
             ),
             const SizedBox(height: 12.0),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 48.0),
-                backgroundColor: PRIMARY_COLOR,
-                side: const BorderSide(color: Colors.black),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                    backgroundColor: PRIMARY_COLOR,
+                    side: const BorderSide(color: Colors.black),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    iconColor: Colors.white,
+                  ),
+                  child: Text(
+                    "닫기",
+                    style: textTheme.bodyMedium,
+                  ),
                 ),
-                iconColor: Colors.white,
-              ),
-              child: Text(
-                "닫기",
-                style: textTheme.bodyMedium,
-              ),
+                IconButton(
+                    onPressed: () {}, icon: Icon(Icons.delete_forever)),
+                //SizedBox(width: 20),
+              ],
             ),
           ],
         ),

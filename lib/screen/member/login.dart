@@ -50,7 +50,7 @@ class _LoginState extends State<Login> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 1,
               child: Image.asset(
-                'assets/imgs/login_top.png',
+                'assets/imgs/background/login_top.png',
                 width: MediaQuery.of(context).size.width,
                 fit: BoxFit.fitWidth,
               ),
@@ -186,7 +186,7 @@ class _LoginState extends State<Login> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Image.asset(
-                'assets/imgs/login_bottom.png',
+                'assets/imgs/background/login_bottom.png',
                 width: MediaQuery.of(context).size.width,
                 fit: BoxFit.fitWidth,
               ),
