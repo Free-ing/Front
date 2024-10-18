@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
 
@@ -56,7 +58,7 @@ class GreenButton extends StatelessWidget {
       text: text,
       width: width,
       height: 40, // 기본 초록 버튼 높이
-      color: MAIN_COLOR,
+      color: PRIMARY_COLOR,
       onPressed: onPressed,
     );
   }
@@ -79,7 +81,7 @@ class GrayButton extends StatelessWidget {
       text: text,
       width: width,
       height: 40, // 기본 회색 버튼 높이
-      color: GRAY_COLOR,
+      color: LIGHT_GREY,
       onPressed: onPressed,
     );
   }
