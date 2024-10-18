@@ -20,15 +20,24 @@ class _HobbyTabBarViewState extends State<HobbyTabBarView> {
     print("Fetching hobby list");
 
     final apiService = HobbyAPIService();
-    final response = await apiService.getHobbyList();
+    final response = await apiService.getHobbyList(1);
 
-    if (response.statusCode == 20) {
+    if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
+      //
+      // for (dynamic data in jsonData) {
+      //   HobbyList hobby = HobbyList.fromJson(data);
+      //   _hobbyList.add(hobby);
+      // }
+      // return _hobbyList;
 
-      for (dynamic data in jsonData) {
-        HobbyList hobby = HobbyList.fromJson(data);
-        _hobbyList.add(hobby);
-      }
+        List<dynamic> hobbyList = jsonData['result'];
+        _hobbyList.clear();
+        for (dynamic data in hobbyList) {
+          HobbyList hobbyCard = HobbyList.fromJson(data);
+          _hobbyList.add(hobbyCard);
+        }
+
       return _hobbyList;
     } else if (response.statusCode == 404) {
       return _hobbyList = [];

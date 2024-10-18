@@ -25,7 +25,6 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     final apiService = HobbyAPIService();
     final response = await apiService.getHobbyAlbum(year, month, 1);
 
-    print(response.statusCode);
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
@@ -67,7 +66,12 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
       selectedDate = date;
     });
 
-    await _fetchHobbyAlbum(selectedDate.year, selectedDate.month);
+    final hobbyAlbums =
+        await _fetchHobbyAlbum(selectedDate.year, selectedDate.month);
+
+    setState(() {
+      _hobbyAlbums = hobbyAlbums;
+    });
   }
 
   @override
@@ -115,6 +119,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                     date: hobbyAlbum.date,
                     title: hobbyAlbum.hobbyName,
                     description: hobbyAlbum.recordBody,
+                    recordId: hobbyAlbum.recordId,
                   );
                 },
               ),
@@ -133,6 +138,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     required DateTime date,
     required String title,
     required String description,
+    required int recordId,
   }) {
     final textTheme = Theme.of(context).textTheme;
 
@@ -147,6 +153,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
               date: date,
               imageUrl: imageUrl,
               description: description,
+              recordId: recordId,
             );
           },
         );
@@ -211,6 +218,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     required DateTime date,
     required String imageUrl,
     required String description,
+    required int recordId,
   }) {
     final textTheme = Theme.of(context).textTheme;
 
@@ -290,7 +298,6 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -310,7 +317,28 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                   ),
                 ),
                 IconButton(
-                    onPressed: () {}, icon: Icon(Icons.delete_forever)),
+                  onPressed: () async {
+                    final responseCode =
+                        await HobbyAPIService().deleteHobbyRecord(recordId, 1);
+                    if (responseCode == 200) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('기록이 삭제되었습니다.')),
+                      );
+                      // 저장된 리스트에서 삭제
+                      setState(() {
+                        _hobbyAlbums.removeWhere((album) =>
+                            album.recordId == recordId); // recordId와 일치하는 항목 삭제
+                      });
+                      Navigator.of(context).pop();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('기록이 삭제되지 않았습니다 ')),
+                      );
+                      print(responseCode);
+                    }
+                  },
+                  icon: Icon(Icons.delete_forever, size: 25),
+                ),
                 //SizedBox(width: 20),
               ],
             ),
