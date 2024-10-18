@@ -99,7 +99,7 @@ class _LoginState extends State<Login> {
         child: ToastCard(
           title: const Text('테스트'),
           color: const Color(0xFFFFFBF0),
-          leading: Image.asset('assets/imgs/login_fail.png'),
+          leading: Image.asset("assets/imgs/login/login_fail.png"),
         ),
       ),
       autoDismiss: true,
@@ -118,7 +118,7 @@ class _LoginState extends State<Login> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 1,
               child: Image.asset(
-                'assets/imgs/login_top.png',
+                "assets/imgs/login/login_top.png",
                 width: MediaQuery.of(context).size.width,
                 fit: BoxFit.fitWidth,
               ),
@@ -256,7 +256,7 @@ class _LoginState extends State<Login> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Image.asset(
-                'assets/imgs/login_bottom.png',
+                "assets/imgs/login/login_bottom.png",
                 width: MediaQuery.of(context).size.width,
                 fit: BoxFit.fitWidth,
               ),

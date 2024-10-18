@@ -486,7 +486,7 @@ class GrayTextFormFieldWithButton extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         child: ElevatedButton(
           style: TextButton.styleFrom(
-            backgroundColor: MAIN_COLOR,
+            backgroundColor: PRIMARY_COLOR,
             foregroundColor: Colors.black,
             padding: EdgeInsets.zero,
             fixedSize: Size(105, 30),
@@ -594,7 +594,7 @@ class _GrayTextFormFieldWihTimerButtonState
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: MAIN_COLOR,
+                backgroundColor: PRIMARY_COLOR,
                 foregroundColor: Colors.black,
                 padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(

@@ -70,6 +70,7 @@ flutter:
     - assets/imgs/hobby/
     - assets/imgs/mind/
     - assets/imgs/sleep/
+    - assets/imgs/login/
     - assets/icons/
 
   fonts:
