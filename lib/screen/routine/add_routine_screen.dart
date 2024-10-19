@@ -205,7 +205,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                         ),
                       )),
                   onPressed: () {},
-                  child: Text('완료', style: textTheme.bodyMedium),
+                  child: Text('완료', style: textTheme.titleLarge),
                 ),
               ),
             ],

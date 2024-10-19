@@ -37,12 +37,12 @@ void main() {
           titleLarge: TextStyle(
             // 모달창 title. 수면 루틴 Title, 완료 버튼, 날짜,
             fontSize: 18.0,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
           titleMedium: TextStyle(
             // 루틴 TapBar, 모달창 버튼, 설문조사 선택지, ai 루틴 이름,
             fontSize: 16.0,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
           titleSmall: TextStyle(
             // 감정일기 조회 제목
