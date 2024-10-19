@@ -4,6 +4,7 @@ import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/text_form_fields.dart';
+import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/service/login_service.dart';
 import 'package:freeing/common/service/token_storage.dart';
 import 'package:freeing/layout/default_layout.dart';
@@ -33,20 +34,22 @@ class _LoginState extends State<Login> {
     // 이메일 형식 검증을 위한 정규식
     final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegExp.hasMatch(email)) {
-      DelightToastBar(
-        builder: (context) => const ToastCard(
-          title: Text('프론트 - 이메일 형식이 잘못되었습니다.'),
-        ),
-      ).show(context);
+      // DelightToastBar(
+      //   builder: (context) => const ToastCard(
+      //     title: Text('이메일 형식이 잘못되었습니다.'),
+      //   ),
+      // ).show(context);
+      ToastBarWidget(title: '이메일 형식이 잘못되었습니다.',).showToast(context);
       return;
     }
     // 비밀번호 8자리 이상인지 검사
     if (password.length < 8) {
-      DelightToastBar(
-        builder: (context) => const ToastCard(
-          title: Text('프론트 - 비밀번호는 8자 이상이어야 합니다.'),
-        ),
-      ).show(context);
+    //   DelightToastBar(
+    //     builder: (context) => const ToastCard(
+    //       title: Text('비밀번호는 8자 이상이어야 합니다.'),
+    //     ),
+    //   ).show(context);
+      ToastBarWidget(title: '비밀번호는 8자 이상이어야 합니다.',).showToast(context);
       return;
     }
 
@@ -86,25 +89,6 @@ class _LoginState extends State<Login> {
         ),
       ).show(context);
     }
-  }
-
-  void _test() {
-    DelightToastBar(
-      builder: (context) => Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 1.0),
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: ToastCard(
-          title: const Text('테스트'),
-          color: const Color(0xFFFFFBF0),
-          leading: Image.asset("assets/imgs/login/login_fail.png"),
-        ),
-      ),
-      autoDismiss: true,
-      snackbarDuration: Duration(milliseconds: 1000),
-    ).show(context);
   }
 
   @override
