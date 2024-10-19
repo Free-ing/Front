@@ -178,7 +178,7 @@ class _SignUpState extends State<SignUp> {
       child: Column(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.6,
+            height: MediaQuery.of(context).size.height * 0.5,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Column(

@@ -12,9 +12,9 @@ enum VerificationStatus{
 
 class SignUpService {
   static const String _baseUrl = BaseUrl.baseUrl;
-  static const String _signUpEndpoint = '$_baseUrl:8000/user-service/signup';
+  static const String _signUpEndpoint = '$_baseUrl/user-service/signup';
   static const String _checkEmailEndpoint =
-      '$_baseUrl:8000/user-service/check-email';
+      '$_baseUrl/user-service/check-email';
 
 
   static Future<bool> checkEmail(String email) async {
@@ -52,7 +52,7 @@ class SignUpService {
 
   static Future<bool> sendVerificationEmail(String email) async {
     final String _sendVerificationEndpoint =
-        '$_baseUrl:8000/user-service/email/send-verification?email=$email';
+        '$_baseUrl/user-service/email/send-verification?email=$email';
 
     try {
       var url = Uri.parse(_sendVerificationEndpoint);
@@ -77,7 +77,7 @@ class SignUpService {
 
 
   static Future<VerificationStatus> verifyCode(String email,String code) async {
-    final String _verifyCodeEndpoint = '$_baseUrl:8000/user-service/email/verify?email=$email&code=$code';
+    final String _verifyCodeEndpoint = '$_baseUrl/user-service/email/verify?email=$email&code=$code';
     var url = Uri.parse(_verifyCodeEndpoint);
 
     try {
