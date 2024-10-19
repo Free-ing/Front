@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class ResetPasswordService{
   static const String _baseUrl = BaseUrl.baseUrl;
-  static const String _changePassword = '$_baseUrl:8000/user-service/change-password/before-login';
+  static const String _changePassword = '$_baseUrl/user-service/change-password/before-login';
 
   static Future<bool> changePassword(String email, String newPassword) async{
     var url = Uri.parse(_changePassword);

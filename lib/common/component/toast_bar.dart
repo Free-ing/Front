@@ -24,7 +24,7 @@ class ToastBarWidget extends StatelessWidget {
         padding: const EdgeInsets.all(0),
         child: ToastCard(
           shadowColor: Colors.transparent,
-          title: Text(title),
+          title: Text(title, style: TextStyle(fontSize: 15.0),),
           color: const Color(0xFFFFFBF0),
           leading: Image.asset("assets/imgs/login/login_fail.png"),
         ),
