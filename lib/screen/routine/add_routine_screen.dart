@@ -101,7 +101,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                     SizedBox(width: screenWidth * 0.02),
                     Text(' 시간 선택', style: textTheme.bodyMedium),
                     SizedBox(width: screenWidth * 0.10),
-                    Text('시작: 8:00, 종료: 12:00',
+                    Text('시작: ${_startTime?.hour}:${_startTime?.minute}, 종료: 미설정}',
                         style:
                             textTheme.bodySmall!.copyWith(color: TEXT_PURPLE)),
                     IconButton(
