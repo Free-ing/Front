@@ -198,6 +198,7 @@ enum ShadowStyle {
 //   }
 // }
 
+/// Todo: 기본틀
 class CustomTextFormField extends StatefulWidget {
   final String? labelText; // 라벨 텍스트 (옵션)
   final String? hintText; // 힌트 텍스트 (옵션)
@@ -348,6 +349,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   }
 }
 
+// Todo: 기본 텍스트 필드
 class GrayTextFormField extends StatelessWidget {
   final TextEditingController controller;
   final FormFieldValidator<String>? validator;
@@ -373,7 +375,7 @@ class GrayTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomTextFormField(
-      labelText: labelText ?? '이메일',
+      labelText: labelText,
       hintText: hintText ?? '',
       width: width ?? 260,
       height: height ?? 40,
@@ -386,6 +388,7 @@ class GrayTextFormField extends StatelessWidget {
   }
 }
 
+/// Todo: 비밀번호 입력
 class GrayTextFormFieldWithEye extends StatefulWidget {
   final TextEditingController controller;
   final FormFieldValidator<String>? validator;
@@ -454,6 +457,7 @@ class _GrayTextFormFieldWithEyeState extends State<GrayTextFormFieldWithEye> {
   }
 }
 
+// Todo: 인증번호 전송
 class GrayTextFormFieldWithButton extends StatelessWidget {
   final TextEditingController? controller;
   final String? labelText;

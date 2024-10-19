@@ -4,7 +4,7 @@ import 'base_url.dart';
 
 class LoginService {
   static const String _baseUrl = BaseUrl.baseUrl;
-  static const String _loginEndpoint = '$_baseUrl:8000/user-service/login';
+  static const String _loginEndpoint = '$_baseUrl/user-service/login';
 
   Future<http.Response> login(String email, String password) async {
     final response = await http.post(

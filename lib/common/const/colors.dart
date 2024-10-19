@@ -29,3 +29,6 @@ const DARK_GREY = Color(0xFF929292);
 
 // 노란 그림자
 const YELLOW_SHADOW = Color(0xFFFFDE85);
+
+// 보라색 글씨
+const TEXT_PURPLE = Color(0xFFA9A8D0);

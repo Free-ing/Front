@@ -3,7 +3,7 @@ import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/screen/chart/chart_page.dart';
 import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/routine/routine_page.dart';
-import 'package:freeing/screen/setting_page.dart';
+import 'package:freeing/screen/setting/setting_page.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final int selectedIndex;

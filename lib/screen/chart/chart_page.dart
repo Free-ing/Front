@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
+import 'package:freeing/screen/member/login.dart';
+import 'package:freeing/screen/routine/add_routine_screen.dart';
 
 class ChartPage extends StatelessWidget {
   const ChartPage({super.key});
@@ -43,13 +45,13 @@ class ChartPage extends StatelessWidget {
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/routine_tracker.png',
                   title: "월간\n루틴 트래커",
-                  navigatePage: HobbyGalleryScreen(),
+                  navigatePage: AddRoutineScreen(),
                   context: context,
                 ),
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/sleep_report.png',
                   title: "수면 리포트\n몰아보기",
-                  navigatePage: HobbyGalleryScreen(),
+                  navigatePage: Login(),
                   context: context,
                 ),
                 _chartCard(
@@ -88,7 +90,7 @@ class ChartPage extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => HobbyGalleryScreen()));
+            .push(MaterialPageRoute(builder: (context) => navigatePage));
       },
       child: Card(
         elevation: 4,

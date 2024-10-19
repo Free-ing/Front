@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/screen/chart/chart_page.dart';
 
 class FloatingActionMenu extends StatefulWidget {
   @override
   _FloatingActionMenuState createState() => _FloatingActionMenuState();
 }
 
-class _FloatingActionMenuState extends State<FloatingActionMenu> with SingleTickerProviderStateMixin {
+class _FloatingActionMenuState extends State<FloatingActionMenu>
+    with SingleTickerProviderStateMixin {
   bool isMenuOpen = false;
   late AnimationController _controller;
+  late Animation<Offset> _menu1Animation;
+  late Animation<Offset> _menu2Animation;
 
   @override
   void initState() {
@@ -17,6 +21,12 @@ class _FloatingActionMenuState extends State<FloatingActionMenu> with SingleTick
       duration: Duration(milliseconds: 300),
       vsync: this,
     );
+
+    // 각각의 메뉴에 대한 애니메이션을 위쪽으로 설정 (y축 기준으로 위로 올라가게 함)
+    _menu1Animation = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1.7))
+        .animate(_controller);
+    _menu2Animation = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1.7))
+        .animate(_controller);
   }
 
   @override
@@ -39,27 +49,43 @@ class _FloatingActionMenuState extends State<FloatingActionMenu> with SingleTick
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
-        // 메뉴 버튼들
-        Positioned(
-          bottom: 120,
-          right: 30,
-          child: AnimatedOpacity(
-            opacity: isMenuOpen ? 1.0 : 0.0,
-            duration: Duration(milliseconds: 300),
-            child: Column(
-              children: [
-                _buildMenuButton(Icons.menu, "Menu 1"),
-                SizedBox(height: 10),
-                _buildMenuButton(Icons.menu_open, "Menu 2"),
-              ],
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            // 첫 번째 메뉴 버튼
+            Opacity(
+              opacity: isMenuOpen ? 1.0 : 0.0,
+              child: SlideTransition(
+                position: _menu2Animation,
+                child: _buildMenuButton(
+                  context: context,
+                  label: "AI에게 추천받기",
+                  onPressed: () {print("ai추천받기 클릭");},
+                ),
+              ),
             ),
-          ),
+            SizedBox(height: screenHeight*0.01),
+            // 두 번째 메뉴 버튼
+            Opacity(
+              opacity: isMenuOpen ? 1.0 : 0.0,
+              child: SlideTransition(
+                position: _menu1Animation,
+                child: _buildMenuButton(
+                  context: context,
+                  label: "직접 추가하기",
+                  onPressed: () {print("직접 추가 클릭");},
+                ),
+              ),
+            ),
+          ],
         ),
-        // 플로팅 액션 버튼
+        //Todo: 플로팅 액션 버튼
         Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
           child: SizedBox(
@@ -89,12 +115,31 @@ class _FloatingActionMenuState extends State<FloatingActionMenu> with SingleTick
     );
   }
 
-  Widget _buildMenuButton(IconData icon, String label) {
-    return FloatingActionButton(
-      onPressed: () {
-        print('$label clicked');
-      },
-      child: Icon(icon),
+  Widget _buildMenuButton({
+    required BuildContext context,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+      child: ElevatedButton(
+        onPressed: (){print('버튼 누름!! 눌렀음!');},
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(screenWidth * 0.36, 0),
+          padding: EdgeInsets.all(screenWidth * 0.03),
+          backgroundColor: Colors.white,
+          foregroundColor: ORANGE,
+          textStyle: textTheme.titleSmall,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          side: BorderSide(color: Colors.black),
+        ),
+        child: Text(label, style: TextStyle(color: Colors.black)),
+      ),
     );
   }
 }
