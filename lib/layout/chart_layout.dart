@@ -94,7 +94,7 @@ class _ChartLayoutState extends State<ChartLayout> {
                 icon: Icon(Icons.chevron_left),
                 iconSize: 35.0,
               ),
-              Text(widget.title, style: textTheme.headlineLarge),
+              Expanded(child: Text(widget.title, style: textTheme.headlineLarge, textAlign: TextAlign.center,)),
               IconButton(
                 onPressed: selectMonth,
                 icon: Image.asset(

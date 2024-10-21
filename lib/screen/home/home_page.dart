@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
+import 'package:freeing/common/component/survey_buttons.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;

@@ -51,6 +51,7 @@ void main() {
           bodyLarge: TextStyle(
             // 설문조사 질문,
             fontSize: 22.0,
+            height: 1.5
           ),
           bodyMedium: TextStyle(
             // 본문
@@ -68,7 +69,7 @@ void main() {
         ),
       ),
       //home: Login(),
-      home: HomePage()
+      home: HomePage(),
     ),
   );
 }

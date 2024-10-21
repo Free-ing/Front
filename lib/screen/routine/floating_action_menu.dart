@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/screen/chart/chart_page.dart';
+import 'package:freeing/screen/routine/add_routine_screen.dart';
+import 'package:freeing/screen/routine/select_recommend_category.dart';
 
 class FloatingActionMenu extends StatefulWidget {
   @override
@@ -23,10 +25,10 @@ class _FloatingActionMenuState extends State<FloatingActionMenu>
     );
 
     // 각각의 메뉴에 대한 애니메이션을 위쪽으로 설정 (y축 기준으로 위로 올라가게 함)
-    _menu1Animation = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1.7))
-        .animate(_controller);
-    _menu2Animation = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1.7))
-        .animate(_controller);
+    _menu1Animation = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1))
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _menu2Animation = Tween<Offset>(begin: Offset(0, 0), end: Offset(0, -1))
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -54,37 +56,44 @@ class _FloatingActionMenuState extends State<FloatingActionMenu>
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            // 첫 번째 메뉴 버튼
-            Opacity(
-              opacity: isMenuOpen ? 1.0 : 0.0,
-              child: SlideTransition(
-                position: _menu2Animation,
-                child: _buildMenuButton(
-                  context: context,
-                  label: "AI에게 추천받기",
-                  onPressed: () {print("ai추천받기 클릭");},
+        AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          height: isMenuOpen ? screenHeight * 0.216 : 0, // 충분한 공간을 미리 확보
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Opacity(
+                  opacity: isMenuOpen ? 1.0 : 0.0,
+                  child: _buildMenuButton(
+                    context: context,
+                    label: "AI에게 추천받기",
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              SelectRecommendCategory()));
+                    },
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(height: screenHeight*0.01),
-            // 두 번째 메뉴 버튼
-            Opacity(
-              opacity: isMenuOpen ? 1.0 : 0.0,
-              child: SlideTransition(
-                position: _menu1Animation,
-                child: _buildMenuButton(
-                  context: context,
-                  label: "직접 추가하기",
-                  onPressed: () {print("직접 추가 클릭");},
+                SizedBox(height: screenHeight * 0.01),
+                Opacity(
+                  opacity: isMenuOpen ? 1.0 : 0.0,
+                  child: _buildMenuButton(
+                    context: context,
+                    label: "직접 추가하기",
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              AddRoutineScreen()));
+                    },
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
+
         //Todo: 플로팅 액션 버튼
         Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
@@ -126,9 +135,9 @@ class _FloatingActionMenuState extends State<FloatingActionMenu>
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
       child: ElevatedButton(
-        onPressed: (){print('버튼 누름!! 눌렀음!');},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(screenWidth * 0.36, 0),
+          minimumSize: Size(screenWidth * 0.38, 0),
           padding: EdgeInsets.all(screenWidth * 0.03),
           backgroundColor: Colors.white,
           foregroundColor: ORANGE,

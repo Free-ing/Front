@@ -32,3 +32,9 @@ const YELLOW_SHADOW = Color(0xFFFFDE85);
 
 // 보라색 글씨
 const TEXT_PURPLE = Color(0xFFA9A8D0);
+
+// 회색 글씨
+const TEXT_GREY = Color(0xFFBEBEBE);
+
+// 진한 회색 글씨
+const TEXT_DARK = Color(0xFF79747E);

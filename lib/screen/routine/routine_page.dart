@@ -35,10 +35,9 @@ class RoutinePage extends StatelessWidget {
               child: Text("루틴", style: textTheme.headlineLarge),
             ),
           ),
-          floatingActionButton: FloatingActionMenu(),
           body: Padding(
             padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.06, vertical: screenHeight*0.02),
+                horizontal: screenWidth * 0.06, vertical: screenHeight * 0.02),
             child: CategoryTabBar(
               exercise: _buildExerciseTabBarView(),
               sleep: _buildSleepTabBarView(),
@@ -46,6 +45,9 @@ class RoutinePage extends StatelessWidget {
               spirit: _buildSpiritTabBarView(),
             ),
           ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          floatingActionButton:
+              FloatingActionMenu(),
           bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 1),
         ),
       ],
@@ -75,14 +77,14 @@ class RoutinePage extends StatelessWidget {
   }
 
   /// FloatingActionButton
-  Widget _buildFloatingActionButton(screenWidth) {return Padding(
+  Widget _buildFloatingActionButton(screenWidth) {
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
       child: SizedBox(
         width: screenWidth * 0.18,
         height: screenWidth * 0.18,
         child: FloatingActionButton.large(
-          onPressed: () {
-          },
+          onPressed: () {},
           backgroundColor: BLUE_PURPLE,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -117,7 +119,10 @@ class _buildExerciseTabBarViewState extends State<_buildExerciseTabBarView> {
           SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       itemCount: 3,
       itemBuilder: (context, index) {
-        return ToggledRoutineCard(imageUrl: 'assets/imgs/exercise/running.png', title: '달리기', description: '루틴에 대한 설명');
+        return ToggledRoutineCard(
+            imageUrl: 'assets/imgs/exercise/running.png',
+            title: '달리기',
+            description: '루틴에 대한 설명');
       },
     );
   }
