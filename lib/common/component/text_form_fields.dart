@@ -10,194 +10,6 @@ enum ShadowStyle {
   yellowOuter,
 }
 
-// // CustomTextFormField 클래스 정의
-// class CustomTextFormField extends StatefulWidget {
-//   final String? labelText; // 라벨 텍스트 (옵션)
-//   final String? hintText; // 힌트 텍스트 (옵션)
-//   final double width; // 너비
-//   final double height; // 높이
-//   final TextEditingController? controller;
-//   // final FormFieldValidator<String>? validator;
-//   final TextInputType? keyboardType;
-//   final ShadowStyle shadowStyle; // 그림자 스타일
-//
-//   const CustomTextFormField({
-//     Key? key,
-//     this.labelText,
-//     this.hintText,
-//     this.width = 260,
-//     this.height = 40,
-//     this.controller,
-//     // this.validator,
-//     this.keyboardType,
-//     this.shadowStyle = ShadowStyle.none,
-//   }) : super(key: key);
-//
-//   @override
-//   _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
-// }
-//
-// class _CustomTextFormFieldState extends State<CustomTextFormField> {
-//   bool _isFocused = false;
-//   late FocusNode _focusNode;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _focusNode = FocusNode();
-//     _focusNode.addListener(_handleFocusChange);
-//   }
-//
-//   void _handleFocusChange() {
-//     setState(() {
-//       _isFocused = _focusNode.hasFocus;
-//     });
-//   }
-//
-//   @override
-//   void dispose() {
-//     _focusNode.removeListener(_handleFocusChange);
-//     _focusNode.dispose();
-//     super.dispose();
-//   }
-//
-//   BoxShadow? _getBoxShadow() {
-//     if (_isFocused) {
-//       return BoxShadow(
-//         color: Colors.grey.withOpacity(0.7),
-//         offset: Offset(2, 2),
-//         blurRadius: 4,
-//         spreadRadius: 2
-//       );
-//     } else {
-//       switch (widget.shadowStyle) {
-//         case ShadowStyle.grayInner:
-//           return BoxShadow(
-//             color: Colors.grey.withOpacity(0.7),
-//             offset: Offset(2, 2),
-//             blurRadius: 4,
-//             spreadRadius: -2
-//           );
-//         case ShadowStyle.yellowOuter:
-//           return BoxShadow(
-//             color: Colors.yellow.withOpacity(0.3),
-//             spreadRadius: 1,
-//             offset: Offset(2, 2),
-//             blurRadius: 2,
-//           );
-//         case ShadowStyle.none:
-//         default:
-//           return null;
-//       }
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     List<BoxShadow> boxShadows = [];
-//     BoxShadow? shadow = _getBoxShadow();
-//     if (shadow != null) {
-//       boxShadows.add(shadow);
-//     }
-//
-//     return Center(
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           if (widget.labelText != null) ...[
-//             Text(
-//               widget.labelText!,
-//               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
-//             ),
-//             SizedBox(height: MediaQuery.of(context).size.height*0.001),
-//           ],
-//           Container(
-//             width: widget.width,
-//             height: widget.height,
-//             decoration: BoxDecoration(
-//               color: Colors.white,
-//               borderRadius: BorderRadius.circular(15),
-//               border: Border.all(color: Colors.black, width: 1),
-//               boxShadow: boxShadows,
-//             ),
-//             child: TextFormField(
-//               style: TextStyle(
-//                 fontSize: 12,
-//                 fontWeight: FontWeight.w300,
-//                 color: Color(0xFF929292),
-//               ),
-//               controller: widget.controller,
-//               focusNode: _focusNode,
-//               // validator: widget.validator,
-//               keyboardType: widget.keyboardType,
-//               maxLines: widget.height > 40 ? null : 1, // 높이에 따라 다중 라인 설정
-//               decoration: InputDecoration(
-//                 hintText: widget.hintText,
-//                 border: InputBorder.none,
-//                 fillColor: Colors.transparent,
-//                 filled: true,
-//                 contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-//
-//
-// class GrayTextFormField extends StatelessWidget {
-//   final TextEditingController? controller;
-//   final FormFieldValidator<String>? validator;
-//   final TextInputType? keyboardType;
-//   final double? width;
-//   final double? height;
-//   final String? labelText;
-//   final String? hintText;
-//
-//   const GrayTextFormField({
-//     Key? key,
-//     this.controller,
-//     this.validator,
-//     this.keyboardType,
-//     this.width, // 필요 시 커스터마이즈 가능하도록
-//     this.height, // 필요 시 커스터마이즈 가능하도록
-//     this.labelText,
-//     this.hintText,
-//   }) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return CustomTextFormField(
-//       labelText: labelText ?? '이메일',
-//       hintText: hintText ?? '',
-//       width: width ?? 260,
-//       height: height ?? 40,
-//       controller: controller,
-//       // validator: validator,
-//       keyboardType: keyboardType ?? TextInputType.text,
-//       shadowStyle: ShadowStyle.grayInner, // 포커스 시 회색 내부 그림자
-//     );
-//   }
-// }
-//
-// class GrayTextFormFieldWithEye extends StatefulWidget {
-//
-//
-//   const GrayTextFormFieldWithEye({super.key});
-//
-//   @override
-//   State<GrayTextFormFieldWithEye> createState() => _GrayTextFormFieldWithEyeState();
-// }
-//
-// class _GrayTextFormFieldWithEyeState extends State<GrayTextFormFieldWithEye> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Placeholder();
-//   }
-// }
-
 class CustomTextFormField extends StatefulWidget {
   final String? labelText; // 라벨 텍스트 (옵션)
   final String? hintText; // 힌트 텍스트 (옵션)
@@ -212,6 +24,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool showSuffixIcon;
   final Widget? suffixIcon;
   final bool enabled;
+  final int? maxLength;
 
   const CustomTextFormField({
     Key? key,
@@ -228,6 +41,7 @@ class CustomTextFormField extends StatefulWidget {
     this.showSuffixIcon = false,
     this.suffixIcon,
     this.enabled = true,
+    this.maxLength,
   }) : super(key: key);
 
   @override
@@ -237,12 +51,21 @@ class CustomTextFormField extends StatefulWidget {
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
   bool _isFocused = false;
   late FocusNode _focusNode;
+  int _currentLength = 0;
 
   @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
     _focusNode.addListener(_handleFocusChange);
+
+    widget.controller?.addListener(_handleTextChange);
+  }
+
+  void _handleTextChange() {
+    setState(() {
+      _currentLength = widget.controller!.text.length;
+    });
   }
 
   void _handleFocusChange() {
@@ -255,6 +78,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   void dispose() {
     _focusNode.removeListener(_handleFocusChange);
     _focusNode.dispose();
+    widget.controller?.removeListener(_handleTextChange);
     super.dispose();
   }
 
@@ -289,6 +113,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
+    // final screenWidth = MediaQuery.of(context).size.width * 0.72;
+    // final screenHeight = MediaQuery.of(context).size.height * 0.06;
     List<BoxShadow> boxShadows = [];
     BoxShadow? shadow = _getBoxShadow();
     if (shadow != null) {
@@ -296,57 +122,242 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     }
 
     return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.labelText != null) ...[
-            Text(
-              widget.labelText!,
-              style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.black),
+      child: SizedBox(
+        height: widget.height,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.labelText != null) ...[
+              Text(
+                widget.labelText!,
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.black),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.001),
+            ],
+            Expanded(
+              child: Container(
+                width: widget.width,
+                height: widget.height,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: Colors.black, width: 1),
+                  boxShadow: boxShadows,
+                ),
+                child: TextFormField(
+                  enabled: widget.enabled,
+                  obscureText: widget.isPassword,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300,
+                    color: Color(0xFF929292),
+                  ),
+                  controller: widget.controller,
+                  focusNode: _focusNode,
+                  // validator: widget.validator,
+                  keyboardType: widget.keyboardType,
+                  maxLines: widget.isPassword ? 1 : null, // 높이에 따라 다중 라인 설정
+                  maxLength: widget.maxLength,
+                  buildCounter: (
+                      BuildContext context, {
+                        required int currentLength,
+                        required bool isFocused,
+                        required int? maxLength,
+                      }) {
+                    return null; // 기본 카운터 비활성화
+                  },
+                  decoration: InputDecoration(
+                    hintText: widget.hintText,
+                    border: InputBorder.none,
+                    fillColor: Colors.transparent,
+                    filled: true,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    suffixIcon: widget.suffixIcon,
+                  ),
+                ),
+              ),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.001),
+            if (widget.maxLength != null) ...[
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4.0, right: 25.0),
+                  child: Text(
+                    '$_currentLength / ${widget.maxLength}',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey, // 글자 수 표시
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ],
-          Container(
-            width: widget.width,
-            height: widget.height,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.black, width: 1),
-              boxShadow: boxShadows,
-            ),
-            child: TextFormField(
-              enabled: widget.enabled,
-              obscureText: widget.isPassword,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-                color: Color(0xFF929292),
-              ),
-              controller: widget.controller,
-              focusNode: _focusNode,
-              // validator: widget.validator,
-              keyboardType: widget.keyboardType,
-              maxLines: widget.height > 40 ? null : 1, // 높이에 따라 다중 라인 설정
-              decoration: InputDecoration(
-                hintText: widget.hintText,
-                border: InputBorder.none,
-                fillColor: Colors.transparent,
-                filled: true,
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                suffixIcon: widget.suffixIcon,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
+
+// class CustomTextFormFieldWithFlexible extends StatefulWidget {
+//   final String? labelText; // 라벨 텍스트 (옵션)
+//   final String? hintText; // 힌트 텍스트 (옵션)
+//   final double width; // 너비
+//   final double height; // 높이
+//   final TextEditingController? controller;
+//   // final FormFieldValidator<String>? validator;
+//   final TextInputType? keyboardType;
+//   final ShadowStyle shadowStyle; // 그림자 스타일
+//   final bool isPassword;
+//   final Function()? onSuffixIconTap;
+//   final bool showSuffixIcon;
+//   final Widget? suffixIcon;
+//   final bool enabled;
+//
+//   const CustomTextFormFieldWithFlexible(
+//       {this.labelText,
+//       this.hintText,
+//       this.width = 260,
+//       this.height = 40,
+//       this.controller,
+//       // this.validator,
+//       this.keyboardType,
+//       this.shadowStyle = ShadowStyle.none,
+//       this.isPassword = false,
+//       this.onSuffixIconTap,
+//       this.showSuffixIcon = false,
+//       this.suffixIcon,
+//       this.enabled = true,
+//       super.key});
+//
+//   @override
+//   State<CustomTextFormFieldWithFlexible> createState() =>
+//       _CustomTextFormFieldWithFlexibleState();
+// }
+//
+// class _CustomTextFormFieldWithFlexibleState
+//     extends State<CustomTextFormFieldWithFlexible> {
+//   bool _isFocused = false;
+//   late FocusNode _focusNode;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _focusNode = FocusNode();
+//     _focusNode.addListener(_handleFocusChange);
+//   }
+//
+//   void _handleFocusChange() {
+//     setState(() {
+//       _isFocused = _focusNode.hasFocus;
+//     });
+//   }
+//
+//   @override
+//   void dispose() {
+//     _focusNode.removeListener(_handleFocusChange);
+//     _focusNode.dispose();
+//     super.dispose();
+//   }
+//
+//   BoxShadow? _getBoxShadow() {
+//     if (_isFocused) {
+//       return BoxShadow(
+//           color: Colors.grey.withOpacity(0.7),
+//           offset: Offset(2, 2),
+//           blurRadius: 4,
+//           spreadRadius: 2);
+//     } else {
+//       switch (widget.shadowStyle) {
+//         case ShadowStyle.grayInner:
+//           return BoxShadow(
+//               color: Colors.grey.withOpacity(0.7),
+//               offset: Offset(2, 2),
+//               blurRadius: 4,
+//               spreadRadius: -2);
+//         case ShadowStyle.yellowOuter:
+//           return BoxShadow(
+//             color: Colors.yellow.withOpacity(0.3),
+//             spreadRadius: 1,
+//             offset: Offset(2, 2),
+//             blurRadius: 2,
+//           );
+//         case ShadowStyle.none:
+//         default:
+//           return null;
+//       }
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final screenWidth = MediaQuery.of(context).size.width * 0.72;
+//     final screenHeight = MediaQuery.of(context).size.height * 0.06;
+//     List<BoxShadow> boxShadows = [];
+//     BoxShadow? shadow = _getBoxShadow();
+//     if (shadow != null) {
+//       boxShadows.add(shadow);
+//     }
+//
+//     return Center(
+//       child: SizedBox(
+//         height: widget.height,
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             if (widget.labelText != null) ...[
+//               Text(
+//                 widget.labelText!,
+//                 style: TextStyle(
+//                     fontSize: 12,
+//                     fontWeight: FontWeight.w300,
+//                     color: Colors.black),
+//               ),
+//               SizedBox(height: MediaQuery.of(context).size.height * 0.001),
+//             ],
+//             Container(
+//               width: widget.width,
+//               height: widget.height,
+//               decoration: BoxDecoration(
+//                 color: Colors.white,
+//                 borderRadius: BorderRadius.circular(15),
+//                 border: Border.all(color: Colors.black, width: 1),
+//                 boxShadow: boxShadows,
+//               ),
+//               child: TextFormField(
+//                 enabled: widget.enabled,
+//                 obscureText: widget.isPassword,
+//                 style: TextStyle(
+//                   fontSize: 12,
+//                   fontWeight: FontWeight.w300,
+//                   color: Color(0xFF929292),
+//                 ),
+//                 controller: widget.controller,
+//                 focusNode: _focusNode,
+//                 // validator: widget.validator,
+//                 keyboardType: widget.keyboardType,
+//                 maxLines: widget.height > 40 ? null : 1, // 높이에 따라 다중 라인 설정
+//                 decoration: InputDecoration(
+//                   hintText: widget.hintText,
+//                   border: InputBorder.none,
+//                   fillColor: Colors.transparent,
+//                   filled: true,
+//                   contentPadding:
+//                       EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+//                   suffixIcon: widget.suffixIcon,
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class GrayTextFormField extends StatelessWidget {
   final TextEditingController controller;
@@ -372,11 +383,14 @@ class GrayTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width * 0.72;
+    final screenHeight = MediaQuery.of(context).size.height * 0.063;
+
     return CustomTextFormField(
       labelText: labelText ?? '이메일',
       hintText: hintText ?? '',
-      width: width ?? 260,
-      height: height ?? 40,
+      width: width ?? screenWidth,
+      height: height ?? screenHeight,
       controller: controller,
       // validator: validator,
       keyboardType: keyboardType ?? TextInputType.text,
@@ -430,11 +444,14 @@ class _GrayTextFormFieldWithEyeState extends State<GrayTextFormFieldWithEye> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width * 0.72;
+    final screenHeight = MediaQuery.of(context).size.height * 0.063;
+
     return CustomTextFormField(
       labelText: widget.labelText ?? '비밀번호',
       hintText: widget.hintText ?? '',
-      width: widget.width ?? 260,
-      height: widget.height ?? 40,
+      width: widget.width ?? screenWidth,
+      height: widget.height ?? screenHeight,
       controller: widget.controller,
       keyboardType: widget.keyboardType ?? TextInputType.text,
       shadowStyle: ShadowStyle.grayInner, // 포커스 시 회색 내부 그림자
@@ -484,14 +501,17 @@ class GrayTextFormFieldWithButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width * 0.72;
+    final screenHeight = MediaQuery.of(context).size.height * 0.063;
+
     return CustomTextFormField(
       controller: controller,
       labelText: labelText ?? '이메일',
       hintText: hintText ?? '이메일을 입력해주세요.',
       //validator: validator,
       //obscureText: obscureText,
-      width: width ?? 260,
-      height: height ?? 40,
+      width: width ?? screenWidth,
+      height: height ?? screenHeight,
       keyboardType: keyboardType,
       enabled: enabled,
       suffixIcon: Padding(
@@ -570,8 +590,8 @@ class _GrayTextFormFieldWihTimerButtonState
     });
   }
 
-  void stopTimer(){
-    if(_timer != null && _timer!.isActive){
+  void stopTimer() {
+    if (_timer != null && _timer!.isActive) {
       _timer!.cancel();
       setState(() {
         bool isVisible = false;
@@ -587,9 +607,12 @@ class _GrayTextFormFieldWihTimerButtonState
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width * 0.72;
+    final screenHeight = MediaQuery.of(context).size.height * 0.063;
+
     return Container(
-      width: widget.width ?? 320,
-      height: 40,
+      width: widget.width ?? screenWidth,
+      height: screenHeight,
       child: Row(
         children: [
           CustomTextFormField(
@@ -599,7 +622,7 @@ class _GrayTextFormFieldWihTimerButtonState
             keyboardType: TextInputType.number,
             enabled: widget.enabled,
             suffixIcon: Padding(
-              padding: const EdgeInsets.only(top:8.0, right: 15.0),
+              padding: const EdgeInsets.only(top: 8.0, right: 15.0),
               child: Visibility(
                 visible: widget.isVisible,
                 child: Text(
@@ -651,6 +674,7 @@ class YellowTextFormField extends StatelessWidget {
   final double? height;
   final String? hintText;
   final bool enabled;
+  final int? maxLength;
 
   const YellowTextFormField({
     Key? key,
@@ -661,14 +685,19 @@ class YellowTextFormField extends StatelessWidget {
     this.height, // 필요 시 커스터마이즈 가능하도록
     this.hintText,
     this.enabled = true,
+    this.maxLength,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width * 0.72;
+    final screenHeight = MediaQuery.of(context).size.height * 0.1;
+
     return CustomTextFormField(
-      width: width ?? 260,
-      height: height ?? 76,
+      width: width ?? screenWidth,
+      height: height ?? screenHeight,
       controller: controller,
+      maxLength: maxLength,
       // validator: validator,
       enabled: enabled,
       keyboardType: keyboardType ?? TextInputType.text,

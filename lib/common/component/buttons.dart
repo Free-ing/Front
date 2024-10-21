@@ -20,6 +20,8 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return SizedBox(
       width: width,
       height: height,
@@ -35,7 +37,7 @@ class CustomButton extends StatelessWidget {
           )
         ),
         onPressed: onPressed,
-        child: Text(text),
+        child: Text(text, style: textTheme.titleLarge,),
       ),
     );
   }
