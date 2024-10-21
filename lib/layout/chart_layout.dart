@@ -35,69 +35,86 @@ class _ChartLayoutState extends State<ChartLayout> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.03),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: Icon(Icons.chevron_left),
-                  iconSize: 35.0,
-                ),
-                Text(widget.title, style: textTheme.headlineLarge),
-                IconButton(
-                  onPressed: () {
-                    showMonthPicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-
-                      monthPickerDialogSettings: MonthPickerDialogSettings(
-                        headerSettings: PickerHeaderSettings(
-                            headerBackgroundColor: PRIMARY_COLOR),
-                        dialogSettings: PickerDialogSettings(
-                            dialogBackgroundColor: LIGHT_IVORY,
-                            dialogRoundedCornersRadius: 15),
-                        buttonsSettings: PickerButtonsSettings(
-                          monthTextStyle: textTheme.bodySmall,
-                          selectedMonthBackgroundColor: BLUE_PURPLE,
-                          unselectedMonthsTextColor: Colors.black,
-                          buttonBorder: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      ),
-                    ).then((date) {
-                      if (date != null) {
-                        setState(() {
-                          selectedDate = date;
-                          widget.onDateSelected(date); // 콜백 호출
-                        });
-                      }
-                    });
-                  },
-                  icon: Image.asset(
-                    "assets/icons/calendar_icon.png",
-                    width: 25,
-                  ),
-                ),
-              ],
+    // Todo: 년, 월 선택
+    selectMonth(){
+      showMonthPicker(
+        context: context,
+        initialDate: DateTime.now(),
+        monthPickerDialogSettings: MonthPickerDialogSettings(
+          headerSettings: PickerHeaderSettings(
+            headerBackgroundColor: PRIMARY_COLOR,
+            headerPadding: EdgeInsets.all(screenWidth * 0.05),
+            headerIconsSize: 35,
+            headerIconsColor: Colors.black,
+            headerCurrentPageTextStyle:
+            textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w300,
+            ),
+            headerSelectedIntervalTextStyle:
+            textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w300,
+              color: Colors.black,
             ),
           ),
+          dialogSettings: PickerDialogSettings(
+              dialogBackgroundColor: LIGHT_IVORY,
+              dialogRoundedCornersRadius: 15,
+              dialogBorderSide: BorderSide(color: Colors.black)),
+          buttonsSettings: PickerButtonsSettings(
+            monthTextStyle: textTheme.bodySmall,
+            selectedMonthBackgroundColor: BLUE_PURPLE,
+            unselectedMonthsTextColor: Colors.black,
+            currentMonthTextColor: ORANGE,
+          ),
         ),
-        body: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    "assets/imgs/background/background_image_category_chart.png"),
-                fit: BoxFit.cover,
+      ).then((date) {
+        if (date != null) {
+          setState(() {
+            selectedDate = date;
+            widget.onDateSelected(date); // 콜백 호출
+          });
+        }
+      });
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        title: Padding(
+          padding: EdgeInsets.only(top: screenHeight * 0.03),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: Icon(Icons.chevron_left),
+                iconSize: 35.0,
               ),
+              Text(widget.title, style: textTheme.headlineLarge),
+              IconButton(
+                onPressed: selectMonth,
+                icon: Image.asset(
+                  "assets/icons/calendar_icon.png",
+                  width: 25,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                  "assets/imgs/background/background_image_category_chart.png"),
+              fit: BoxFit.cover,
             ),
-            child: widget.chartWidget));
+          ),
+          child: widget.chartWidget),
+    );
   }
 }

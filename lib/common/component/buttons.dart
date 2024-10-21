@@ -27,6 +27,7 @@ class CustomButton extends StatelessWidget {
       height: height,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
+          elevation: 4,
           backgroundColor: color,
           foregroundColor: Colors.black,
           shape: RoundedRectangleBorder(
@@ -43,6 +44,9 @@ class CustomButton extends StatelessWidget {
   }
 }
 
+
+/// 초록 버튼
+/// width 240 - 루틴 추가 화면 => screenWidth*0.6
 class GreenButton extends StatelessWidget {
   final String text;
   final double width;

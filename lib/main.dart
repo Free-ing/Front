@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/routine/routine_page.dart';
 
-
 void main() {
   runApp(
     MaterialApp(
+      locale: Locale('ko', 'KR'),
       debugShowCheckedModeBanner: false,
+
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('en', 'US'),
+        Locale('ko', 'KR'),
+      ],
+
       theme: ThemeData(
         fontFamily: 'scdream',
         textTheme: TextTheme(
@@ -47,6 +59,7 @@ void main() {
           bodySmall: TextStyle(
             // 작은 글씨
             fontSize: 14.0,
+            height: 1.5,
           ),
           labelMedium: TextStyle(
             // 제일 작은 글씨
@@ -54,7 +67,8 @@ void main() {
           ),
         ),
       ),
-      home: Login(),
+      //home: Login(),
+      home: HomePage()
     ),
   );
 }

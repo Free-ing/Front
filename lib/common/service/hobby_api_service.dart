@@ -9,7 +9,7 @@ class HobbyAPIService {
   Future<http.Response> getHobbyList(int userId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse('$_baseUrl/hobby-service/routine-list/$userId');
+    final url = Uri.parse('$_baseUrl/hobby-service/routine-list');
 
     return http.get(
       url,
@@ -21,11 +21,11 @@ class HobbyAPIService {
   }
 
   //Todo: 취미 사진첩 조회
-  Future<http.Response> getHobbyAlbum(int year, int month, int userId) async {
+  Future<http.Response> getHobbyAlbum(int year, int month) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse(
-        '$_baseUrl/hobby-service/album-list/$userId?year=$year&month=$month');
+        '$_baseUrl/hobby-service/album-list?year=$year&month=$month');
 
     return http.get(url, headers: {
       'Content-Type': 'application/json',

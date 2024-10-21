@@ -23,11 +23,10 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     print("Fetching hobby albums for $year-$month");
 
     final apiService = HobbyAPIService();
-    final response = await apiService.getHobbyAlbum(year, month, 1);
+    final response = await apiService.getHobbyAlbum(year, month);
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
-
 
       // 서버에서 객체로 반환될 경우 처리
       if (jsonData is Map<String, dynamic>) {
@@ -56,6 +55,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     }
   }
 
+  //Todo: 날짜 update
   Future<void> updateSelectedDate(DateTime date) async {
     setState(() {
       selectedDate = date;
@@ -104,10 +104,10 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                   crossAxisSpacing: screenWidth * 0.02,
                   mainAxisSpacing: screenWidth * 0.02,
                 ),
-                itemCount: 5, //_hobbyAlbums.length,
+                itemCount: _hobbyAlbums.length,
                 itemBuilder: (context, index) {
                   final hobbyAlbum =
-                    _hobbyAlbums[_hobbyAlbums.length - 1 - index];
+                      _hobbyAlbums[_hobbyAlbums.length - 1 - index];
                   return _buildHobbyRecord(
                     context: context,
                     imageUrl: hobbyAlbum.photoUrl,
@@ -216,8 +216,8 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     required int recordId,
   }) {
     final textTheme = Theme.of(context).textTheme;
-  final screenWidth = MediaQuery.of(context).size.width;
-  final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -226,9 +226,9 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
           color: IVORY,
           borderRadius: BorderRadius.circular(20.0),
         ),
-        padding: EdgeInsets.all(screenHeight*0.02),
-        width: screenWidth*0.9,
-        height: screenHeight*0.6,
+        padding: EdgeInsets.all(screenHeight * 0.02),
+        width: screenWidth * 0.9,
+        height: screenHeight * 0.6,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -237,22 +237,59 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
             Align(
                 alignment: Alignment.center,
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: screenHeight*0.008),
+                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.008),
                   decoration: BoxDecoration(
                     color: BLUE_PURPLE,
                     border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   width: 300.0,
-                  child: Center(
-                    child: Text(
-                      title,
-                      style: Theme.of(context).textTheme.headlineSmall,
-                      textAlign: TextAlign.center,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Center(
+                        child: Text(
+                          title,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(width: 50),
+                      // IconButton(
+                      //   onPressed: (){},
+                      //   icon: Icon(Icons.edit_note_rounded,),
+                      //   iconSize: 25,
+                      // ),
+                      IconButton(
+                        onPressed: () async {
+                          final responseCode = await HobbyAPIService()
+                              .deleteHobbyRecord(recordId, 1);
+                          if (responseCode == 200) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('기록이 삭제되었습니다.')),
+                            );
+                            setState(() {
+                              _hobbyAlbums.removeWhere(
+                                  (album) => album.recordId == recordId);
+                            });
+                            Navigator.of(context).pop();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('기록이 삭제되지 않았습니다 ')),
+                            );
+                            print(responseCode);
+                          }
+                        },
+                        icon: Icon(
+                          Icons.delete_forever,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 )),
-            SizedBox(height: screenHeight*0.015),
+            SizedBox(height: screenHeight * 0.015),
             // 날짜
             Container(
               alignment: Alignment.centerLeft,
@@ -261,19 +298,19 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                 style: textTheme.bodyMedium,
               ),
             ),
-            SizedBox(height: screenHeight*0.015),
+            SizedBox(height: screenHeight * 0.015),
             // 이미지 영역
 
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Image.network(
                 imageUrl,
-                height: screenHeight*0.22,
+                height: screenHeight * 0.22,
                 fit: BoxFit.contain,
               ),
             ),
 
-            SizedBox(height: screenHeight*0.015),
+            SizedBox(height: screenHeight * 0.015),
             // 설명 텍스트
             Expanded(
               child: Container(
@@ -291,53 +328,24 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                 ),
               ),
             ),
-            SizedBox(height: screenHeight*0.015),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 100.0),
-                    backgroundColor: PRIMARY_COLOR,
-                    side: const BorderSide(color: Colors.black),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    iconColor: Colors.white,
-                  ),
-                  child: Text(
-                    "닫기",
-                    style: textTheme.bodyMedium,
-                  ),
+            SizedBox(height: screenHeight * 0.015),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                backgroundColor: PRIMARY_COLOR,
+                side: const BorderSide(color: Colors.black),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                IconButton(
-                  onPressed: () async {
-                    final responseCode =
-                        await HobbyAPIService().deleteHobbyRecord(recordId, 1);
-                    if (responseCode == 200) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('기록이 삭제되었습니다.')),
-                      );
-                      // 저장된 리스트에서 삭제
-                      setState(() {
-                        _hobbyAlbums.removeWhere((album) =>
-                            album.recordId == recordId); // recordId와 일치하는 항목 삭제
-                      });
-                      Navigator.of(context).pop();
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('기록이 삭제되지 않았습니다 ')),
-                      );
-                      print(responseCode);
-                    }
-                  },
-                  icon: Icon(Icons.delete_forever, size: 25),
-                ),
-                //SizedBox(width: 20),
-              ],
+                iconColor: Colors.white,
+              ),
+              child: Text(
+                "닫기",
+                style: textTheme.bodyMedium,
+              ),
             ),
           ],
         ),

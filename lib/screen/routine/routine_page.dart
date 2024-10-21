@@ -35,7 +35,7 @@ class RoutinePage extends StatelessWidget {
               child: Text("루틴", style: textTheme.headlineLarge),
             ),
           ),
-         // floatingActionButton: FloatingActionMenu(),
+          floatingActionButton: FloatingActionMenu(),
           body: Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: screenWidth * 0.06, vertical: screenHeight*0.02),
