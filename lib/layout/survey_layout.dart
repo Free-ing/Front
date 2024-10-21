@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class SurveyLayout extends StatelessWidget {
   final Widget title;
   final Widget body;
-  const SurveyLayout({super.key, required this.title, required this.body});
+  final VoidCallback? onIconPressed;
+  const SurveyLayout({super.key, required this.title, required this.body, this.onIconPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +27,11 @@ class SurveyLayout extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  iconSize: 45.0,
+                  iconSize: 30.0,
                   padding: EdgeInsets.zero,
                   constraints: BoxConstraints(),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: Icon(Icons.chevron_left),
+                  onPressed: onIconPressed ?? (){Navigator.of(context).pop();},
+                  icon: Icon(Icons.arrow_back_ios_rounded),
                 ),
                 title,
                 SizedBox(width: 35)

@@ -91,8 +91,10 @@ class _ChartLayoutState extends State<ChartLayout> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                icon: Icon(Icons.chevron_left),
-                iconSize: 35.0,
+                icon: Icon(Icons.arrow_back_ios_rounded),
+                iconSize: 30.0,
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints(),
               ),
               Expanded(child: Text(widget.title, style: textTheme.headlineLarge, textAlign: TextAlign.center,)),
               IconButton(

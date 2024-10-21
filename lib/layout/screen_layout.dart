@@ -33,12 +33,12 @@ class ScreenLayout extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: Icon(Icons.chevron_left),
-                  iconSize: 35.0,
-                ),
+                  iconSize: 30.0,
+                  padding: EdgeInsets.zero,
+                  constraints: BoxConstraints(),
+                  onPressed: (){Navigator.of(context).pop();},
+                  icon: Icon(Icons.arrow_back_ios_rounded),
+                )
               ),
               Text(title, style: textTheme.headlineLarge),
               Align(

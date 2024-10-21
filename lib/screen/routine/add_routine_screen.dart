@@ -49,7 +49,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png';
 
   TextEditingController _nameController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _boddyController = TextEditingController();
   TextEditingController _startTimeController = TextEditingController();
   TextEditingController _endTimeController = TextEditingController();
 
@@ -121,8 +121,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                       _routieDescirbe(textTheme, screenWidth, screenHeight),
                       SizedBox(
                           height: _timePickerOpen
-                              ? screenHeight * 0.04
-                              : screenHeight * 0.18),
+                              ? screenWidth * 0.06
+                              : screenWidth * 0.2),
                     ],
                   ),
                 ),
@@ -154,6 +154,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                     child: Text('완료', style: textTheme.titleLarge),
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.053),
               ],
             ),
           ),
@@ -371,10 +372,45 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       children: [
         Text(' 설명', style: textTheme.bodyMedium),
         SizedBox(height: screenHeight * 0.01),
-        GrayTextFormField(
-          hintText: "루틴에 대한 설명",
-          width: screenWidth,
-          controller: _descriptionController,
+        Container(
+          constraints: BoxConstraints(
+            minHeight: screenHeight * 0.045,
+          ),
+          child: TextField(
+            controller: _boddyController,
+            style: textTheme.bodyMedium,
+            keyboardType: TextInputType.text,
+            maxLength: 50,
+            maxLines: 3,
+            decoration: InputDecoration(
+              hintText: "루틴에 대한 설명",
+              hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
+              contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
+                borderSide: BorderSide(
+                  width: 1, // 테두리 두께
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(
+                  width: 1,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 1,
+                ),
+              ),
+            ),
+          ),
         )
       ],
     );

@@ -141,7 +141,7 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
                     );
                     if (result != null && result is String) {
                       setState(() {
-                        imageUrl = result; // 선택된 이미지를 imageUrl에 저장
+                        imageUrl = result;
                       });
                     }
                   },

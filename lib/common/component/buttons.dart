@@ -108,12 +108,13 @@ class PairedButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        GrayButton(text: grayText, width: 120, onPressed: onGrayPressed),
+        GrayButton(text: grayText, width: screenWidth*0.3, onPressed: onGrayPressed),
         SizedBox(width: 20,),
-        GreenButton(text: greenText, width: 120, onPressed: onGreenPressed),
+        GreenButton(text: greenText, width: screenWidth*0.3, onPressed: onGreenPressed),
       ],
     );
   }

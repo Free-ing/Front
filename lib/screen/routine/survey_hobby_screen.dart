@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/survey_buttons.dart';
+import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/layout/survey_layout.dart';
 import 'package:freeing/model/hobby/recommend_hobby.dart';
@@ -18,10 +19,31 @@ class SurveyHobbyScreen extends StatefulWidget {
 
 class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
   int? selectedIndex;
-  final PageController _pageController = PageController();
   List<String?> answers = List.filled(7, null);
+  List<int?> selectedIndices = List.filled(7, null);
   int currentQuestionIndex = 0;
   List<RecommendedHobby> _recommendList = [];
+
+  final PageController _pageController = PageController();
+
+  final int _totalPages = 8; // 총 페이지 수
+  double _progress = 1 / (8 - 1); // 초기 진행 상태
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      setState(() {
+        _progress = (_pageController.page! + 1) / (_totalPages - 1);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   //Todo: 서버 요청
   Future<List<RecommendedHobby>> _submitAnswers() async {
@@ -70,9 +92,11 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
     }
   }
 
+  //Todo: 다음 질문
   void _nextQuestion(String answer, int index) {
     setState(() {
       answers[index] = answer; // 현재 질문에 대한 답변 저장
+      selectedIndices[index] = selectedIndex;
       selectedIndex = null;
     });
 
@@ -88,20 +112,32 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
     }
   }
 
+  //Todo: 이전 질문
   void _previousQuestion() {
     if (currentQuestionIndex > 0) {
-      print('현제 페이지 인덱스 번호 $currentQuestionIndex');
+      setState(() {
+        currentQuestionIndex -= 1;
+        selectedIndex = selectedIndices[currentQuestionIndex];
+      });
+
       _pageController.animateToPage(
-        currentQuestionIndex - 1,
+        currentQuestionIndex,
         duration: Duration(milliseconds: 300),
         curve: Curves.ease,
       );
-      setState(() {
-        selectedIndex = null;
-      });
     }
   }
 
+  //Todo: 뒤로가기 버튼
+  void _greyPressed() {
+    if (currentQuestionIndex == 0) {
+      Navigator.of(context).pop();
+    } else {
+      _previousQuestion();
+    }
+  }
+
+  //Todo: 선택된 버튼 인덱스 업데이트
   void handleButtonSelected(int index) {
     setState(() {
       selectedIndex = index; // 선택된 버튼의 인덱스를 업데이트
@@ -125,7 +161,17 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
     ];
 
     return SurveyLayout(
-      title: Container(width: 200),
+      title: PreferredSize(
+        preferredSize: Size(double.infinity, 4.0),
+        child: Container(
+          width: screenWidth * 0.51,
+          child: LinearProgressIndicator(
+            value: _progress,
+            backgroundColor: BASIC_GREY,
+            valueColor: AlwaysStoppedAnimation<Color>(ORANGE),
+          ),
+        ),
+      ),
       body: Expanded(
         child: PageView.builder(
           physics: const NeverScrollableScrollPhysics(),
@@ -137,6 +183,7 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
           },
         ),
       ),
+      onIconPressed: _greyPressed,
     );
   }
 
@@ -208,7 +255,7 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
           style: textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
-       // SizedBox(height: screenHeight * 0.08),
+        // SizedBox(height: screenHeight * 0.08),
         Expanded(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.025),
@@ -218,7 +265,7 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
                 3,
                 (index) {
                   final imageUrls = [
-                    'https://freeingimage.s3.ap-northeast-2.amazonaws.com/reading.png',
+                    'https://freeingimage.s3.ap-northeast-2.amazonaws.com/physical_activity.png',
                     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/watching_tv.png',
                     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/stroll.png',
                   ]; // 이미지 파일 경로
@@ -279,7 +326,7 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
   Widget _buildNewThings(textTheme, screenWidth, screenHeight) {
     return _circleButtons(
       text: '새로운 것을 배우거나 시도하는 것에\n대해 어떻게 생각하시나요?',
-      label: ['싫어함', '상관 없음', '좋아함'],
+      label: [' 싫어함 ', '상관 없음', ' 좋아함 '],
       textTheme: textTheme,
       screenWidth: screenWidth,
       screenHeight: screenHeight,
@@ -392,11 +439,7 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
         }
       },
       onGrayPressed: () {
-        if (currentQuestionIndex == 0) {
-          Navigator.of(context).pop();
-        } else {
-          _previousQuestion();
-        }
+        _greyPressed();
       },
     );
   }
