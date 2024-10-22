@@ -152,7 +152,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   textAlignVertical: screenHeight < screenHeight * 0.08 ? TextAlignVertical.center : null,
                   enabled: widget.enabled,
                   obscureText: widget.isPassword,
-                  style: textTheme.bodySmall?.copyWith(color: TEXT_DARK, fontWeight: FontWeight.w300),
+                  style: textTheme.bodySmall?.copyWith(color: Colors.black, fontWeight: FontWeight.w300),
                   controller: widget.controller,
                   focusNode: _focusNode,
                   // validator: widget.validator,

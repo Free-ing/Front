@@ -12,6 +12,7 @@ void showExerciseBottomSheet(BuildContext context, String title) {
       return BaseAnimatedBottomSheetContent(
         title: title,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [Text('?')],
         ),
       );
@@ -26,6 +27,7 @@ void showMeditationBottomSheet(BuildContext context, String title) {
       return BaseAnimatedBottomSheetContent(
         title: title,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [Text('?')],
         ),
       );
@@ -122,23 +124,19 @@ void showSleepBottomSheet(BuildContext context, String title) {
 }
 
 void showDiaryBottomSheet(BuildContext context, String title) {
+  final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
+
   showCustomModalBottomSheet(
     context: context,
     builder: (BuildContext context, TextTheme textTheme) {
-      final screenWidth = MediaQuery.of(context).size.width;
-      final screenHeight = MediaQuery.of(context).size.height;
-
       return BaseAnimatedBottomSheetContent(
         title: title,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.only(bottom: screenHeight * 0.02),
-                child: Text('몇 시쯤 잠자리에 들었나요?', style: textTheme.bodyMedium),
-              ),
+              Text('?'),
             ],
           ),
         ),
@@ -243,6 +241,7 @@ class _BaseAnimatedBottomSheetContentState
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
                       padding: EdgeInsets.only(top: screenHeight * 0.005),
@@ -278,7 +277,7 @@ class _BaseAnimatedBottomSheetContentState
                             ),
                           )),
                     ),
-                    widget.child,
+                    Container(width: screenWidth, child: widget.child),
                     Padding(
                       padding: EdgeInsets.only(
                           bottom: screenHeight * 0.05,
@@ -302,6 +301,7 @@ class _BaseAnimatedBottomSheetContentState
   }
 }
 
+// 수면 기록하기에서 클릭되는 효과!
 class CustomClickedContainer extends StatefulWidget {
   final String beforeImage;
   final String afterImage;

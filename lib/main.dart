@@ -69,7 +69,7 @@ void main() {
           ),
         ),
       ),
-      home: Login(),
+      home: HomePage(),
       //home: HomePage(),
     ),
   );
