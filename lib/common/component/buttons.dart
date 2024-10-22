@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:icon_decoration/icon_decoration.dart';
-import 'bottom_sheet.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -27,24 +26,23 @@ class CustomButton extends StatelessWidget {
       height: height,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            elevation: 4,
-            backgroundColor: color,
-            foregroundColor: Colors.black,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-              side: BorderSide(
-                width: 1,
-              ),
-            )),
-        onPressed: onPressed,
-        child: Text(
-          text,
-          style: textTheme.titleLarge,
+          elevation: 4,
+          backgroundColor: color,
+          foregroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+            side: BorderSide(
+              width: 1,
+            ),
+          )
         ),
+        onPressed: onPressed,
+        child: Text(text, style: textTheme.titleLarge,),
       ),
     );
   }
 }
+
 
 /// 초록 버튼
 /// width 240 - 루틴 추가 화면 => screenWidth*0.6
@@ -54,7 +52,7 @@ class GreenButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const GreenButton({
-    this.text = '완료',
+    this.text  = '완료',
     required this.width,
     required this.onPressed,
   });
@@ -109,14 +107,13 @@ class PairedButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        GrayButton(text: grayText, width: 120, onPressed: onGrayPressed),
-        SizedBox(
-          width: 20,
-        ),
-        GreenButton(text: greenText, width: 120, onPressed: onGreenPressed),
+        GrayButton(text: grayText, width: screenWidth*0.3, onPressed: onGrayPressed),
+        SizedBox(width: 20,),
+        GreenButton(text: greenText, width: screenWidth*0.3, onPressed: onGreenPressed),
       ],
     );
   }

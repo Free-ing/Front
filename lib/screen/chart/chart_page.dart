@@ -4,12 +4,22 @@ import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/routine/add_routine_screen.dart';
+import 'package:freeing/screen/routine/edit_routine_screen.dart';
+import 'package:freeing/screen/routine/survey_response_screen.dart';
+
+import '../../model/hobby/recommend_hobby.dart';
 
 class ChartPage extends StatelessWidget {
   const ChartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 예시로 추천 리스트를 생성
+    List<RecommendedHobby> recommendedHobbies = [
+      RecommendedHobby( hobbyName: '취미', explanation: '에 대한 설명'),
+      RecommendedHobby(hobbyName: '설명', explanation: '에 대한 취미'),
+    ];
+
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -45,7 +55,7 @@ class ChartPage extends StatelessWidget {
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/routine_tracker.png',
                   title: "월간\n루틴 트래커",
-                  navigatePage: AddRoutineScreen(),
+                  navigatePage: SurveyResponseScreen(category: '취미', recommend: recommendedHobbies,),
                   context: context,
                 ),
                 _chartCard(
@@ -63,7 +73,7 @@ class ChartPage extends StatelessWidget {
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/emotional_diary_and_letter.png',
                   title: "무드 캘린더",
-                  navigatePage: HobbyGalleryScreen(),
+                  navigatePage: EditRoutineScreen(),
                   context: context,
                 ),
                 _chartCard(

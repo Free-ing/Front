@@ -33,6 +33,12 @@ const YELLOW_SHADOW = Color(0xFFFFDE85);
 // 보라색 글씨
 const TEXT_PURPLE = Color(0xFFA9A8D0);
 
+// 회색 글씨
+const TEXT_GREY = Color(0xFFBEBEBE);
+
+// 진한 회색 글씨
+const TEXT_DARK = Color(0xFF79747E);
+
 // 홈 핑크 재생 버튼 색상
 const PINK_PLAY_BUTTON = Color(0xFFD679D6);
 

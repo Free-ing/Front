@@ -20,7 +20,7 @@ class _HobbyTabBarViewState extends State<HobbyTabBarView> {
     print("Fetching hobby list");
 
     final apiService = HobbyAPIService();
-    final response = await apiService.getHobbyList(1);
+    final response = await apiService.getHobbyList();
 
     print(response.statusCode);
 
