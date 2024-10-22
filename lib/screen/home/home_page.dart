@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/bottom_sheet.dart';
+import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/home_expansion_tile.dart';
+import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/layout/default_layout.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:icon_decoration/icon_decoration.dart';
 import 'package:intl/intl.dart';
-
-import '../../common/component/text_form_fields.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,7 +16,6 @@ class HomePage extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    TextEditingController _testController = TextEditingController();
 
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy년 MM월 dd일').format(now);
@@ -118,28 +119,28 @@ class HomePage extends StatelessWidget {
                   children: [
                     ExpansionTileBox(
                         text: '운동', width: 300, lists: ['정적 스트레칭', '걷기']),
-                    GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(context: context, builder: (BuildContext context){
-                          return Container(
-                            height: 200,
-                            child: Center(
-                              child: Text('This is a BottomSheet'),
-                            ),
-                          );
-                        });
-                      },
-                      child: DecoratedIcon(
-                        icon: Icon(
-                          Icons.play_arrow_rounded,
-                          color: Color(0xFFD679D6),
-                          size: 40,
-                        ),
-                        decoration: IconDecoration(
-                            border: IconBorder(color: Colors.black, width: 3)),
-                      ),
-                    ),
-                    GrayTextFormField(controller: _testController,width: 320,),
+                    PlayButton(
+                        onPressed: () {
+                          showExerciseBottomSheet(context, '정적 스트레칭');
+                        },
+                        iconColor: PINK_PLAY_BUTTON),
+                    PlayButton(
+                        onPressed: () {
+                          showMeditationBottomSheet(context, '명상하기');
+                        },
+                        iconColor: GREEN_PLAY_BUTTON),
+                    LogButton(
+                        onPressed: () {
+                          showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
+                        },),
+                    LogButton(
+                      onPressed: () {
+                        showDiaryBottomSheet(context, '오늘 하루 어땠나요?');
+                      },),
+                    LogButton(
+                      onPressed: () {
+                        showHobbyBottomSheet(context, '오늘 했던 취미는 어땠나요? ');
+                      },)
                   ],
                 ),
               ],
