@@ -1,39 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/screen/routine/edit_routine_screen.dart';
 
 class HobbyCard extends StatelessWidget {
+  final int routineId;
   final String imageUrl;
   final String title;
 
-  const HobbyCard({super.key, required this.imageUrl, required this.title});
+  const HobbyCard({super.key, required this.routineId, required this.imageUrl, required this.title});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 6,
-      shadowColor: YELLOW_SHADOW,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(25.0),
-      ),
-      margin: EdgeInsets.all(12),
-      child: Container(
-        padding: EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(25),
-          border: Border.all(
-            color: Colors.black,
-          ),
+    return GestureDetector(
+      onLongPress: () async {
+        await Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => EditRoutineScreen(routineId: routineId, title: title, selectImage: imageUrl, category: '취미',),
+        ));
+      },
+      child: Card(
+        elevation: 6,
+        shadowColor: YELLOW_SHADOW,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
         ),
-        child: Stack(
-          children: [
-            _routineImage(imageUrl: imageUrl),
-            _routineTitle(context: context, title:title),
-          ],
+        margin: EdgeInsets.all(12),
+        child: Container(
+          padding: EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(
+              color: Colors.black,
+            ),
+          ),
+          child: Stack(
+            children: [
+              _routineImage(imageUrl: imageUrl),
+              _routineTitle(context: context, title: title),
+            ],
+          ),
         ),
       ),
     );
-
   }
 
   Widget _routineImage({required String imageUrl}) {

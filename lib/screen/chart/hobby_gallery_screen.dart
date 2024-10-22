@@ -18,7 +18,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
 
   List<HobbyAlbum> _hobbyAlbums = [];
 
-  //Todo: 서버 요청
+  //Todo: 서버 요청(조회)
   Future<List<HobbyAlbum>> _fetchHobbyAlbum(int year, int month) async {
     print("Fetching hobby albums for $year-$month");
 
@@ -52,6 +52,25 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
       return _hobbyAlbums = [];
     } else {
       throw Exception('취미 기록 가져오기 실패 ${response.statusCode}');
+    }
+  }
+
+  //Todo: 서버 요청(삭제)
+  Future<void> _deleteHobbyRecord(int recordId) async {
+    final responseCode = await HobbyAPIService().deleteHobbyRecord(recordId);
+    if (responseCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('기록이 삭제되었습니다.')),
+      );
+      setState(() {
+        _hobbyAlbums.removeWhere((album) => album.recordId == recordId);
+      });
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('기록이 삭제되지 않았습니다 ')),
+      );
+      print(responseCode);
     }
   }
 
@@ -261,24 +280,8 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                       //   iconSize: 25,
                       // ),
                       IconButton(
-                        onPressed: () async {
-                          final responseCode = await HobbyAPIService()
-                              .deleteHobbyRecord(recordId, 1);
-                          if (responseCode == 200) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('기록이 삭제되었습니다.')),
-                            );
-                            setState(() {
-                              _hobbyAlbums.removeWhere(
-                                  (album) => album.recordId == recordId);
-                            });
-                            Navigator.of(context).pop();
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('기록이 삭제되지 않았습니다 ')),
-                            );
-                            print(responseCode);
-                          }
+                        onPressed: () {
+                          _deleteHobbyRecord(recordId);
                         },
                         icon: Icon(
                           Icons.delete_forever,

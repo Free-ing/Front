@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'base_url.dart';
 
 class LoginService {
-  static const String _baseUrl = BaseUrl.baseUrl;
+  static const String _baseUrl = 'http://freeing-apigateway-service-893483672.ap-northeast-2.elb.amazonaws.com';
   static const String _loginEndpoint = '$_baseUrl/user-service/login';
 
   Future<http.Response> login(String email, String password) async {

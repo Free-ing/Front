@@ -30,7 +30,7 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
     final apiService = HobbyAPIService();
 
     final int response =
-        await apiService.postHobbyRoutine(widget.hobbyName, imageUrl,1);
+        await apiService.postHobbyRoutine(widget.hobbyName, imageUrl);
 
     if (response == 200) {
       Navigator.pop(context, true);
@@ -50,7 +50,6 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return ScreenLayout(
-
       title: 'AI추천 취미 추가하기',
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.012),

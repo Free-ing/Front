@@ -2,10 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/text_form_fields.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
-
-const List<String> list = <String>['운동', '수면', '취미', '마음채우기'];
 
 //Todo: 날짜 선택 유뮤
 class WeekDay {
@@ -15,16 +14,24 @@ class WeekDay {
   WeekDay(this.day, this.isSelected);
 }
 
-
 class EditRoutineScreen extends StatefulWidget {
-  const EditRoutineScreen({super.key});
+  final int routineId;
+  final String title;
+  final String selectImage;
+  final String category;
+
+  const EditRoutineScreen(
+      {super.key,
+      required this.routineId,
+      required this.title,
+      required this.selectImage,
+      required this.category});
 
   @override
   State<EditRoutineScreen> createState() => _EditRoutineScreenState();
 }
 
 class _EditRoutineScreenState extends State<EditRoutineScreen> {
-  final List<String> options = ['운동', '수면', '취미', '마음 채우기'];
   List<WeekDay> weekDays = [
     WeekDay("월", true),
     WeekDay("화", true),
@@ -37,21 +44,56 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  String dropdownValue = list.first;
+  final List<String> options = ['운동', '수면', '취미', '마음 채우기'];
   String selectedValue = '운동';
 
   DateTime? _startTime;
   DateTime? _endTime;
   bool _timePickerOpen = false;
   bool _selectHobby = true;
+  bool _isEnabled = false;
 
   String imageUrl =
-      'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png';
+      'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_exercise.png';
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _startTimeController = TextEditingController();
   TextEditingController _endTimeController = TextEditingController();
+
+  @override
+  void initState(){
+    super.initState();
+    _nameController = TextEditingController(text: widget.title);
+    imageUrl = widget.selectImage;
+    selectedValue = widget.category;
+    selectedValue == '취미'
+        ? _selectHobby = false
+        : _selectHobby = true;
+
+  }
+
+  //Todo: 서버 요청 (취미 루틴 수정)
+  Future<void> _editHobbyRoutine() async {
+    if(_formKey.currentState!.validate()){
+      FocusScope.of(context).unfocus();
+
+      final String hobbyName = _nameController.text;
+
+      final apiService = HobbyAPIService();
+      final int response =
+          await apiService.patchHobbyRoutine(hobbyName, imageUrl, widget.routineId);
+
+      if (response == 200) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('취미 루틴이 수정되었습니다.')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('취미 루틴 수정에 실패하였습니다.')));
+        print(response);
+        }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -118,9 +160,9 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                           ),
                         )),
                     onPressed: () {
-                      switch(selectedValue) {
+                      switch (selectedValue) {
                         case '취미':
-                          //_submitHobbyRoutine();
+                          _editHobbyRoutine();
                           break;
                         default:
                           Navigator.of(context).pop();
@@ -142,82 +184,83 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
-      Card(
-        elevation: 6,
-        shadowColor: YELLOW_SHADOW,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25.0),
-        ),
-        margin: EdgeInsets.all(12),
-        child: Container(
-          width: screenWidth * 0.38,
-          height: screenWidth * 0.38,
-          padding: EdgeInsets.all(2),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(25),
-            border: Border.all(
-              color: Colors.black,
+        Card(
+          elevation: 6,
+          shadowColor: YELLOW_SHADOW,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25.0),
+          ),
+          margin: EdgeInsets.all(12),
+          child: Container(
+            width: screenWidth * 0.38,
+            height: screenWidth * 0.38,
+            padding: EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: Colors.black,
+              ),
+            ),
+            child: Stack(
+              children: [
+                _routineImage(imageUrl: imageUrl),
+                _routineTitle(textTheme: textTheme, title: "제목 입력"),
+              ],
             ),
           ),
-          child: Stack(
-            children: [
-              _routineImage(imageUrl: imageUrl),
-              _routineTitle(textTheme: textTheme, title: "제목 입력"),
-            ],
-          ),
         ),
-      ),
-      Align(
-        alignment: Alignment.centerRight,
-        child: Column(
-          children: [
-            Stack(
-              children: <Widget>[
-                Card(
-                  shadowColor: YELLOW_SHADOW,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
-                  margin: EdgeInsets.all(12),
-                  child: Container(
-                    width: screenWidth * 0.12,
-                    height: screenWidth * 0.12,
-                    padding: EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.black,
+        Align(
+          alignment: Alignment.centerRight,
+          child: Column(
+            children: [
+              Stack(
+                children: <Widget>[
+                  Card(
+                    shadowColor: YELLOW_SHADOW,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
+                    margin: EdgeInsets.all(12),
+                    child: Container(
+                      width: screenWidth * 0.12,
+                      height: screenWidth * 0.12,
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () async {
-                    final result = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            SelectRoutineImageScreen(selectImage: imageUrl),
-                      ),
-                    );
-                    if (result != null && result is String) {
-                      setState(() {
-                        imageUrl = result; // 선택된 이미지를 imageUrl에 저장
-                      });
-                    }
-                  },
-                  icon: Image.network(imageUrl,
-                      width: screenWidth * 0.14,
-                      height: screenWidth * 0.14,
-                      fit: BoxFit.cover),
-                ),
-              ],
-            ),
-            Text("그림 변경"),
-          ],
+                  IconButton(
+                    onPressed: () async {
+                      final result = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              SelectRoutineImageScreen(selectImage: imageUrl),
+                        ),
+                      );
+                      if (result != null && result is String) {
+                        setState(() {
+                          imageUrl = result; // 선택된 이미지를 imageUrl에 저장
+                        });
+                      }
+                    },
+                    icon: Image.network(imageUrl,
+                        width: screenWidth * 0.14,
+                        height: screenWidth * 0.14,
+                        fit: BoxFit.cover),
+                  ),
+                ],
+              ),
+              Text("그림 변경"),
+            ],
+          ),
         ),
-      ),],
+      ],
     );
   }
 
@@ -240,26 +283,17 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: selectedValue,
-                items: list.map((String value) {
+                items: options.map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Padding(
                       padding:
-                      EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
                       child: Text(value),
                     ),
                   );
                 }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedValue = newValue!;
-                    print('카테고리 선택한 카테고리 $newValue');
-
-                    selectedValue == '취미'
-                        ? _selectHobby = false
-                        : _selectHobby = true;
-                  });
-                },
+                onChanged: null,
                 icon: Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Icon(Icons.arrow_drop_down, color: Colors.black),
@@ -495,10 +529,9 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
               ),
               errorBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Colors.transparent,
-                    width: 0,
-                  )
-              ),
+                color: Colors.transparent,
+                width: 0,
+              )),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -508,12 +541,12 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             },
           ),
         )
-      // child: Text(
-      //   title,
-      //   textAlign: TextAlign.center,
-      //   style: Theme.of(context).textTheme.bodyMedium,
-      // ),
-    );
+        // child: Text(
+        //   title,
+        //   textAlign: TextAlign.center,
+        //   style: Theme.of(context).textTheme.bodyMedium,
+        // ),
+        );
   }
 
   //Todo: 시간 선택 필드
@@ -588,7 +621,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                             mode: CupertinoDatePickerMode.time,
                             onDateTimeChanged: (DateTime selectTime) {
                               setState(
-                                    () {
+                                () {
                                   onTimeChanged(selectTime);
 
                                   int hour = selectTime.hour;
@@ -603,7 +636,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                                       .padLeft(2, '0');
 
                                   controller.text =
-                                  '$formattedHour:$formattedMinute $period';
+                                      '$formattedHour:$formattedMinute $period';
                                 },
                               );
                             },
@@ -636,4 +669,5 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
         )
       ],
     );
-  }}
+  }
+}

@@ -58,6 +58,7 @@ class _HobbyTabBarViewState extends State<HobbyTabBarView> {
       itemBuilder: (context, index) {
         final hobbyList = _hobbyList[index];
         return HobbyCard(
+          routineId: hobbyList.routineId,
           imageUrl: hobbyList.imageUrl,
           title: hobbyList.hobbyName,
         );
