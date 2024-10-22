@@ -99,7 +99,7 @@ class _LoginState extends State<Login> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.015),
+                          height: MediaQuery.of(context).size.height * 0.07),
                       const Text(
                         '스트레스로부터',
                         style: TextStyle(
@@ -123,7 +123,7 @@ class _LoginState extends State<Login> {
                         ],
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.015),
+                          height: MediaQuery.of(context).size.height * 0.028),
                       const Text(
                         '나를 위한 힐링을 시작해보세요.',
                         style: TextStyle(
@@ -134,7 +134,7 @@ class _LoginState extends State<Login> {
                   Column(
                     children: [
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.05),
+                          height: MediaQuery.of(context).size.height * 0.055),
                       const Text(
                         '로그인',
                         style: TextStyle(
@@ -143,27 +143,29 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.01),
+                          height: MediaQuery.of(context).size.height * 0.03),
                       GrayTextFormField(
                         controller: _emailController,
                         labelText: '이메일',
                         hintText: '이메일을 입력해주세요',
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.015),
+                          height: MediaQuery.of(context).size.height * 0.016),
                       GrayTextFormFieldWithEye(
                         controller: _passwordController,
                         labelText: '비밀번호',
                         hintText: '비밀번호를 입력해주세요.',
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.040),
+                          height: MediaQuery.of(context).size.height * 0.045),
                       GreenButton(
-                        width: 260,
+                        width: MediaQuery.of(context).size.height * 0.33,
                         onPressed: _login,
                       ),
                       SizedBox(
-                        width: 270,
+                          height: MediaQuery.of(context).size.height * 0.001),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.height * 0.34,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -224,10 +226,13 @@ class _LoginState extends State<Login> {
               ),
             ),
           ),
-          Image.asset(
-            "assets/imgs/login/login_bottom.png",
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.fitWidth,
+          Padding(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.07),
+            child: Image.asset(
+              "assets/imgs/login/login_bottom.png",
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.fitWidth,
+            ),
           ),
         ],
       ),
