@@ -73,7 +73,7 @@ class ChartPage extends StatelessWidget {
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/emotional_diary_and_letter.png',
                   title: "무드 캘린더",
-                  navigatePage: EditRoutineScreen(),
+                  navigatePage: EditRoutineScreen(routineId: 2, title: '음악 감상', selectImage: 'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png', category: '취미',),
                   context: context,
                 ),
                 _chartCard(

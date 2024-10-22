@@ -7,7 +7,6 @@ import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
 
-const List<String> list = <String>['운동', '수면', '취미', '마음채우기'];
 
 //Todo: 날짜 선택 유뮤
 class WeekDay {
@@ -37,9 +36,9 @@ class AddRoutineScreen extends StatefulWidget {
 class _AddRoutineScreenState extends State<AddRoutineScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  String dropdownValue = list.first;
-  String selectedValue = '운동';
   final List<String> options = ['운동', '수면', '취미', '마음 채우기'];
+  String selectedValue = '운동';
+
   DateTime? _startTime;
   DateTime? _endTime;
   bool _timePickerOpen = false;
@@ -53,19 +52,15 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   TextEditingController _startTimeController = TextEditingController();
   TextEditingController _endTimeController = TextEditingController();
 
-  //Todo: 취미 루틴 추가 요청
+  //Todo: 서버 요청 (취미 루틴 추가)
   Future<void> _submitHobbyRoutine() async {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
-
       final String hobbyName = _nameController.text;
 
-      print(hobbyName);
-      print(_nameController.text);
       final apiService = HobbyAPIService();
-
       final int response =
-          await apiService.postHobbyRoutine(hobbyName, imageUrl, 1);
+          await apiService.postHobbyRoutine(hobbyName, imageUrl);
 
       if (response == 200) {
         Navigator.pop(context);
@@ -272,7 +267,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                     value: value,
                     child: Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
                       child: Text(value),
                     ),
                   );
