@@ -174,7 +174,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                     fillColor: Colors.transparent,
                     filled: true,
                     contentPadding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     suffixIcon: widget.suffixIcon,
                   ),
                 ),
@@ -184,7 +184,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
-                  padding: EdgeInsets.only(top: 4.0, right: screenWidth * 0.15),
+                  padding: EdgeInsets.only(top: 4.0, right: screenWidth * 0.05),
                   child: Text(
                     '$_currentLength / ${widget.maxLength}',
                     style: TextStyle(

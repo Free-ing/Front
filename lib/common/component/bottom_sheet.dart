@@ -34,6 +34,8 @@ void showMeditationBottomSheet(BuildContext context, String title) {
 }
 
 void showSleepBottomSheet(BuildContext context, String title) {
+  final TextEditingController sleepTimeController = TextEditingController();
+  final TextEditingController wakeUpTimeController = TextEditingController();
   final TextEditingController _sleepMemoController = TextEditingController();
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
@@ -41,61 +43,79 @@ void showSleepBottomSheet(BuildContext context, String title) {
   showCustomModalBottomSheet(
     context: context,
     builder: (BuildContext context, TextTheme textTheme) {
-      return BaseAnimatedBottomSheetContent(
-        title: title,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(bottom: screenHeight * 0.02),
-                child: Text('몇 시쯤 잠자리에 들었나요?', style: textTheme.bodyMedium),
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return BaseAnimatedBottomSheetContent(
+            title: title,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: screenHeight * 0.02),
+                    child: Text('몇 시쯤 잠자리에 들었나요?', style: textTheme.bodyMedium),
+                  ),
+                  TimePickerButton(
+                    controller: sleepTimeController,
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.04,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: screenHeight * 0.02),
+                    child: Text('오늘 몇 시에 일어났나요?', style: textTheme.bodyMedium),
+                  ),
+                  TimePickerButton(
+                    controller: wakeUpTimeController,
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.04,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: screenHeight * 0.02),
+                    child: Text('자고 일어난 후의 상태를 알려주세요.',
+                        style: textTheme.bodyMedium),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CustomClickedContainer(
+                          beforeImage: 'assets/imgs/home/before_refreshed.png',
+                          afterImage: 'assets/imgs/home/after_refreshed.png',
+                          text: '개운해요'),
+                      CustomClickedContainer(
+                          beforeImage: 'assets/imgs/home/before_sore.png',
+                          afterImage: 'assets/imgs/home/after_sore.png',
+                          text: '뻐근해요'),
+                      CustomClickedContainer(
+                          beforeImage: 'assets/imgs/home/before_unrested.png',
+                          afterImage: 'assets/imgs/home/after_unrested.png',
+                          text: '잔 것 같지 않아요'),
+                    ],
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.04,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(screenWidth * 0),
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: screenHeight * 0.02),
+                      child: Text('메모를 남길 수 있어요.', style: textTheme.bodyMedium),
+                    ),
+                  ),
+                  YellowTextFormField(
+                    controller: _sleepMemoController,
+                    maxLength: 50,
+                    // height: screenHeight * 0.06,
+                    height: screenHeight * 0.1,
+                    width: screenWidth,
+                  ),
+                ],
               ),
-              TimePickerButton(
-                onPressed: () {
-                  custom.showTimePicker(context);
-                },
-              ),
-              SizedBox(
-                height: screenHeight * 0.04,
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: screenHeight * 0.02),
-                child: Text('오늘 몇 시에 일어났나요?', style: textTheme.bodyMedium),
-              ),
-              TimePickerButton(
-                onPressed: () {
-                  custom.showTimePicker(context);
-                },
-              ),
-              SizedBox(
-                height: screenHeight * 0.04,
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: screenHeight * 0.02),
-                child:
-                    Text('자고 일어난 후의 상태를 알려주세요.', style: textTheme.bodyMedium),
-              ),
-              SizedBox(
-                height: screenHeight * 0.04,
-              ),
-              Padding(
-                padding: EdgeInsets.all(screenWidth * 0),
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: screenHeight * 0.02),
-                  child: Text('메모를 남길 수 있어요.', style: textTheme.bodyMedium),
-                ),
-              ),
-              YellowTextFormField(
-                controller: _sleepMemoController,
-                maxLength: 50,
-                // height: screenHeight * 0.06,
-                height: screenHeight * 0.1,
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       );
     },
   );
@@ -260,7 +280,9 @@ class _BaseAnimatedBottomSheetContentState
                     ),
                     widget.child,
                     Padding(
-                      padding: EdgeInsets.all(screenHeight * 0.05),
+                      padding: EdgeInsets.only(
+                          bottom: screenHeight * 0.05,
+                          top: screenHeight * 0.03),
                       child: GreenButton(
                         width: screenWidth * 0.6,
                         onPressed: () async {
@@ -276,6 +298,90 @@ class _BaseAnimatedBottomSheetContentState
           ),
         );
       },
+    );
+  }
+}
+
+class CustomClickedContainer extends StatefulWidget {
+  final String beforeImage;
+  final String afterImage;
+  final String text;
+
+  CustomClickedContainer({
+    required this.beforeImage,
+    required this.afterImage,
+    required this.text,
+  });
+
+  @override
+  _CustomClickedContainerState createState() => _CustomClickedContainerState();
+}
+
+class _CustomClickedContainerState extends State<CustomClickedContainer> {
+  bool isClicked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          isClicked = !isClicked;
+        });
+      },
+      child: Container(
+        width: screenWidth * 0.25,
+        height: screenHeight * 0.13,
+        decoration: BoxDecoration(
+          color: isClicked ? Colors.white : Color(0xFFFAFAFA),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+              color: isClicked ? Colors.black : Color(0xFF929292), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: isClicked
+                  ? Color(0xFFFFD477).withOpacity(0.2)
+                  : Colors.black.withOpacity(0.1),
+              offset: Offset(2, 4),
+              blurRadius: 4,
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(screenWidth * 0.025),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isClicked
+                          ? Color(0xFFFFD477).withOpacity(0.4)
+                          : Colors.black.withOpacity(0.1),
+                      offset: Offset(1, 2),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                child: Image.asset(
+                  isClicked ? widget.afterImage : widget.beforeImage,
+                ),
+              ),
+            ),
+            Center(
+              child: Text(
+                widget.text,
+                style:
+                    textTheme.labelMedium?.copyWith(color: Color(0xFF2C2C2C)),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

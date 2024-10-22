@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:icon_decoration/icon_decoration.dart';
+
+import 'home_time_picker.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -26,23 +29,24 @@ class CustomButton extends StatelessWidget {
       height: height,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          elevation: 4,
-          backgroundColor: color,
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-            side: BorderSide(
-              width: 1,
-            ),
-          )
-        ),
+            elevation: 4,
+            backgroundColor: color,
+            foregroundColor: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+              side: BorderSide(
+                width: 1,
+              ),
+            )),
         onPressed: onPressed,
-        child: Text(text, style: textTheme.titleLarge,),
+        child: Text(
+          text,
+          style: textTheme.titleLarge,
+        ),
       ),
     );
   }
 }
-
 
 /// 초록 버튼
 /// width 240 - 루틴 추가 화면 => screenWidth*0.6
@@ -52,7 +56,7 @@ class GreenButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const GreenButton({
-    this.text  = '완료',
+    this.text = '완료',
     required this.width,
     required this.onPressed,
   });
@@ -111,9 +115,15 @@ class PairedButtons extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        GrayButton(text: grayText, width: screenWidth*0.3, onPressed: onGrayPressed),
-        SizedBox(width: 20,),
-        GreenButton(text: greenText, width: screenWidth*0.3, onPressed: onGreenPressed),
+        GrayButton(
+            text: grayText, width: screenWidth * 0.3, onPressed: onGrayPressed),
+        SizedBox(
+          width: 20,
+        ),
+        GreenButton(
+            text: greenText,
+            width: screenWidth * 0.3,
+            onPressed: onGreenPressed),
       ],
     );
   }
@@ -157,33 +167,130 @@ class LogButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: DecoratedIcon(
-        icon: Icon(
-          Icons.edit_note_rounded,
-          color: Colors.black,
-          size: 40,
-        ),
-        decoration: IconDecoration(
-          border: IconBorder(color: Colors.black, width: 0.5),
+    // return IconButton(
+    //   icon: DecoratedIcon(
+    //     icon: Icon(
+    //       Icons.edit,
+    //       color: Colors.black,
+    //       size: 40,
+    //     ),
+    //     decoration: IconDecoration(
+    //       border: IconBorder(color: Colors.black, width: 0.5),
+    //     ),
+    //   ),
+    //   onPressed: onPressed,
+    // );
+    return Padding(
+      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+      child: InkWell(
+        onTap: onPressed,
+        child: Image.asset(
+          'assets/imgs/home/record_icon.png',
+          width: MediaQuery.of(context).size.width * 0.06,
+          height: MediaQuery.of(context).size.height * 0.03,
+          fit: BoxFit.contain,
         ),
       ),
-      onPressed: onPressed,
     );
   }
 }
 
-class TimePickerButton extends StatelessWidget {
+class TimePickerButton extends StatefulWidget {
+  final TextEditingController controller;
   final double? height;
   final double? width;
-  final Function() onPressed;
 
   TimePickerButton({
     Key? key,
+    required this.controller,
     this.height,
     this.width,
-    required this.onPressed,
   }) : super(key: key);
+
+  @override
+  State<TimePickerButton> createState() => _TimePickerButtonState();
+}
+
+class _TimePickerButtonState extends State<TimePickerButton> {
+  String selectedTime = '시간 선택';
+
+  void _showTimePicker() {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final textTheme = Theme.of(context).textTheme;
+    Duration selectedDuration = Duration(hours: 1);
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          //height: screenHeight * 0,
+          color: Colors.white,
+          child: Wrap(
+            children: [
+              Column(
+                children: [
+                  Container(
+                    height: screenHeight * 0.05,
+                    color: Colors.white,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        // 취소 버튼
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context); // 팝업 닫기
+                          },
+                          child: Text('취소',
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: CupertinoColors.systemGrey,
+                                fontSize: 18,
+                              )),
+                        ),
+                        // 확인 버튼
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              selectedTime = _formatDuration(selectedDuration);
+                              widget.controller.text = selectedTime;
+                            });
+                            //widget.onTimeChanged(selectedDuration);
+                            // 선택된 시간을 저장하고 팝업 닫기
+                            //print("Selected duration: $selectedDuration");
+                            Navigator.pop(context); // 팝업 닫기
+                          },
+                          child: Text('확인',
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: CupertinoColors.systemGrey,
+                                fontSize: 18,
+                              )),
+                        ),
+                      ],
+                    ),
+                  ),
+                  CustomTimePicker(
+                    selectedTime: Duration(hours: 1),
+                    onTimeChanged: (duration) {
+                      selectedDuration = duration;
+                      // selectedDuration = newDuration;
+                      // print("Selected duration: $newDuration");
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String hours = twoDigits(duration.inHours);
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    return "$hours:$minutes";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,8 +300,8 @@ class TimePickerButton extends StatelessWidget {
 
     return Center(
       child: SizedBox(
-        height: height ?? defaultHeight,
-        width: width ?? defaultWidth,
+        height: widget.height ?? defaultHeight,
+        width: widget.width ?? defaultWidth,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
@@ -205,21 +312,29 @@ class TimePickerButton extends StatelessWidget {
                   width: 1,
                 ),
               )),
-          onPressed: onPressed,
+          onPressed: _showTimePicker,
           child: Center(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '시간 선택',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Colors.grey),
+                  selectedTime,
+                  style: selectedTime == '시간 선택'
+                      ? Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: Colors.grey)
+                      : Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: Colors.black),
                 ),
-                SizedBox(
-                  width: defaultSizedBox,
-                ),
-                const Icon(Icons.access_time_rounded, color: Colors.grey),
+                // SizedBox(
+                //   width: defaultSizedBox,
+                // ),
+                Icon(Icons.access_time_rounded,
+                    color:
+                        selectedTime == '시간 선택' ? Colors.grey : Colors.black),
               ],
             ),
           ),

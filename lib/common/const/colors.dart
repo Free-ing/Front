@@ -12,6 +12,7 @@ const BLUE_PURPLE = Color(0xFFBAB8F3);
 // 아이보리
 const IVORY = Color(0xFFF9F5E9);
 
+
 // 아주 밝은 아이보리(네비게이션 바 용)
 const LIGHT_IVORY = Color(0xFFFFFBF0);
 
