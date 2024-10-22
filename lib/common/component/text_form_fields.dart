@@ -152,7 +152,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   textAlignVertical: screenHeight < screenHeight * 0.08 ? TextAlignVertical.center : null,
                   enabled: widget.enabled,
                   obscureText: widget.isPassword,
-                  style: textTheme.bodySmall,
+                  style: textTheme.bodySmall?.copyWith(color: TEXT_DARK, fontWeight: FontWeight.w300),
                   controller: widget.controller,
                   focusNode: _focusNode,
                   // validator: widget.validator,
@@ -169,7 +169,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   },
                   decoration: InputDecoration(
                     hintText: widget.hintText,
-                    hintStyle: textTheme.bodySmall,
+                    hintStyle: textTheme.bodySmall?.copyWith(color: TEXT_GREY, fontWeight: FontWeight.w300),
                     border: InputBorder.none,
                     fillColor: Colors.transparent,
                     filled: true,
@@ -304,7 +304,7 @@ class _GrayTextFormFieldWithEyeState extends State<GrayTextFormFieldWithEye> {
       suffixIcon: GestureDetector(
         onTap: _togglePasswordVisibility,
         child: Icon(
-          widget.isPassword
+          _isObscured
               ? Icons.visibility_off_outlined
               : Icons.visibility_outlined,
           color: Colors.black,
