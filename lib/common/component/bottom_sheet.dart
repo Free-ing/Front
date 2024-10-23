@@ -236,9 +236,10 @@ class _BaseAnimatedBottomSheetContentState
                 top: Radius.circular(50),
               ),
             ),
-            child: Wrap(
-              children: [
-                Column(
+            child: Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: SingleChildScrollView(
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -292,7 +293,7 @@ class _BaseAnimatedBottomSheetContentState
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         );

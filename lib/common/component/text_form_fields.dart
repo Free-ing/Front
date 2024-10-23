@@ -389,6 +389,7 @@ class GrayTextFormFieldWithButton extends StatelessWidget {
 class GrayTextFormFieldWihTimerButton extends StatefulWidget {
   final TextEditingController? controller;
   final double? width;
+  final double? height;
   final VoidCallback onButtonPressed;
   final bool enabled;
   final bool isVisible;
@@ -396,6 +397,7 @@ class GrayTextFormFieldWihTimerButton extends StatefulWidget {
   const GrayTextFormFieldWihTimerButton({
     this.controller,
     this.width,
+    this.height,
     required this.onButtonPressed,
     this.enabled = true,
     this.isVisible = true,
@@ -456,7 +458,7 @@ class _GrayTextFormFieldWihTimerButtonState
 
     return Container(
       width: widget.width ?? screenWidth,
-      height: screenHeight,
+      height: widget.height ?? screenHeight,
       child: Row(
         children: [
           CustomTextFormField(
