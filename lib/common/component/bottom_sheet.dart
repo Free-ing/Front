@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
-import 'package:freeing/common/component/home_time_picker.dart' as custom;
 import 'package:freeing/common/component/text_form_fields.dart';
 import 'package:freeing/common/const/colors.dart';
 
@@ -11,6 +9,8 @@ void showExerciseBottomSheet(BuildContext context, String title) {
     builder: (BuildContext context, TextTheme textTheme) {
       return BaseAnimatedBottomSheetContent(
         title: title,
+        // 완료 버튼 눌렸을때 실행되는 함수 호출
+        onButtonPressed: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [Text('?')],
@@ -26,6 +26,8 @@ void showMeditationBottomSheet(BuildContext context, String title) {
     builder: (BuildContext context, TextTheme textTheme) {
       return BaseAnimatedBottomSheetContent(
         title: title,
+        // 완료 버튼 눌렸을때 실행되는 함수 호출
+        onButtonPressed: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [Text('?')],
@@ -41,6 +43,9 @@ void showSleepBottomSheet(BuildContext context, String title) {
   final TextEditingController _sleepMemoController = TextEditingController();
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
+  int selectedIndex = -1;
+
+  Future<void> _sleepTimeRecord() async {}
 
   showCustomModalBottomSheet(
     context: context,
@@ -49,6 +54,7 @@ void showSleepBottomSheet(BuildContext context, String title) {
         builder: (BuildContext context, StateSetter setState) {
           return BaseAnimatedBottomSheetContent(
             title: title,
+            onButtonPressed: () {},
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
               child: Column(
@@ -83,17 +89,38 @@ void showSleepBottomSheet(BuildContext context, String title) {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CustomClickedContainer(
-                          beforeImage: 'assets/imgs/home/before_refreshed.png',
-                          afterImage: 'assets/imgs/home/after_refreshed.png',
-                          text: '개운해요'),
+                        beforeImage: 'assets/imgs/home/before_refreshed.png',
+                        selected: selectedIndex == 0,
+                        afterImage: 'assets/imgs/home/after_refreshed.png',
+                        text: '개운해요',
+                        onTap: () {
+                          setState(() {
+                            selectedIndex = 0;
+                          });
+                        },
+                      ),
                       CustomClickedContainer(
-                          beforeImage: 'assets/imgs/home/before_sore.png',
-                          afterImage: 'assets/imgs/home/after_sore.png',
-                          text: '뻐근해요'),
+                        beforeImage: 'assets/imgs/home/before_stiff.png',
+                        afterImage: 'assets/imgs/home/after_stiff.png',
+                        text: '뻐근해요',
+                        selected: selectedIndex == 1,
+                        onTap: () {
+                          setState(() {
+                            selectedIndex = 1;
+                          });
+                        },
+                      ),
                       CustomClickedContainer(
-                          beforeImage: 'assets/imgs/home/before_unrested.png',
-                          afterImage: 'assets/imgs/home/after_unrested.png',
-                          text: '잔 것 같지 않아요'),
+                        beforeImage: 'assets/imgs/home/before_unrested.png',
+                        afterImage: 'assets/imgs/home/after_unrested.png',
+                        text: '잔 것 같지 않아요',
+                        selected: selectedIndex == 2,
+                        onTap: () {
+                          setState(() {
+                            selectedIndex = 2;
+                          });
+                        },
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -132,6 +159,8 @@ void showDiaryBottomSheet(BuildContext context, String title) {
     builder: (BuildContext context, TextTheme textTheme) {
       return BaseAnimatedBottomSheetContent(
         title: title,
+        // 완료 버튼 눌렸을때 실행되는 함수 호출
+        onButtonPressed: () {},
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
           child: Column(
@@ -151,6 +180,8 @@ void showHobbyBottomSheet(BuildContext context, String title) {
     builder: (BuildContext context, TextTheme textTheme) {
       return BaseAnimatedBottomSheetContent(
         title: title,
+        // 완료 버튼 눌렸을때 실행되는 함수 호출
+        onButtonPressed: () {},
         child: Column(
           children: [Text('?')],
         ),
@@ -180,9 +211,11 @@ void showCustomModalBottomSheet({
 class BaseAnimatedBottomSheetContent extends StatefulWidget {
   final String title;
   final Widget child;
+  final VoidCallback onButtonPressed;
   BaseAnimatedBottomSheetContent({
     required this.title,
     required this.child,
+    required this.onButtonPressed,
   });
 
   @override
@@ -237,7 +270,8 @@ class _BaseAnimatedBottomSheetContentState
               ),
             ),
             child: Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -286,6 +320,7 @@ class _BaseAnimatedBottomSheetContentState
                       child: GreenButton(
                         width: screenWidth * 0.6,
                         onPressed: () async {
+                          widget.onButtonPressed;
                           await _controller.reverse(); // 애니메이션 역방향 실행
                           Navigator.pop(context); // 애니메이션 완료 후 BottomSheet 닫기
                         },
@@ -307,11 +342,15 @@ class CustomClickedContainer extends StatefulWidget {
   final String beforeImage;
   final String afterImage;
   final String text;
+  final bool selected;
+  final VoidCallback onTap;
 
   CustomClickedContainer({
     required this.beforeImage,
     required this.afterImage,
     required this.text,
+    required this.selected,
+    required this.onTap,
   });
 
   @override
@@ -331,6 +370,7 @@ class _CustomClickedContainerState extends State<CustomClickedContainer> {
       onTap: () {
         setState(() {
           isClicked = !isClicked;
+          widget.onTap;
         });
       },
       child: Container(
@@ -369,7 +409,7 @@ class _CustomClickedContainerState extends State<CustomClickedContainer> {
                   ],
                 ),
                 child: Image.asset(
-                  isClicked ? widget.afterImage : widget.beforeImage,
+                  widget.selected ? widget.afterImage : widget.beforeImage,
                 ),
               ),
             ),
