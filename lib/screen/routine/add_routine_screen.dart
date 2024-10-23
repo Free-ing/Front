@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:freeing/common/component/buttons.dart';
-import 'package:freeing/common/component/text_form_fields.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
+import 'package:freeing/common/service/spirit_api_sevice.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
-
+import 'package:intl/intl.dart';
 
 //Todo: 날짜 선택 유뮤
 class WeekDay {
@@ -43,6 +42,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   DateTime? _endTime;
   bool _timePickerOpen = false;
   bool _selectHobby = true;
+  bool _selectSleep = true;
 
   String imageUrl =
       'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png';
@@ -51,6 +51,86 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   TextEditingController _boddyController = TextEditingController();
   TextEditingController _startTimeController = TextEditingController();
   TextEditingController _endTimeController = TextEditingController();
+
+  //Todo: 서버 요청 (운동 루틴 추가)
+  Future<void> _submitExerciseRoutine() async {
+    // if (_formKey.currentState!.validate()) {
+    //   FocusScope.of(context).unfocus();
+    //   final String spiritName = _nameController.text;
+    //   final String explanation = _boddyController.text;
+    //
+    //   final startTime =
+    //       _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+    //   final endTime =
+    //       _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+    //
+    //   final apiService = ExerciseAPIService();
+    //   final int response = await apiService.postExerciseRoutine(
+    //     spiritName,
+    //     imageUrl,
+    //     weekDays[0].isSelected,
+    //     weekDays[1].isSelected,
+    //     weekDays[2].isSelected,
+    //     weekDays[3].isSelected,
+    //     weekDays[4].isSelected,
+    //     weekDays[5].isSelected,
+    //     weekDays[6].isSelected,
+    //     startTime,
+    //     endTime,
+    //     explanation,
+    //   );
+    //
+    //   if (response == 200) {
+    //     Navigator.pop(context);
+    //     ScaffoldMessenger.of(context)
+    //         .showSnackBar(const SnackBar(content: Text('운동 루틴이 추가되었습니다')));
+    //   } else {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //         const SnackBar(content: Text('운동 채우기 루틴 추가에 실패했습니다.')));
+    //     print(response);
+    //   }
+    // }
+  }
+
+  //Todo: 서버 요청 (수면 루틴 추가)
+  Future<void> _submitSleepRoutine() async {
+    // if (_formKey.currentState!.validate()) {
+    //   FocusScope.of(context).unfocus();
+    //   final String spiritName = _nameController.text;
+    //   final String explanation = _boddyController.text;
+    //
+    //   final startTime =
+    //   _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+    //   final endTime =
+    //   _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+    //
+    //   final apiService = SleepAPIService();
+    //   final int response = await apiService.postSleepRoutine(
+    //     spiritName,
+    //     imageUrl,
+    //     weekDays[0].isSelected,
+    //     weekDays[1].isSelected,
+    //     weekDays[2].isSelected,
+    //     weekDays[3].isSelected,
+    //     weekDays[4].isSelected,
+    //     weekDays[5].isSelected,
+    //     weekDays[6].isSelected,
+    //     startTime,
+    //     endTime,
+    //     explanation,
+    //   );
+    //
+    //   if (response == 200) {
+    //     Navigator.pop(context);
+    //     ScaffoldMessenger.of(context)
+    //         .showSnackBar(const SnackBar(content: Text('수면 루틴이 추가되었습니다')));
+    //   } else {
+    //     ScaffoldMessenger.of(context)
+    //         .showSnackBar(const SnackBar(content: Text('수면 루틴 추가에 실패했습니다.')));
+    //     print(response);
+    //   }
+    // }
+  }
 
   //Todo: 서버 요청 (취미 루틴 추가)
   Future<void> _submitHobbyRoutine() async {
@@ -69,6 +149,46 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('취미 루틴 추가에 실패했습니다.')));
+        print(response);
+      }
+    }
+  }
+
+  //Todo: 서버 요청 (마음 채우기 루틴 추가)
+  Future<void> _submitSpiritRoutine() async {
+    if (_formKey.currentState!.validate()) {
+      FocusScope.of(context).unfocus();
+      final String spiritName = _nameController.text;
+      final String explanation = _boddyController.text;
+
+      final startTime =
+          _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+      final endTime =
+          _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+
+      final apiService = SpiritAPIService();
+      final int response = await apiService.postSpiritRoutine(
+        spiritName,
+        imageUrl,
+        weekDays[0].isSelected,
+        weekDays[1].isSelected,
+        weekDays[2].isSelected,
+        weekDays[3].isSelected,
+        weekDays[4].isSelected,
+        weekDays[5].isSelected,
+        weekDays[6].isSelected,
+        startTime,
+        endTime,
+        explanation,
+      );
+
+      if (response == 200) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('마음 채우기 루틴이 추가되었습니다')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('마음 채우기 루틴 추가에 실패했습니다.')));
         print(response);
       }
     }
@@ -113,16 +233,28 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                       _startEndTime(textTheme, screenWidth, screenHeight),
                       SizedBox(height: screenHeight * 0.02),
                       // 설명 입력
-                      _routieDescirbe(textTheme, screenWidth, screenHeight),
+                      Visibility(
+                          visible: _selectSleep,
+                          child: _routienDescribe(
+                              textTheme, screenWidth, screenHeight)),
                       SizedBox(
                           height: _timePickerOpen
                               ? screenWidth * 0.06
                               : screenWidth * 0.2),
+                      SizedBox(
+                          height: _selectSleep
+                              ? 0
+                              : _timePickerOpen
+                                  ? screenWidth * 0.167
+                                  : screenWidth * 0.33),
                     ],
                   ),
                 ),
                 // 추가하기 버튼
-                SizedBox(height: _selectHobby ? 0 : screenHeight * 0.473),
+                SizedBox(
+                    height: _selectHobby
+                        ? screenHeight * 0.008
+                        : screenHeight * 0.465),
                 //GreenButton(width: screenWidth * 0.6, onPressed: () {}),
                 SizedBox(
                   width: screenWidth * 0.6,
@@ -139,17 +271,25 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                         )),
                     onPressed: () {
                       switch (selectedValue) {
+                        case '운동':
+                          _submitExerciseRoutine();
+                          break;
+                        case '수면':
+                          _submitSleepRoutine();
+                          break;
                         case '취미':
                           _submitHobbyRoutine();
                           break;
+                        case '마음 채우기':
+                          _submitSpiritRoutine();
                         default:
                           Navigator.of(context).pop();
                       }
                     },
-                    child: Text('완료', style: textTheme.titleLarge),
+                    child: Text('추가하기', style: textTheme.titleLarge),
                   ),
                 ),
-                SizedBox(height: screenHeight * 0.053),
+                SizedBox(height: _timePickerOpen ? screenHeight * 0.053 : 0),
               ],
             ),
           ),
@@ -280,6 +420,10 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                     selectedValue == '취미'
                         ? _selectHobby = false
                         : _selectHobby = true;
+
+                    selectedValue == '수면'
+                        ? _selectSleep = false
+                        : _selectSleep = true;
                   });
                 },
                 icon: Padding(
@@ -361,7 +505,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   }
 
   //Todo: 루틴 설명 입력
-  Widget _routieDescirbe(textTheme, screenWidth, screenHeight) {
+  Widget _routienDescribe(textTheme, screenWidth, screenHeight) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -591,7 +735,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         SizedBox(
           width: screenWidth * 0.46,
           height: screenHeight * 0.047,
-          child: TextField(
+          child: TextFormField(
             controller: controller,
             decoration: InputDecoration(
               hintText: '미설정',

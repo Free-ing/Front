@@ -5,6 +5,7 @@ import 'package:freeing/common/component/home_time_picker.dart' as custom;
 import 'package:freeing/common/component/text_form_fields.dart';
 import 'package:freeing/common/const/colors.dart';
 
+//Todo: 스트레칭
 void showExerciseBottomSheet(BuildContext context, String title) {
   showCustomModalBottomSheet(
     context: context,
@@ -19,6 +20,7 @@ void showExerciseBottomSheet(BuildContext context, String title) {
   );
 }
 
+//Todo: 명상
 void showMeditationBottomSheet(BuildContext context, String title) {
   showCustomModalBottomSheet(
     context: context,
@@ -33,6 +35,7 @@ void showMeditationBottomSheet(BuildContext context, String title) {
   );
 }
 
+//Todo: 수면 기록
 void showSleepBottomSheet(BuildContext context, String title) {
   final TextEditingController _sleepMemoController = TextEditingController();
   final screenWidth = MediaQuery.of(context).size.width;
@@ -101,6 +104,7 @@ void showSleepBottomSheet(BuildContext context, String title) {
   );
 }
 
+//Todo: 감정 일기
 void showDiaryBottomSheet(BuildContext context, String title) {
   showCustomModalBottomSheet(
     context: context,
@@ -127,20 +131,94 @@ void showDiaryBottomSheet(BuildContext context, String title) {
   );
 }
 
+//Todo: 취미 기록
 void showHobbyBottomSheet(BuildContext context, String title) {
   showCustomModalBottomSheet(
     context: context,
     builder: (BuildContext context, TextTheme textTheme) {
+      final TextEditingController _hobbyNameController = TextEditingController();
+      final screenWidth = MediaQuery.of(context).size.width;
+      final screenHeight = MediaQuery.of(context).size.height;
+
       return BaseAnimatedBottomSheetContent(
         title: title,
-        child: Column(
-          children: [Text('?')],
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                child: TextField(
+                  controller: _hobbyNameController,
+                  decoration: InputDecoration(
+                    hintText: '취미 선택',
+                    hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_GREY),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 16), // 텍스트 필드 내부 패딩
+                    filled: true,
+                    fillColor: Colors.white, // 배경색
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
+                      borderSide: BorderSide(
+                        color: Colors.black, // 테두리 색상
+                        width: 1, // 테두리 두께
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: Colors.black, width: 1),
+                    ),
+                  ),
+                  style: textTheme.bodyMedium,
+                  textAlign: TextAlign.center, // 텍스트를 가운데 정렬
+                  readOnly: true, // 읽기 전용
+                ),
+              ),
+              SizedBox(
+                height: screenHeight * 0.04,
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: screenHeight * 0.02),
+                child: Text('오늘 몇 시에 일어났나요?', style: textTheme.bodyMedium),
+              ),
+              TimePickerButton(
+                onPressed: () {
+                  custom.showTimePicker(context);
+                },
+              ),
+              SizedBox(
+                height: screenHeight * 0.04,
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: screenHeight * 0.02),
+                child:
+                    Text('자고 일어난 후의 상태를 알려주세요.', style: textTheme.bodyMedium),
+              ),
+              SizedBox(
+                height: screenHeight * 0.04,
+              ),
+              Padding(
+                padding: EdgeInsets.all(screenWidth * 0),
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: screenHeight * 0.02),
+                  child: Text('메모를 남길 수 있어요.', style: textTheme.bodyMedium),
+                ),
+              ),
+              // YellowTextFormField(
+              //   controller: _sleepMemoController,
+              //   maxLength: 50,
+              //   // height: screenHeight * 0.06,
+              //   height: screenHeight * 0.1,
+              // ),
+            ],
+          ),
         ),
       );
     },
   );
 }
 
+//Todo: 기본 BottomSheet
 void showCustomModalBottomSheet({
   required BuildContext context,
   required Widget Function(BuildContext, TextTheme) builder,
@@ -158,7 +236,7 @@ void showCustomModalBottomSheet({
   );
 }
 
-// AnimatedContainer를 이용한 애니메이션 적용
+//Todo: AnimatedContainer를 이용한 애니메이션 적용
 class BaseAnimatedBottomSheetContent extends StatefulWidget {
   final String title;
   final Widget child;
@@ -243,7 +321,7 @@ class _BaseAnimatedBottomSheetContentState
                       child: Container(
                           padding: const EdgeInsets.all(0),
                           width: screenWidth * 0.77,
-                          height: screenHeight * 0.045,
+                          height: screenHeight * 0.049,
                           decoration: BoxDecoration(
                             color: BLUE_PURPLE,
                             border: Border.all(color: Colors.black),

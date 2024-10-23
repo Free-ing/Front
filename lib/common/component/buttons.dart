@@ -188,7 +188,7 @@ class TimePickerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final defaultWidth = MediaQuery.of(context).size.width * 0.36;
-    final defaultHeight = MediaQuery.of(context).size.height * 0.04;
+    final defaultHeight = MediaQuery.of(context).size.height * 0.045;
     final defaultSizedBox = MediaQuery.of(context).size.width * 0.02;
 
     return Center(
