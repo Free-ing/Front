@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 
 class ToastBarWidget extends StatelessWidget {
   final String title;
+  final String leadingImagePath;
 
   const ToastBarWidget({
     Key? key,
     required this.title,
+    this.leadingImagePath = "assets/imgs/login/login_fail.png",
   }) : super(key: key);
 
   @override
@@ -26,7 +28,7 @@ class ToastBarWidget extends StatelessWidget {
           shadowColor: Colors.transparent,
           title: Text(title, style: TextStyle(fontSize: 15.0),),
           color: const Color(0xFFFFFBF0),
-          leading: Image.asset("assets/imgs/login/login_fail.png"),
+          leading: Image.asset(leadingImagePath),
         ),
       ),
     );
@@ -48,7 +50,7 @@ class ToastBarWidget extends StatelessWidget {
             shadowColor: Colors.transparent,
             title: Text(title, style: const TextStyle(fontSize: 15.0)),
             color: const Color(0xFFFFFBF0),
-            leading: Image.asset("assets/imgs/login/login_fail.png"),
+            leading: Image.asset(leadingImagePath),
           ),
         ),
       ),

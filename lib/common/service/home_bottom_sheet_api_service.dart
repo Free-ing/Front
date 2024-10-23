@@ -7,34 +7,38 @@ import 'base_url.dart';
 class HomeBottomSheetApiService {
   //static const String _baseUrl = BaseUrl.baseUrl;
   static const String _sleepTimeRecordEndpoint =
-      'http://172.30.43.216:8000/sleep-service/sleep-time/record';
+      'http://172.16.32.208:8000/sleep-service/sleep-time/record';
 
-  Future<int> sleepTimeRecord({
+  Future<http.Response> sleepTimeRecord({
     required String wakeUpTime,
     required String sleepTime,
     required String recordDay,
     required String memo,
     required String sleepStatus,
   }) async {
-    final tokenStorage = TokenManager();
-    final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse(_sleepTimeRecordEndpoint);
+    try{
+      final tokenStorage = TokenManager();
+      final accessToken = await tokenStorage.getAccessToken();
+      final url = Uri.parse(_sleepTimeRecordEndpoint);
 
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: json.encode({
-        'wakeUpTime': wakeUpTime,
-        'sleepTime': sleepTime,
-        'recordDay': recordDay,
-        'memo': memo,
-        'sleepSatus': sleepStatus,
-      }),
-    );
-
-    return response.statusCode;
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: json.encode({
+          'wakeUpTime': wakeUpTime,
+          'sleepTime': sleepTime,
+          'recordDay': recordDay,
+          'memo': memo,
+          'sleepStatus': sleepStatus,
+        }),
+      );
+      return response;
+    }catch (e){
+      print('오류 발생!!!!!!!!!!!!11: $e');
+      rethrow;
+    }
   }
 }

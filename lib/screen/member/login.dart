@@ -54,11 +54,18 @@ class _LoginState extends State<Login> {
     if (response.statusCode == 200) {
       print('성공!!!!!!!!!!!!!!!!!!!!!!1');
       final responseData = json.decode(response.body);
-      final accessToken = responseData['accessToken'];
-      final refreshToken = responseData['refreshToken'];
 
-      final tokenStorage = TokenStorage();
-      await tokenStorage.saveTokens(accessToken, refreshToken);
+      if (responseData.containsKey('accessToken') && responseData.containsKey('refreshToken')){
+        final accessToken = responseData['accessToken'];
+        final refreshToken = responseData['refreshToken'];
+        final tokenStorage = TokenStorage();
+        try{
+          await tokenStorage.saveTokens(accessToken, refreshToken);
+          print('토큰 저장 성공!!!');
+        }catch(e){
+          print('토큰 저장 실패: $e');
+        }
+      }
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => HomePage()),
