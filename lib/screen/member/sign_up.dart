@@ -27,7 +27,24 @@ class _SignUpState extends State<SignUp> {
   bool _isCodeFieldEnabled = true;
   bool _isTimerVisible = true;
 
+  bool _isValidEmail(String email) {
+    final emailRegex =
+    RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    return emailRegex.hasMatch(email);
+  }
+
   void checkEmail() {
+    final email = _emailController.text;
+
+    if (!_isValidEmail(email)) {
+      DialogManager.showAlertDialog(
+        context: context,
+        title: '이메일 형식 오류',
+        content: '올바른 이메일 형식이 아닙니다.\n다시 입력해주세요.',
+      );
+      return;
+    }
+
     SignUpService.checkEmail(_emailController.text).then((success) {
       if (success) {
         DialogManager.showAlertDialog(
@@ -218,6 +235,7 @@ class _SignUpState extends State<SignUp> {
                           onButtonPressed: verifyCode,
                           enabled: _isCodeFieldEnabled,
                           isVisible: _isTimerVisible,
+                          width: 320,
                         ),
                       ],
                     ),

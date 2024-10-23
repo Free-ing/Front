@@ -6,6 +6,7 @@ import 'package:freeing/navigationbar/category_tabbar.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/routine/floating_action_menu.dart';
 import 'package:freeing/screen/routine/hobby_tabbar_view.dart';
+import 'package:freeing/screen/routine/sleep_tabbar_view.dart';
 
 class RoutinePage extends StatelessWidget {
   const RoutinePage({super.key});
@@ -40,7 +41,7 @@ class RoutinePage extends StatelessWidget {
                 horizontal: screenWidth * 0.06, vertical: screenHeight * 0.02),
             child: CategoryTabBar(
               exercise: _buildExerciseTabBarView(),
-              sleep: _buildSleepTabBarView(),
+              sleep: SleepTabBarView(),
               hobby: HobbyTabBarView(),
               spirit: _buildSpiritTabBarView(),
             ),

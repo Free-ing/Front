@@ -28,15 +28,32 @@ class _ResetPasswordState extends State<ResetPassword> {
   bool _isCodeFieldEnabled = true;
   bool _isTimerVisible = true;
 
+  bool _isValidEmail(String email) {
+    final emailRegex =
+        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    return emailRegex.hasMatch(email);
+  }
+
   void sendEmail() {
+    final email = _emailController.text;
+
+    if (!_isValidEmail(email)) {
+      DialogManager.showAlertDialog(
+        context: context,
+        title: '이메일 형식 오류',
+        content: '올바른 이메일 형식이 아닙니다.\n다시 입력해주세요.',
+      );
+      return;
+    }
+
     SignUpService.checkEmail(_emailController.text).then((success) {
-      if (success){
+      if (success) {
         // 회원가입 된 이메일
         DialogManager.showAlertDialog(
           context: context,
           title: '이메일 인증',
           content: '이메일로 인증번호를 보내드렸어요!\n인증번호를 입력해주세요.',
-          onConfirm: (){
+          onConfirm: () {
             setState(() {
               _isTransmissionSuccessful = true;
             });
@@ -99,16 +116,18 @@ class _ResetPasswordState extends State<ResetPassword> {
     });
   }
 
-  bool validInputs(){
+  bool validInputs() {
     return (_passwordController.text == _passwordVerificationController.text) &&
         _isEmailVerified &&
         (_passwordController.text.length >= 8);
   }
 
-  void attemptResetPassword(){
-    if(validInputs()){
-      ResetPasswordService.changePassword(_emailController.text, _passwordController.text).then((success){
-        if(success){
+  void attemptResetPassword() {
+    if (validInputs()) {
+      ResetPasswordService.changePassword(
+              _emailController.text, _passwordController.text)
+          .then((success) {
+        if (success) {
           DialogManager.showAlertDialog(
               context: context,
               title: '비밀번호 변경 성공',
@@ -121,7 +140,7 @@ class _ResetPasswordState extends State<ResetPassword> {
               });
         }
       });
-    }else{
+    } else {
       DialogManager.showAlertDialog(
           context: context,
           title: '비밀번호 변경 실패',
@@ -131,7 +150,6 @@ class _ResetPasswordState extends State<ResetPassword> {
           });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +187,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 children: [
                   SizedBox(height: MediaQuery.of(context).size.height * 0.015),
                   GrayTextFormFieldWihTimerButton(
+                    width: 320,
                     controller: _codeController,
                     onButtonPressed: verifyCode,
                     enabled: _isCodeFieldEnabled,
@@ -197,7 +216,7 @@ class _ResetPasswordState extends State<ResetPassword> {
               width: 260,
               text: '변경하기',
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.13),
             Image.asset(
               "assets/imgs/login/login_bottom.png",
               width: MediaQuery.of(context).size.width,

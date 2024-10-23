@@ -152,7 +152,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   textAlignVertical: screenHeight < screenHeight * 0.08 ? TextAlignVertical.center : null,
                   enabled: widget.enabled,
                   obscureText: widget.isPassword,
-                  style: textTheme.bodySmall?.copyWith(color: TEXT_DARK, fontWeight: FontWeight.w300),
+                  style: textTheme.bodySmall?.copyWith(color: Colors.black, fontWeight: FontWeight.w300),
                   controller: widget.controller,
                   focusNode: _focusNode,
                   // validator: widget.validator,
@@ -174,7 +174,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                     fillColor: Colors.transparent,
                     filled: true,
                     contentPadding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     suffixIcon: widget.suffixIcon,
                   ),
                 ),
@@ -184,7 +184,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
-                  padding: EdgeInsets.only(top: 4.0, right: screenWidth * 0.15),
+                  padding: EdgeInsets.only(top: 4.0, right: screenWidth * 0.05),
                   child: Text(
                     '$_currentLength / ${widget.maxLength}',
                     style: TextStyle(
@@ -389,6 +389,7 @@ class GrayTextFormFieldWithButton extends StatelessWidget {
 class GrayTextFormFieldWihTimerButton extends StatefulWidget {
   final TextEditingController? controller;
   final double? width;
+  final double? height;
   final VoidCallback onButtonPressed;
   final bool enabled;
   final bool isVisible;
@@ -396,6 +397,7 @@ class GrayTextFormFieldWihTimerButton extends StatefulWidget {
   const GrayTextFormFieldWihTimerButton({
     this.controller,
     this.width,
+    this.height,
     required this.onButtonPressed,
     this.enabled = true,
     this.isVisible = true,
@@ -456,7 +458,7 @@ class _GrayTextFormFieldWihTimerButtonState
 
     return Container(
       width: widget.width ?? screenWidth,
-      height: screenHeight,
+      height: widget.height ?? screenHeight,
       child: Row(
         children: [
           CustomTextFormField(
