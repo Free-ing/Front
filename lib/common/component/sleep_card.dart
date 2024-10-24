@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-
+import 'package:freeing/screen/routine/sleep_tabbar_view.dart';
+import '../../screen/member/login.dart';
 import '../../screen/routine/edit_routine_screen.dart';
 import '../const/colors.dart';
+import '../service/sleep_api_service.dart';
+import '../service/token_storage.dart';
+import 'dialog_manager.dart';
 
 class SleepCard extends StatefulWidget {
   int routineId;
@@ -15,7 +19,87 @@ class SleepCard extends StatefulWidget {
 }
 
 class _SleepCardState extends State<SleepCard> {
+  final apiService = SleepAPIService();
+  final tokenStorage = TokenStorage();
+
+  // TODO: 수면 루틴 toggle on (활성화)
+  Future<void> activateSleepRoutine(int routineId) async {
+    print("Active sleep routine");
+
+    final response = await apiService.activateSleepRoutine(routineId);
+
+    if (response == 200) {
+    } else if (response == 401) {
+      //refresh 토큰 발급
+      String? refreshToken = await tokenStorage.getRefreshToken();
+      if (refreshToken != null) {
+        var newAccessToken = await tokenStorage.getAccessToken();
+        print('newAccessTOken: $newAccessToken');
+        await tokenStorage.saveAccessTokens(newAccessToken!);
+      } else {
+        // refresh token이 없거나 만료된 경우
+        DialogManager.showAlertDialog(
+          context: context,
+          title: '알림',
+          content: '로그인 세션이 만료되었습니다.\n다시 로그인 해주세요.',
+          onConfirm: () {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => Login(),
+            ));
+          },
+        );
+      }
+    } else if (response == 404) {
+      // 해당 루틴을 찾을 수 없음
+      DialogManager.showAlertDialog(
+          context: context, title: 'Error 404', content: '루틴을 찾을 수 없음');
+    } else {
+      // response == 500
+      DialogManager.showAlertDialog(
+          context: context, title: 'Error 500', content: '서버 오류 발생');
+    }
+  }
+
+  // TODO: 수면 루틴 toggle off (비활성화)
+  Future<void> deactivateSleepRoutine(int routineId) async {
+    print("Deactive sleep routine");
+
+    final response = await apiService.deactivateSleepRoutine(routineId);
+
+    if (response == 200) {
+    } else if (response == 401) {
+      //refresh 토큰 발급
+      String? refreshToken = await tokenStorage.getRefreshToken();
+      if (refreshToken != null) {
+        var newAccessToken = await tokenStorage.getAccessToken();
+        print('newAccessTOken: $newAccessToken');
+        await tokenStorage.saveAccessTokens(newAccessToken!);
+      } else {
+        // refresh token이 없거나 만료된 경우
+        DialogManager.showAlertDialog(
+          context: context,
+          title: '알림',
+          content: '로그인 세션이 만료되었습니다.\n다시 로그인 해주세요.',
+          onConfirm: () {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => Login(),
+            ));
+          },
+        );
+      }
+    } else if (response == 404) {
+      // 해당 루틴을 찾을 수 없음
+      DialogManager.showAlertDialog(
+          context: context, title: 'Error 404', content: '루틴을 찾을 수 없음');
+    } else {
+      // response == 500
+      DialogManager.showAlertDialog(
+          context: context, title: 'Error 500', content: '서버 오류 발생');
+    }
+  }
+
   bool isSwitched = false;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -57,7 +141,7 @@ class _SleepCardState extends State<SleepCard> {
       left: 15,
       right: 15,
       top: 13,
-      child: Image.asset(
+      child: Image.network(
         imageUrl,
         fit: BoxFit.contain,
         width: 120,
@@ -86,6 +170,11 @@ class _SleepCardState extends State<SleepCard> {
       child: GestureDetector(
         onTap: () {
           setState(() {
+            if(isSwitched){
+              deactivateSleepRoutine(widget.routineId);
+            } else {
+              activateSleepRoutine(widget.routineId);
+            }
             isSwitched = !isSwitched;
           });
         },

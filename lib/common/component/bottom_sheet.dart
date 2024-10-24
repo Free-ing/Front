@@ -62,22 +62,23 @@ void showSleepBottomSheet(BuildContext context, String title) {
     final sleepTime = _sleepTimeController.text;
     final wakeUpTime = _wakeUpTimeController.text;
     final memo = _sleepMemoController.text;
-    final sleepStatus = sleepStatusList[selectedIndex];
+    String sleepStatus = 'default';
+
     DateTime now = DateTime.now();
     final String recordDay = DateFormat("yyyy-MM-dd").format(now);
     print('sleep Time : $sleepTime');
 
     print('sleepTImeRecord 안!!!!!!!!!!!!!!!!!!!!!!!');
-    // bool validateInputs() {
-    //   return _sleepTimeController.text.isNotEmpty &&
-    //       _wakeUpTimeController.text.isNotEmpty &&
-    //       sleepStatus.isNotEmpty &&
-    //       recordDay.isNotEmpty;
-    // }
+
+    if( selectedIndex >= 0){
+      sleepStatus = sleepStatusList[selectedIndex];
+    } else {
+      print('Invalid index: $selectedIndex');
+    }
 
     if (_sleepTimeController.text.isNotEmpty &&
         _wakeUpTimeController.text.isNotEmpty &&
-        sleepStatus.isNotEmpty &&
+        sleepStatus != 'default' &&
         recordDay.isNotEmpty) {
       final response = await _homeButtonSheetApiService.sleepTimeRecord(
           wakeUpTime: wakeUpTime,

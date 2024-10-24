@@ -27,8 +27,6 @@ class _LoginState extends State<Login> {
   final TextEditingController _passwordController = TextEditingController();
   final LoginService _loginService = LoginService();
 
-  final TextEditingController _yellowController = TextEditingController();
-
   Future<void> _login() async {
     final email = _emailController.text;
     final password = _passwordController.text;

@@ -6,33 +6,37 @@ import '../../common/component/dialog_manager.dart';
 import '../../common/component/sleep_card.dart';
 import '../../common/const/colors.dart';
 import '../../common/service/sleep_api_service.dart';
+import '../../common/service/token_storage.dart';
 import '../../model/sleep/sleep_list.dart';
+import '../member/login.dart';
 
 class SleepTabBarView extends StatefulWidget {
   const SleepTabBarView({super.key});
 
   @override
-  State<SleepTabBarView> createState() => _SleepTabBarViewState();
+  State<SleepTabBarView> createState() => SleepTabBarViewState();
 }
 
-class _SleepTabBarViewState extends State<SleepTabBarView> {
+class SleepTabBarViewState extends State<SleepTabBarView> {
+  final apiService = SleepAPIService();
+  final tokenStorage = TokenStorage();
   List<SleepList> _sleepList = [];
 
-  Future<List<SleepList>> _fetchHobbyList() async {
+  // TODO: 서버 요청
+  Future<List<SleepList>> _fetchSleepList() async {
     print("Fetching sleep list");
 
-    final apiService = SleepAPIService();
     final response = await apiService.getSleepList();
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
       if (jsonData is Map<String, dynamic>) {
-        List<dynamic> hobbyList = jsonData['result'];
+        List<dynamic> sleepList = jsonData['result'];
         _sleepList.clear();
-        for (dynamic data in hobbyList) {
-          SleepList SleepCard = SleepList.fromJson(data);
-          _sleepList.add(SleepCard);
+        for (dynamic data in sleepList) {
+          SleepList sleepCard = SleepList.fromJson(data);
+          _sleepList.add(sleepCard);
         }
       }
       return _sleepList;
@@ -43,10 +47,91 @@ class _SleepTabBarViewState extends State<SleepTabBarView> {
     }
   }
 
+  // // TODO: 수면 루틴 toggle on (활성화)
+  // Future<void> activeSleepRoutine(int routineId) async {
+  //   print("Active sleep routine");
+  //
+  //   //final int routineId = _sleepList[sleepListIndex].routineId;
+  //
+  //   final response = await apiService.activeSleepRoutine(routineId);
+  //
+  //   if (response == 200) {
+  //   } else if (response == 401) {
+  //     //refresh 토큰 발급
+  //     String? refreshToken = await tokenStorage.getRefreshToken();
+  //     if (refreshToken != null) {
+  //       var newAccessToken = await tokenStorage.getAccessToken();
+  //       print('newAccessTOken: $newAccessToken');
+  //       await tokenStorage.saveAccessTokens(newAccessToken!);
+  //     } else {
+  //       // refresh token이 없거나 만료된 경우
+  //       DialogManager.showAlertDialog(
+  //         context: context,
+  //         title: '알림',
+  //         content: '로그인 세션이 만료되었습니다.\n다시 로그인 해주세요.',
+  //         onConfirm: () {
+  //           Navigator.of(context).pushReplacement(MaterialPageRoute(
+  //             builder: (context) => Login(),
+  //           ));
+  //         },
+  //       );
+  //     }
+  //   } else if (response == 404) {
+  //     // 해당 루틴을 찾을 수 없음
+  //     DialogManager.showAlertDialog(
+  //         context: context, title: 'Error 404', content: '루틴을 찾을 수 없음');
+  //   } else {
+  //     // response == 500
+  //     DialogManager.showAlertDialog(
+  //         context: context, title: 'Error 500', content: '서버 오류 발생');
+  //   }
+  // }
+  //
+  // // TODO: 수면 루틴 toggle off (비활성화)
+  // Future<void> deactiveSleepRoutine(int routineId) async {
+  //   print("Deactive sleep routine");
+  //
+  //   //final int routineId = _sleepList[sleepListIndex].routineId;
+  //
+  //   final response = await apiService.deactiveSleepRoutine(routineId);
+  //
+  //   if (response == 200) {
+  //   } else if (response == 401) {
+  //     //refresh 토큰 발급
+  //     String? refreshToken = await tokenStorage.getRefreshToken();
+  //     if (refreshToken != null) {
+  //       var newAccessToken = await tokenStorage.getAccessToken();
+  //       print('newAccessTOken: $newAccessToken');
+  //       await tokenStorage.saveAccessTokens(newAccessToken!);
+  //     } else {
+  //       // refresh token이 없거나 만료된 경우
+  //       DialogManager.showAlertDialog(
+  //         context: context,
+  //         title: '알림',
+  //         content: '로그인 세션이 만료되었습니다.\n다시 로그인 해주세요.',
+  //         onConfirm: () {
+  //           Navigator.of(context).pushReplacement(MaterialPageRoute(
+  //             builder: (context) => Login(),
+  //           ));
+  //         },
+  //       );
+  //     }
+  //   } else if (response == 404) {
+  //     // 해당 루틴을 찾을 수 없음
+  //     DialogManager.showAlertDialog(
+  //         context: context, title: 'Error 404', content: '루틴을 찾을 수 없음');
+  //   } else {
+  //     // response == 500
+  //     DialogManager.showAlertDialog(
+  //         context: context, title: 'Error 500', content: '서버 오류 발생');
+  //   }
+  // }
+
   @override
   void initState() {
     super.initState();
-    _fetchHobbyList();
+    print('fetch sleep list');
+    _fetchSleepList();
   }
 
   @override
@@ -60,7 +145,10 @@ class _SleepTabBarViewState extends State<SleepTabBarView> {
       children: [
         Row(
           children: [
-            Text('수면 기록하기', style: textTheme.titleLarge,),
+            Text(
+              '수면 기록하기',
+              style: textTheme.titleLarge,
+            ),
             QuestionMark(
                 title: '수면 기록하기 설명',
                 description:
@@ -71,11 +159,17 @@ class _SleepTabBarViewState extends State<SleepTabBarView> {
         ),
         Container(
           width: screenWidth,
-          child: Divider(color: Colors.black, thickness: 1.0,),
+          child: Divider(
+            color: Colors.black,
+            thickness: 1.0,
+          ),
         ),
         Row(
           children: [
-            Text('수면 루틴 만들기', style: textTheme.titleLarge,),
+            Text(
+              '수면 루틴 만들기',
+              style: textTheme.titleLarge,
+            ),
             QuestionMark(
                 title: '수면 루틴 만들기 설명',
                 description:

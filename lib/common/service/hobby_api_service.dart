@@ -36,6 +36,7 @@ class HobbyAPIService {
     int routineId,
   ) async {
     final tokenStorage = TokenManager();
+
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/hobby-service/routine/$routineId');
 
