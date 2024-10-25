@@ -1,12 +1,11 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-<<<<<<< HEAD
+<manifest xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET" />
-=======
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA"
+        tools:ignore="PermissionImpliesUnsupportedChromeOsHardware" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
->>>>>>> 4fbf2097e4c0739259eed6d17d9fb1a0094fa861
     <application
         android:label="freeing"
         android:enableOnBackInvokedCallback="true"
