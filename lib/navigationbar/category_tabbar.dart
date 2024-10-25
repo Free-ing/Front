@@ -8,12 +8,13 @@ class CategoryTabBar extends StatefulWidget {
   final Widget hobby;
   final Widget spirit;
 
-  const CategoryTabBar(
-      {super.key,
-      required this.exercise,
-      required this.sleep,
-      required this.hobby,
-      required this.spirit});
+  const CategoryTabBar({
+    super.key,
+    required this.exercise,
+    required this.sleep,
+    required this.hobby,
+    required this.spirit,
+  });
 
   @override
   State<CategoryTabBar> createState() => _CategoryTabBarState();
@@ -30,6 +31,7 @@ class _CategoryTabBarState extends State<CategoryTabBar> {
       child: Column(
         children: <Widget>[
           ButtonsTabBar(
+
             physics: NeverScrollableScrollPhysics(),
             backgroundColor: BLUE_PURPLE,
             unselectedBackgroundColor: LIGHT_GREY,
@@ -51,7 +53,7 @@ class _CategoryTabBarState extends State<CategoryTabBar> {
               Tab(text: "마음채우기"),
             ],
           ),
-          SizedBox(height: screenHeight*0.02),
+          SizedBox(height: screenHeight * 0.02),
           Expanded(
             child: TabBarView(
               children: <Widget>[

@@ -8,9 +8,14 @@ import 'package:freeing/screen/routine/floating_action_menu.dart';
 import 'package:freeing/screen/routine/hobby_tabbar_view.dart';
 import 'package:freeing/screen/routine/sleep_tabbar_view.dart';
 
-class RoutinePage extends StatelessWidget {
+class RoutinePage extends StatefulWidget {
   const RoutinePage({super.key});
 
+  @override
+  State<RoutinePage> createState() => _RoutinePageState();
+}
+
+class _RoutinePageState extends State<RoutinePage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -47,58 +52,15 @@ class RoutinePage extends StatelessWidget {
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          floatingActionButton:
-              FloatingActionMenu(),
+          floatingActionButton: FloatingActionMenu(),
           bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 1),
         ),
       ],
     );
   }
 
-  // Widget _buildExerciseTabBarView() {
-  //   bool isToggled = false;
-  //
-  //   return
-  // }
-
-  Widget _buildSleepTabBarView() {
-    return Center(
-      child: Icon(Icons.nightlight_round),
-    );
-  }
-
-  // Widget _buildHobbyTabBarView() {
-  //   return Center(
-  //     child: Icon(Icons.palette),
-  //   );
-  // }
-
   Widget _buildSpiritTabBarView() {
     return Center(child: Icon(Icons.self_improvement));
-  }
-
-  /// FloatingActionButton
-  Widget _buildFloatingActionButton(screenWidth) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
-      child: SizedBox(
-        width: screenWidth * 0.18,
-        height: screenWidth * 0.18,
-        child: FloatingActionButton.large(
-          onPressed: () {},
-          backgroundColor: BLUE_PURPLE,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.black),
-            borderRadius: BorderRadius.circular(50),
-          ),
-          child: Image.asset(
-            'assets/icons/floating_button_icon.png',
-            width: screenWidth * 0.12,
-          ),
-        ),
-      ),
-    );
   }
 }
 

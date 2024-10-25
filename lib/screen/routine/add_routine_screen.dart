@@ -132,7 +132,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
     // }
   }
 
-  //Todo: 서버 요청 (취미 루틴 추가)
+  //Todo: 서버 요청 (취미 루틴 추가) (완)
   Future<void> _submitHobbyRoutine() async {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
@@ -235,7 +235,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                       // 설명 입력
                       Visibility(
                           visible: _selectSleep,
-                          child: _routienDescribe(
+                          child: _routineDescribe(
                               textTheme, screenWidth, screenHeight)),
                       SizedBox(
                           height: _timePickerOpen
@@ -282,8 +282,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                           break;
                         case '마음 채우기':
                           _submitSpiritRoutine();
-                        default:
-                          Navigator.of(context).pop();
+                          break;
                       }
                     },
                     child: Text('추가하기', style: textTheme.titleLarge),
@@ -505,7 +504,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   }
 
   //Todo: 루틴 설명 입력
-  Widget _routienDescribe(textTheme, screenWidth, screenHeight) {
+  Widget _routineDescribe(textTheme, screenWidth, screenHeight) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
