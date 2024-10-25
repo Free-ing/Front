@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
+import 'package:freeing/screen/home/record_hobby.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/routine/add_routine_screen.dart';
 import 'package:freeing/screen/routine/edit_routine_screen.dart';
@@ -16,7 +17,7 @@ class ChartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // 예시로 추천 리스트를 생성
     List<RecommendedHobby> recommendedHobbies = [
-      RecommendedHobby( hobbyName: '취미', explanation: '에 대한 설명'),
+      RecommendedHobby(hobbyName: '취미', explanation: '에 대한 설명'),
       RecommendedHobby(hobbyName: '설명', explanation: '에 대한 취미'),
     ];
 
@@ -55,13 +56,17 @@ class ChartPage extends StatelessWidget {
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/routine_tracker.png',
                   title: "월간\n루틴 트래커",
-                  navigatePage: SurveyResponseScreen(category: '취미', recommend: recommendedHobbies,),
+                  navigatePage: SurveyResponseScreen(
+                    category: '취미',
+                    recommend: recommendedHobbies,
+                    answers: []
+                  ),
                   context: context,
                 ),
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/sleep_report.png',
                   title: "수면 리포트\n몰아보기",
-                  navigatePage: Login(),
+                  navigatePage: RecordHobby(),
                   context: context,
                 ),
                 _chartCard(
@@ -73,7 +78,13 @@ class ChartPage extends StatelessWidget {
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/emotional_diary_and_letter.png',
                   title: "무드 캘린더",
-                  navigatePage: EditRoutineScreen(routineId: 2, title: '음악 감상', selectImage: 'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png', category: '취미',),
+                  navigatePage: EditRoutineScreen(
+                    routineId: 2,
+                    title: '음악 감상',
+                    selectImage:
+                        'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png',
+                    category: '취미',
+                  ),
                   context: context,
                 ),
                 _chartCard(
@@ -95,8 +106,7 @@ class ChartPage extends StatelessWidget {
       {required String imageUrl,
       required String title,
       required Widget navigatePage,
-      required BuildContext context
-      }) {
+      required BuildContext context}) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context)

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:freeing/common/component/hobby_card.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/model/hobby/hobby_list.dart';
+import 'package:freeing/screen/routine/edit_routine_screen.dart';
 
 class HobbyTabBarView extends StatefulWidget {
   const HobbyTabBarView({super.key});
@@ -35,6 +36,7 @@ class _HobbyTabBarViewState extends State<HobbyTabBarView> {
           _hobbyList.add(hobbyCard);
         }
       }
+      print(_hobbyList);
       return _hobbyList;
     } else if (response.statusCode == 404) {
       return _hobbyList = [];
@@ -46,7 +48,11 @@ class _HobbyTabBarViewState extends State<HobbyTabBarView> {
   @override
   void initState() {
     super.initState();
-    _fetchHobbyList();
+    _fetchHobbyList().then((hobbies) {
+      setState(() {
+        _hobbyList = hobbies;
+      });
+    });
   }
 
   @override
@@ -57,10 +63,24 @@ class _HobbyTabBarViewState extends State<HobbyTabBarView> {
       itemCount: _hobbyList.length,
       itemBuilder: (context, index) {
         final hobbyList = _hobbyList[index];
-        return HobbyCard(
-          routineId: hobbyList.routineId,
-          imageUrl: hobbyList.imageUrl,
-          title: hobbyList.hobbyName,
+        return GestureDetector(
+          onLongPress: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => EditRoutineScreen(
+                  routineId: hobbyList.routineId,
+                  title: hobbyList.hobbyName,
+                  selectImage: hobbyList.imageUrl,
+                  category: '취미',
+                ),
+              ),
+            );
+          },
+          child: HobbyCard(
+            routineId: hobbyList.routineId,
+            imageUrl: hobbyList.imageUrl,
+            title: hobbyList.hobbyName,
+          ),
         );
       },
     );

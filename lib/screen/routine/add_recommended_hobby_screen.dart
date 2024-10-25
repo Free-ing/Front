@@ -9,6 +9,7 @@ import '../../common/service/hobby_api_service.dart';
 class AddRecommendedHobbyScreen extends StatefulWidget {
   final String hobbyName;
 
+
   const AddRecommendedHobbyScreen({super.key, required this.hobbyName});
 
   @override

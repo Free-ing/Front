@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
+import 'package:freeing/common/service/sleep_api_service.dart';
 import 'package:freeing/common/service/spirit_api_sevice.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
@@ -94,45 +95,45 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   //Todo: 서버 요청 (수면 루틴 추가)
   Future<void> _submitSleepRoutine() async {
-    // if (_formKey.currentState!.validate()) {
-    //   FocusScope.of(context).unfocus();
-    //   final String spiritName = _nameController.text;
-    //   final String explanation = _boddyController.text;
-    //
-    //   final startTime =
-    //   _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
-    //   final endTime =
-    //   _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
-    //
-    //   final apiService = SleepAPIService();
-    //   final int response = await apiService.postSleepRoutine(
-    //     spiritName,
-    //     imageUrl,
-    //     weekDays[0].isSelected,
-    //     weekDays[1].isSelected,
-    //     weekDays[2].isSelected,
-    //     weekDays[3].isSelected,
-    //     weekDays[4].isSelected,
-    //     weekDays[5].isSelected,
-    //     weekDays[6].isSelected,
-    //     startTime,
-    //     endTime,
-    //     explanation,
-    //   );
-    //
-    //   if (response == 200) {
-    //     Navigator.pop(context);
-    //     ScaffoldMessenger.of(context)
-    //         .showSnackBar(const SnackBar(content: Text('수면 루틴이 추가되었습니다')));
-    //   } else {
-    //     ScaffoldMessenger.of(context)
-    //         .showSnackBar(const SnackBar(content: Text('수면 루틴 추가에 실패했습니다.')));
-    //     print(response);
-    //   }
-    // }
+    if (_formKey.currentState!.validate()) {
+      FocusScope.of(context).unfocus();
+      final String sleepName = _nameController.text;
+      final String explanation = _boddyController.text;
+
+      final startTime =
+      _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+      final endTime =
+      _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+
+      final apiService = SleepAPIService();
+      final int response = await apiService.postSleepRoutine(
+        sleepName,
+        startTime,
+        endTime,
+        weekDays[0].isSelected,
+        weekDays[1].isSelected,
+        weekDays[2].isSelected,
+        weekDays[3].isSelected,
+        weekDays[4].isSelected,
+        weekDays[5].isSelected,
+        weekDays[6].isSelected,
+        explanation,
+        imageUrl,
+      );
+
+      if (response == 200) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('수면 루틴이 추가되었습니다')));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('수면 루틴 추가에 실패했습니다.')));
+        print(response);
+      }
+    }
   }
 
-  //Todo: 서버 요청 (취미 루틴 추가)
+  //Todo: 서버 요청 (취미 루틴 추가) (완)
   Future<void> _submitHobbyRoutine() async {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
@@ -235,7 +236,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                       // 설명 입력
                       Visibility(
                           visible: _selectSleep,
-                          child: _routienDescribe(
+                          child: _routineDescribe(
                               textTheme, screenWidth, screenHeight)),
                       SizedBox(
                           height: _timePickerOpen
@@ -282,8 +283,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                           break;
                         case '마음 채우기':
                           _submitSpiritRoutine();
-                        default:
-                          Navigator.of(context).pop();
+                          break;
                       }
                     },
                     child: Text('추가하기', style: textTheme.titleLarge),
@@ -505,7 +505,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   }
 
   //Todo: 루틴 설명 입력
-  Widget _routienDescribe(textTheme, screenWidth, screenHeight) {
+  Widget _routineDescribe(textTheme, screenWidth, screenHeight) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

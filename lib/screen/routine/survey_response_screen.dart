@@ -1,16 +1,24 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/model/hobby/recommend_hobby.dart';
 import 'package:freeing/screen/routine/add_recommended_hobby_screen.dart';
+
+import 'ai_loading_screen.dart';
 
 class SurveyResponseScreen extends StatefulWidget {
   final String category;
   final List<RecommendedHobby> recommend;
+  final List<String?> answers;
+
   const SurveyResponseScreen({
     super.key,
     required this.category,
     required this.recommend,
+    required this.answers,
   });
 
   @override
@@ -20,10 +28,59 @@ class SurveyResponseScreen extends StatefulWidget {
 class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
   bool _isAdded = false;
   late List<bool> _isAddedList;
+  List<RecommendedHobby> _recommendList = [];
 
-  void initState(){
+  @override
+  void initState() {
     super.initState();
     _isAddedList = List<bool>.filled(widget.recommend.length, false);
+  }
+
+  //Todo: 서버 요청 (ai 재추천)
+  Future<List<RecommendedHobby>> _reRecommend() async {
+    print('Re Recommend: ${widget.answers}');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AiLoadingScreen(
+          category: '취미를',
+        ),
+      ),
+    );
+
+    try {
+      final apiService = HobbyAPIService();
+
+      final response = await apiService.recommendHobby(widget.answers);
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(utf8.decode(response.bodyBytes));
+
+        if (jsonData is Map<String, dynamic>) {
+          List<dynamic> recommendList = jsonData['result'];
+          _recommendList.clear();
+          for (dynamic data in recommendList) {
+            RecommendedHobby hobby = RecommendedHobby.fromJson(data);
+            _recommendList.add(hobby);
+          }
+        }
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SurveyResponseScreen(
+                    category: '취미',
+                    recommend: _recommendList,
+                    answers: widget.answers)));
+        return _recommendList;
+      } else if (response.statusCode == 404) {
+        return _recommendList = [];
+      } else {
+        throw Exception('취미 추천 가져오기 실패 ${response.statusCode}');
+      }
+    } catch (error) {
+      print("응답 실패 $error");
+      return _recommendList = [];
+    }
   }
 
   @override
@@ -49,17 +106,17 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
               child: widget.recommend.isEmpty
                   ? Center(child: Text('추천할 ${widget.category}가 없습니다.'))
                   : MediaQuery.removePadding(
-                context: context,
-                removeTop: true,
-                    child: ListView.builder(
-                        itemCount: widget.recommend.length,
-                        itemBuilder: (context, index) {
-                          final hobby = widget.recommend[index];
-                          final isAdded = _isAddedList[index];
-                          return _buildCard(
-                              hobby, textTheme, screenWidth, screenHeight, isAdded, index);
-                        }),
-                  ),
+                      context: context,
+                      removeTop: true,
+                      child: ListView.builder(
+                          itemCount: widget.recommend.length,
+                          itemBuilder: (context, index) {
+                            final hobby = widget.recommend[index];
+                            final isAdded = _isAddedList[index];
+                            return _buildCard(hobby, textTheme, screenWidth,
+                                screenHeight, isAdded, index);
+                          }),
+                    ),
             ),
             SizedBox(height: screenHeight * 0.04),
             _button(context),
@@ -100,14 +157,14 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
   }
 
   //Todo: 추천 리스트
-  Widget _buildCard(
-      RecommendedHobby hobby, TextTheme textTheme, double screenWidth, double screenHeight, bool isAdded, int index) {
+  Widget _buildCard(RecommendedHobby hobby, TextTheme textTheme,
+      double screenWidth, double screenHeight, bool isAdded, int index) {
     return Container(
       child: Column(
         children: [
           Card(
             elevation: 6,
-            margin: EdgeInsets.only(bottom: screenHeight*0.023),
+            margin: EdgeInsets.only(bottom: screenHeight * 0.023),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(23.0),
             ),
@@ -116,7 +173,7 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
                 minHeight: screenHeight * 0.095,
               ),
               decoration: BoxDecoration(
-                color: _isAdded ? BLUE_PURPLE : Colors.white,
+                color: isAdded ? BLUE_PURPLE : Colors.white,
                 borderRadius: BorderRadius.circular(23),
                 border: Border.all(width: 1),
               ),
@@ -134,33 +191,41 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
                           Text(
                             hobby.hobbyName,
                             style: textTheme.titleLarge?.copyWith(
-                                color: _isAdded ? Colors.white : Colors.black),
+                                color: isAdded ? Colors.white : Colors.black),
                           ),
-                          SizedBox(height: screenHeight*0.01,),
+                          SizedBox(
+                            height: screenHeight * 0.01,
+                          ),
                           Text(
                             hobby.explanation,
                             style: textTheme.bodySmall?.copyWith(
-                                color: _isAdded ? Colors.white : Colors.black),
+                                color: isAdded ? Colors.white : Colors.black),
                           ),
                         ],
                       ),
                     ),
                   ),
                   IconButton(
+                    enableFeedback: _isAdded ? false : true,
                     onPressed: () async {
-                      if (!_isAdded) {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddRecommendedHobbyScreen(hobbyName: hobby.hobbyName),
-                          ),
-                        );
+                      if (_isAdded == false) {
+                        if (!_isAdded) {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddRecommendedHobbyScreen(
+                                  hobbyName: hobby.hobbyName),
+                            ),
+                          );
 
-                        if (result is bool && result == true) {
-                          setState(() {
-                            _isAddedList[index] = true;
-                          });
+                          if (result is bool && result == true) {
+                            setState(() {
+                              _isAddedList[index] = true;
+                            });
+                          }
                         }
+                      } else {
+                        null;
                       }
                     },
                     icon: Image.asset(
@@ -168,7 +233,7 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
                             ? 'assets/icons/ai_minus_button_icon.png'
                             : 'assets/icons/ai_plus_button_icon.png',
                         width: screenWidth * 0.1),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -183,7 +248,7 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
       onGreenPressed: () {
         Navigator.of(context).pop();
       },
-      onGrayPressed: () {},
+      onGrayPressed: _reRecommend,
       greenText: '완료',
       grayText: '다시 추천',
     );

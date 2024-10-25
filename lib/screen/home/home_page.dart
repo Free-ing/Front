@@ -5,6 +5,7 @@ import 'package:freeing/common/component/home_expansion_tile.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/layout/default_layout.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
+import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
 import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
 import 'package:icon_decoration/icon_decoration.dart';
 import 'package:intl/intl.dart';

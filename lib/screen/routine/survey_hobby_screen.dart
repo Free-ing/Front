@@ -77,7 +77,7 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => SurveyResponseScreen(
-                    category: '취미', recommend: _recommendList)));
+                    category: '취미', recommend: _recommendList, answers: answers)));
         return _recommendList;
       } else if (response.statusCode == 404) {
         return _recommendList = [];

@@ -4,6 +4,7 @@ import 'package:freeing/common/component/text_form_fields.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
+import 'package:freeing/screen/routine/routine_page.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
 
 //Todo: 날짜 선택 유뮤
@@ -51,7 +52,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
   DateTime? _endTime;
   bool _timePickerOpen = false;
   bool _selectHobby = true;
-  bool _isEnabled = false;
+  bool _selectSleep = true;
+  //bool _isEnabled = false;
 
   String imageUrl =
       'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_exercise.png';
@@ -62,38 +64,58 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
   TextEditingController _endTimeController = TextEditingController();
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.title);
     imageUrl = widget.selectImage;
     selectedValue = widget.category;
-    selectedValue == '취미'
-        ? _selectHobby = false
-        : _selectHobby = true;
-
+    selectedValue == '취미' ? _selectHobby = false : _selectHobby = true;
+    selectedValue == '수면' ? _selectSleep = false : _selectSleep = true;
   }
 
   //Todo: 서버 요청 (취미 루틴 수정)
   Future<void> _editHobbyRoutine() async {
-    if(_formKey.currentState!.validate()){
+    if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
 
       final String hobbyName = _nameController.text;
 
       final apiService = HobbyAPIService();
-      final int response =
-          await apiService.patchHobbyRoutine(hobbyName, imageUrl, widget.routineId);
+      final int response = await apiService.patchHobbyRoutine(
+          hobbyName, imageUrl, widget.routineId);
 
       if (response == 200) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('취미 루틴이 수정되었습니다.')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('취미 루틴이 수정되었습니다.')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('취미 루틴 수정에 실패하였습니다.')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('취미 루틴 수정에 실패하였습니다.')));
         print(response);
-        }
+      }
     }
   }
 
+  //Todo: 서버 요청 (취미 루틴 삭제)
+  Future<void> _deleteHobbyRoutine() async {
+    final responseCode = await HobbyAPIService()
+        .deleteHobbyRoutine(
+        widget.routineId);
+    if (responseCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('일정이 삭제되었습니다.')),
+      );
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+            builder: (context) => const RoutinePage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('일정이 삭제되지 않았습니다')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,16 +157,28 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                       _startEndTime(textTheme, screenWidth, screenHeight),
                       SizedBox(height: screenHeight * 0.02),
                       // 설명 입력
-                      _routieDescirbe(textTheme, screenWidth, screenHeight),
+                      Visibility(
+                          visible: _selectSleep,
+                          child: _routineDescribe(
+                              textTheme, screenWidth, screenHeight)),
                       SizedBox(
                           height: _timePickerOpen
-                              ? screenHeight * 0.04
-                              : screenHeight * 0.18),
+                              ? screenWidth * 0.06
+                              : screenWidth * 0.2),
+                      SizedBox(
+                          height: _selectSleep
+                              ? 0
+                              : _timePickerOpen
+                                  ? screenWidth * 0.167
+                                  : screenWidth * 0.33),
                     ],
                   ),
                 ),
                 // 추가하기 버튼
-                SizedBox(height: _selectHobby ? 0 : screenHeight * 0.473),
+                SizedBox(
+                    height: _selectHobby
+                        ? screenHeight * 0.008
+                        : screenHeight * 0.465),
                 //GreenButton(width: screenWidth * 0.6, onPressed: () {}),
                 SizedBox(
                   width: screenWidth * 0.6,
@@ -161,21 +195,44 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                         )),
                     onPressed: () {
                       switch (selectedValue) {
+                        case '운동':
+                          //_editExerciseRoutine();
+                          break;
+                        case '수면':
+                          // _editSleepRoutine();
+                          break;
                         case '취미':
                           _editHobbyRoutine();
                           break;
-                        default:
-                          Navigator.of(context).pop();
+                        case '마음 채우기':
+                        //_editSpiritRoutine();
+                          break;
                       }
                     },
                     child: Text('완료', style: textTheme.titleLarge),
                   ),
                 ),
+                SizedBox(height: _timePickerOpen ? screenHeight * 0.053 : 0),
               ],
             ),
           ),
         ),
       ),
+      onDeletePressed: () {
+        switch (selectedValue) {
+          case '운동':
+            //_deleteExerciseRoutine();
+            break;
+          case '수면':
+            // _deleteSleepRoutine();
+            break;
+          case '취미':
+            _deleteHobbyRoutine();
+            break;
+          case '마음 채우기':
+          //_deleteSpiritRoutine();
+        }
+      },
     );
   }
 
@@ -373,7 +430,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
   }
 
   //Todo: 루틴 설명 입력
-  Widget _routieDescirbe(textTheme, screenWidth, screenHeight) {
+  Widget _routineDescribe(textTheme, screenWidth, screenHeight) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
