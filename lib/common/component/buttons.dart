@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:icon_decoration/icon_decoration.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'home_time_picker.dart';
 
@@ -338,6 +339,50 @@ class _TimePickerButtonState extends State<TimePickerButton> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SettingTextButton extends StatelessWidget {
+  //final IconData icon;
+  final String address;
+  final String text;
+  final Widget targetPage;
+  //final VoidCallback onTap;
+
+  const SettingTextButton({
+    Key? key,
+    //required this.icon,
+    required this.address,
+    required this.text,
+    required this.targetPage,
+    //required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Padding(
+      padding: EdgeInsets.all(screenWidth * 0.03),
+      child: GestureDetector(
+        onTap:  () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => targetPage),
+          );
+        },
+        child: Row(
+          children: [
+            //Icon(icon, color: Colors.black),
+            Image.asset(address),
+            SizedBox(width: screenWidth * 0.03),
+            Text(text, style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
+          ],
         ),
       ),
     );

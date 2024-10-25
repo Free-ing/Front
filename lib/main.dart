@@ -6,6 +6,7 @@ import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/routine/routine_page.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MaterialApp(
       locale: Locale('ko', 'KR'),
@@ -70,7 +71,7 @@ void main() {
         ),
       ),
       //home: Login(),
-      home: HomePage(),
+      home: Login(),
     ),
   );
 }
