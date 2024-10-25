@@ -83,9 +83,13 @@ class _buildExerciseTabBarViewState extends State<_buildExerciseTabBarView> {
       itemCount: 3,
       itemBuilder: (context, index) {
         return ToggledRoutineCard(
-            imageUrl: 'assets/imgs/exercise/running.png',
-            title: '달리기',
-            description: '루틴에 대한 설명');
+          imageUrl: 'assets/imgs/exercise/running.png',
+          title: '달리기',
+          status: true,
+
+          onSwitch: () {print('루틴 켜기');},
+          offSwitch: () {print('루틴 끄기');}, explanation: '열심히 달령',
+        );
       },
     );
   }

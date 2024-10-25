@@ -64,6 +64,18 @@ class SpiritAPIService {
     });
   }
 
+  //Todo: 마음 채우기 루틴 설명 조회
+  Future<http.Response> getSpiritRoutineInfo(int routineId) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/spirit-service/routine-info/$routineId');
+
+    return http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    });
+  }
+
   //Todo: 마음 채우기 루틴 수정
   Future<int> patchSpiritRoutine(
     String routineName,
@@ -109,11 +121,11 @@ class SpiritAPIService {
     return response.statusCode;
   }
 
-  //Todo: 마음 채우기 루틴 켜기??
+  //Todo: 마음 채우기 루틴 켜기
   Future<int> onSpiritRoutine(int routineId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse('$_baseUrl/spirit-service/routine-list');
+    final url = Uri.parse('$_baseUrl/spirit-service/$routineId/on?month=${DateTime.now().month}&day=${DateTime.now().day}');
 
     final response = await http.patch(
       url,
@@ -125,4 +137,22 @@ class SpiritAPIService {
 
     return response.statusCode;
   }
+
+  //Todo: 마음 채우기 루틴  끄기
+  Future<int> offSpiritRoutine(int routineId) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/spirit-service/$routineId/on?month=${DateTime.now().month}&day=${DateTime.now().day}');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    return response.statusCode;
+  }
+
 }

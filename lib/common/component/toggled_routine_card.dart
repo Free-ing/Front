@@ -5,13 +5,20 @@ import 'package:freeing/common/const/colors.dart';
 class ToggledRoutineCard extends StatefulWidget {
   final String imageUrl;
   final String title;
-  final String description;
+  final bool status;
+  final String explanation;
+  final VoidCallback onSwitch;
+  final VoidCallback offSwitch;
 
-  const ToggledRoutineCard(
-      {super.key,
-      required this.imageUrl,
-      required this.title,
-      required this.description});
+  const ToggledRoutineCard({
+    super.key,
+    required this.imageUrl,
+    required this.title,
+    required this.status,
+    required this.explanation,
+    required this.onSwitch,
+    required this.offSwitch,
+  });
 
   @override
   State<ToggledRoutineCard> createState() => _ToggledRoutineCardState();
@@ -21,6 +28,8 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
   bool isSwitched = false;
   @override
   Widget build(BuildContext context) {
+    isSwitched = widget.status;
+
     return Card(
       elevation: isSwitched ? 4 : 0,
       shadowColor: YELLOW_SHADOW,
@@ -42,7 +51,10 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
             // 이미지 중앙 배치
             _routineImage(imageUrl: widget.imageUrl),
             // 상단 왼쪽 물음표 버튼
-            _questionMark(title: widget.title, description: widget.description),
+            _questionMark(
+              title: widget.title,
+              explanation: widget.explanation,
+            ),
             // 상단 오른쪽 토글 버튼
             _toggleSwitch(),
             // 하단 중앙 텍스트
@@ -64,16 +76,18 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
     );
   }
 
-  Widget _questionMark({required String title,required String description}) {
+  Widget _questionMark({required String title, required String explanation}) {
     return Positioned(
       top: 2,
       left: 2,
       child: IconButton(
-        onPressed: (){DialogManager.showAlertDialog(
-          context: context,
-          title: title,
-          content:description,
-        );},
+        onPressed: () {
+          DialogManager.showAlertDialog(
+            context: context,
+            title: title,
+            content: explanation,
+          );
+        },
         icon: Image.asset(
           "assets/icons/question_icon.png",
           width: 30,
@@ -90,6 +104,8 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
         onTap: () {
           setState(() {
             isSwitched = !isSwitched;
+
+            isSwitched ? widget.onSwitch : widget.offSwitch;
           });
         },
         child: Padding(
