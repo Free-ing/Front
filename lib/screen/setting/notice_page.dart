@@ -6,6 +6,7 @@ class NoticePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SettingLayout(child: Text('띠요오옹'), appBar: AppBar());
+    return SettingLayout(title: '공지사항',
+    child: Text('띠요오옹'),);
   }
 }
