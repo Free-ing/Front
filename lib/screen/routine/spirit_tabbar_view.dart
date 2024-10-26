@@ -1,10 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/toggled_routine_card.dart';
 import 'package:freeing/common/service/spirit_api_sevice.dart';
-import 'package:freeing/model/spirit/spirit_info.dart';
 import 'package:freeing/model/spirit/spirit_list.dart';
 import 'package:freeing/screen/routine/edit_routine_screen.dart';
 
@@ -125,6 +123,14 @@ class _SpiritTabBarViewState extends State<SpiritTabBarView> {
                       title: spiritList.mentalRoutineName,
                       selectImage: spiritList.imageUrl,
                       category: '마음 채우기',
+                      monday: spiritList.monday,
+                      tuesday: spiritList.tuesday,
+                      wednesday: spiritList.wednesday,
+                      thursday: spiritList.thursday,
+                      friday: spiritList.friday,
+                      saturday: spiritList.saturday,
+                      sunday: spiritList.sunday,
+                      explanation: spiritList.explanation,
                     ),
                   ),
                 );
@@ -132,7 +138,7 @@ class _SpiritTabBarViewState extends State<SpiritTabBarView> {
               child: ToggledRoutineCard(
                 imageUrl: spiritList.imageUrl,
                 title: spiritList.mentalRoutineName,
-                explanation: spiritList.explanation,
+                explanation: spiritList.explanation ?? '',
                 status: spiritList.status,
                 onSwitch: () {
                   _onSpiritRoutine();

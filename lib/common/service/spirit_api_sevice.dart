@@ -91,6 +91,7 @@ class SpiritAPIService {
     startTime,
     endTime,
     String explanation,
+    bool status,
   ) async {
     //final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
@@ -115,9 +116,22 @@ class SpiritAPIService {
         'startTime': startTime,
         'endTime': endTime,
         'explanation': explanation,
-        'statue': true,
+        'statue': status,
       }),
     );
+
+    return response.statusCode;
+  }
+
+  //Todo: 마음 채우기 루틴 삭제
+  Future<int> deleteSpiritRoutine(int routineId) async {
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/spirit-service/$routineId');
+
+    final response = await http.delete(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    });
 
     return response.statusCode;
   }
@@ -126,7 +140,8 @@ class SpiritAPIService {
   Future<int> onSpiritRoutine(int routineId) async {
     //final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse('$_baseUrl/spirit-service/$routineId/on?month=${DateTime.now().month}&day=${DateTime.now().day}');
+    final url = Uri.parse(
+        '$_baseUrl/spirit-service/$routineId/on?month=${DateTime.now().month}&day=${DateTime.now().day}');
 
     final response = await http.patch(
       url,
@@ -143,7 +158,8 @@ class SpiritAPIService {
   Future<int> offSpiritRoutine(int routineId) async {
     //final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse('$_baseUrl/spirit-service/$routineId/on?month=${DateTime.now().month}&day=${DateTime.now().day}');
+    final url = Uri.parse(
+        '$_baseUrl/spirit-service/$routineId/on?month=${DateTime.now().month}&day=${DateTime.now().day}');
 
     final response = await http.patch(
       url,
@@ -157,22 +173,22 @@ class SpiritAPIService {
   }
 
   //Todo: 감정 일기 작성 하기
-Future<int> postEmotionalDiary(
-    String wellDone, String hardWork, bool getAiLetter, String emotion) async {
+  Future<int> postEmotionalDiary(String wellDone, String hardWork,
+      bool getAiLetter, String emotion) async {
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/spirit-service/emotional-diary');
 
     final response = await http.post(
       url,
       headers: {
-        'Content-Type' : 'application/json',
-        'Authorization' : 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
       body: json.encode({
-        'wellDone' : wellDone,
-        'hardWork' : hardWork,
-        'getAiLet' : getAiLetter,
-        'emotion' : emotion,
+        'wellDone': wellDone,
+        'hardWork': hardWork,
+        'getAiLet': getAiLetter,
+        'emotion': emotion,
       }),
     );
 

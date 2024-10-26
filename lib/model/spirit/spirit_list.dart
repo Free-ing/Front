@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class SpiritList {
   String mentalRoutineName;
   String imageUrl;
@@ -10,9 +12,9 @@ class SpiritList {
   bool saturday;
   bool sunday;
   bool status;
-  DateTime startTime;
-  DateTime endTime;
-  String explanation;
+  DateTime? startTime;
+  DateTime? endTime;
+  String? explanation;
 
   SpiritList(
       {required this.mentalRoutineName,
@@ -31,6 +33,10 @@ class SpiritList {
       required this.explanation});
 
   factory SpiritList.fromJson(Map<String, dynamic> json) {
+    DateTime? parsedStartTime = json['startTime'] != null ? DateFormat('HH:mm').parse(json['startTime']) : null;
+    DateTime? parsedEndTime = json['endTime'] != null ? DateFormat('HH:mm').parse(json['endTime']) : null;
+
+
     return SpiritList(
         mentalRoutineName: json['mentalRoutineName'],
         imageUrl: json['imageUrl'],
@@ -43,8 +49,8 @@ class SpiritList {
         saturday: json['saturday'],
         sunday: json['sunday'],
         status: json['status'],
-        startTime: json['startTime'],
-        endTime: json['endTime'],
+        startTime: parsedStartTime,
+        endTime: parsedEndTime,
         explanation: json['explanation']);
   }
 
@@ -61,8 +67,8 @@ class SpiritList {
       'saturday' : saturday,
       'sunday' : sunday,
       'status' : status,
-      'startTime' : startTime,
-      'endTime' : endTime,
+      'startTime' : startTime?.toIso8601String(),
+      'endTime' : endTime?.toIso8601String(),
       'explanation' : explanation,
     };
   }
