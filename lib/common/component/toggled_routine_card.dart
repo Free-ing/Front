@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
+import 'package:freeing/common/component/question_mark.dart';
 import 'package:freeing/common/const/colors.dart';
 
 class ToggledRoutineCard extends StatefulWidget {
@@ -80,18 +81,9 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
     return Positioned(
       top: 2,
       left: 2,
-      child: IconButton(
-        onPressed: () {
-          DialogManager.showAlertDialog(
-            context: context,
-            title: title,
-            content: explanation,
-          );
-        },
-        icon: Image.asset(
-          "assets/icons/question_icon.png",
-          width: 30,
-        ),
+      child: QuestionMark(
+        title: title,
+        content: explanation,
       ),
     );
   }

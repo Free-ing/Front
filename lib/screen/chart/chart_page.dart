@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
-import 'package:freeing/screen/home/record_hobby.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/routine/add_routine_screen.dart';
 import 'package:freeing/screen/routine/edit_routine_screen.dart';
@@ -66,7 +65,7 @@ class ChartPage extends StatelessWidget {
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/sleep_report.png',
                   title: "수면 리포트\n몰아보기",
-                  navigatePage: RecordHobby(),
+                  navigatePage: HobbyGalleryScreen(),
                   context: context,
                 ),
                 _chartCard(
