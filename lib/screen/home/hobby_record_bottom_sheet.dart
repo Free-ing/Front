@@ -10,73 +10,75 @@ import 'package:image_picker/image_picker.dart';
 
 //Todo: 취미 기록
 void showHobbyBottomSheet(BuildContext context, String title) {
-  final ValueNotifier<String> selectedHobbyNotifier = ValueNotifier('취미 선택');
+  final TextEditingController hobbyMemoController = TextEditingController();
+  final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
+
+  final ValueNotifier<String> selectedHobbyNotifier =
+  ValueNotifier('취미 선택');
   final ValueNotifier<File?> imageNotifier = ValueNotifier<File?>(null);
   final ImagePicker picker = ImagePicker();
+
+  //Todo: 서버 요청 (취미 기록하기)
+  Future<void> submitHobbyRecord() async {
+    final apiService = HobbyAPIService();
+    final int response = await apiService.postHobbyRecord(
+        selectedHobbyNotifier.value,
+        imageNotifier.value,
+        hobbyMemoController.text);
+
+    if (response == 200) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('취미 기록이 추가되었습니다')));
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('취미 기록 추가에 실패했습니다.')));
+      print(response);
+    }
+  }
+
+  //Todo: 사진 선택 함수
+  Future<void> pickImage(ImageSource source) async {
+    final XFile? pickedImage = await picker.pickImage(source: source);
+    if (pickedImage != null) {
+      imageNotifier.value = File(pickedImage.path);
+    }
+    Navigator.of(context).pop();
+  }
+
+  //Todo: 모달 바텀 시트: 사진 선택 옵션
+  void showPicker(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: const Text('갤러리에서 선택'),
+                onTap: () {
+                  pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: const Text('카메라로 촬영'),
+                onTap: () {
+                  pickImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 
   showCustomModalBottomSheet(
     context: context,
     builder: (BuildContext context, TextTheme textTheme) {
-      final TextEditingController hobbyMemoController =
-          TextEditingController();
-      final screenWidth = MediaQuery.of(context).size.width;
-      final screenHeight = MediaQuery.of(context).size.height;
-
-      //Todo: 서버 요청 (취미 기록하기)
-      Future<void> submitHobbyRecord() async {
-        final apiService = HobbyAPIService();
-        final int response = await apiService.postHobbyRecord(
-            selectedHobbyNotifier.value,
-            imageNotifier.value,
-            hobbyMemoController.text);
-
-        if (response == 200) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('취미 기록이 추가되었습니다')));
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('취미 기록 추가에 실패했습니다.')));
-          print(response);
-        }
-      }
-
-      //Todo: 사진 선택 함수
-      Future<void> pickImage(ImageSource source) async {
-        final XFile? pickedImage = await picker.pickImage(source: source);
-        if (pickedImage != null) {
-          imageNotifier.value = File(pickedImage.path);
-        }
-        Navigator.of(context).pop();
-      }
-
-      //Todo: 모달 바텀 시트: 사진 선택 옵션
-      void showPicker(context) {
-        showModalBottomSheet(
-          context: context,
-          builder: (BuildContext bc) {
-            return SafeArea(
-              child: Wrap(
-                children: <Widget>[
-                  ListTile(
-                    leading: Icon(Icons.photo_library),
-                    title: const Text('갤러리에서 선택'),
-                    onTap: () {
-                      pickImage(ImageSource.gallery);
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.camera_alt),
-                    title: const Text('카메라로 촬영'),
-                    onTap: () {
-                      pickImage(ImageSource.camera);
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }
 
       return BaseAnimatedBottomSheetContent(
         title: title,

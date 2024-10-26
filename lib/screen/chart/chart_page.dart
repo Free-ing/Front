@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
-import 'package:freeing/screen/home/record_hobby.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/routine/add_routine_screen.dart';
 import 'package:freeing/screen/routine/edit_routine_screen.dart';
@@ -57,16 +56,30 @@ class ChartPage extends StatelessWidget {
                   imageUrl: 'assets/imgs/chart/routine_tracker.png',
                   title: "월간\n루틴 트래커",
                   navigatePage: SurveyResponseScreen(
-                    category: '취미',
-                    recommend: recommendedHobbies,
-                    answers: []
-                  ),
+                      category: '취미',
+                      recommend: recommendedHobbies,
+                      answers: []),
                   context: context,
                 ),
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/sleep_report.png',
                   title: "수면 리포트\n몰아보기",
-                  navigatePage: RecordHobby(),
+                  navigatePage: EditRoutineScreen(
+                      routineId: 3,
+                      title: '오',
+                      selectImage: 'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png',
+                      category: '마음 채우기',
+                    monday: false,
+                      tuesday: false,
+                    wednesday: false,
+                      thursday: false,
+                      friday: true,
+                    saturday: true,
+                      sunday: true,
+                    startTime: DateTime.now(),
+                    explanation: '나는야 밥오',
+                    
+                  ),
                   context: context,
                 ),
                 _chartCard(

@@ -71,7 +71,7 @@ class HobbyAPIService {
   }
 
   //Todo: 취미 루틴 삭제
-  Future<int> deleteHobbyRecord(int routineId) async {
+  Future<int> deleteHobbyRoutine(int routineId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/hobby-service/routine/$routineId');
@@ -139,7 +139,7 @@ class HobbyAPIService {
   }
 
   //Todo: 취미 기록 삭제
-  Future<int> deleteHobbyRoutine(int recordId) async {
+  Future<int> deleteHobbyRecord(int recordId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/hobby-service/record/$recordId');

@@ -57,7 +57,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
 
   //Todo: 서버 요청(삭제)
   Future<void> _deleteHobbyRecord(int recordId) async {
-    final responseCode = await HobbyAPIService().deleteHobbyRecord(recordId);
+    final responseCode = await HobbyAPIService().deleteHobbyRoutine(recordId);
     if (responseCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('기록이 삭제되었습니다.')),

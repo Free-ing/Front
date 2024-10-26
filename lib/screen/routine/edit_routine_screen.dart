@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:freeing/common/component/text_form_fields.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
+import 'package:freeing/common/service/spirit_api_sevice.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/screen/routine/routine_page.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
+import 'package:intl/intl.dart';
 
 //Todo: 날짜 선택 유뮤
 class WeekDay {
@@ -20,29 +21,41 @@ class EditRoutineScreen extends StatefulWidget {
   final String title;
   final String selectImage;
   final String category;
+  final bool? monday;
+  final bool? tuesday;
+  final bool? wednesday;
+  final bool? thursday;
+  final bool? friday;
+  final bool? saturday;
+  final bool? sunday;
+  final DateTime? startTime;
+  final DateTime? endTime;
+  final String? explanation;
+  final bool? status;
 
   const EditRoutineScreen(
       {super.key,
       required this.routineId,
       required this.title,
       required this.selectImage,
-      required this.category});
+      required this.category,
+      this.monday,
+      this.tuesday,
+      this.wednesday,
+      this.thursday,
+      this.friday,
+      this.saturday,
+      this.sunday,
+      this.startTime,
+      this.endTime,
+      this.explanation, this.status});
 
   @override
   State<EditRoutineScreen> createState() => _EditRoutineScreenState();
 }
 
 class _EditRoutineScreenState extends State<EditRoutineScreen> {
-  List<WeekDay> weekDays = [
-    WeekDay("월", true),
-    WeekDay("화", true),
-    WeekDay("수", true),
-    WeekDay("목", true),
-    WeekDay("금", true),
-    WeekDay("토", false),
-    WeekDay("일", false),
-  ];
-
+  List<WeekDay> weekDays = [];
   final _formKey = GlobalKey<FormState>();
 
   final List<String> options = ['운동', '수면', '취미', '마음 채우기'];
@@ -59,7 +72,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_exercise.png';
 
   TextEditingController _nameController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _explanationController = TextEditingController();
   TextEditingController _startTimeController = TextEditingController();
   TextEditingController _endTimeController = TextEditingController();
 
@@ -71,6 +84,38 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     selectedValue = widget.category;
     selectedValue == '취미' ? _selectHobby = false : _selectHobby = true;
     selectedValue == '수면' ? _selectSleep = false : _selectSleep = true;
+    weekDays = [
+      WeekDay("월", widget.monday ?? true),
+      WeekDay("화", widget.tuesday ?? true),
+      WeekDay("수", widget.wednesday ?? true),
+      WeekDay("목", widget.thursday ?? true),
+      WeekDay("금", widget.friday ?? true),
+      WeekDay("토", widget.saturday ?? false),
+      WeekDay("일", widget.sunday ?? false),
+    ];
+    _explanationController = TextEditingController(text: widget.explanation);
+    // 시간 초기화
+    _startTime = widget.startTime;
+    _endTime = widget.endTime;
+
+    // 시작 및 종료 시간을 컨트롤러에 설정
+    if (_startTime != null) {
+      _startTimeController.text = _formatTime(_startTime!);
+    }
+
+    if (_endTime != null) {
+      _endTimeController.text = _formatTime(_endTime!);
+    }
+  }
+
+  //Todo: 시간 포맷
+  String _formatTime(DateTime time) {
+    int hour = time.hour;
+    String period = hour >= 12 ? 'PM' : 'AM';
+    hour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+    String formattedHour = hour.toString();
+    String formattedMinute = time.minute.toString().padLeft(2, '0');
+    return '$formattedHour:$formattedMinute $period';
   }
 
   //Todo: 서버 요청 (취미 루틴 수정)
@@ -98,21 +143,79 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
 
   //Todo: 서버 요청 (취미 루틴 삭제)
   Future<void> _deleteHobbyRoutine() async {
-    final responseCode = await HobbyAPIService()
-        .deleteHobbyRoutine(
-        widget.routineId);
+    final responseCode =
+        await HobbyAPIService().deleteHobbyRoutine(widget.routineId);
     if (responseCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('일정이 삭제되었습니다.')),
+        const SnackBar(content: Text('취미 루틴이 삭제되었습니다.')),
       );
 
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-            builder: (context) => const RoutinePage()),
+        MaterialPageRoute(builder: (context) => const RoutinePage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('일정이 삭제되지 않았습니다')),
+        SnackBar(content: Text('취미 루틴이 삭제되지 않았습니다 ${responseCode}')),
+      );
+    }
+  }
+
+  //Todo: 서버 요청 (마음 채우기 루틴 수정)
+  Future<void> _editSpiritRoutine() async {
+    if (_formKey.currentState!.validate()) {
+      FocusScope.of(context).unfocus();
+      final String spiritName = _nameController.text;
+      final String explanation = _explanationController.text;
+
+      final startTime =
+          _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+      final endTime =
+          _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+
+      final apiService = SpiritAPIService();
+      final int response = await apiService.patchSpiritRoutine(
+        spiritName,
+        imageUrl,
+        weekDays[0].isSelected,
+        weekDays[1].isSelected,
+        weekDays[2].isSelected,
+        weekDays[3].isSelected,
+        weekDays[4].isSelected,
+        weekDays[5].isSelected,
+        weekDays[6].isSelected,
+        startTime,
+        endTime,
+        explanation,
+        widget.status ?? true,
+      );
+
+      if (response == 200) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('마음 채우기 루틴이 수정되었습니다')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('마음 채우기 루틴 수정에 실패했습니다. $response')));
+        print(response);
+      }
+    }
+  }
+
+  //Todo: 서버 요청 (마음 채우기 루틴 삭제)
+  Future<void> _deleteSpiritRoutine() async {
+    final responseCode =
+        await SpiritAPIService().deleteSpiritRoutine(widget.routineId);
+    if (responseCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('마음 채우기 루틴이 삭제되었습니다.')),
+      );
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const RoutinePage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('마음 채우기 루틴이 삭제되지 않았습니다 $responseCode')),
       );
     }
   }
@@ -205,7 +308,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                           _editHobbyRoutine();
                           break;
                         case '마음 채우기':
-                        //_editSpiritRoutine();
+                          _editSpiritRoutine();
                           break;
                       }
                     },
@@ -230,7 +333,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             _deleteHobbyRoutine();
             break;
           case '마음 채우기':
-          //_deleteSpiritRoutine();
+            _deleteSpiritRoutine();
+            break;
         }
       },
     );
@@ -436,10 +540,45 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       children: [
         Text(' 설명', style: textTheme.bodyMedium),
         SizedBox(height: screenHeight * 0.01),
-        GrayTextFormField(
-          hintText: "루틴에 대한 설명",
-          width: screenWidth,
-          controller: _descriptionController,
+        Container(
+          constraints: BoxConstraints(
+            minHeight: screenHeight * 0.045,
+          ),
+          child: TextField(
+            controller: _explanationController,
+            style: textTheme.bodyMedium,
+            keyboardType: TextInputType.text,
+            maxLength: 50,
+            maxLines: 3,
+            decoration: InputDecoration(
+              hintText: "루틴에 대한 설명",
+              hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
+              contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
+                borderSide: BorderSide(
+                  width: 1, // 테두리 두께
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(
+                  width: 1,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 1,
+                ),
+              ),
+            ),
+          ),
         )
       ],
     );
@@ -680,7 +819,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                               setState(
                                 () {
                                   onTimeChanged(selectTime);
-
+                                  //_formatTime(selectTime);
                                   int hour = selectTime.hour;
                                   String period = hour >= 12 ? 'PM' : 'AM';
                                   hour = hour > 12

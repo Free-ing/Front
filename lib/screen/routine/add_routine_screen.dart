@@ -49,7 +49,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png';
 
   TextEditingController _nameController = TextEditingController();
-  TextEditingController _boddyController = TextEditingController();
+  TextEditingController _explanationController = TextEditingController();
   TextEditingController _startTimeController = TextEditingController();
   TextEditingController _endTimeController = TextEditingController();
 
@@ -98,7 +98,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
       final String sleepName = _nameController.text;
-      final String explanation = _boddyController.text;
+      final String explanation = _explanationController.text;
 
       final startTime =
       _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
@@ -133,7 +133,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
     }
   }
 
-  //Todo: 서버 요청 (취미 루틴 추가) (완)
+  //Todo: 서버 요청 (취미 루틴 추가)
   Future<void> _submitHobbyRoutine() async {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
@@ -160,7 +160,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
       final String spiritName = _nameController.text;
-      final String explanation = _boddyController.text;
+      final String explanation = _explanationController.text;
 
       final startTime =
           _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
@@ -189,8 +189,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             .showSnackBar(const SnackBar(content: Text('마음 채우기 루틴이 추가되었습니다')));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('마음 채우기 루틴 추가에 실패했습니다.')));
-        print(response);
+            SnackBar(content: Text('마음 채우기 루틴 추가에 실패했습니다. $response}')));
       }
     }
   }
@@ -516,7 +515,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             minHeight: screenHeight * 0.045,
           ),
           child: TextField(
-            controller: _boddyController,
+            controller: _explanationController,
             style: textTheme.bodyMedium,
             keyboardType: TextInputType.text,
             maxLength: 50,

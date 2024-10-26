@@ -7,6 +7,8 @@ class DialogManager {
     required BuildContext context,
     required String title,
     required String content,
+    String? subContent,
+    TextAlign? textAlign,
     VoidCallback? onConfirm,
     String buttonText = '확인',
   }) async {
@@ -17,8 +19,8 @@ class DialogManager {
           shape: _buildDialogShape(),
           backgroundColor: Colors.white,
           title: _buildDialogTitle(title, context),
-          content:
-              _buildAlertDialogContent(context, content, buttonText, onConfirm),
+          content: _buildAlertDialogContent(context, content, subContent ?? '',
+              textAlign ?? TextAlign.center, buttonText, onConfirm),
         );
       },
     );
@@ -63,8 +65,8 @@ class DialogManager {
         return AlertDialog(
           shape: _buildDialogShape(),
           backgroundColor: Colors.white,
-          content: _buildDialogImageContent(context, userName, topic, image, onConfirm,
-              cancelButtonText, confirmButtonText),
+          content: _buildDialogImageContent(context, userName, topic, image,
+              onConfirm, cancelButtonText, confirmButtonText),
         );
       },
     );
@@ -102,6 +104,8 @@ class DialogManager {
   static Widget _buildAlertDialogContent(
     BuildContext context,
     String content,
+    String subContent,
+    TextAlign textAlign,
     String buttonText,
     VoidCallback? onConfirm,
   ) {
@@ -112,9 +116,19 @@ class DialogManager {
         Text(
           content,
           style: Theme.of(context).textTheme.bodySmall,
-          textAlign: TextAlign.center,
+          textAlign: textAlign,
         ),
         const SizedBox(height: 12),
+        subContent != ''
+            ? Text(
+                subContent,
+                style: Theme.of(context).textTheme.labelMedium,
+                textAlign: textAlign,
+              )
+            : const SizedBox(height: 0),
+        subContent != ''
+            ? const SizedBox(height: 12)
+            : const SizedBox(height: 0),
         _buildDialogButton(
           buttonWidth: 180,
           context: context,
@@ -172,7 +186,7 @@ class DialogManager {
         Row(
           children: [
             _buildCustomText(context, userName, topic),
-            SizedBox(width:77, height:100, child: image),
+            SizedBox(width: 77, height: 100, child: image),
           ],
         ),
         _buildDialogButtons(
@@ -182,18 +196,18 @@ class DialogManager {
   }
 
   static Widget _buildCustomText(
-      BuildContext context,
-      String userName,
-      String topic,
-      ){
+    BuildContext context,
+    String userName,
+    String topic,
+  ) {
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
             text: "$userName", // 사용자 이름
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.w600, // 다른 weight 적용
-            ),
+                  fontWeight: FontWeight.w600, // 다른 weight 적용
+                ),
           ),
           TextSpan(
             text: "님을 위한\n${topic}가 있어요.\n광고 시청 후 확인해 보시겠어요?",
