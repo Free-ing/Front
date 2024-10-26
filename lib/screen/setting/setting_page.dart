@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
+import 'package:freeing/screen/setting/account_management_page.dart';
 import 'package:freeing/screen/setting/notice_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -33,7 +34,8 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   String _email = '';
   String _name = '';
-  final String _instagramUrl = 'https://www.instagram.com/free.ing_official?igsh=bm94Nm1nZGg0cXVi';
+  final String _instagramUrl =
+      'https://www.instagram.com/free.ing_official?igsh=bm94Nm1nZGg0cXVi';
 
   Future<void> _launchInstagram() async {
     final Uri url = Uri.parse(_instagramUrl);
@@ -149,7 +151,13 @@ class _SettingPageState extends State<SettingPage> {
                     width: screenWidth * 0.70,
                     height: screenHeight * 0.045,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AccountManagementPage()),
+                        );
+                      },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
                         side: const BorderSide(width: 1, color: Colors.black),
