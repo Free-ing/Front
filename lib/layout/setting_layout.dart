@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 
 class SettingLayout extends StatelessWidget {
+  final Color color;
   final String title;
+  final String imgAddress;
+  final bool isBottom;
   final Widget child;
   //final AppBar appBar;
 
-  const SettingLayout(
-      {required this.title,
-      required this.child,
-      //required this.appBar,
-      super.key});
+  const SettingLayout({
+    this.color = Colors.transparent,
+    required this.title,
+    this.imgAddress = 'assets/imgs/background/background_image_title.png',
+    this.isBottom = false,
+    required this.child,
+    //required this.appBar,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +30,15 @@ class SettingLayout extends StatelessWidget {
           color: Colors.white,
         ),
         Positioned(
-          top: 0,
+          top: isBottom ? null : 0,
+          bottom: isBottom ? 0 : null,
           width: screenWidth,
-          child: Image.asset(
-            'assets/imgs/background/background_image_title.png',
-            fit: BoxFit.cover,
-          ),
+          child: Image.asset(imgAddress, fit: BoxFit.cover),
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: color,
             automaticallyImplyLeading: false,
             leading: IconButton(
               onPressed: () {

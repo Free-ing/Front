@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/layout/setting_layout.dart';
 
-class NoticePage extends StatelessWidget {
-  const NoticePage({super.key});
+class FeedbackPage extends StatelessWidget {
+  const FeedbackPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return SettingLayout(
-      title: '공지사항',
+      title: '문의/버그 신고',
       child: Text('띠요오옹'),
     );
   }

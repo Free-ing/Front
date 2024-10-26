@@ -2,17 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:freeing/layout/setting_layout.dart';
 
 class ReadyPage extends StatelessWidget {
-  const ReadyPage({super.key});
+  final String appBarTitle;
+  const ReadyPage({required this.appBarTitle, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return SettingLayout(
-      title: '준비중',
-      child: Column(
-        children: [
-          Image.asset('assets/imgs/setting/user_img'),
-          Text('준비중입니다.....'),
-        ],
+      title: appBarTitle,
+      child: Align(
+        alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset('assets/imgs/setting/user_img.jpg'),
+            Text('준비중.....', style: textTheme.bodyLarge,),
+          ],
+        ),
       ),
     );
   }

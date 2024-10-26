@@ -4,6 +4,7 @@ import 'package:freeing/common/component/home_time_picker.dart';
 import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/routine/routine_page.dart';
+import 'package:freeing/screen/setting/setting_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,7 +72,7 @@ void main() {
         ),
       ),
       //home: Login(),
-      home: HomePage(),
+      home: SettingPage(),
     ),
   );
 }

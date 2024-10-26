@@ -5,7 +5,9 @@ import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/setting/account_management_page.dart';
+import 'package:freeing/screen/setting/feedback_page.dart';
 import 'package:freeing/screen/setting/notice_page.dart';
+import 'package:freeing/screen/setting/ready_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class User {
@@ -179,7 +181,7 @@ class _SettingPageState extends State<SettingPage> {
                 SettingTextButton(
                   address: 'assets/icons/setting_alarm.png',
                   text: '알림 설정',
-                  targetPage: NoticePage(),
+                  targetPage: ReadyPage(appBarTitle: '알림 설정',),
                 ),
                 SettingTextButton(
                   address: 'assets/icons/setting_notice.png',
@@ -189,22 +191,22 @@ class _SettingPageState extends State<SettingPage> {
                 SettingTextButton(
                   address: 'assets/icons/setting_manual.png',
                   text: '이용 설명서',
-                  targetPage: NoticePage(),
+                  targetPage: ReadyPage(appBarTitle: '이용 설명서',),
                 ),
                 SettingTextButton(
                   address: 'assets/icons/setting_inquiry.png',
                   text: '문의/버그 신고',
-                  targetPage: NoticePage(),
+                  targetPage: FeedbackPage(),
                 ),
                 SettingTextButton(
                   address: 'assets/icons/setting_review.png',
                   text: '앱 리뷰 남기기',
-                  targetPage: NoticePage(),
+                  targetPage: ReadyPage(appBarTitle: '앱 리뷰 남기기',),
                 ),
                 SettingTextButton(
                   address: 'assets/icons/setting_storage.png',
                   text: '임시 보관함',
-                  targetPage: NoticePage(),
+                  targetPage: ReadyPage(appBarTitle: '임시 보관함',),
                 ),
                 SizedBox(
                   height: screenHeight * 0.028,
