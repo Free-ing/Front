@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:freeing/common/service/reset_password_service.dart';
 import 'package:freeing/layout/setting_layout.dart';
 
 import '../../common/component/buttons.dart';
@@ -125,27 +126,22 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
 
   void attemptResetPassword() async {
     if (validInputs()) {
-
-      // TODO: 수정해야함!!!
-      final response = await SettingAPIService().changePassword(
-          _emailController.text, _newPasswordController.text);
-
-      if (response.statusCode == 200) {
-
-        DialogManager.showAlertDialog(
-            context: context,
-            title: '비밀번호 변경 성공',
-            content: '비밀번호가 변경되었습니다.\n\n다시 로그인해주세요.',
-            onConfirm: () async {
-              final tokenStorage = TokenStorage();
-              await tokenStorage.deleteAllTokens();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => Login()),
-                    (route) => false,
-              );
-            });
-      }
+      ResetPasswordService.changePassword(
+          _emailController.text, _newPasswordController.text)
+          .then((success) {
+        if (success) {
+          DialogManager.showAlertDialog(
+              context: context,
+              title: '비밀번호 변경 성공',
+              content: '비밀번호가 변경되었습니다.\n\n다시 로그인해주세요.',
+              onConfirm: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => Login(),
+                ));
+              });
+        }
+      });
     } else {
       if (!_isEmailVerified) {
         DialogManager.showAlertDialog(context: context, title: '비밀번호 변경 실패', content: '이메일 인증을 해주세요.');
@@ -173,13 +169,13 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GrayTextFormFieldWithButton(
               enabled: _isEmailFieldEnabled,
               controller: _emailController,
               buttonText: '인증번호 전송',
-              width: screenWidth * 0.8,
+              width: screenWidth * 0.777,
               onButtonPressed: sendEmail,
             ),
             Visibility(
@@ -188,7 +184,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                 children: [
                   SizedBox(height: MediaQuery.of(context).size.height * 0.015),
                   GrayTextFormFieldWihTimerButton(
-                    width: screenWidth * 0.8,
+                    width: screenWidth * 0.777,
                     controller: _codeController,
                     onButtonPressed: verifyCode,
                     enabled: _isCodeFieldEnabled,
@@ -202,14 +198,14 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
               controller: _newPasswordController,
               labelText: '새 비밀번호',
               hintText: '새로운 비밀번호를 입력해주세요.',
-              width: screenWidth * 0.8,
+              width: screenWidth * 0.777,
             ),
             verticalSpace,
             GrayTextFormFieldWithEye(
               controller: _newPasswordVerificationController,
               labelText: '새 비밀번호 확인',
               hintText: '비밀번호를 한번 더 입력해주세요.',
-              width: screenWidth * 0.8,
+              width: screenWidth * 0.777,
             ),
             verticalSpace,
             verticalSpace,
@@ -219,7 +215,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                 alignment: Alignment.center,
                 child: GreenButton(
                     text: '비밀번호 변경하기',
-                    width: screenWidth * 0.7,
+                    width: screenWidth * 0.62,
                     onPressed:attemptResetPassword,)),
           ],
         ),

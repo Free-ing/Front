@@ -150,19 +150,14 @@ class _ResetPasswordState extends State<ResetPassword> {
       } else if (_passwordController.text != _passwordVerificationController.text){
         DialogManager.showAlertDialog(context: context, title: '비밀번호 변경 실패', content: '비밀번호와 확인 비밀번호가 다릅니다.');
       }
-
-      // DialogManager.showAlertDialog(
-      //     context: context,
-      //     title: '비밀번호 변경 실패',
-      //     content: '비밀번호 변경에 실패했습니다.\n\n다시 시도해주세요',
-      //     onConfirm: () {
-      //       Navigator.of(context).pop();
-      //     });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return DefaultLayout(
       appBar: AppBar(
         title: Text(
@@ -183,21 +178,21 @@ class _ResetPasswordState extends State<ResetPassword> {
         height: MediaQuery.of(context).size.height,
         child: Column(
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            SizedBox(height: screenHeight * 0.02),
             GrayTextFormFieldWithButton(
               enabled: _isEmailFieldEnabled,
               controller: _emailController,
               buttonText: '인증번호 전송',
-              width: 320,
+              width: screenWidth * 0.777,
               onButtonPressed: sendEmail,
             ),
             Visibility(
               visible: _isTransmissionSuccessful,
               child: Column(
                 children: [
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                  SizedBox(height: screenHeight * 0.015),
                   GrayTextFormFieldWihTimerButton(
-                    width: 320,
+                    width: screenWidth * 0.777,
                     controller: _codeController,
                     onButtonPressed: verifyCode,
                     enabled: _isCodeFieldEnabled,
@@ -206,35 +201,35 @@ class _ResetPasswordState extends State<ResetPassword> {
                 ],
               ),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            SizedBox(height: screenHeight * 0.02),
             GrayTextFormFieldWithEye(
               controller: _passwordController,
               labelText: '새 비밀번호',
               hintText: '새로운 비밀번호를 입력해주세요.',
-              width: 320,
+              width: screenWidth * 0.777,
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            SizedBox(height: screenHeight * 0.02),
             GrayTextFormFieldWithEye(
               controller: _passwordVerificationController,
               labelText: '새 비밀번호 확인',
               hintText: '비밀번호를 한번 더 입력해주세요.',
-              width: 320,
+              width: screenWidth * 0.777,
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+            SizedBox(height: screenHeight * 0.03),
             GreenButton(
               onPressed: attemptResetPassword,
-              width: 260,
+              width: screenWidth * 0.62,
               text: '변경하기',
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.13),
+            SizedBox(height: screenHeight * 0.13),
             Image.asset(
               "assets/imgs/login/login_bottom.png",
-              width: MediaQuery.of(context).size.width,
+              width: screenWidth,
               fit: BoxFit.fitWidth,
             ),
             Image.asset(
               "assets/imgs/login/login_top.png",
-              width: MediaQuery.of(context).size.width,
+              width: screenWidth,
               fit: BoxFit.fitWidth,
             ),
           ],

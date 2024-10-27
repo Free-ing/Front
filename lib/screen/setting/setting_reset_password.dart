@@ -106,20 +106,20 @@ class _SettingResetPasswordState extends State<SettingResetPassword> {
               controller: _currentPasswordController,
               labelText: '현재 비밀번호',
               hintText: '현재 비밀번호를 입력해주세요.',
-              width: screenWidth * 0.8,
+              width: screenWidth * 0.777,
             ),
             verticalSpace,
             GrayTextFormFieldWithEye(
                 controller: _newPasswordController,
                 labelText: '새 비밀번호',
                 hintText: '새 비밀번호를 입력해주세요.',
-                width: screenWidth * 0.8),
+                width: screenWidth * 0.777),
             verticalSpace,
             GrayTextFormFieldWithEye(
                 controller: _newPasswordVerificationController,
                 labelText: '새 비밀번호 확인',
                 hintText: '비밀번호를 한번 더 입력해주세요.',
-                width: screenWidth * 0.8),
+                width: screenWidth * 0.777),
             UnderlineTextButton(
               text: '비밀번호를 잊으셨나요?',
               textPressed: () {
@@ -133,7 +133,7 @@ class _SettingResetPasswordState extends State<SettingResetPassword> {
                 alignment: Alignment.center,
                 child: GreenButton(
                     text: '비밀번호 변경하기',
-                    width: screenWidth * 0.7,
+                    width: screenWidth * 0.62,
                     onPressed: attemptResetPassword)),
           ],
         ),
