@@ -6,6 +6,7 @@ class SettingLayout extends StatelessWidget {
   final String imgAddress;
   final bool isBottom;
   final Widget child;
+  final bool isLeftAndRightPadding;
   //final AppBar appBar;
 
   const SettingLayout({
@@ -14,6 +15,7 @@ class SettingLayout extends StatelessWidget {
     this.imgAddress = 'assets/imgs/background/background_image_title.png',
     this.isBottom = false,
     required this.child,
+    this.isLeftAndRightPadding = true,
     //required this.appBar,
     super.key,
   });
@@ -55,42 +57,12 @@ class SettingLayout extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             centerTitle: true,
-
-            // title: Padding(
-            //   padding: EdgeInsets.only(top: screenHeight * 0.03),
-            //   child: Expanded(
-            //     child: Row(
-            //       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       children: [
-            //         Align(
-            //           alignment: Alignment.centerLeft,
-            //           child: IconButton(
-            //             onPressed: () {
-            //               Navigator.of(context).pop();
-            //             },
-            //             icon: Icon(Icons.arrow_back_ios_rounded),
-            //             iconSize: 30.0,
-            //             padding: EdgeInsets.zero,
-            //             constraints: BoxConstraints(),
-            //           ),
-            //         ),
-            //         Align(
-            //             alignment: Alignment.center,
-            //             child: Text(
-            //               title,
-            //               style: textTheme.headlineLarge,
-            //               textAlign: TextAlign.center,
-            //             )),
-            //       ],
-            //     ),
-            //   ),
-            // ),
           ),
           body: Padding(
             padding: EdgeInsets.only(
               top: screenHeight * 0.04,
-              right: screenWidth * 0.05,
-              left: screenWidth * 0.05,
+              right: isLeftAndRightPadding ? screenWidth * 0.05 : 0,
+              left: isLeftAndRightPadding ? screenWidth * 0.05 : 0,
             ),
             child: child,
           ),

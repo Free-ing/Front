@@ -72,7 +72,7 @@ void main() {
         ),
       ),
       //home: Login(),
-      home: Login(),
+      home: SettingPage(),
     ),
   );
 }
