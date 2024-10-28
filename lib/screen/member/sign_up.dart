@@ -182,6 +182,9 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return DefaultLayout(
       appBar: AppBar(
         title: Text(
@@ -201,69 +204,61 @@ class _SignUpState extends State<SignUp> {
       child: Column(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
+            height: screenHeight * 0.5,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Column(
                 children: [
                   GrayTextFormField(
                     controller: _nameController,
-                    width: 320,
+                    width: screenWidth * 0.777,
                     labelText: '이름',
                     hintText: '이름을 입력해주세요',
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                  SizedBox(height: screenHeight * 0.015),
                   GrayTextFormFieldWithButton(
                     controller: _emailController,
                     labelText: '이메일',
                     hintText: '이메일을 입력해주세요.',
                     buttonText: '중복 확인',
-                    width: 320,
+                    width: screenWidth * 0.777,
                     onButtonPressed: checkEmail,
                     enabled: _isEmailFieldEnabled,
                   ),
-                  // Visibility(
-                  //   visible: _isEmailSent,
-                  //   child: GrayTextFormFieldWihTimerButton(
-                  //     controller: _codeController,
-                  //     onButtonPressed: verifyCode,
-                  //     enabled: _isCodeFieldEnabled,
-                  //   ),
-                  // ),
                   Visibility(
                     visible: _isEmailSent,
                     child: Column(
                       children: [
                         SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.015),
+                            height: screenHeight * 0.015),
                         GrayTextFormFieldWihTimerButton(
                           controller: _codeController,
                           onButtonPressed: verifyCode,
                           enabled: _isCodeFieldEnabled,
                           isVisible: _isTimerVisible,
-                          width: 320,
+                          width: screenWidth * 0.777,
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                  SizedBox(height: screenHeight * 0.015),
                   GrayTextFormFieldWithEye(
                     controller: _passwordController,
                     labelText: '비밀번호',
                     hintText: '비밀번호를 입력해주세요.',
-                    width: 320,
+                    width: screenWidth * 0.777,
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                  SizedBox(height: screenHeight * 0.015),
                   GrayTextFormFieldWithEye(
                     controller: _passwordVerificationController,
                     labelText: '비밀번호 확인',
                     hintText: '비밀번호를 한번 더 입력해주세요.',
-                    width: 320,
+                    width: screenWidth * 0.777,
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.035),
+                  SizedBox(height: screenHeight * 0.035),
                   GreenButton(
                     text: '가입 하기',
-                    width: 260,
+                    width: screenWidth * 0.62,
                     onPressed: attemptSignUp,
                   ),
                 ],

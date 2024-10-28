@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:icon_decoration/icon_decoration.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -349,7 +350,11 @@ class SettingTextButton extends StatelessWidget {
   //final IconData icon;
   final String address;
   final String text;
-  final Widget targetPage;
+  final Widget? targetPage;
+  final bool isModal;
+  final String modalTitle;
+  final String modalContent;
+  final VoidCallback? modalOnConfirm;
   //final VoidCallback onTap;
 
   const SettingTextButton({
@@ -357,7 +362,11 @@ class SettingTextButton extends StatelessWidget {
     //required this.icon,
     required this.address,
     required this.text,
-    required this.targetPage,
+    this.targetPage,
+    this.isModal = false,
+    this.modalTitle = '',
+    this.modalContent = '',
+    this.modalOnConfirm,
     //required this.onTap,
   }) : super(key: key);
 
@@ -370,21 +379,58 @@ class SettingTextButton extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(screenWidth * 0.03),
       child: GestureDetector(
-        onTap:  () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => targetPage),
-          );
+        onTap: () {
+          if (isModal) {
+            DialogManager.showConfirmDialog(
+              context: context,
+              title: modalTitle,
+              content: modalContent,
+              onConfirm: modalOnConfirm!,
+            );
+          } else if (targetPage != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => targetPage!),
+            );
+          }
         },
         child: Row(
           children: [
             //Icon(icon, color: Colors.black),
             Image.asset(address),
             SizedBox(width: screenWidth * 0.03),
-            Text(text, style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
+            Text(text,
+                style: textTheme.bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.w400)),
           ],
         ),
       ),
     );
+  }
+}
+
+class UnderlineTextButton extends StatelessWidget {
+  final String text;
+  final double fontSize;
+  final VoidCallback textPressed;
+
+  const UnderlineTextButton({
+    required this.text,
+    this.fontSize = 14,
+    required this.textPressed,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return TextButton(
+        onPressed: textPressed,
+        child: Text(text,
+            style: textTheme.bodySmall?.copyWith(
+              color: Colors.black,
+              fontWeight: FontWeight.w300,
+              decoration: TextDecoration.underline,
+            )));
   }
 }

@@ -1,36 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:freeing/common/component/text_form_fields.dart';
+import 'package:flutter/services.dart';
 import 'package:freeing/common/service/reset_password_service.dart';
+import 'package:freeing/layout/setting_layout.dart';
 
 import '../../common/component/buttons.dart';
 import '../../common/component/dialog_manager.dart';
+import '../../common/component/text_form_fields.dart';
+import '../../common/service/setting_api_service.dart';
 import '../../common/service/sign_up_service.dart';
-import '../../layout/default_layout.dart';
-import 'login.dart';
+import '../../common/service/token_storage.dart';
+import '../member/login.dart';
 
-class ResetPassword extends StatefulWidget {
-  const ResetPassword({super.key});
+class ForgetPasswordPage extends StatefulWidget {
+  const ForgetPasswordPage({super.key});
 
   @override
-  State<ResetPassword> createState() => _ResetPasswordState();
+  State<ForgetPasswordPage> createState() => _ForgetPasswordPageState();
 }
 
-class _ResetPasswordState extends State<ResetPassword> {
+class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordVerificationController =
-      TextEditingController();
   final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _newPasswordVerificationController = TextEditingController();
 
-  bool _isEmailVerified = false;
-  bool _isTransmissionSuccessful = false;
   bool _isEmailFieldEnabled = true;
+  bool _isTransmissionSuccessful = false;
   bool _isCodeFieldEnabled = true;
   bool _isTimerVisible = true;
+  bool _isEmailVerified = false;
 
   bool _isValidEmail(String email) {
     final emailRegex =
-        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+    RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
     return emailRegex.hasMatch(email);
   }
 
@@ -117,15 +119,15 @@ class _ResetPasswordState extends State<ResetPassword> {
   }
 
   bool validInputs() {
-    return (_passwordController.text == _passwordVerificationController.text) &&
+    return (_newPasswordController.text == _newPasswordVerificationController.text) &&
         _isEmailVerified &&
-        (_passwordController.text.length >= 8);
+        (_newPasswordController.text.length >= 8);
   }
 
-  void attemptResetPassword() {
+  void attemptResetPassword() async {
     if (validInputs()) {
       ResetPasswordService.changePassword(
-              _emailController.text, _passwordController.text)
+          _emailController.text, _newPasswordController.text)
           .then((success) {
         if (success) {
           DialogManager.showAlertDialog(
@@ -141,13 +143,13 @@ class _ResetPasswordState extends State<ResetPassword> {
         }
       });
     } else {
-      if(!_isEmailVerified){
+      if (!_isEmailVerified) {
         DialogManager.showAlertDialog(context: context, title: '비밀번호 변경 실패', content: '이메일 인증을 해주세요.');
-      } else if(_passwordController.text.isEmpty || _passwordVerificationController.text.isEmpty){
+      } else if (_newPasswordController.text.isEmpty || _newPasswordVerificationController.text.isEmpty) {
         DialogManager.showAlertDialog(context: context, title: '비밀번호 변경 실패', content: '비밀번호와 확인 비밀번호를\n 모두 입력해주세요.');
-      } else if(_passwordController.text.length <8 && _passwordVerificationController.text.length <8){
+      } else if (_newPasswordController.text.length < 8 && _newPasswordVerificationController.text.length < 8) {
         DialogManager.showAlertDialog(context: context, title: '비밀번호 변경 실패', content: '비밀번호는 8자 이상이여야 합니다.');
-      } else if (_passwordController.text != _passwordVerificationController.text){
+      } else if (_newPasswordController.text != _newPasswordVerificationController.text) {
         DialogManager.showAlertDialog(context: context, title: '비밀번호 변경 실패', content: '비밀번호와 확인 비밀번호가 다릅니다.');
       }
     }
@@ -157,28 +159,18 @@ class _ResetPasswordState extends State<ResetPassword> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+    SizedBox verticalSpace = SizedBox(height: screenHeight * 0.02);
 
-    return DefaultLayout(
-      appBar: AppBar(
-        title: Text(
-          '비밀번호 변경',
-          style: Theme.of(context).textTheme.headlineLarge,
-        ),
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.chevron_left),
-          iconSize: 35.0,
-        ),
-      ),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height,
+    return SettingLayout(
+      title: '비밀번호 변경',
+      color: Colors.white,
+      isBottom: true,
+      imgAddress: 'assets/imgs/background/letter_bottom.png',
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
         child: Column(
+          //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: screenHeight * 0.02),
             GrayTextFormFieldWithButton(
               enabled: _isEmailFieldEnabled,
               controller: _emailController,
@@ -190,7 +182,7 @@ class _ResetPasswordState extends State<ResetPassword> {
               visible: _isTransmissionSuccessful,
               child: Column(
                 children: [
-                  SizedBox(height: screenHeight * 0.015),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.015),
                   GrayTextFormFieldWihTimerButton(
                     width: screenWidth * 0.777,
                     controller: _codeController,
@@ -201,37 +193,30 @@ class _ResetPasswordState extends State<ResetPassword> {
                 ],
               ),
             ),
-            SizedBox(height: screenHeight * 0.02),
+            verticalSpace,
             GrayTextFormFieldWithEye(
-              controller: _passwordController,
+              controller: _newPasswordController,
               labelText: '새 비밀번호',
               hintText: '새로운 비밀번호를 입력해주세요.',
               width: screenWidth * 0.777,
             ),
-            SizedBox(height: screenHeight * 0.02),
+            verticalSpace,
             GrayTextFormFieldWithEye(
-              controller: _passwordVerificationController,
+              controller: _newPasswordVerificationController,
               labelText: '새 비밀번호 확인',
               hintText: '비밀번호를 한번 더 입력해주세요.',
               width: screenWidth * 0.777,
             ),
-            SizedBox(height: screenHeight * 0.03),
-            GreenButton(
-              onPressed: attemptResetPassword,
-              width: screenWidth * 0.62,
-              text: '변경하기',
-            ),
-            SizedBox(height: screenHeight * 0.13),
-            Image.asset(
-              "assets/imgs/login/login_bottom.png",
-              width: screenWidth,
-              fit: BoxFit.fitWidth,
-            ),
-            Image.asset(
-              "assets/imgs/login/login_top.png",
-              width: screenWidth,
-              fit: BoxFit.fitWidth,
-            ),
+            verticalSpace,
+            verticalSpace,
+            //verticalSpace,
+            //verticalSpace,
+            Align(
+                alignment: Alignment.center,
+                child: GreenButton(
+                    text: '비밀번호 변경하기',
+                    width: screenWidth * 0.62,
+                    onPressed:attemptResetPassword,)),
           ],
         ),
       ),

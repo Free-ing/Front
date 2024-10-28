@@ -2,8 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
+import 'package:freeing/common/service/token_storage.dart';
 import 'package:freeing/layout/setting_layout.dart';
+import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/setting/ready_page.dart';
+import 'package:freeing/screen/setting/setting_reset_password.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../common/service/setting_api_service.dart';
 
@@ -47,6 +51,19 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
     } else {
       throw Exception('사용자 정보 가져오기 실패 ${response.statusCode}');
     }
+  }
+
+  // Todo: 로그아웃
+  void logout(BuildContext context) async {
+    final tokenStorage = TokenStorage();
+    await tokenStorage.deleteAllTokens();
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>Login()), (route)=> false,);
+  }
+
+  @override
+  initState(){
+    super.initState();
+    _viewUserInfo();
   }
 
   @override
@@ -94,8 +111,15 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => AccountManagementPage()),
+                          PageTransition(
+                            type: PageTransitionType.topToBottom,
+                            alignment: Alignment.topCenter,
+                            curve: Curves.bounceOut,
+                            duration: Duration(milliseconds: 300),
+                            reverseDuration:
+                            Duration(milliseconds: 300),
+                            child: SettingResetPassword(),
+                          ),
                         );
                       },
                       style: TextButton.styleFrom(
@@ -122,7 +146,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
             SettingTextButton(
                 address: 'assets/icons/setting_data_reset.png',
                 text: '데이터 초기화',
-                targetPage: ReadyPage()),
+                targetPage: ReadyPage(appBarTitle: '데이터 초기화',)),
             Container(
               padding: EdgeInsets.symmetric(vertical: screenHeight * 0.005),
               width: screenWidth,
@@ -134,15 +158,15 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
             SettingTextButton(
                 address: 'assets/icons/setting_terms_of_use.png',
                 text: '서비스 이용약관',
-                targetPage: ReadyPage()),
+                targetPage: ReadyPage(appBarTitle: '서비스 이용약관',),),
             SettingTextButton(
                 address: 'assets/icons/setting_privacy_policy.png',
                 text: '개인 정보 처리 방침',
-                targetPage: ReadyPage()),
+                targetPage: ReadyPage(appBarTitle: '개인 정보 처리 방침',)),
             SettingTextButton(
                 address: 'assets/icons/setting_version_info.png',
                 text: '버전 정보',
-                targetPage: ReadyPage()),
+                targetPage: ReadyPage(appBarTitle: '버전 정보',)),
             Container(
               padding: EdgeInsets.symmetric(vertical: screenHeight * 0.005),
               width: screenWidth,
@@ -154,14 +178,18 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
             SettingTextButton(
                 address: 'assets/icons/setting_logout.png',
                 text: '로그아웃',
-                targetPage: ReadyPage()),
+                isModal: true,
+                modalTitle: '로그아웃',
+                modalContent: '로그아웃을 하시겠습니까?',
+                modalOnConfirm: (){logout(context);},),
             SettingTextButton(
                 address: 'assets/icons/setting_withdraw.png',
                 text: '회원 탈퇴',
-                targetPage: ReadyPage()),
+                targetPage: ReadyPage(appBarTitle: '회원 탈퇴',)),
           ],
         ),
       ),
     );
   }
 }
+
