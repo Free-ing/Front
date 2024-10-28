@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
 
 class CategoryTabBar extends StatefulWidget {
+  final int index;
   final Widget exercise;
   final Widget sleep;
   final Widget hobby;
@@ -10,6 +11,7 @@ class CategoryTabBar extends StatefulWidget {
 
   const CategoryTabBar({
     super.key,
+    required this.index,
     required this.exercise,
     required this.sleep,
     required this.hobby,
@@ -27,11 +29,11 @@ class _CategoryTabBarState extends State<CategoryTabBar> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return DefaultTabController(
+      initialIndex: widget.index,
       length: 4,
       child: Column(
         children: <Widget>[
           ButtonsTabBar(
-
             physics: NeverScrollableScrollPhysics(),
             backgroundColor: BLUE_PURPLE,
             unselectedBackgroundColor: LIGHT_GREY,

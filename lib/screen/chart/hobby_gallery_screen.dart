@@ -18,7 +18,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
 
   List<HobbyAlbum> _hobbyAlbums = [];
 
-  //Todo: 서버 요청(조회)
+  //Todo: 서버 요청(취미 기록 조회)
   Future<List<HobbyAlbum>> _fetchHobbyAlbum(int year, int month) async {
     print("Fetching hobby albums for $year-$month");
 
@@ -55,9 +55,9 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     }
   }
 
-  //Todo: 서버 요청(삭제)
+  //Todo: 서버 요청(취미 기록 삭제)
   Future<void> _deleteHobbyRecord(int recordId) async {
-    final responseCode = await HobbyAPIService().deleteHobbyRoutine(recordId);
+    final responseCode = await HobbyAPIService().deleteHobbyRecord(recordId);
     if (responseCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('기록이 삭제되었습니다.')),
@@ -105,41 +105,37 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
 
     return ChartLayout(
       title: "취미 사진첩",
-      chartWidget: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: screenHeight * 0.01),
-            ShowChartDate(
-              // 모듈화된 날짜 선택 UI 사용
-              selectedDate: selectedDate,
-              onDateChanged: updateSelectedDate, // 콜백 함수 전달
-            ),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: screenWidth * 0.02,
-                  mainAxisSpacing: screenWidth * 0.02,
-                ),
-                itemCount: _hobbyAlbums.length,
-                itemBuilder: (context, index) {
-                  final hobbyAlbum =
-                      _hobbyAlbums[_hobbyAlbums.length - 1 - index];
-                  return _buildHobbyRecord(
-                    context: context,
-                    imageUrl: hobbyAlbum.photoUrl,
-                    date: hobbyAlbum.date,
-                    title: hobbyAlbum.hobbyName,
-                    description: hobbyAlbum.recordBody,
-                    recordId: hobbyAlbum.recordId,
-                  );
-                },
+      chartWidget: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: screenHeight * 0.02),
+          ShowChartDate(
+            selectedDate: selectedDate,
+            onDateChanged: updateSelectedDate, // 콜백 함수 전달
+          ),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: screenWidth * 0.02,
+                mainAxisSpacing: screenWidth * 0.02,
               ),
+              itemCount: _hobbyAlbums.length,
+              itemBuilder: (context, index) {
+                final hobbyAlbum =
+                    _hobbyAlbums[_hobbyAlbums.length - 1 - index];
+                return _buildHobbyRecord(
+                  context: context,
+                  imageUrl: hobbyAlbum.photoUrl,
+                  date: hobbyAlbum.date,
+                  title: hobbyAlbum.hobbyName,
+                  description: hobbyAlbum.recordBody,
+                  recordId: hobbyAlbum.recordId,
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       onDateSelected: updateSelectedDate,
     );
@@ -237,6 +233,8 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    TextEditingController bodyController = TextEditingController(text: title);
+    bool _isEditing = false;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -256,7 +254,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
             Align(
                 alignment: Alignment.center,
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.008),
+                  //padding: EdgeInsets.symmetric(vertical: screenHeight * 0.008),
                   decoration: BoxDecoration(
                     color: BLUE_PURPLE,
                     border: Border.all(color: Colors.black),
@@ -274,11 +272,13 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                         ),
                       ),
                       SizedBox(width: 50),
+                      // /// 취미 기록 수정
                       // IconButton(
-                      //   onPressed: (){},
-                      //   icon: Icon(Icons.edit_note_rounded,),
+                      //   onPressed: _isEditing ? (){} : (){},
+                      //   icon: _isEditing ? Icon(Icons.check_rounded): Icon(Icons.edit_note_rounded),
                       //   iconSize: 25,
                       // ),
+                      /// 취미 기록 삭제
                       IconButton(
                         onPressed: () {
                           _deleteHobbyRecord(recordId);
@@ -323,14 +323,58 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 padding: const EdgeInsets.all(8),
-                child: SingleChildScrollView(
-                  child: Text(
-                    description,
-                    style: const TextStyle(fontSize: 14.0),
+                child: TextField(
+                  readOnly: _isEditing,
+                  controller: bodyController,
+                  style: textTheme.bodyMedium,
+                  keyboardType: TextInputType.text,
+                  maxLength: 100,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
+                      borderSide: BorderSide(
+                        width: 1, // 테두리 두께
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(
+                        width: 1,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(
+                        width: 1,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 1,
+                      ),
+                    ),
                   ),
-                ),
+                )
               ),
             ),
+            // Expanded(
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       color: Colors.white,
+            //       border: Border.all(color: Colors.black),
+            //       borderRadius: BorderRadius.circular(20.0),
+            //     ),
+            //     padding: const EdgeInsets.all(8),
+            //     child: SingleChildScrollView(
+            //       child: Text(
+            //         description,
+            //         style: const TextStyle(fontSize: 14.0),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             SizedBox(height: screenHeight * 0.015),
             ElevatedButton(
               onPressed: () {

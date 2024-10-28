@@ -116,7 +116,10 @@ class _ChartLayoutState extends State<ChartLayout> {
               fit: BoxFit.cover,
             ),
           ),
-          child: widget.chartWidget),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+            child: widget.chartWidget,
+          )),
     );
   }
 }

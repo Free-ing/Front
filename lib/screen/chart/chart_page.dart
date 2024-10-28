@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
+import 'package:freeing/screen/chart/mood_calendar.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/routine/add_routine_screen.dart';
 import 'package:freeing/screen/routine/edit_routine_screen.dart';
@@ -16,6 +17,8 @@ class ChartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // 예시로 추천 리스트를 생성
     List<RecommendedHobby> recommendedHobbies = [
+      RecommendedHobby(hobbyName: '취미', explanation: '에 대한 설명'),
+      RecommendedHobby(hobbyName: '설명', explanation: '에 대한 취미'),
       RecommendedHobby(hobbyName: '취미', explanation: '에 대한 설명'),
       RecommendedHobby(hobbyName: '설명', explanation: '에 대한 취미'),
     ];
@@ -58,7 +61,8 @@ class ChartPage extends StatelessWidget {
                   navigatePage: SurveyResponseScreen(
                       category: '취미',
                       recommend: recommendedHobbies,
-                      answers: []),
+                      answers: [],
+                  remain: 2),
                   context: context,
                 ),
                 _chartCard(
@@ -91,13 +95,7 @@ class ChartPage extends StatelessWidget {
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/emotional_diary_and_letter.png',
                   title: "무드 캘린더",
-                  navigatePage: EditRoutineScreen(
-                    routineId: 2,
-                    title: '음악 감상',
-                    selectImage:
-                        'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png',
-                    category: '취미',
-                  ),
+                  navigatePage: MoodCalendar(),
                   context: context,
                 ),
                 _chartCard(

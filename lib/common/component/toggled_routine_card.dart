@@ -28,8 +28,14 @@ class ToggledRoutineCard extends StatefulWidget {
 class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
   bool isSwitched = false;
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    // TODO: implement initState
+    super.initState();
     isSwitched = widget.status;
+  }
+  @override
+  Widget build(BuildContext context) {
+   //isSwitched = widget.status;
 
     return Card(
       elevation: isSwitched ? 4 : 0,
@@ -68,7 +74,7 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
 
   Widget _routineImage({required String imageUrl}) {
     return Center(
-      child: Image.asset(
+      child: Image.network(
         imageUrl,
         fit: BoxFit.contain,
         width: 120,
@@ -96,8 +102,12 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
         onTap: () {
           setState(() {
             isSwitched = !isSwitched;
-
-            isSwitched ? widget.onSwitch : widget.offSwitch;
+            print('상태 $isSwitched');
+            if (isSwitched) {
+              widget.onSwitch(); // onSwitch 호출
+            } else {
+              widget.offSwitch(); // offSwitch 호출
+            }
           });
         },
         child: Padding(
@@ -149,7 +159,7 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
 
   Widget _routineTitle({required String title}) {
     return Positioned(
-      bottom: 10,
+      bottom:5,
       left: 0,
       right: 0,
       child: Text(

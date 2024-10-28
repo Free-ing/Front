@@ -15,7 +15,7 @@ class SelectHobbyName extends StatefulWidget {
 class _SelectHobbyNameState extends State<SelectHobbyName> {
   List<HobbyList> _hobbyList = [];
 
-  //Todo: 서버 요청
+  //Todo: 서버 요청 (취미 리스트 조회)
   Future<List<HobbyList>> _fetchHobbyList() async {
     print("Fetching hobby list");
 
@@ -46,7 +46,11 @@ class _SelectHobbyNameState extends State<SelectHobbyName> {
   @override
   void initState() {
     super.initState();
-    _fetchHobbyList();
+    _fetchHobbyList().then((hobbies) {
+      setState(() {
+        _hobbyList = hobbies;
+      });
+    });
   }
 
   @override

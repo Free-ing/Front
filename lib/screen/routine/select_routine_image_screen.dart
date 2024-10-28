@@ -160,6 +160,7 @@ class _SelectRoutineImageScreenState extends State<SelectRoutineImageScreen> {
   Widget _viewCategoryImage(screenWidth, screenHeight){
     return Expanded(
       child: CategoryTabBar(
+        index: 0,
         exercise: _buildImage(
           category: exerciseImage,
           screenWidth: screenWidth,

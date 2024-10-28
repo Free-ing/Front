@@ -11,7 +11,9 @@ import 'package:freeing/screen/routine/sleep_tabbar_view.dart';
 import 'package:freeing/screen/routine/spirit_tabbar_view.dart';
 
 class RoutinePage extends StatefulWidget {
-  const RoutinePage({super.key});
+  final int index;
+
+  const RoutinePage({super.key, required this.index});
 
   @override
   State<RoutinePage> createState() => _RoutinePageState();
@@ -47,6 +49,7 @@ class _RoutinePageState extends State<RoutinePage> {
             padding: EdgeInsets.symmetric(
                 horizontal: screenWidth * 0.06, vertical: screenHeight * 0.02),
             child: CategoryTabBar(
+              index: widget.index,
               exercise: ExerciseTabBarView(),
               sleep: SleepTabBarView(),
               hobby: HobbyTabBarView(),

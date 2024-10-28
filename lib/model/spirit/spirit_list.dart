@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 class SpiritList {
-  String mentalRoutineName;
+  String spiritName;
   String imageUrl;
   int routineId;
   bool monday;
@@ -17,7 +17,7 @@ class SpiritList {
   String? explanation;
 
   SpiritList(
-      {required this.mentalRoutineName,
+      {required this.spiritName,
       required this.imageUrl,
       required this.routineId,
       required this.monday,
@@ -38,7 +38,7 @@ class SpiritList {
 
 
     return SpiritList(
-        mentalRoutineName: json['mentalRoutineName'],
+        spiritName: json['spiritName'] ?? '',
         imageUrl: json['imageUrl'],
         routineId: json['routineId'],
         monday: json['monday'],
@@ -51,12 +51,12 @@ class SpiritList {
         status: json['status'],
         startTime: parsedStartTime,
         endTime: parsedEndTime,
-        explanation: json['explanation']);
+        explanation: json['explanation'] ?? '');
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'mentalRoutineName' : mentalRoutineName,
+      'spiritName' : spiritName,
       'imageUrl' : imageUrl,
       'routineId' : routineId,
       'monday' : monday,

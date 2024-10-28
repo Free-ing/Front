@@ -14,26 +14,38 @@ void showHobbyBottomSheet(BuildContext context, String title) {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
 
-  final ValueNotifier<String> selectedHobbyNotifier =
-  ValueNotifier('취미 선택');
+  final ValueNotifier<String> selectedHobbyNotifier = ValueNotifier('취미 선택');
   final ValueNotifier<File?> imageNotifier = ValueNotifier<File?>(null);
   final ImagePicker picker = ImagePicker();
 
   //Todo: 서버 요청 (취미 기록하기)
+  //Todo: 서버 요청 (취미 기록하기)
   Future<void> submitHobbyRecord() async {
     final apiService = HobbyAPIService();
-    final int response = await apiService.postHobbyRecord(
-        selectedHobbyNotifier.value,
-        imageNotifier.value,
-        hobbyMemoController.text);
 
-    if (response == 200) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('취미 기록이 추가되었습니다')));
+    // 이미지 파일 객체가 있는지 확인
+    if (imageNotifier.value != null) {
+      // 취미 기록 요청
+      final int response = await apiService.postHobbyRecord(
+          selectedHobbyNotifier.value,
+          imageNotifier.value!,
+          hobbyMemoController.text // 취미 내용
+          );
+
+      // 응답 처리
+      if (response == 200) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('취미 기록이 추가되었습니다')));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('취미 기록 추가에 실패했습니다.')));
+        print(response); // 에러 코드 출력
+      }
     } else {
+      // 이미지 파일이 없는 경우 사용자에게 알림
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('취미 기록 추가에 실패했습니다.')));
-      print(response);
+          .showSnackBar(const SnackBar(content: Text('이미지를 선택해 주세요.')));
     }
   }
 
@@ -75,11 +87,9 @@ void showHobbyBottomSheet(BuildContext context, String title) {
     );
   }
 
-
   showCustomModalBottomSheet(
     context: context,
     builder: (BuildContext context, TextTheme textTheme) {
-
       return BaseAnimatedBottomSheetContent(
         title: title,
         onButtonPressed: (AnimationController) async {
@@ -97,9 +107,6 @@ void showHobbyBottomSheet(BuildContext context, String title) {
                       builder: (context) => const SelectHobbyName(),
                     ),
                   );
-                  // setState(() {
-                  //   selectedHobby = result ?? selectedHobby;
-                  // });
                   selectedHobbyNotifier.value =
                       result ?? selectedHobbyNotifier.value;
                 },
@@ -113,27 +120,27 @@ void showHobbyBottomSheet(BuildContext context, String title) {
                     border: Border.all(width: 1),
                   ),
                   child: ValueListenableBuilder<String>(
-                      valueListenable: selectedHobbyNotifier,
-                      builder: (context, selectedHobby, _) {
-                        return Stack(
-                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                selectedHobby,
-                                style: selectedHobby == '취미 선택'
-                                    ? textTheme.bodyMedium
-                                        ?.copyWith(color: TEXT_GREY)
-                                    : textTheme.bodyMedium,
-                              ),
+                    valueListenable: selectedHobbyNotifier,
+                    builder: (context, selectedHobby, _) {
+                      return Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              selectedHobby,
+                              style: selectedHobby == '취미 선택'
+                                  ? textTheme.bodyMedium
+                                      ?.copyWith(color: TEXT_GREY)
+                                  : textTheme.bodyMedium,
                             ),
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: Icon(Icons.arrow_right_rounded))
-                          ],
-                        );
-                      }),
+                          ),
+                          Align(
+                              alignment: Alignment.centerRight,
+                              child: Icon(Icons.arrow_right_rounded))
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
               SizedBox(
