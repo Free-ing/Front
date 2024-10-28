@@ -96,6 +96,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   //Todo: 서버 요청 (수면 루틴 추가)
   Future<void> _submitSleepRoutine() async {
+    print('수면 루틴 추가');
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
       final String sleepName = _nameController.text;
@@ -122,7 +123,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         imageUrl,
       );
 
-      if (response == 200) {
+      if (response == 201) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('수면 루틴이 추가되었습니다')));

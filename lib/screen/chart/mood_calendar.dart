@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/show_chart_date.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/spirit_api_sevice.dart';
 import 'package:freeing/layout/chart_layout.dart';
 import 'package:freeing/screen/chart/mood_scrap.dart';
 import 'package:freeing/screen/home/diary_bottom_sheet.dart';
@@ -24,6 +27,9 @@ class _MoodCalendarState extends State<MoodCalendar> {
   int getDaysInMonth() => DateTime(year, month + 1, 0).day;
   bool _existLetter = true; // 편지 존재 여부
   bool _isScrap = false; // 스크랩 여부
+  final apiService = SpiritAPIService();
+
+  Map<int, String> emotionDataByDay = {};
 
   // 예시 감정 데이터: 날짜를 키로, 감정 종류를 값으로 저장
   Map<int, String> exampleEmotions = {
@@ -40,6 +46,45 @@ class _MoodCalendarState extends State<MoodCalendar> {
     25: "SAD",
     28: "CALM",
   };
+
+
+  //Todo: 서버 요청 (월별 감정 조회)
+  // Future<Map<int, String>> _fetchMonthlyEmotion(int year, int month) async {
+  //   print('Fetching Monthly Emotion');
+  //   final response = await apiService.getMoodList(year, month);
+  //
+  //   print(response.statusCode);
+  //
+  //   if (response.statusCode == 200){
+  //     final jsonData = json.decode(utf8.decode(response.bodyBytes));
+  //
+  //     if (jsonData is Map<String, dynamic>) {
+  //       return
+  //     }
+  //   }
+  // }
+
+  //Todo: 서버 요청 (감정 일기 스크랩 하기) -- 주석
+  Future<void> _scrapEmotionDiary() async {
+    print('감정 일기 스크랩 하기');
+    // final responseCode = apiService.scrapEmotionDiary(diaryId);
+    // if (responseCode == 200) {
+    //   print('감정일기 스크랩 성공');
+    // } else {
+    //   print('감정일기 스크랩 실패($responseCode');
+    // }
+  }
+
+  //Todo: 서버 요청 (감정 일기 스크랩 취소 하기) -- 주석
+  Future<void> _scrapCancelEmotionDiary() async {
+    print('감정 일기 스크랩 취소 하기');
+    // final responseCode = apiService.scrapCancelEmotionDiary(diaryId);
+    // if (responseCode == 200) {
+    //   print('감정일기 스크랩 취소 성공');
+    // } else {
+    //   print('감정일기 스크랩 취소 실패($responseCode');
+    // }
+  }
 
   //Todo: 날짜 update
   Future<void> updateSelectedMonth(DateTime date) async {
@@ -305,7 +350,9 @@ class _MoodCalendarState extends State<MoodCalendar> {
                     onPressed: () {
                       setState(() {
                         _isScrap = !_isScrap;
+                        print(_isScrap);
                       });
+                      _isScrap ? _scrapEmotionDiary() : _scrapCancelEmotionDiary();
                     },
                     icon: Image.asset(
                       _isScrap

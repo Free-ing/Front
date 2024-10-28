@@ -62,8 +62,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
   final List<String> options = ['운동', '수면', '취미', '마음 채우기'];
   String selectedValue = '운동';
 
-  DateTime? _startTime;
-  DateTime? _endTime;
+  DateTime? _startTime = DateTime.now();
+  DateTime? _endTime = DateTime.now();
   bool _timePickerOpen = false;
   bool _selectHobby = true;
   bool _selectSleep = true;
@@ -94,10 +94,9 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       WeekDay("일", widget.sunday ?? false),
     ];
     _explanationController = TextEditingController(text: widget.explanation);
-    // 시간 초기화
+
     _startTime = widget.startTime;
     _endTime = widget.endTime;
-
     // 시작 및 종료 시간을 컨트롤러에 설정
     if (_startTime != null) {
       _startTimeController.text = _formatTime(_startTime!);
@@ -174,6 +173,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       final endTime =
           _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
 
+      print("루틴 켜졌니 ${widget.status}");
+
       final apiService = SpiritAPIService();
       final int response = await apiService.patchSpiritRoutine(
         spiritName,
@@ -230,6 +231,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+
+    print(DateTime.now());
 
     return ScreenLayout(
       showIconButton: true,

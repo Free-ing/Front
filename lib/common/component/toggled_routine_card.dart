@@ -27,6 +27,7 @@ class ToggledRoutineCard extends StatefulWidget {
 
 class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
   bool isSwitched = false;
+
   @override
   void initState() {
     // TODO: implement initState

@@ -71,8 +71,8 @@ void main() {
           ),
         ),
       ),
-      //home: Login(),
-      home: SettingPage(),
+      home: Login(),
+      //home: RoutinePage(),
     ),
   );
 }

@@ -33,9 +33,12 @@ class SpiritList {
       required this.explanation});
 
   factory SpiritList.fromJson(Map<String, dynamic> json) {
-    DateTime? parsedStartTime = json['startTime'] != null ? DateFormat('HH:mm').parse(json['startTime']) : null;
-    DateTime? parsedEndTime = json['endTime'] != null ? DateFormat('HH:mm').parse(json['endTime']) : null;
-
+    DateTime? parsedStartTime = json['startTime'] != null
+        ? DateFormat('HH:mm').parse(json['startTime'])
+        : null;
+    DateTime? parsedEndTime = json['endTime'] != null
+        ? DateFormat('HH:mm').parse(json['endTime'])
+        : null;
 
     return SpiritList(
         spiritName: json['spiritName'] ?? '',
@@ -56,20 +59,20 @@ class SpiritList {
 
   Map<String, dynamic> toJson() {
     return {
-      'spiritName' : spiritName,
-      'imageUrl' : imageUrl,
-      'routineId' : routineId,
-      'monday' : monday,
-      'tuesday' : tuesday,
-      'wednesday' : wednesday,
-      'thursday' : thursday,
-      'friday' : friday,
-      'saturday' : saturday,
-      'sunday' : sunday,
-      'status' : status,
-      'startTime' : startTime?.toIso8601String(),
-      'endTime' : endTime?.toIso8601String(),
-      'explanation' : explanation,
+      'spiritName': spiritName,
+      'imageUrl': imageUrl,
+      'routineId': routineId,
+      'monday': monday,
+      'tuesday': tuesday,
+      'wednesday': wednesday,
+      'thursday': thursday,
+      'friday': friday,
+      'saturday': saturday,
+      'sunday': sunday,
+      'status': status,
+      'startTime': startTime?.toIso8601String(),
+      'endTime': endTime?.toIso8601String(),
+      'explanation': explanation,
     };
   }
 }

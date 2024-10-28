@@ -15,6 +15,7 @@ class SpiritTabBarView extends StatefulWidget {
 
 class _SpiritTabBarViewState extends State<SpiritTabBarView> {
   List<SpiritList> _spiritList = [];
+
   final apiService = SpiritAPIService();
 
   //Todo: 서버 요청 (마음 채우기 리스트 조회)
@@ -62,10 +63,14 @@ class _SpiritTabBarViewState extends State<SpiritTabBarView> {
         itemBuilder: (context, index) {
           final spiritList = _spiritList[index];
 
+          //Todo: 서버 요청 (마음 채우기 루틴 켜기)
           Future<void> _onSpiritRoutine() async {
             final responseCode =
                 await apiService.onSpiritRoutine(spiritList.routineId);
             if (responseCode == 200) {
+              setState(() {
+                spiritList.status = !spiritList.status;
+              });
               print('마음 채우기 루틴 (${spiritList.spiritName}) 킴 on.');
             } else {
               print(
@@ -73,10 +78,15 @@ class _SpiritTabBarViewState extends State<SpiritTabBarView> {
             }
           }
 
+          //Todo: 서버 요청 (마음 채우기 루틴 끄기)
           Future<void> _offSpiritRoutine() async {
             final responseCode =
                 await apiService.offSpiritRoutine(spiritList.routineId);
             if (responseCode == 200) {
+              setState(() {
+                //spiritList.status = false;
+                spiritList.status = !spiritList.status;
+               });
               print('마음 채우기 루틴 (${spiritList.spiritName}) 끔 off.');
             } else {
               print(
@@ -100,7 +110,10 @@ class _SpiritTabBarViewState extends State<SpiritTabBarView> {
                       friday: spiritList.friday,
                       saturday: spiritList.saturday,
                       sunday: spiritList.sunday,
+                      startTime: spiritList.startTime,
+                      endTime: spiritList.endTime,
                       explanation: spiritList.explanation,
+                      status: spiritList.status,
                     ),
                   ),
                 );

@@ -93,6 +93,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
     print(wellDoneController.text);
     print(hardWork);
     print(hardWorkController.text);
+    print(_getAiLetter);
 
     if (wellDoneController.text.isNotEmpty &&
         hardWorkController.text.isNotEmpty) {

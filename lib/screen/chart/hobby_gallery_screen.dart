@@ -254,7 +254,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
             Align(
                 alignment: Alignment.center,
                 child: Container(
-                  //padding: EdgeInsets.symmetric(vertical: screenHeight * 0.008),
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                   decoration: BoxDecoration(
                     color: BLUE_PURPLE,
                     border: Border.all(color: Colors.black),
@@ -262,7 +262,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                   ),
                   width: 300.0,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Center(
                         child: Text(
@@ -279,14 +279,18 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                       //   iconSize: 25,
                       // ),
                       /// 취미 기록 삭제
-                      IconButton(
-                        onPressed: () {
-                          _deleteHobbyRecord(recordId);
-                        },
-                        icon: Icon(
-                          Icons.delete_forever,
-                          size: 25,
-                          color: Colors.white,
+                      SizedBox(
+                        height: screenHeight*0.045,
+                        width: screenWidth * 0.07,
+                        child: IconButton(
+                          onPressed: () {
+                            _deleteHobbyRecord(recordId);
+                          },
+                          icon: Icon(
+                            Icons.delete_forever,
+                            size: 25,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -314,6 +318,50 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
             ),
 
             SizedBox(height: screenHeight * 0.015),
+            // Expanded(
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       color: Colors.white,
+            //       border: Border.all(color: Colors.black),
+            //       borderRadius: BorderRadius.circular(20.0),
+            //     ),
+            //     padding: const EdgeInsets.all(8),
+            //     child: TextField(
+            //       readOnly: _isEditing,
+            //       controller: bodyController,
+            //       style: textTheme.bodyMedium,
+            //       keyboardType: TextInputType.text,
+            //       maxLength: 100,
+            //       maxLines: 5,
+            //       decoration: InputDecoration(
+            //         contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+            //         border: OutlineInputBorder(
+            //           borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
+            //           borderSide: BorderSide(
+            //             width: 1, // 테두리 두께
+            //           ),
+            //         ),
+            //         enabledBorder: OutlineInputBorder(
+            //           borderRadius: BorderRadius.circular(15),
+            //           borderSide: BorderSide(
+            //             width: 1,
+            //           ),
+            //         ),
+            //         focusedBorder: OutlineInputBorder(
+            //           borderRadius: BorderRadius.circular(15),
+            //           borderSide: BorderSide(
+            //             width: 1,
+            //           ),
+            //         ),
+            //         errorBorder: OutlineInputBorder(
+            //           borderSide: BorderSide(
+            //             width: 1,
+            //           ),
+            //         ),
+            //       ),
+            //     )
+            //   ),
+            // ),
             // 설명 텍스트
             Expanded(
               child: Container(
@@ -323,58 +371,14 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 padding: const EdgeInsets.all(8),
-                child: TextField(
-                  readOnly: _isEditing,
-                  controller: bodyController,
-                  style: textTheme.bodyMedium,
-                  keyboardType: TextInputType.text,
-                  maxLength: 100,
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
-                      borderSide: BorderSide(
-                        width: 1, // 테두리 두께
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(
-                        width: 1,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(
-                        width: 1,
-                      ),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 1,
-                      ),
-                    ),
+                child: SingleChildScrollView(
+                  child: Text(
+                    description,
+                    style: const TextStyle(fontSize: 14.0),
                   ),
-                )
+                ),
               ),
             ),
-            // Expanded(
-            //   child: Container(
-            //     decoration: BoxDecoration(
-            //       color: Colors.white,
-            //       border: Border.all(color: Colors.black),
-            //       borderRadius: BorderRadius.circular(20.0),
-            //     ),
-            //     padding: const EdgeInsets.all(8),
-            //     child: SingleChildScrollView(
-            //       child: Text(
-            //         description,
-            //         style: const TextStyle(fontSize: 14.0),
-            //       ),
-            //     ),
-            //   ),
-            // ),
             SizedBox(height: screenHeight * 0.015),
             ElevatedButton(
               onPressed: () {

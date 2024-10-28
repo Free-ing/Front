@@ -98,27 +98,31 @@ class SpiritAPIService {
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/spirit-service/$routineId');
 
+    print(status);
+
     final response = await http.put(
       url,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',
       },
-      body: json.encode({
-        'spiritName': spiritName,
-        'imageUrl': imageUrl,
-        'monday': monday,
-        'tuesday': tuesday,
-        'wednesday': wednesday,
-        'thursday': thursday,
-        'friday': friday,
-        'saturday': saturday,
-        'sunday': sunday,
-        'startTime': startTime,
-        'endTime': endTime,
-        'explanation': explanation,
-        'status': status,
-      }),
+      body: json.encode(
+        {
+          'spiritName': spiritName,
+          'imageUrl': imageUrl,
+          'monday': monday,
+          'tuesday': tuesday,
+          'wednesday': wednesday,
+          'thursday': thursday,
+          'friday': friday,
+          'saturday': saturday,
+          'sunday': sunday,
+          'startTime': startTime,
+          'endTime': endTime,
+          'explanation': explanation,
+          'status': status,
+        },
+      ),
     );
 
     return response.statusCode;
@@ -207,7 +211,7 @@ class SpiritAPIService {
       body: json.encode({
         'wellDone': wellDone,
         'hardWork': hardWork,
-        'getAiLet': getAiLetter,
+        'getAiLetter': getAiLetter,
         'emotion': emotion,
       }),
     );
@@ -229,5 +233,72 @@ class SpiritAPIService {
         'Authorization': 'Bearer $accessToken',
       },
     );
+  }
+
+  //Todo: 특정 일기 조회
+  Future<http.Response> getEmotionDiary(int diaryId) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/spirit-service/emotional-record/$diaryId');
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+
+  //Todo: ai 편지 (??POST)
+  Future<http.Response> getAiLetter(int diaryId) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url =
+        Uri.parse('$_baseUrl/spirit-service/ai/emotional-record/$diaryId');
+
+    return http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+
+  //Todo: 감정 일기 스크랩 하기
+  Future<int> scrapEmotionDiary(int diaryId) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url =
+        Uri.parse('$_baseUrl/spirit-service/emotional-records/scrap/$diaryId');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    return response.statusCode;
+  }
+
+  //Todo: 감정 일기 스크랩 취소
+  Future<int> scrapCancelEmotionDiary(int diaryId) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse(
+        '$_baseUrl/spirit-service/emotional-records/scrap-cancel/$diaryId');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    return response.statusCode;
   }
 }
