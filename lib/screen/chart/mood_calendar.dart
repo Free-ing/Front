@@ -124,9 +124,9 @@ class _MoodCalendarState extends State<MoodCalendar> {
                   daysInMonth, firstDayOfMonth),
               SizedBox(height: screenHeight * 0.017),
               // 선택된 날짜 상세 보기
-              exampleEmotions[selectedDate] != null ?
-                  _viewEmotionalDiary(textTheme, screenWidth, screenHeight)
-              : _noneEmotionDiary(textTheme, screenWidth, screenHeight),
+              exampleEmotions[selectedDate] != null
+                  ? _viewEmotionalDiary(textTheme, screenWidth, screenHeight)
+                  : _noneEmotionDiary(textTheme, screenWidth, screenHeight),
               SizedBox(height: screenHeight * 0.017),
             ],
           ),
@@ -320,7 +320,6 @@ class _MoodCalendarState extends State<MoodCalendar> {
           ),
         ),
         SizedBox(height: screenHeight * 0.008),
-
         /// 감정 일기 조회 (선택 날짜에 감정 일기 있을 때)
         Card(
           margin: EdgeInsets.zero,
@@ -359,12 +358,15 @@ class _MoodCalendarState extends State<MoodCalendar> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('칭찬하고 싶은 일'),
+
                             /// 감정 일기 편집 버튼
                             Container(
                               width: screenWidth * 0.07,
                               height: screenHeight * 0.035,
                               child: IconButton(
-                                onPressed: () {showMenu(context);},
+                                onPressed: () {
+                                  showMenu(context);
+                                },
                                 icon: Icon(Icons.more_horiz),
                                 padding: EdgeInsets.zero,
                                 iconSize: screenWidth * 0.06,
@@ -443,11 +445,16 @@ class _MoodCalendarState extends State<MoodCalendar> {
     double screenHeight,
   ) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          '$year년 $month월 $selectedDate일',
-          style: textTheme.titleSmall,
+        SizedBox(
+          height: screenHeight*0.035,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '$year년 $month월 $selectedDate일',
+              style: textTheme.titleSmall,
+            ),
+          ),
         ),
         SizedBox(height: screenHeight * 0.008),
         DottedBorder(
@@ -458,7 +465,6 @@ class _MoodCalendarState extends State<MoodCalendar> {
           color: SEMI_GREY,
           strokeWidth: 1.5,
           child: Container(
-            color: Colors.transparent,
             height: screenHeight * 0.22,
             child: Center(
               child: Column(
@@ -501,6 +507,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
             ),
           ),
         ),
+        SizedBox(height: screenHeight * 0.2),
       ],
     );
   }
