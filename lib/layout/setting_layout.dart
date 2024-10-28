@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SettingLayout extends StatelessWidget {
+class SettingLayout extends StatefulWidget {
   final Color color;
   final String title;
   final String imgAddress;
@@ -21,26 +21,31 @@ class SettingLayout extends StatelessWidget {
   });
 
   @override
+  State<SettingLayout> createState() => _SettingLayoutState();
+}
+
+class _SettingLayoutState extends State<SettingLayout> {
+  @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-
+    print(widget.isLeftAndRightPadding);
     return Stack(
       children: <Widget>[
         Container(
           color: Colors.white,
         ),
         Positioned(
-          top: isBottom ? null : 0,
-          bottom: isBottom ? 0 : null,
+          top: widget.isBottom ? null : 0,
+          bottom: widget.isBottom ? 0 : null,
           width: screenWidth,
-          child: Image.asset(imgAddress, fit: BoxFit.cover),
+          child: Image.asset(widget.imgAddress, fit: BoxFit.cover),
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            backgroundColor: color,
+            backgroundColor: widget.color,
             automaticallyImplyLeading: false,
             leading: IconButton(
               onPressed: () {
@@ -52,7 +57,7 @@ class SettingLayout extends StatelessWidget {
               constraints: BoxConstraints(),
             ),
             title: Text(
-              title,
+              widget.title,
               style: textTheme.headlineLarge,
               textAlign: TextAlign.center,
             ),
@@ -61,11 +66,12 @@ class SettingLayout extends StatelessWidget {
           body: Padding(
             padding: EdgeInsets.only(
               top: screenHeight * 0.04,
-              right: isLeftAndRightPadding ? screenWidth * 0.05 : 0,
-              left: isLeftAndRightPadding ? screenWidth * 0.05 : 0,
+              right: widget.isLeftAndRightPadding ? screenWidth * 0.05 : 0,
+              left: widget.isLeftAndRightPadding ? screenWidth * 0.05 : 0,
             ),
-            child: child,
+            child: widget.child,
           ),
+
         )
       ],
     );

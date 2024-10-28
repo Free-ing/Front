@@ -53,28 +53,36 @@ class _FeedbackPageState extends State<FeedbackPage>
   }
 
   Widget _tabBar(TextTheme textTheme) {
-    return TabBar(
-      controller: tabController,
-      tabs: const [Tab(text: '문의 내역'), Tab(text: '문의하기')],
-      labelColor: Colors.black,
-      labelPadding: EdgeInsets.symmetric(horizontal: 15),
-      labelStyle: textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.w600,
-          decoration: TextDecoration.underline,
-          decorationColor: Colors.black),
-      unselectedLabelColor: MEDIUM_GREY,
-      unselectedLabelStyle: textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.w600,
-          decoration: TextDecoration.underline,
-          decorationColor: MEDIUM_GREY),
-      overlayColor: const WidgetStatePropertyAll(Colors.transparent),
-      splashBorderRadius: BorderRadius.zero,
-      indicatorColor: Colors.white,
-      indicator:
-          UnderlineTabIndicator(borderSide: BorderSide(color: Colors.white)),
-      dividerColor: Colors.transparent,
-      padding: EdgeInsets.only(left: 0, right: 8, bottom: 4),
-      isScrollable: true,
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: SizedBox(
+        width: 225,
+        child: TabBar(
+          controller: tabController,
+          tabs: const [Tab(text: '문의 내역'), Tab(text: '문의하기')],
+          labelColor: Colors.black,
+          //labelPadding: EdgeInsets.symmetric(horizontal: 15),
+          labelPadding: EdgeInsets.zero,
+          labelStyle: textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              decoration: TextDecoration.underline,
+              decorationColor: Colors.black),
+          unselectedLabelColor: MEDIUM_GREY,
+          unselectedLabelStyle: textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              decoration: TextDecoration.underline,
+              decorationColor: MEDIUM_GREY),
+          overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+          splashBorderRadius: BorderRadius.zero,
+          indicatorColor: Colors.white,
+          indicator:
+              UnderlineTabIndicator(borderSide: BorderSide(color: Colors.white)),
+          dividerColor: Colors.transparent,
+          padding: EdgeInsets.only(left: 2, right: 4, bottom: 4),
+          //padding: EdgeInsets.zero,
+          isScrollable: false,
+        ),
+      ),
     );
   }
 }
