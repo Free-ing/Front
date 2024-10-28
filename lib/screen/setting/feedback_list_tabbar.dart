@@ -48,7 +48,7 @@ class _FeedbackListTabbarState extends State<FeedbackListTabbar> {
                               width: screenWidth * 0.01,
                             ),
                             Text(
-                              '내용 한줄 ...',
+                              '문의 제목',
                               style: textTheme.bodySmall
                                   ?.copyWith(fontWeight: FontWeight.w500),
                             )

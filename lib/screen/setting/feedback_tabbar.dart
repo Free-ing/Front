@@ -134,6 +134,66 @@ class _FeedbackTabbarState extends State<FeedbackTabbar> {
               SizedBox(
                 height: screenHeight * 0.02,
               ),
+              Row(
+                children: [
+                  Text('제목',
+                      style: textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w600)),
+                  SizedBox(
+                    width: screenWidth * 0.08,
+                  ),
+                  // Container(
+                  //     width: screenWidth * 0.6,
+                  //     height: screenHeight * 0.04,
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       borderRadius: BorderRadius.circular(12),
+                  //       border: Border.all(color: Colors.black, width: 1),
+                  //     ),
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.all(15.0),
+                  //       child: TextFormField(
+                  //         maxLines: 1,
+                  //         //expands: true,
+                  //         decoration: InputDecoration(border: InputBorder.none),
+                  //       ),
+                  //     )),
+                  SizedBox(
+                    width: screenWidth * 0.6,
+                    height: screenHeight * 0.035,
+                    child: TextFormField(
+                      cursorColor: Colors.black,
+                      cursorHeight: screenHeight * 0.02,
+                      maxLines: 1,
+                      decoration: InputDecoration(
+                        isCollapsed: true,
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: screenHeight * 0.01,
+                            horizontal: screenWidth * 0.03),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.black, width: 1),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.black, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.black, width: 1),
+                        ),
+                      ),
+                    ),
+                  ),
+
+
+                ],
+              ),
+              SizedBox(
+                height: screenHeight * 0.02,
+              ),
               Text('내용',
                   style: textTheme.titleMedium
                       ?.copyWith(fontWeight: FontWeight.w600)),
@@ -142,18 +202,19 @@ class _FeedbackTabbarState extends State<FeedbackTabbar> {
               ),
               Container(
                   width: screenWidth,
-                  height: screenHeight * 0.46,
+                  height: screenHeight * 0.36,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.black, width: 1.3),
+                    border: Border.all(color: Colors.black, width: 1),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: TextFormField(
+                      cursorColor: Colors.black,
                       maxLines: null,
                       expands: true,
-                      decoration: InputDecoration(border: InputBorder.none),
+                      decoration: InputDecoration(isCollapsed: true, border: InputBorder.none),
                     ),
                   )),
               SizedBox(

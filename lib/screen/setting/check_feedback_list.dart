@@ -41,6 +41,18 @@ class CheckFeedbackList extends StatelessWidget {
                 ],
               ),
               verticalSpace,
+              Row(
+                children: [
+                  Text(
+                    '제목',
+                    style: textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(width: screenWidth * 0.08,),
+                  Text('문의 제목')
+                ],
+              ),
+              verticalSpace,
               Row(children: [
                 Text(
                   '상태',
@@ -99,7 +111,7 @@ class CheckFeedbackList extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: EdgeInsets.all(15.0),
-                      child: Text('문의 내용'),
+                      child: Text('답변 내용'),
                     )),
               ),
               Spacer(),
