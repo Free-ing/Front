@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/common/service/spirit_api_sevice.dart';
@@ -61,12 +62,11 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
   final List<String> options = ['운동', '수면', '취미', '마음 채우기'];
   String selectedValue = '운동';
 
-  DateTime? _startTime;
-  DateTime? _endTime;
+  DateTime? _startTime = DateTime.now();
+  DateTime? _endTime = DateTime.now();
   bool _timePickerOpen = false;
   bool _selectHobby = true;
   bool _selectSleep = true;
-  //bool _isEnabled = false;
 
   String imageUrl =
       'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_exercise.png';
@@ -94,10 +94,9 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       WeekDay("일", widget.sunday ?? false),
     ];
     _explanationController = TextEditingController(text: widget.explanation);
-    // 시간 초기화
+
     _startTime = widget.startTime;
     _endTime = widget.endTime;
-
     // 시작 및 종료 시간을 컨트롤러에 설정
     if (_startTime != null) {
       _startTimeController.text = _formatTime(_startTime!);
@@ -130,7 +129,9 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
           hobbyName, imageUrl, widget.routineId);
 
       if (response == 200) {
-        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 2)),
+        );
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('취미 루틴이 수정되었습니다.')));
       } else {
@@ -151,7 +152,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       );
 
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const RoutinePage()),
+        MaterialPageRoute(builder: (context) => const RoutinePage(index: 2)),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -172,6 +173,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       final endTime =
           _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
 
+      print("루틴 켜졌니 ${widget.status}");
+
       final apiService = SpiritAPIService();
       final int response = await apiService.patchSpiritRoutine(
         spiritName,
@@ -187,10 +190,13 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
         endTime,
         explanation,
         widget.status ?? true,
+        widget.routineId,
       );
 
       if (response == 200) {
-        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
+        );
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('마음 채우기 루틴이 수정되었습니다')));
       } else {
@@ -211,7 +217,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       );
 
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const RoutinePage()),
+        MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -225,6 +231,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+
+    print(DateTime.now());
 
     return ScreenLayout(
       showIconButton: true,
@@ -280,40 +288,27 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                 // 추가하기 버튼
                 SizedBox(
                     height: _selectHobby
-                        ? screenHeight * 0.008
-                        : screenHeight * 0.465),
-                //GreenButton(width: screenWidth * 0.6, onPressed: () {}),
-                SizedBox(
+                        ? screenHeight * 0.012
+                        : screenHeight * 0.469),
+                GreenButton(
                   width: screenWidth * 0.6,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        elevation: 4,
-                        backgroundColor: PRIMARY_COLOR,
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          side: BorderSide(
-                            width: 1,
-                          ),
-                        )),
-                    onPressed: () {
-                      switch (selectedValue) {
-                        case '운동':
-                          //_editExerciseRoutine();
-                          break;
-                        case '수면':
-                          // _editSleepRoutine();
-                          break;
-                        case '취미':
-                          _editHobbyRoutine();
-                          break;
-                        case '마음 채우기':
-                          _editSpiritRoutine();
-                          break;
-                      }
-                    },
-                    child: Text('완료', style: textTheme.titleLarge),
-                  ),
+                  text: '수정하기',
+                  onPressed: () {
+                    switch (selectedValue) {
+                      case '운동':
+                      //_editExerciseRoutine();
+                        break;
+                      case '수면':
+                      // _editSleepRoutine();
+                        break;
+                      case '취미':
+                        _editHobbyRoutine();
+                        break;
+                      case '마음 채우기':
+                        _editSpiritRoutine();
+                        break;
+                    }
+                  },
                 ),
                 SizedBox(height: _timePickerOpen ? screenHeight * 0.053 : 0),
               ],

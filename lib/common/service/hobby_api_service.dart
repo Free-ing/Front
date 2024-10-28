@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:path/path.dart';
 import 'token_manager.dart';
 import 'base_url.dart';
 
 class HobbyAPIService {
+  final Dio dio = Dio();
   final String _baseUrl = BaseUrl.baseUrl;
 
   //Todo: 취미 루틴 추가
@@ -87,42 +90,65 @@ class HobbyAPIService {
     return response.statusCode;
   }
 
-  //Todo: 취미 기록
+  //Todo: 취미 기록 저장
   Future<int> postHobbyRecord(
-      String hobbyName, dynamic imageFile, String hobbyBody) async {
-    final tokenStorage = TokenManager();
-    final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse('$_baseUrl/hobby-service/record');
-    // 멀티파트 요청 생성
-    var request = http.MultipartRequest('POST', url);
+    String hobbyName,
+    File imageFile,
+    String hobbyBody,
+  ) async {
+    try {
+      final tokenStorage = TokenManager();
+      final accessToken = await tokenStorage.getAccessToken();
+      final url = Uri.parse('$_baseUrl/hobby-service/record');
 
-    // 헤더 추가
-    request.headers['Authorization'] = 'Bearer $accessToken';
+      // 기본 요청 데이터 생성
+      var request = http.MultipartRequest('POST', url);
 
-    // 파일 추가
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'image', // 서버에서 받을 필드명
-        imageFile.path,
-        filename: basename(imageFile.path), // 파일 이름 설정
-      ),
-    );
+      // 헤더 설정
+      request.headers.addAll({
+        'Authorization': 'Bearer $accessToken',
+        'Accept': 'application/json',
+      });
 
-    // JSON 필드 추가
-    request.fields['hobbyName'] = hobbyName;
-    request.fields['hobbyBody'] = hobbyBody;
+      // 이미지 파일 추가
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          imageFile.path,
+        ),
+      );
 
-    // 멀티파트 요청을 서버에 전송
-    var response = await request.send();
+      // Form 데이터에 JSON 문자열 추가 시 Content-Type 설정
+      var hobbyRecordDtoJson = json.encode({
+        'hobbyName': hobbyName,
+        'hobbyBody': hobbyBody,
+      });
 
-    // 응답 처리
-    if (response.statusCode == 200) {
-      var responseBody = await http.Response.fromStream(response);
-      var responseData = json.decode(responseBody.body);
-      print('서버 응답: $responseData');
+      // JSON 데이터를 MultipartFile로 추가하여 Content-Type 지정
+      request.files.add(
+        http.MultipartFile.fromString(
+          'hobbyRecordDto',
+          hobbyRecordDtoJson,
+          contentType: MediaType(
+              'application', 'json'), // Content-Type을 application/json으로 설정
+        ),
+      );
+
+      // 디버깅용 로그
+      print('Request headers: ${request.headers}');
+      print('Request files: ${request.files}');
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      return response.statusCode;
+    } catch (e) {
+      print('Error in postHobbyRecord: $e');
+      return 500;
     }
-
-    return response.statusCode;
   }
 
   //Todo: 취미 사진첩 조회
@@ -132,10 +158,13 @@ class HobbyAPIService {
     final url =
         Uri.parse('$_baseUrl/hobby-service/album-list?year=$year&month=$month');
 
-    return http.get(url, headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $accessToken',
-    });
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
   }
 
   //Todo: 취미 기록 삭제

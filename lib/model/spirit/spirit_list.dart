@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 class SpiritList {
-  String mentalRoutineName;
+  String spiritName;
   String imageUrl;
   int routineId;
   bool monday;
@@ -17,7 +17,7 @@ class SpiritList {
   String? explanation;
 
   SpiritList(
-      {required this.mentalRoutineName,
+      {required this.spiritName,
       required this.imageUrl,
       required this.routineId,
       required this.monday,
@@ -33,12 +33,15 @@ class SpiritList {
       required this.explanation});
 
   factory SpiritList.fromJson(Map<String, dynamic> json) {
-    DateTime? parsedStartTime = json['startTime'] != null ? DateFormat('HH:mm').parse(json['startTime']) : null;
-    DateTime? parsedEndTime = json['endTime'] != null ? DateFormat('HH:mm').parse(json['endTime']) : null;
-
+    DateTime? parsedStartTime = json['startTime'] != null
+        ? DateFormat('HH:mm').parse(json['startTime'])
+        : null;
+    DateTime? parsedEndTime = json['endTime'] != null
+        ? DateFormat('HH:mm').parse(json['endTime'])
+        : null;
 
     return SpiritList(
-        mentalRoutineName: json['mentalRoutineName'],
+        spiritName: json['spiritName'] ?? '',
         imageUrl: json['imageUrl'],
         routineId: json['routineId'],
         monday: json['monday'],
@@ -51,25 +54,25 @@ class SpiritList {
         status: json['status'],
         startTime: parsedStartTime,
         endTime: parsedEndTime,
-        explanation: json['explanation']);
+        explanation: json['explanation'] ?? '');
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'mentalRoutineName' : mentalRoutineName,
-      'imageUrl' : imageUrl,
-      'routineId' : routineId,
-      'monday' : monday,
-      'tuesday' : tuesday,
-      'wednesday' : wednesday,
-      'thursday' : thursday,
-      'friday' : friday,
-      'saturday' : saturday,
-      'sunday' : sunday,
-      'status' : status,
-      'startTime' : startTime?.toIso8601String(),
-      'endTime' : endTime?.toIso8601String(),
-      'explanation' : explanation,
+      'spiritName': spiritName,
+      'imageUrl': imageUrl,
+      'routineId': routineId,
+      'monday': monday,
+      'tuesday': tuesday,
+      'wednesday': wednesday,
+      'thursday': thursday,
+      'friday': friday,
+      'saturday': saturday,
+      'sunday': sunday,
+      'status': status,
+      'startTime': startTime?.toIso8601String(),
+      'endTime': endTime?.toIso8601String(),
+      'explanation': explanation,
     };
   }
 }

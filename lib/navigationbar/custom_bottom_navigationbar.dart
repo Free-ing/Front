@@ -20,7 +20,7 @@ class CustomBottomNavigationBar extends StatefulWidget {
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   final List<Widget> _pages = [
     HomePage(),
-    RoutinePage(),
+    RoutinePage(index: 0),
     ChartPage(),
     SettingPage(),
   ];

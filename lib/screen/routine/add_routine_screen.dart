@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/common/service/sleep_api_service.dart';
@@ -95,15 +96,16 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   //Todo: 서버 요청 (수면 루틴 추가)
   Future<void> _submitSleepRoutine() async {
+    print('수면 루틴 추가');
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
       final String sleepName = _nameController.text;
       final String explanation = _explanationController.text;
 
       final startTime =
-      _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+          _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
       final endTime =
-      _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+          _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
 
       final apiService = SleepAPIService();
       final int response = await apiService.postSleepRoutine(
@@ -121,7 +123,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         imageUrl,
       );
 
-      if (response == 200) {
+      if (response == 201) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('수면 루틴이 추가되었습니다')));
@@ -253,41 +255,29 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 // 추가하기 버튼
                 SizedBox(
                     height: _selectHobby
-                        ? screenHeight * 0.008
-                        : screenHeight * 0.465),
-                //GreenButton(width: screenWidth * 0.6, onPressed: () {}),
-                SizedBox(
+                        ? screenHeight * 0.012
+                        : screenHeight * 0.469),
+                GreenButton(
                   width: screenWidth * 0.6,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        elevation: 4,
-                        backgroundColor: PRIMARY_COLOR,
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          side: BorderSide(
-                            width: 1,
-                          ),
-                        )),
-                    onPressed: () {
-                      switch (selectedValue) {
-                        case '운동':
-                          _submitExerciseRoutine();
-                          break;
-                        case '수면':
-                          _submitSleepRoutine();
-                          break;
-                        case '취미':
-                          _submitHobbyRoutine();
-                          break;
-                        case '마음 채우기':
-                          _submitSpiritRoutine();
-                          break;
-                      }
-                    },
-                    child: Text('추가하기', style: textTheme.titleLarge),
-                  ),
+                  text: '추가하기',
+                  onPressed: () {
+                    switch (selectedValue) {
+                      case '운동':
+                        _submitExerciseRoutine();
+                        break;
+                      case '수면':
+                        _submitSleepRoutine();
+                        break;
+                      case '취미':
+                        _submitHobbyRoutine();
+                        break;
+                      case '마음 채우기':
+                        _submitSpiritRoutine();
+                        break;
+                    }
+                  },
                 ),
+
                 SizedBox(height: _timePickerOpen ? screenHeight * 0.053 : 0),
               ],
             ),
@@ -616,7 +606,10 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 title: '시작 시간',
                 controller: _startTimeController,
                 onTimeChanged: (DateTime selectTime) {
-                  setState(() => _startTime = selectTime);
+                  setState(
+                    () => _startTime = selectTime,
+                  );
+                  print('시작시간 바뀜~~~ $_startTime');
                 },
                 resetTime: () {
                   _startTime = null;

@@ -8,7 +8,13 @@ import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/spirit_api_sevice.dart';
 
 //Todo: 감정 일기
-void showDiaryBottomSheet(BuildContext context, String title) {
+void showDiaryBottomSheet(
+  BuildContext context,
+  String title,
+  // int year,
+  // int month,
+  // int day,
+) {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
 
@@ -20,6 +26,9 @@ void showDiaryBottomSheet(BuildContext context, String title) {
         textTheme: textTheme,
         screenWidth: screenWidth,
         screenHeight: screenHeight,
+        // year: year,
+        // month: month,
+        // day: day,
       );
     },
   );
@@ -30,6 +39,9 @@ class _DiaryBottomSheetContent extends StatefulWidget {
   final TextTheme textTheme;
   final double screenWidth;
   final double screenHeight;
+  // final int year;
+  // final int month;
+  // final int day;
 
   const _DiaryBottomSheetContent({
     super.key,
@@ -37,6 +49,9 @@ class _DiaryBottomSheetContent extends StatefulWidget {
     required this.textTheme,
     required this.screenWidth,
     required this.screenHeight,
+    // required this.year,
+    // required this.month,
+    // required this.day,
   });
 
   @override
@@ -64,7 +79,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
   Future<void> _submitEmotionalDiary() async {
     final String wellDone = wellDoneController.text;
     final String hardWork = hardWorkController.text;
-    String emotion = 'defalut';
+    String emotion = 'default';
     final apiService = SpiritAPIService();
 
     if (selectedIndex! >= 0) {
@@ -72,6 +87,13 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
     } else {
       print('Invalid index: $selectedIndex');
     }
+
+    print(emotion);
+    print(wellDone);
+    print(wellDoneController.text);
+    print(hardWork);
+    print(hardWorkController.text);
+    print(_getAiLetter);
 
     if (wellDoneController.text.isNotEmpty &&
         hardWorkController.text.isNotEmpty) {
@@ -95,19 +117,19 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         }
       } else if (response == 400) {
         DialogManager.showAlertDialog(
-            context: context, title: '알림', content: '모두 입력해주세요.');
+            context: context, title: '알림', content: '모두 입력해주세요{$response}.');
       } else {
         DialogManager.showAlertDialog(
           context: context,
           title: '알림',
-          content: '서버에서 오류가 발생하였습니다.\n다시 시도해주세요.',
+          content: '서버에서 오류가 발생하였습니다.\n다시 시도해주세요. $response',
         );
       }
     } else {
       DialogManager.showAlertDialog(
         context: context,
         title: '알림',
-        content: '모두 입력해주세요.',
+        content: '모두 입력해주세요.(모두 입력 안됨)',
       );
     }
   }
@@ -123,38 +145,18 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         padding: EdgeInsets.symmetric(horizontal: widget.screenWidth * 0.1),
         child: Column(
           children: [
+            // Text(
+            //   '${widget.year}년 ${widget.month}월 ${widget.day}일',
+            //   style: widget.textTheme.titleSmall,
+            // ),
+            //SizedBox(height: widget.screenHeight * 0.03),
             _selectDailyEmotion(),
             SizedBox(height: widget.screenHeight * 0.03),
             _wellDoneRecord(),
             SizedBox(height: widget.screenHeight * 0.03),
             _hardWorkRecord(),
             SizedBox(height: widget.screenHeight * 0.02),
-            Row(
-              children: [
-                Checkbox(
-                  value: _getAiLetter,
-                  onChanged: (bool? newValue) {
-                    setState(
-                      () {
-                        _getAiLetter =
-                            newValue ?? false; // Ensure to handle null case
-                      },
-                    );
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  activeColor: BLUE_PURPLE,
-                ),
-                const Text('AI에게 답장 받기'),
-                const QuestionMark(
-                  title: '오늘 하루 수고한 당신에게\n답장을 보내드릴게요.',
-                  content: '최대 10분 정도 소요될 수 있어요.\n광고를 시청하면 편지를 볼 수 있어요.',
-                  subContent: '*해당 기능은 GPT를 사용합니다. \n민감한 개인정보 입력은 유의해 주세요.',
-                  textAlign: TextAlign.left,
-                ),
-              ],
-            ),
+            _checkAILetter(),
           ],
         ),
       ),
@@ -233,8 +235,41 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         Text('힘들었던 일을 알려주세요', style: widget.textTheme.bodyMedium),
         SizedBox(height: widget.screenHeight * 0.02),
         YellowTextFormField(
+          controller: hardWorkController,
           width: widget.screenWidth,
           maxLength: 200,
+        ),
+      ],
+    );
+  }
+
+  //Todo: ai 답장 받기 체크
+  Widget _checkAILetter() {
+    return Row(
+      children: [
+        Checkbox(
+          value: _getAiLetter,
+          onChanged: (bool? newValue) {
+            setState(
+              () {
+                _getAiLetter = newValue ?? false; // Ensure to handle null case
+              },
+            );
+          },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          activeColor: BLUE_PURPLE,
+        ),
+        const Text('AI에게 답장 받기'),
+        SizedBox(
+          width: widget.screenWidth * 0.1,
+          child: const QuestionMark(
+            title: '오늘 하루 수고한 당신에게\n답장을 보내드릴게요.',
+            content: '최대 10분 정도 소요될 수 있어요.\n광고를 시청하면 편지를 볼 수 있어요.',
+            subContent: '*해당 기능은 GPT를 사용합니다. \n민감한 개인정보 입력은 유의해 주세요.',
+            textAlign: TextAlign.left,
+          ),
         ),
       ],
     );

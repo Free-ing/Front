@@ -13,12 +13,14 @@ class SurveyResponseScreen extends StatefulWidget {
   final String category;
   final List<RecommendedHobby> recommend;
   final List<String?> answers;
+  final int remain;
 
   const SurveyResponseScreen({
     super.key,
     required this.category,
     required this.recommend,
     required this.answers,
+    required this.remain,
   });
 
   @override
@@ -65,12 +67,16 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
           }
         }
         Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SurveyResponseScreen(
-                    category: '취미',
-                    recommend: _recommendList,
-                    answers: widget.answers)));
+          context,
+          MaterialPageRoute(
+            builder: (context) => SurveyResponseScreen(
+              category: '취미',
+              recommend: _recommendList,
+              answers: widget.answers,
+              remain: widget.remain - 1,
+            ),
+          ),
+        );
         return _recommendList;
       } else if (response.statusCode == 404) {
         return _recommendList = [];
@@ -119,6 +125,13 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
                     ),
             ),
             SizedBox(height: screenHeight * 0.04),
+            Row(
+              children: [
+                SizedBox(width: screenWidth * 0.15),
+                Text('남은 기회 (${widget.remain})', style: textTheme.bodySmall),
+              ],
+            ),
+            SizedBox(height: screenHeight * 0.005),
             _button(context),
             SizedBox(height: screenHeight * 0.033),
           ],
@@ -206,26 +219,21 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
                     ),
                   ),
                   IconButton(
-                    enableFeedback: _isAdded ? false : true,
-                    onPressed: () async {
-                      if (_isAdded == false) {
-                        if (!_isAdded) {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddRecommendedHobbyScreen(
-                                  hobbyName: hobby.hobbyName),
-                            ),
-                          );
+                    onPressed: isAdded ? null : () async {
+                      if (!_isAdded) {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddRecommendedHobbyScreen(
+                                hobbyName: hobby.hobbyName),
+                          ),
+                        );
 
-                          if (result is bool && result == true) {
-                            setState(() {
-                              _isAddedList[index] = true;
-                            });
-                          }
+                        if (result is bool && result == true) {
+                          setState(() {
+                            _isAddedList[index] = true;
+                          });
                         }
-                      } else {
-                        null;
                       }
                     },
                     icon: Image.asset(
@@ -248,7 +256,9 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
       onGreenPressed: () {
         Navigator.of(context).pop();
       },
-      onGrayPressed: _reRecommend,
+      onGrayPressed: () {
+        widget.remain == 0 ? null : _reRecommend() ;
+      },
       greenText: '완료',
       grayText: '다시 추천',
     );

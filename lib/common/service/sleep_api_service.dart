@@ -23,11 +23,12 @@ class SleepAPIService {
     bool saturday,
     bool sunday,
     String explanation,
-    String url,
+    String imageUrl,
   ) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse('http://172.30.1.3:8000/sleep-service/routine/add');
+    final url = Uri.parse(
+        'http://freeing-apigateway-service-893483672.ap-northeast-2.elb.amazonaws.com/sleep-service/routine/add');
 
     final response = await http.post(
       url,
@@ -48,7 +49,7 @@ class SleepAPIService {
         'sunday': sunday,
         'explanation': explanation,
         'status': true,
-        'url': url,
+        'url': imageUrl,
       }),
     );
 

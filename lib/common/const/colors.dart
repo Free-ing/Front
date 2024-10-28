@@ -19,6 +19,9 @@ const LIGHT_IVORY = Color(0xFFFFFBF0);
 // 아주 밝은 회색
 const LIGHT_GREY = Color(0xFFF6F6F6);
 
+// 조금 밝은 회색
+const SEMI_GREY = Color(0xFFD9D9D9);
+
 // 기본 회색
 const BASIC_GREY = Color(0xFFEFEFEF);
 

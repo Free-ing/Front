@@ -45,7 +45,7 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
     super.dispose();
   }
 
-  //Todo: 서버 요청
+  //Todo: 서버 요청 (ai 취미 추천)
   Future<List<RecommendedHobby>> _submitAnswers() async {
     print('Submitting Answers: ${answers}');
     Navigator.push(
@@ -77,7 +77,7 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => SurveyResponseScreen(
-                    category: '취미', recommend: _recommendList, answers: answers)));
+                    category: '취미', recommend: _recommendList, answers: answers, remain: 2)));
         return _recommendList;
       } else if (response.statusCode == 404) {
         return _recommendList = [];
