@@ -62,6 +62,7 @@ void showHobbyBottomSheet(BuildContext context, String title) {
   void showPicker(context) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.white,
       builder: (BuildContext bc) {
         return SafeArea(
           child: Wrap(

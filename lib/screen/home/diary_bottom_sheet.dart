@@ -8,7 +8,13 @@ import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/spirit_api_sevice.dart';
 
 //Todo: 감정 일기
-void showDiaryBottomSheet(BuildContext context, String title) {
+void showDiaryBottomSheet(
+  BuildContext context,
+  String title,
+  // int year,
+  // int month,
+  // int day,
+) {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
 
@@ -20,6 +26,9 @@ void showDiaryBottomSheet(BuildContext context, String title) {
         textTheme: textTheme,
         screenWidth: screenWidth,
         screenHeight: screenHeight,
+        // year: year,
+        // month: month,
+        // day: day,
       );
     },
   );
@@ -30,6 +39,9 @@ class _DiaryBottomSheetContent extends StatefulWidget {
   final TextTheme textTheme;
   final double screenWidth;
   final double screenHeight;
+  // final int year;
+  // final int month;
+  // final int day;
 
   const _DiaryBottomSheetContent({
     super.key,
@@ -37,6 +49,9 @@ class _DiaryBottomSheetContent extends StatefulWidget {
     required this.textTheme,
     required this.screenWidth,
     required this.screenHeight,
+    // required this.year,
+    // required this.month,
+    // required this.day,
   });
 
   @override
@@ -66,7 +81,6 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
     final String hardWork = hardWorkController.text;
     String emotion = 'default';
     final apiService = SpiritAPIService();
-
 
     if (selectedIndex! >= 0) {
       emotion = emotionList[selectedIndex!];
@@ -130,6 +144,11 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         padding: EdgeInsets.symmetric(horizontal: widget.screenWidth * 0.1),
         child: Column(
           children: [
+            // Text(
+            //   '${widget.year}년 ${widget.month}월 ${widget.day}일',
+            //   style: widget.textTheme.titleSmall,
+            // ),
+            //SizedBox(height: widget.screenHeight * 0.03),
             _selectDailyEmotion(),
             SizedBox(height: widget.screenHeight * 0.03),
             _wellDoneRecord(),
@@ -243,7 +262,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         ),
         const Text('AI에게 답장 받기'),
         SizedBox(
-          width: widget.screenWidth*0.1,
+          width: widget.screenWidth * 0.1,
           child: const QuestionMark(
             title: '오늘 하루 수고한 당신에게\n답장을 보내드릴게요.',
             content: '최대 10분 정도 소요될 수 있어요.\n광고를 시청하면 편지를 볼 수 있어요.',

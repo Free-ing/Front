@@ -135,17 +135,26 @@ class HomePage extends StatelessWidget {
                         },
                         iconColor: GREEN_PLAY_BUTTON),
                     LogButton(
-                        onPressed: () {
-                          showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
-                        },),
+                      onPressed: () {
+                        showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
+                      },
+                    ),
                     LogButton(
                       onPressed: () {
-                        showDiaryBottomSheet(context, '오늘 하루 어땠나요?');
-                      },),
+                        showDiaryBottomSheet(
+                          context,
+                          '오늘 하루 어땠나요?',
+                          // DateTime.now().year,
+                          // DateTime.now().month,
+                          // DateTime.now().day,
+                        );
+                      },
+                    ),
                     LogButton(
                       onPressed: () {
                         showHobbyBottomSheet(context, '오늘 했던 취미는 어땠나요? ');
-                      },)
+                      },
+                    )
                   ],
                 ),
               ],
