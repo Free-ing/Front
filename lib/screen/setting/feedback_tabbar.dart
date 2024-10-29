@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 
@@ -43,49 +44,151 @@ class _FeedbackTabbarState extends State<FeedbackTabbar> {
                     style: textTheme.titleMedium
                         ?.copyWith(fontWeight: FontWeight.w600),
                   ),
-                  SizedBox(width: screenWidth * 0.08,),
-                  DropdownButton(
-                      value: _selectedCategory.isNotEmpty ? _selectedCategory : null,
-                      items: _category.where((e)=>e.isNotEmpty).map(
-                          (e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-                      onChanged: (value){
+                  SizedBox(
+                    width: screenWidth * 0.08,
+                  ),
+                  // Container(
+                  //   width: screenWidth * 0.35,
+                  //   height: screenHeight * 0.033,
+                  //   decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       border: Border.all(color: Colors.black, width: 1),
+                  //       borderRadius: BorderRadius.circular(12)),
+                  //   child: Align(
+                  //     alignment: Alignment.center,
+                  //     child: DropdownButton<String>(
+                  //       dropdownColor: Colors.white,
+                  //       value: _selectedCategory.isNotEmpty
+                  //           ? _selectedCategory
+                  //           : null,
+                  //       items: _category
+                  //           .where((e) => e.isNotEmpty)
+                  //           .map((e) =>
+                  //               DropdownMenuItem(value: e, child: Text(e)))
+                  //           .toList(),
+                  //       onChanged: (value) {
+                  //         setState(() {
+                  //           _selectedCategory = value!;
+                  //         });
+                  //       },
+                  //       underline: Container(),
+                  //       //dropdownStyleData: DropdownStyleData(),
+                  //     ),
+                  //   ),
+                  // ),
+                  SizedBox(
+                    width: screenWidth * 0.35,
+                    height: screenHeight * 0.033,
+                    child: DropdownButtonFormField2<String>(
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(screenWidth * 0.01),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide:
+                              BorderSide(color: Colors.black, width: 1.5),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                              color: Colors.black, width: 1), // 클릭되지 않았을 때의 테두리
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.black, width: 1),
+                        ),
+                      ),
+                      value: _selectedCategory.isNotEmpty
+                          ? _selectedCategory
+                          : null,
+                      items: _category
+                          .where((e) => e.isNotEmpty)
+                          .map((e) => DropdownMenuItem(
+                              value: e,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 1.0),
+                                child: Text(
+                                  e,
+                                  style: textTheme.bodySmall,
+                                ),
+                              )))
+                          .toList(),
+                      onChanged: (value) {
                         setState(() {
                           _selectedCategory = value!;
                         });
-                      }),
-                  // DropdownButtonFormField(
-                  //   decoration: InputDecoration(
-                  //     border: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(15.0),
-                  //       borderSide: BorderSide.none, // 테두리를 없앱니다.
+                      },
+                      dropdownStyleData: DropdownStyleData(
+                        //maxHeight: screenHeight * 0.15,
+                        padding: EdgeInsets.zero,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: Colors.black, width: 1),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: screenHeight * 0.02,
+              ),
+              Row(
+                children: [
+                  Text('제목',
+                      style: textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w600)),
+                  SizedBox(
+                    width: screenWidth * 0.08,
+                  ),
+                  // Container(
+                  //     width: screenWidth * 0.6,
+                  //     height: screenHeight * 0.04,
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       borderRadius: BorderRadius.circular(12),
+                  //       border: Border.all(color: Colors.black, width: 1),
                   //     ),
-                  //     filled: true,
-                  //     fillColor: Colors.white, // 드롭다운 버튼 배경색
-                  //   ),
-                  //   dropdownColor: Colors.white, // 드롭다운 메뉴 배경색
-                  //   menuMaxHeight: screenHeight * 0.3, // 드롭다운 메뉴 최대 높이
-                  //   value: _selectedCategory.isNotEmpty ? _selectedCategory : null,
-                  //   hint: Text('선택해 주세요'),
-                  //   items: _category
-                  //       .where((e) => e.isNotEmpty)
-                  //       .map((e) => DropdownMenuItem(
-                  //     value: e,
-                  //     child: Material(
-                  //       color: Colors.white, // 메뉴 아이템 배경색
-                  //       borderRadius: BorderRadius.circular(15.0), // borderRadius 설정
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  //         child: Text(e),
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.all(15.0),
+                  //       child: TextFormField(
+                  //         maxLines: 1,
+                  //         //expands: true,
+                  //         decoration: InputDecoration(border: InputBorder.none),
                   //       ),
-                  //     ),
-                  //   ))
-                  //       .toList(),
-                  //   onChanged: (value) {
-                  //     setState(() {
-                  //       _selectedCategory = value!;
-                  //     });
-                  //   },
-                  // ),
+                  //     )),
+                  SizedBox(
+                    width: screenWidth * 0.6,
+                    height: screenHeight * 0.035,
+                    child: TextFormField(
+                      cursorColor: Colors.black,
+                      cursorHeight: screenHeight * 0.02,
+                      maxLines: 1,
+                      decoration: InputDecoration(
+                        isCollapsed: true,
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: screenHeight * 0.01,
+                            horizontal: screenWidth * 0.03),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.black, width: 1),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.black, width: 1),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.black, width: 1),
+                        ),
+                      ),
+                    ),
+                  ),
+
+
                 ],
               ),
               SizedBox(
@@ -99,18 +202,19 @@ class _FeedbackTabbarState extends State<FeedbackTabbar> {
               ),
               Container(
                   width: screenWidth,
-                  height: screenHeight * 0.46,
+                  height: screenHeight * 0.36,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.black, width: 1.3),
+                    border: Border.all(color: Colors.black, width: 1),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: TextFormField(
+                      cursorColor: Colors.black,
                       maxLines: null,
                       expands: true,
-                      decoration: InputDecoration(border: InputBorder.none),
+                      decoration: InputDecoration(isCollapsed: true, border: InputBorder.none),
                     ),
                   )),
               SizedBox(

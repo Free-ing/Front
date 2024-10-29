@@ -6,9 +6,8 @@ import 'package:intl/find_locale.dart';
 import 'base_url.dart';
 
 class SleepAPIService {
-  //final String _baseUrl = BaseUrl.baseUrl;
-  static const String _viewAllSleepRoutineEndpoint =
-      'http://192.168.0.40:8000/sleep-service/routine/all';
+  static const String _baseUrl = BaseUrl.baseUrl;
+  static const String _viewAllSleepRoutineEndpoint = '$_baseUrl/sleep-service/routine/all';
 
   //Todo: 수면 루틴 추가
   Future<int> postSleepRoutine(
@@ -76,7 +75,7 @@ class SleepAPIService {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse(
-        'http://192.168.0.40:8000/sleep-service/routine/$routineId/activate');
+        '$_baseUrl/sleep-service/routine/$routineId/activate');
 
     try {
       var response = await http.patch(
@@ -101,7 +100,7 @@ class SleepAPIService {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse(
-        'http://172.30.1.78:8000/sleep-service/routine/$routineId/deactivate');
+        '$_baseUrl/sleep-service/routine/$routineId/deactivate');
 
     try {
       var response = await http.patch(

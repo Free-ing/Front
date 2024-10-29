@@ -23,27 +23,31 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
   List<SleepList> _sleepList = [];
 
   // TODO: 서버 요청
-  Future<List<SleepList>> _fetchSleepList() async {
+  Future<List<SleepList>> fetchSleepList() async {
     print("Fetching sleep list");
 
     final response = await apiService.getSleepList();
 
     if (response.statusCode == 200) {
+
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
-      if (jsonData is Map<String, dynamic>) {
-        List<dynamic> sleepList = jsonData['result'];
-        _sleepList.clear();
-        for (dynamic data in sleepList) {
-          SleepList sleepCard = SleepList.fromJson(data);
-          _sleepList.add(sleepCard);
-        }
+      if(jsonData is List){
+        setState(() {
+          _sleepList = jsonData.map((data) => SleepList.fromJson(data)).toList();
+        });
+      } else {
+        print('Unexpected JSON format');
       }
       return _sleepList;
+    } else if (response.statusCode == 204) {
+      print("status Code 204안!!");
+      return _sleepList = [];
     } else if (response.statusCode == 404) {
+      print("status Code 404안!!");
       return _sleepList = [];
     } else {
-      throw Exception('수면 리스트 가져오기 실패 ${response.statusCode}');
+      throw Exception('Failed to fetch sleep list ${response.statusCode}');
     }
   }
 
@@ -131,7 +135,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
   void initState() {
     super.initState();
     print('fetch sleep list');
-    _fetchSleepList();
+    fetchSleepList();
   }
 
   @override
@@ -139,7 +143,6 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final textTheme = Theme.of(context).textTheme;
-    List<SleepList> combinedSleepList = [...defaultSleepList, ..._sleepList];
 
     return Column(
       children: [
@@ -181,9 +184,9 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
           child: GridView.builder(
             gridDelegate:
                 SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-            itemCount: combinedSleepList.length,
+            itemCount: _sleepList.length,
             itemBuilder: (context, index) {
-              final sleepList = combinedSleepList[index];
+              final sleepList = _sleepList[index];
               return SleepCard(
                 routineId: sleepList.routineId,
                 imageUrl: sleepList.imageUrl,
