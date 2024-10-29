@@ -1,3 +1,3 @@
 class BaseUrl {
-  static const String baseUrl = 'http://192.168.219.152:8080';
+  static const String baseUrl = 'http://freeing-apigateway-service-893483672.ap-northeast-2.elb.amazonaws.com';
 }
