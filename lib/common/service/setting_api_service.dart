@@ -42,4 +42,21 @@ class SettingAPIService {
           "newPassword": newPassword,
         }),);
   }
+
+  Future<http.Response> viewNoticeList() async {
+    final accessToken = await tokenStorage.getAccessToken();
+    final String _viewNoticeListEndpoint = '$_baseUrl/user-service/announcement/list';
+    final url = Uri.parse(_viewNoticeListEndpoint);
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+  }
+
+
 }

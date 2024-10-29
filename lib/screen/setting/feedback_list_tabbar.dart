@@ -33,9 +33,9 @@ class _FeedbackListTabbarState extends State<FeedbackListTabbar> {
                     border: Border.all(color: Colors.black, width: 1.5),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.all(screenWidth * 0.02),
+                    padding: EdgeInsets.symmetric(horizontal :screenWidth * 0.04, vertical: screenHeight * 0.018),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
