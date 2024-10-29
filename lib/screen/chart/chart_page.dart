@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
+import 'package:freeing/screen/chart/ai_letter.dart';
 
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
 import 'package:freeing/screen/chart/mood_calendar.dart';
@@ -68,22 +69,7 @@ class ChartPage extends StatelessWidget {
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/sleep_report.png',
                   title: "수면 리포트\n몰아보기",
-                  navigatePage: EditRoutineScreen(
-                      routineId: 3,
-                      title: '오',
-                      selectImage: 'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png',
-                      category: '마음 채우기',
-                    monday: false,
-                      tuesday: false,
-                    wednesday: false,
-                      thursday: false,
-                      friday: true,
-                    saturday: true,
-                      sunday: true,
-                    startTime: DateTime.now(),
-                    explanation: '나는야 밥오',
-                    
-                  ),
+                  navigatePage: AiLetter(),
                   context: context,
                 ),
                 _chartCard(

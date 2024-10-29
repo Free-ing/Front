@@ -250,14 +250,14 @@ class SpiritAPIService {
     );
   }
 
-  //Todo: ai 편지 (??POST)
+  //Todo: ai 편지
   Future<http.Response> getAiLetter(int diaryId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url =
         Uri.parse('$_baseUrl/spirit-service/ai/emotional-record/$diaryId');
 
-    return http.post(
+    return http.get(
       url,
       headers: {
         'Content-Type': 'application/json',
@@ -297,6 +297,23 @@ class SpiritAPIService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',
       },
+    );
+
+    return response.statusCode;
+  }
+
+  //Todo: 감정 일기 삭제
+  Future<int> deleteEmotionDiary(int diaryId) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/spirit-service/emotional-diary/$diaryId');
+
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type':'application/json',
+        'Authorization':'Bearer $accessToken',
+      }
     );
 
     return response.statusCode;

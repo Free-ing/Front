@@ -150,7 +150,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
           await apiService.postHobbyRoutine(hobbyName, imageUrl);
 
       if (response == 200) {
-        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 2)),
+        );
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('취미 루틴이 추가되었습니다')));
       } else {
@@ -190,7 +192,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       );
 
       if (response == 200) {
-        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
+        );
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('마음 채우기 루틴이 추가되었습니다')));
       } else {
