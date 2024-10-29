@@ -6,7 +6,9 @@ import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/common/service/sleep_api_service.dart';
 import 'package:freeing/common/service/spirit_api_sevice.dart';
 import 'package:freeing/layout/screen_layout.dart';
+import 'package:freeing/screen/routine/routine_page.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
+import 'package:freeing/screen/routine/sleep_tabbar_view.dart';
 import 'package:intl/intl.dart';
 
 //Todo: 날짜 선택 유뮤
@@ -124,7 +126,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       );
 
       if (response == 201) {
-        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 1)),
+        );
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('수면 루틴이 추가되었습니다')));
       } else {

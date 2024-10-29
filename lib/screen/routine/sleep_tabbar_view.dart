@@ -23,34 +23,23 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
   List<SleepList> _sleepList = [];
 
   // TODO: 서버 요청
-  Future<List<SleepList>> _fetchSleepList() async {
+  Future<List<SleepList>> fetchSleepList() async {
     print("Fetching sleep list");
 
     final response = await apiService.getSleepList();
 
     if (response.statusCode == 200) {
-      print("statusCode 200안!!");
+
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
-      print('Receieced Json data : $jsonData');
 
       if(jsonData is List){
         setState(() {
           _sleepList = jsonData.map((data) => SleepList.fromJson(data)).toList();
         });
-        //print("Parsed Sleep list: $_sleepList");
       } else {
         print('Unexpected JSON format');
       }
       return _sleepList;
-
-      // if (jsonData is Map<String, dynamic>) {
-      //   List<dynamic> sleepList = jsonData['result'];
-      //   print("Sleep list: $sleepList");
-      //   _sleepList = sleepList.map((data) => SleepList.fromJson(data)).toList();
-      // } else{
-      //   print('jsonData가 매핑되지 않음');
-      // }
-      // return _sleepList;
     } else if (response.statusCode == 204) {
       print("status Code 204안!!");
       return _sleepList = [];
@@ -146,7 +135,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
   void initState() {
     super.initState();
     print('fetch sleep list');
-    _fetchSleepList();
+    fetchSleepList();
   }
 
   @override
