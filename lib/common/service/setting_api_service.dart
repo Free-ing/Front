@@ -82,4 +82,20 @@ class SettingAPIService {
       }),
     );
   }
+
+  Future<http.Response> viewFeedbackList() async {
+    final accessToken = await tokenStorage.getAccessToken();
+    final String _viewFeedbackListEndpoint =
+        '$_baseUrl/user-service/inquiries/list';
+    final url = Uri.parse(_viewFeedbackListEndpoint);
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+
 }

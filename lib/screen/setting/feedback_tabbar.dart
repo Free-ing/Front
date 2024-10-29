@@ -59,6 +59,11 @@ class _FeedbackTabbarState extends State<FeedbackTabbar> {
       print('inquirestitle ${_titleController.text}');
       print('content ${_contentController.text}');
       if(response.statusCode == 201){
+        setState(() {
+          _selectedCategory = '';
+          _titleController.clear();
+          _contentController.clear();
+        });
         ToastBarWidget(
           title: '정상적으로 등록되었습니다.',
           leadingImagePath: "assets/imgs/home/sleep_record_success.png",
@@ -121,95 +126,93 @@ class _FeedbackTabbarState extends State<FeedbackTabbar> {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    SizedBox verticalSpace = SizedBox(height: screenHeight * 0.02);
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.07, vertical: screenHeight * 0.02),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    '유형',
-                    style: textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(
-                    width: screenWidth * 0.08,
-                  ),
-                  SizedBox(
-                    width: screenWidth * 0.35,
-                    height: screenHeight * 0.033,
-                    child: DropdownButtonFormField2<String>(
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.all(screenWidth * 0.01),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide:
-                              BorderSide(color: Colors.black, width: 1.5),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                              color: Colors.black, width: 1), // 클릭되지 않았을 때의 테두리
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.07, vertical: screenHeight * 0.02),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  '유형',
+                  style: textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                SizedBox(
+                  width: screenWidth * 0.08,
+                ),
+                SizedBox(
+                  width: screenWidth * 0.35,
+                  height: screenHeight * 0.033,
+                  child: DropdownButtonFormField2<String>(
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(screenWidth * 0.01),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide:
+                            BorderSide(color: Colors.black, width: 1.5),
                       ),
-                      value: _selectedCategory.isNotEmpty
-                          ? _selectedCategory
-                          : null,
-                      items: _category
-                          .where((e) => e.isNotEmpty)
-                          .map((e) => DropdownMenuItem(
-                              value: e,
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 1.0),
-                                child: Text(
-                                  e,
-                                  style: textTheme.bodySmall,
-                                ),
-                              )))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedCategory = value!;
-                        });
-                      },
-                      dropdownStyleData: DropdownStyleData(
-                        //maxHeight: screenHeight * 0.15,
-                        padding: EdgeInsets.zero,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: Colors.black, width: 1),
-                        ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                            color: Colors.black, width: 1), // 클릭되지 않았을 때의 테두리
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.black, width: 1),
+                      ),
+                    ),
+                    value: _selectedCategory.isNotEmpty
+                        ? _selectedCategory
+                        : null,
+                    items: _category
+                        .where((e) => e.isNotEmpty)
+                        .map((e) => DropdownMenuItem(
+                            value: e,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 1.0),
+                              child: Text(
+                                e,
+                                style: textTheme.bodySmall,
+                              ),
+                            )))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategory = value!;
+                      });
+                    },
+                    dropdownStyleData: DropdownStyleData(
+                      //maxHeight: screenHeight * 0.15,
+                      padding: EdgeInsets.zero,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.black, width: 1),
                       ),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(
-                height: screenHeight * 0.02,
-              ),
-              Row(
-                children: [
-                  Text('제목',
-                      style: textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w600)),
-                  SizedBox(
-                    width: screenWidth * 0.08,
-                  ),
-                  SizedBox(
-                    width: screenWidth * 0.6,
+                ),
+              ],
+            ),
+            verticalSpace,
+            Row(
+              children: [
+                Text('제목',
+                    style: textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w600)),
+                SizedBox(
+                  width: screenWidth * 0.08,
+                ),
+                Expanded(
+                  child: SizedBox(
+                    width: double.infinity,
                     height: screenHeight * 0.035,
                     child: TextFormField(
                       style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),
@@ -239,48 +242,47 @@ class _FeedbackTabbarState extends State<FeedbackTabbar> {
                       ),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(
-                height: screenHeight * 0.02,
-              ),
-              Text('내용',
-                  style: textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w600)),
-              SizedBox(
-                height: screenHeight * 0.01,
-              ),
-              Container(
-                  width: screenWidth,
-                  height: screenHeight * 0.36,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.black, width: 1),
+                ),
+              ],
+            ),
+            verticalSpace,
+            Text('내용',
+                style: textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w600)),
+            SizedBox(
+              height: screenHeight * 0.01,
+            ),
+            Container(
+                width: screenWidth,
+                height: screenHeight * 0.4,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.black, width: 1),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: TextFormField(
+                    controller: _contentController,
+                    style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),
+                    cursorColor: Colors.black,
+                    maxLines: null,
+                    expands: true,
+                    decoration: InputDecoration(
+                        isCollapsed: true, border: InputBorder.none),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: TextFormField(
-                      controller: _contentController,
-                      style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300),
-                      cursorColor: Colors.black,
-                      maxLines: null,
-                      expands: true,
-                      decoration: InputDecoration(
-                          isCollapsed: true, border: InputBorder.none),
-                    ),
-                  )),
-              SizedBox(
-                height: screenHeight * 0.07,
-              ),
-              Align(
-                  alignment: Alignment.center,
-                  child: GreenButton(
-                      text: '확인',
-                      width: screenWidth * 0.61,
-                      onPressed: attemptSubmitFeedback))
-            ],
-          ),
+                )),
+
+            Spacer(),
+            Align(
+                alignment: Alignment.center,
+                child: GreenButton(
+                    text: '확인',
+                    width: screenWidth * 0.61,
+                    onPressed: attemptSubmitFeedback)),
+            verticalSpace,
+            verticalSpace
+          ],
         ),
       ),
     );

@@ -52,7 +52,7 @@ class _NoticePageState extends State<NoticePage> {
           _isLoading = false;
         });
       } else {
-        throw Exception('사용자 정보 가져오기 실패 ${response.statusCode}');
+        throw Exception('공지사항 리스트 가져오기 실패 ${response.statusCode}');
       }
     } catch (e) {
       print("Error loading notices: $e");
@@ -77,7 +77,7 @@ class _NoticePageState extends State<NoticePage> {
     return SettingLayout(
       title: '공지사항',
       child: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? CircularProgressIndicator()
           : ListView.builder(
               itemCount: _noticeList.length,
               itemBuilder: (context, index) {

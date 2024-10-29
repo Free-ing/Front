@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/common/service/token_storage.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:http/http.dart' as http;
+
 import '../component/toast_bar.dart';
 import 'base_url.dart'; // 실제 API 서비스 임포트
 
