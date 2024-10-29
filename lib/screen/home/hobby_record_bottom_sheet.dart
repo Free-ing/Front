@@ -13,13 +13,13 @@ void showHobbyBottomSheet(BuildContext context, String title) {
   final TextEditingController hobbyMemoController = TextEditingController();
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
+  DateTime selectedDate = DateTime.now();
 
   final ValueNotifier<String> selectedHobbyNotifier = ValueNotifier('취미 선택');
   final ValueNotifier<File?> imageNotifier = ValueNotifier<File?>(null);
   final ImagePicker picker = ImagePicker();
 
-  //Todo: 서버 요청 (취미 기록하기)
-  //Todo: 서버 요청 (취미 기록하기)
+  //Todo: 서버 요청 (취미 기록 하기)
   Future<void> submitHobbyRecord() async {
     final apiService = HobbyAPIService();
 
@@ -101,6 +101,11 @@ void showHobbyBottomSheet(BuildContext context, String title) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Text(
+                '${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일',
+                style: textTheme.titleSmall,
+              ),
+              SizedBox(height: screenHeight * 0.02),
               GestureDetector(
                 onTap: () async {
                   final result = await Navigator.of(context).push(
@@ -144,9 +149,7 @@ void showHobbyBottomSheet(BuildContext context, String title) {
                   ),
                 ),
               ),
-              SizedBox(
-                height: screenHeight * 0.04,
-              ),
+              SizedBox(height: screenHeight * 0.02),
               ValueListenableBuilder<File?>(
                   valueListenable: imageNotifier,
                   builder: (context, image, _) {
@@ -181,9 +184,7 @@ void showHobbyBottomSheet(BuildContext context, String title) {
                       ],
                     );
                   }),
-              SizedBox(
-                height: screenHeight * 0.04,
-              ),
+              SizedBox(height: screenHeight * 0.04),
               Padding(
                 padding: EdgeInsets.all(screenWidth * 0),
                 child: Padding(

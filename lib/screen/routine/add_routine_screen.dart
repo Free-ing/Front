@@ -6,6 +6,7 @@ import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/common/service/sleep_api_service.dart';
 import 'package:freeing/common/service/spirit_api_sevice.dart';
 import 'package:freeing/layout/screen_layout.dart';
+import 'package:freeing/screen/routine/routine_page.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
 import 'package:intl/intl.dart';
 
@@ -124,7 +125,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       );
 
       if (response == 201) {
-        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 1)),
+        );
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('수면 루틴이 추가되었습니다')));
       } else {
@@ -146,7 +149,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
           await apiService.postHobbyRoutine(hobbyName, imageUrl);
 
       if (response == 200) {
-        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 2)),
+        );
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('취미 루틴이 추가되었습니다')));
       } else {
@@ -186,7 +191,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       );
 
       if (response == 200) {
-        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
+        );
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('마음 채우기 루틴이 추가되었습니다')));
       } else {
