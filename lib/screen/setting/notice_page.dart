@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
 import 'package:freeing/layout/setting_layout.dart';
 import 'package:freeing/model/setting/notice_list.dart';
 import 'package:freeing/screen/setting/notice_detail_page.dart';
+import 'package:intl/intl.dart';
+
+import '../../common/service/setting_api_service.dart';
 
 class NoticePage extends StatefulWidget {
   const NoticePage({super.key});
@@ -14,18 +20,42 @@ class _NoticePageState extends State<NoticePage> {
   List<NoticeList> _noticeList = [];
   bool _isLoading = true;
 
-  // TODO: 공지사항 받아오는 서버 요청
+  // TODO: category map하기(영어 -> 한국)
+  String _getDisplayCategory(String category) {
+    switch (category) {
+      case 'URGENT':
+        return '긴급';
+      case 'ERROR_NOTICE':
+        return '오류 안내';
+      case 'UPDATE':
+        return '업데이트';
+      default:
+        return category;
+    }
+  }
+
+  // TODO: createDate 날짜 형식으로 바꾸기
+  String _formatDateOnly(String createdDate) {
+    final dateTime = DateTime.parse(createdDate);
+    return DateFormat('yyyy-MM-dd').format(dateTime);
+  }
+
+  // TODO: 공지사항 리스트 서버 요청
   Future<void> _getNoticeInfo() async {
     try {
-      // TODO: 실제 서버 요청 추가
-      await Future.delayed(const Duration(seconds: 2)); // 서버 요청 시뮬레이션
-      setState(() {
-        _noticeList = [
-          NoticeList(category: '업데이트', title: '새로운 업데이트', date: '2024-10-27', content: '앱 업데이트 내용입니다.'),
-          NoticeList(category: '공지', title: '서비스 점검 안내', date: '2024-10-26', content: '점검 안내 사항입니다.'),
-        ];
-        _isLoading = false;
-      });
+      final response = await SettingAPIService().viewNoticeList();
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        final List<dynamic> noticeData = json.decode(decodedBody);
+        setState(() {
+          _noticeList =
+              noticeData.map((json) => NoticeList.fromJson(json)).toList();
+          _noticeList.sort((a, b) => b.createdDate.compareTo(a.createdDate));
+          _isLoading = false;
+        });
+      } else {
+        throw Exception('공지사항 리스트 가져오기 실패 ${response.statusCode}');
+      }
     } catch (e) {
       print("Error loading notices: $e");
       setState(() {
@@ -49,7 +79,7 @@ class _NoticePageState extends State<NoticePage> {
     return SettingLayout(
       title: '공지사항',
       child: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? CustomCircularProgressIndicator()
           : ListView.builder(
               itemCount: _noticeList.length,
               itemBuilder: (context, index) {
@@ -63,16 +93,31 @@ class _NoticePageState extends State<NoticePage> {
                           Expanded(
                             child: Row(
                               children: [
-                                Text('[${noticeList.category}]', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
-                                Text('  ${noticeList.title}', style: textTheme.bodyMedium),
+                                Text(
+                                    '[${_getDisplayCategory(noticeList.category)}]',
+                                    style: textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.w600)),
+                                SizedBox(width: screenWidth * 0.013,),
+                                Expanded(
+                                  child: Text(
+                                    '${noticeList.title}',
+                                    style: textTheme.bodyMedium,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                          Text(noticeList.date, style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300)),
+                          SizedBox(width: screenWidth * 0.01,),
+                          Text(_formatDateOnly(noticeList.createdDate),
+                              style: textTheme.bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w300)),
                         ],
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.005),
+                        padding: EdgeInsets.symmetric(
+                            vertical: screenHeight * 0.005),
                         width: screenWidth,
                         child: Divider(
                           color: Colors.black,
@@ -86,7 +131,13 @@ class _NoticePageState extends State<NoticePage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                NoticeDetailPage(noticeList: noticeList)));
+                                NoticeDetailPage(noticeList: noticeList))).then((shouldRefresh){
+                                  if(shouldRefresh == true){
+                                    setState(() {
+                                      _getNoticeInfo();
+                                    });
+                                  }
+                    });
                   },
                 );
               }),

@@ -43,7 +43,8 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
     final response = await SettingAPIService().getUserInfo();
 
     if (response.statusCode == 200) {
-      final userData = User.fromJson(json.decode(response.body));
+      final decodedBody = utf8.decode(response.bodyBytes);
+      final userData = User.fromJson(json.decode(decodedBody));
       setState(() {
         _email = userData.email;
         _name = userData.name;

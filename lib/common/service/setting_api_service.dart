@@ -32,14 +32,70 @@ class SettingAPIService {
         '$_baseUrl/user-service/change-password/after-login';
     final url = Uri.parse(_changePasswordEndpoint);
 
-    return http.patch(url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken',
-        },
-        body: json.encode({
-          "currentPassword": currentPassword,
-          "newPassword": newPassword,
-        }),);
+    return http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: json.encode({
+        "currentPassword": currentPassword,
+        "newPassword": newPassword,
+      }),
+    );
   }
+
+  Future<http.Response> viewNoticeList() async {
+    final accessToken = await tokenStorage.getAccessToken();
+    final String _viewNoticeListEndpoint =
+        '$_baseUrl/user-service/announcement/list';
+    final url = Uri.parse(_viewNoticeListEndpoint);
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+
+  Future<http.Response> submitFeedback({
+    required String category,
+    required String inquiriesTitle,
+    required String content,
+  }) async {
+    final accessToken = await tokenStorage.getAccessToken();
+    final String _viewUserInfoEndpoint = '$_baseUrl/user-service/inquiries';
+    final url = Uri.parse(_viewUserInfoEndpoint);
+
+    return http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: json.encode({
+        'category' : category,
+        'inquiriesTitle' : inquiriesTitle,
+        'content': content,
+      }),
+    );
+  }
+
+  Future<http.Response> viewFeedbackList() async {
+    final accessToken = await tokenStorage.getAccessToken();
+    final String _viewFeedbackListEndpoint =
+        '$_baseUrl/user-service/inquiries/list';
+    final url = Uri.parse(_viewFeedbackListEndpoint);
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+
 }
