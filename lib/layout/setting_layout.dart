@@ -49,7 +49,7 @@ class _SettingLayoutState extends State<SettingLayout> {
             automaticallyImplyLeading: false,
             leading: IconButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(true);
               },
               icon: Icon(Icons.arrow_back_ios_rounded),
               iconSize: 30.0,

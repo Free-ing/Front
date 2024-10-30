@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
 import 'package:freeing/layout/setting_layout.dart';
 import 'package:freeing/model/setting/notice_list.dart';
 import 'package:freeing/screen/setting/notice_detail_page.dart';
@@ -49,6 +50,7 @@ class _NoticePageState extends State<NoticePage> {
         setState(() {
           _noticeList =
               noticeData.map((json) => NoticeList.fromJson(json)).toList();
+          _noticeList.sort((a, b) => b.createdDate.compareTo(a.createdDate));
           _isLoading = false;
         });
       } else {
@@ -77,7 +79,7 @@ class _NoticePageState extends State<NoticePage> {
     return SettingLayout(
       title: '공지사항',
       child: _isLoading
-          ? CircularProgressIndicator()
+          ? CustomCircularProgressIndicator()
           : ListView.builder(
               itemCount: _noticeList.length,
               itemBuilder: (context, index) {
@@ -129,7 +131,13 @@ class _NoticePageState extends State<NoticePage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                NoticeDetailPage(noticeList: noticeList)));
+                                NoticeDetailPage(noticeList: noticeList))).then((shouldRefresh){
+                                  if(shouldRefresh == true){
+                                    setState(() {
+                                      _getNoticeInfo();
+                                    });
+                                  }
+                    });
                   },
                 );
               }),

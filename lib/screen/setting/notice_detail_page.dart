@@ -36,33 +36,34 @@ class NoticeDetailPage extends StatelessWidget {
         title: noticeList.title,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('[${_getDisplayCategory(noticeList.category)}]', style: textTheme.titleMedium),
-                  Text(_formatDateTime(noticeList.createdDate), style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300)),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                    vertical: screenHeight * 0.008),
-                width: screenWidth,
-                child: Divider(
-                  color: Colors.black,
-                  thickness: 1.0,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('[${_getDisplayCategory(noticeList.category)}]', style: textTheme.titleMedium),
+                    Text(_formatDateTime(noticeList.createdDate), style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w300)),
+                  ],
                 ),
-              ),
-              SizedBox(height: screenHeight * 0.01,),
-              SingleChildScrollView(
-                child: Text(
+                Container(
+                  padding: EdgeInsets.symmetric(
+                      vertical: screenHeight * 0.008),
+                  width: screenWidth,
+                  child: Divider(
+                    color: Colors.black,
+                    thickness: 1.0,
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.01,),
+                Text(
                   noticeList.content,
                   style: textTheme.bodyMedium,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ));
   }
