@@ -3,7 +3,8 @@ import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/chart/ai_letter.dart';
 
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
-import 'package:freeing/screen/chart/mood_calendar.dart';
+import 'package:freeing/screen/chart/mood_calendar_screen.dart';
+import 'package:freeing/screen/routine/ai_loading_screen.dart';
 import 'package:freeing/screen/routine/survey_response_screen.dart';
 
 import '../../model/hobby/recommend_hobby.dart';
@@ -89,7 +90,7 @@ class ChartPage extends StatelessWidget {
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/exercise_report.png',
                   title: "운동 리포트\n몰아보기",
-                  navigatePage: HobbyGalleryScreen(),
+                  navigatePage: AiLoadingScreen(category: '취미'),
                   context: context,
                 ),
               ],

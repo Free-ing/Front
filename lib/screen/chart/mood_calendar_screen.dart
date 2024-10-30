@@ -11,7 +11,8 @@ import 'package:freeing/common/service/token_storage.dart';
 import 'package:freeing/layout/chart_layout.dart';
 import 'package:freeing/model/spirit/emotion_diary.dart';
 import 'package:freeing/model/spirit/mood_monthly.dart';
-import 'package:freeing/screen/chart/mood_scrap.dart';
+import 'package:freeing/screen/chart/chart_page.dart';
+import 'package:freeing/screen/chart/mood_scrap_screen.dart';
 import 'package:freeing/screen/home/diary_bottom_sheet.dart';
 import 'package:freeing/screen/member/login.dart';
 
@@ -127,7 +128,6 @@ class _MoodCalendarState extends State<MoodCalendar> {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
       print(jsonData['error']);
       throw Exception('일일 감정 일기 기록 조회 실패 ${response.statusCode}');
-
     }
   }
 
@@ -175,7 +175,6 @@ class _MoodCalendarState extends State<MoodCalendar> {
       select = date;
       selectYear = select.year;
       selectMonth = select.month;
-
     });
 
     final emotionList = await getEmotionDataByDay(selectYear, selectMonth);
@@ -216,6 +215,11 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
     return ChartLayout(
         title: '무드 캘린더',
+        backToPage: () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => ChartPage()),
+          );
+        },
         chartWidget: SingleChildScrollView(
           child: Column(
             children: [
@@ -251,7 +255,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
         children: [
           Center(
             child: ShowChartDate(
-              selectedDate: select ,
+              selectedDate: select,
               onDateChanged: updateSelectedMonth,
             ),
           ),

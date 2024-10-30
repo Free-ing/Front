@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
-import 'package:freeing/screen/chart/mood_calendar.dart';
-import 'package:freeing/screen/chart/mood_scrap.dart';
+import 'package:freeing/screen/chart/mood_calendar_screen.dart';
+import 'package:freeing/screen/chart/mood_scrap_screen.dart';
 
 class Letter {
   final String content;
@@ -43,20 +43,22 @@ class _AiLetterState extends State<AiLetter> {
   final apiService = SpiritAPIService();
 
   // Todo: 서버 요청 (AI 편지 조회)
-  Future<void> _fetchAiLetter(int diaryId) async {
-    final response = await apiService.getEmotionDiary(diaryId);
+  Future<void> _fetchAiLetter(int letterId) async {
+    final response = await apiService.getAiLetter(letterId);
 
     if (response.statusCode == 200) {
       final data = utf8.decode(response.bodyBytes);
-      final result = Letter.fromJson(json.decode(data));
+      final jsonData = json.decode(data);
+      final content = jsonData['result']['content']; // content 추출
 
       setState(() {
-        letterText = result as String;
+        letterText = content; // letterText에 content 할당
       });
     } else {
-      throw Exception('Failed to load data');
+      throw Exception('편지 가져오기 실패 ${response.statusCode}');
     }
   }
+
 
   // Todo: 서버 요청 (AI 편지 삭제)
   Future<void> _deleteAiLetter(int letterId) async {

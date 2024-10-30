@@ -8,6 +8,7 @@ class ChartLayout extends StatefulWidget {
   final Widget chartWidget;
   final Function(DateTime) onDateSelected;
   final bool? selectMonth;
+  final VoidCallback? backToPage;
 
   const ChartLayout({
     super.key,
@@ -15,6 +16,7 @@ class ChartLayout extends StatefulWidget {
     required this.chartWidget,
     required this.onDateSelected,
     this.selectMonth,
+    this.backToPage,
   });
 
   @override
@@ -90,9 +92,10 @@ class _ChartLayoutState extends State<ChartLayout> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+                onPressed: widget.backToPage ??
+                    () {
+                      Navigator.of(context).pop();
+                    },
                 icon: Icon(Icons.arrow_back_ios_rounded),
                 iconSize: 30.0,
                 padding: EdgeInsets.zero,
