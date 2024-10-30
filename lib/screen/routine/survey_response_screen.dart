@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
+import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/model/hobby/recommend_hobby.dart';
 import 'package:freeing/screen/routine/add_recommended_hobby_screen.dart';
+import 'package:freeing/screen/setting/setting_page.dart';
 
 import 'ai_loading_screen.dart';
+import 'routine_page.dart';
 
 class SurveyResponseScreen extends StatefulWidget {
   final String category;
@@ -28,13 +31,30 @@ class SurveyResponseScreen extends StatefulWidget {
 }
 
 class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
+  String _name = '';
   bool _isAdded = false;
   late List<bool> _isAddedList;
   List<RecommendedHobby> _recommendList = [];
 
+  // Todo: 서버 요청 (사용자 이름 받아오기)
+  Future<void> _viewUserInfo() async {
+    final response = await SettingAPIService().getUserInfo();
+
+    if (response.statusCode == 200) {
+      final decodedBody = utf8.decode(response.bodyBytes);
+      final userData = User.fromJson(json.decode(decodedBody));
+      setState(() {
+        _name = userData.name;
+      });
+    } else {
+      throw Exception('사용자 정보 가져오기 실패 ${response.statusCode}');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _viewUserInfo();
     _isAddedList = List<bool>.filled(widget.recommend.length, false);
   }
 
@@ -96,6 +116,7 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.symmetric(
             horizontal: screenWidth * 0.072, vertical: screenHeight * 0.02),
@@ -128,7 +149,10 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
             Row(
               children: [
                 SizedBox(width: screenWidth * 0.15),
-                Text('남은 기회 (${widget.remain})', style: textTheme.bodySmall),
+                Text('남은 기회 (${widget.remain})',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: widget.remain == 0 ? Colors.red : Colors.black,
+                    )),
               ],
             ),
             SizedBox(height: screenHeight * 0.005),
@@ -151,7 +175,7 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('조예진',
+            Text(_name,
                 style: textTheme.headlineSmall?.copyWith(
                     color: Colors.black,
                     fontSize: 26,
@@ -219,23 +243,26 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: isAdded ? null : () async {
-                      if (!_isAdded) {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddRecommendedHobbyScreen(
-                                hobbyName: hobby.hobbyName),
-                          ),
-                        );
+                    onPressed: isAdded
+                        ? null
+                        : () async {
+                            if (!_isAdded) {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AddRecommendedHobbyScreen(
+                                          hobbyName: hobby.hobbyName),
+                                ),
+                              );
 
-                        if (result is bool && result == true) {
-                          setState(() {
-                            _isAddedList[index] = true;
-                          });
-                        }
-                      }
-                    },
+                              if (result is bool && result == true) {
+                                setState(() {
+                                  _isAddedList[index] = true;
+                                });
+                              }
+                            }
+                          },
                     icon: Image.asset(
                         isAdded
                             ? 'assets/icons/ai_minus_button_icon.png'
@@ -254,10 +281,12 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
   Widget _button(context) {
     return PairedButtons(
       onGreenPressed: () {
-        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 2)),
+        );
       },
       onGrayPressed: () {
-        widget.remain == 0 ? null : _reRecommend() ;
+        widget.remain == 0 ? null : _reRecommend();
       },
       greenText: '완료',
       grayText: '다시 추천',

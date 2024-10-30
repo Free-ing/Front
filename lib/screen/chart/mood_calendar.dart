@@ -6,7 +6,7 @@ import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/emotion_diary_card.dart';
 import 'package:freeing/common/component/show_chart_date.dart';
 import 'package:freeing/common/const/colors.dart';
-import 'package:freeing/common/service/spirit_api_sevice.dart';
+import 'package:freeing/common/service/spirit_api_service.dart';
 import 'package:freeing/common/service/token_storage.dart';
 import 'package:freeing/layout/chart_layout.dart';
 import 'package:freeing/model/spirit/emotion_diary.dart';
@@ -14,8 +14,6 @@ import 'package:freeing/model/spirit/mood_monthly.dart';
 import 'package:freeing/screen/chart/mood_scrap.dart';
 import 'package:freeing/screen/home/diary_bottom_sheet.dart';
 import 'package:freeing/screen/member/login.dart';
-
-import 'ai_letter.dart';
 
 class MoodCalendar extends StatefulWidget {
   const MoodCalendar({super.key});
@@ -27,7 +25,7 @@ class MoodCalendar extends StatefulWidget {
 class _MoodCalendarState extends State<MoodCalendar> {
   final tokenStorage = TokenStorage();
   DateTime selectedMonth = DateTime.now();
-  late int selectedDate = DateTime.now().day as int;
+  late int selectedDate = DateTime.now().day;
   late int year = DateTime.now().year;
   late int month = DateTime.now().month;
   int getFirstDayOfMonth() => DateTime(year, month, 1).weekday;
@@ -66,7 +64,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
       String? refreshToken = await tokenStorage.getRefreshToken();
       if (refreshToken != null) {
         var newAccessToken = await tokenStorage.getAccessToken();
-        print('newAccessTOken: $newAccessToken');
+        print('newAccessToken: $newAccessToken');
         await tokenStorage.saveAccessTokens(newAccessToken!);
       } else {
         DialogManager.showAlertDialog(
@@ -75,7 +73,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
           content: '로그인 세션이 만료되었습니다.\n다시 로그인 해주세요.',
           onConfirm: () {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => Login(),
+              builder: (context) => const Login(),
             ));
           },
         );
@@ -126,7 +124,10 @@ class _MoodCalendarState extends State<MoodCalendar> {
         throw Exception('Invalid data structure from server');
       }
     } else {
+      final jsonData = json.decode(utf8.decode(response.bodyBytes));
+      print(jsonData['error']);
       throw Exception('일일 감정 일기 기록 조회 실패 ${response.statusCode}');
+
     }
   }
 
@@ -172,9 +173,9 @@ class _MoodCalendarState extends State<MoodCalendar> {
   //Todo: 날짜 update
   Future<void> updateSelectedMonth(DateTime date) async {
     setState(() {
-      selectedMonth = date;
       year = selectedMonth.year;
       month = selectedMonth.month;
+      selectedMonth = date;
     });
 
     final emotionList = await getEmotionDataByDay(year, month);
@@ -260,8 +261,8 @@ class _MoodCalendarState extends State<MoodCalendar> {
               height: screenHeight * 0.03,
               child: OutlinedButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => MoodScrap()));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const MoodScrap()));
                 },
                 child: Text(
                   '스크랩',
@@ -271,10 +272,10 @@ class _MoodCalendarState extends State<MoodCalendar> {
                   fixedSize: Size(screenWidth * 0.18, screenHeight * 0.03),
                   backgroundColor: Colors.white,
                   foregroundColor: LIGHT_GREY,
-                  padding: EdgeInsets.symmetric(horizontal: 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 0),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  side: BorderSide(
+                  side: const BorderSide(
                     color: Colors.black,
                     width: 1.5,
                   ),
@@ -321,13 +322,13 @@ class _MoodCalendarState extends State<MoodCalendar> {
               crossAxisCount: 7,
               mainAxisSpacing: screenHeight * 0.006,
             ),
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: 42,
             itemBuilder: (context, index) {
               int dayNumber = index - firstDayOfMonth + 2;
 
               if (dayNumber < 1 || dayNumber > daysInMonth) {
-                return SizedBox.shrink(); // 날짜 범위 밖일 경우 빈 셀 반환
+                return const SizedBox.shrink(); // 날짜 범위 밖일 경우 빈 셀 반환
               }
 
               String emotion = emotionDataByDay[dayNumber] ?? "NONE";
@@ -363,9 +364,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
   Widget _viewEmotionalDiary() {
     return EmotionDiaryCard(
       diaryId: selectedDiary?.diaryId ?? -1,
-      year: year,
-      month: month,
-      selectedDate: selectedDate,
+      date: DateTime(year, month, selectedDate),
       letterId: selectedDiary?.letterId ?? -1,
       scrap: selectedDiary?.scrap ?? false,
       emotionImage: getEmotionImagePath(selectedDiary?.emotion ?? ''),
@@ -374,208 +373,11 @@ class _MoodCalendarState extends State<MoodCalendar> {
       deleteDiary: () {
         _deleteEmotionDiary;
       },
+      from: 'calendar',
     );
   }
-  // Widget _viewEmotionalDiary(
-  //     TextTheme textTheme, double screenWidth, double screenHeight) {
-  //   return Column(
-  //     children: [
-  //       /// 날짜 표시, 편지 보기 버튼, 스크랩 버튼
-  //       SizedBox(
-  //         height: screenHeight * 0.035,
-  //         child: Stack(
-  //           children: <Widget>[
-  //             Align(
-  //               alignment: Alignment.centerLeft,
-  //               child: Row(
-  //                 children: [
-  //                   /// 날짜 표시
-  //                   Text(
-  //                     '$year년 $month월 $selectedDate일',
-  //                     style: textTheme.titleSmall,
-  //                   ),
-  //                   SizedBox(width: screenWidth * 0.02),
-  //
-  //                   /// 편지 보기 버튼
-  //                   Visibility(
-  //                     visible: selectedDiary!.letterId == -1 ? false : true,
-  //                     child: SizedBox(
-  //                       width: screenWidth * 0.19,
-  //                       height: screenHeight * 0.027,
-  //                       child: OutlinedButton(
-  //                         onPressed: () {
-  //                           Navigator.of(context).push(
-  //                             MaterialPageRoute(
-  //                               builder: (context) => AiLetter(),
-  //                             ),
-  //                           );
-  //                         },
-  //                         child: Text('편지 보기', style: textTheme.labelMedium),
-  //                         style: OutlinedButton.styleFrom(
-  //                           fixedSize:
-  //                               Size(screenWidth * 0.18, screenHeight * 0.02),
-  //                           backgroundColor: PRIMARY_COLOR,
-  //                           foregroundColor: LIGHT_GREY,
-  //                           padding: EdgeInsets.symmetric(horizontal: 0),
-  //                           shape: RoundedRectangleBorder(
-  //                             borderRadius: BorderRadius.circular(8),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //
-  //             /// 스크랩 버튼
-  //             Align(
-  //                 alignment: Alignment.centerRight,
-  //                 child: IconButton(
-  //                   onPressed: () {
-  //                     setState(() {
-  //                       selectedDiary!.scrap = !selectedDiary!.scrap;
-  //                       print(selectedDiary!.scrap);
-  //                     });
-  //                     selectedDiary!.scrap
-  //                         ? _scrapEmotionDiary(selectedDiary!.diaryId)
-  //                         : _scrapCancelEmotionDiary();
-  //                   },
-  //                   icon: Image.asset(
-  //                     selectedDiary!.scrap
-  //                         ? 'assets/icons/bookmark_icon_on.png'
-  //                         : 'assets/icons/bookmark_icon_off.png',
-  //                     width: screenWidth * 0.07,
-  //                   ),
-  //                   padding: EdgeInsets.zero,
-  //                   constraints: BoxConstraints(),
-  //                 ))
-  //           ],
-  //         ),
-  //       ),
-  //       SizedBox(height: screenHeight * 0.008),
-  //
-  //       /// 감정 일기 조회
-  //       Card(
-  //         margin: EdgeInsets.zero,
-  //         elevation: 6,
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(15.0),
-  //         ),
-  //         child: Container(
-  //           padding: EdgeInsets.symmetric(
-  //               horizontal: screenWidth * 0.033, vertical: screenHeight * 0.01),
-  //           decoration: BoxDecoration(
-  //             color: LIGHT_GREY,
-  //             borderRadius: BorderRadius.circular(15),
-  //             border: Border.all(color: Colors.black),
-  //           ),
-  //           child: Stack(
-  //             children: [
-  //               /// 감정 얼굴
-  //               Positioned(
-  //                 top: screenHeight * 0.023,
-  //                 child: Image.asset(
-  //                     getEmotionImagePath(selectedDiary?.emotion ?? ''),
-  //                     width: screenWidth * 0.15),
-  //               ),
-  //
-  //               /// 기록한 내용
-  //               Align(
-  //                 alignment: Alignment.centerRight,
-  //                 child: Container(
-  //                   width: screenWidth * 0.65,
-  //                   child: Column(
-  //                     mainAxisAlignment: MainAxisAlignment.start,
-  //                     crossAxisAlignment: CrossAxisAlignment.stretch,
-  //                     children: [
-  //                       Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                         children: [
-  //                           Text('칭찬하고 싶은 일'),
-  //
-  //                           /// 감정 일기 편집 버튼
-  //                           Container(
-  //                             width: screenWidth * 0.07,
-  //                             height: screenHeight * 0.035,
-  //                             child: IconButton(
-  //                               onPressed: () {
-  //                                 showMenu(context);
-  //                               },
-  //                               icon: Icon(Icons.more_horiz),
-  //                               padding: EdgeInsets.zero,
-  //                               iconSize: screenWidth * 0.06,
-  //                               color: DARK_GREY,
-  //                             ),
-  //                           )
-  //                         ],
-  //                       ),
-  //                       Container(
-  //                         decoration: BoxDecoration(
-  //                           color: Colors.white,
-  //                           borderRadius: BorderRadius.circular(15),
-  //                           border: Border.all(color: Colors.black, width: 1),
-  //                         ),
-  //                         constraints: BoxConstraints(
-  //                           minHeight: screenHeight * 0.05,
-  //                           maxHeight: screenHeight * 0.135,
-  //                         ),
-  //                         padding: EdgeInsets.all(screenWidth * 0.02),
-  //                         child: LayoutBuilder(
-  //                           builder: (context, constraints) {
-  //                             return Text(
-  //                               selectedDiary?.wellDone ?? '',
-  //                               // '딱 백자. 딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.'
-  //                               // '딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자',
-  //                               style: textTheme.bodySmall,
-  //                               maxLines: null, // 텍스트가 줄바꿈 되도록 설정
-  //                               overflow: TextOverflow.clip,
-  //                             );
-  //                           },
-  //                         ),
-  //                       ),
-  //                       Row(
-  //                         children: [
-  //                           Text('슬펐던 일'),
-  //                           SizedBox(height: screenHeight * 0.04)
-  //                         ],
-  //                       ),
-  //                       Container(
-  //                         decoration: BoxDecoration(
-  //                           color: Colors.white,
-  //                           borderRadius: BorderRadius.circular(15),
-  //                           border: Border.all(color: Colors.black, width: 1),
-  //                         ),
-  //                         constraints: BoxConstraints(
-  //                           minHeight: screenHeight * 0.05,
-  //                           maxHeight: screenHeight * 0.135,
-  //                         ),
-  //                         padding: EdgeInsets.all(screenWidth * 0.02),
-  //                         child: LayoutBuilder(
-  //                           builder: (context, constraints) {
-  //                             return Text(
-  //                               selectedDiary?.hardWork ?? '',
-  //                               //'딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자',
-  //                               style: textTheme.bodySmall,
-  //                               maxLines: null, // 텍스트가 줄바꿈 되도록 설정
-  //                               overflow: TextOverflow.clip,
-  //                             );
-  //                           },
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               )
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //       SizedBox(height: screenHeight * 0.1),
-  //     ],
-  //   );
-  // }
 
+  // Todo: 상세 보기 (선택된 날짜에 감정 일기 없을 때)
   Widget _noneEmotionDiary(
     TextTheme textTheme,
     double screenWidth,
@@ -596,7 +398,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
         SizedBox(height: screenHeight * 0.008),
         DottedBorder(
           borderType: BorderType.RRect,
-          radius: Radius.circular(15),
+          radius: const Radius.circular(15),
           padding: EdgeInsets.zero,
           dashPattern: [6, 4],
           color: SEMI_GREY,
@@ -619,20 +421,15 @@ class _MoodCalendarState extends State<MoodCalendar> {
                     height: screenHeight * 0.035,
                     child: OutlinedButton(
                       onPressed: () {
-                        showDiaryBottomSheet(
-                          context,
-                          '오늘 하루 어땠나요?',
-                          // year,
-                          // month,
-                          // selectedDate,
-                        );
+                        showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
+                            DateTime(year, month, selectedDate));
                       },
                       child: Text('일기 작성하기', style: textTheme.bodySmall),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: PRIMARY_COLOR,
                         foregroundColor: LIGHT_GREY,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),

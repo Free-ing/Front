@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'token_manager.dart';
 import 'base_url.dart';
@@ -13,7 +14,7 @@ class HobbyAPIService {
   final String _baseUrl = BaseUrl.baseUrl;
 
   //Todo: 취미 루틴 추가
-  Future<int> postHobbyRoutine(String hobbyName, String imageUrl) async {
+  Future<http.Response> postHobbyRoutine(String hobbyName, String imageUrl) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/hobby-service/routine');
@@ -30,7 +31,7 @@ class HobbyAPIService {
       }),
     );
 
-    return response.statusCode;
+    return response;
   }
 
   //Todo: 취미 리스트 조회
@@ -49,7 +50,7 @@ class HobbyAPIService {
   }
 
   //Todo: 취미 루틴 수정
-  Future<int> patchHobbyRoutine(
+  Future<http.Response> patchHobbyRoutine(
     String hobbyName,
     String imageUrl,
     int routineId,
@@ -70,7 +71,7 @@ class HobbyAPIService {
       }),
     );
 
-    return response.statusCode;
+    return response;
   }
 
   //Todo: 취미 루틴 삭제
@@ -95,11 +96,13 @@ class HobbyAPIService {
     String hobbyName,
     File imageFile,
     String hobbyBody,
+    DateTime date,
   ) async {
     try {
+      final formattedDate = DateFormat('yyyy-MM-dd').format(date);
       final tokenStorage = TokenManager();
       final accessToken = await tokenStorage.getAccessToken();
-      final url = Uri.parse('$_baseUrl/hobby-service/record');
+      final url = Uri.parse('$_baseUrl/hobby-service/record?date=$formattedDate');
 
       // 기본 요청 데이터 생성
       var request = http.MultipartRequest('POST', url);

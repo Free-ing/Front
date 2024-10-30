@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/bottom_sheet.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
@@ -5,15 +7,27 @@ import 'package:freeing/common/component/question_mark.dart';
 import 'package:freeing/common/component/text_form_fields.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
-import 'package:freeing/common/service/spirit_api_sevice.dart';
+import 'package:freeing/common/service/spirit_api_service.dart';
+
+// class DiaryId {
+//   final int diaryId;
+//
+//   DiaryId({
+//     required this.diaryId,
+// });
+//
+//   factory DiaryId.fromJson(Map<String, dynamic> json) {
+//     return DiaryId(
+//
+//     )
+//   }
+// }
 
 //Todo: 감정 일기
 void showDiaryBottomSheet(
   BuildContext context,
   String title,
-  // int year,
-  // int month,
-  // int day,
+  DateTime selectedDate,
 ) {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
@@ -26,9 +40,7 @@ void showDiaryBottomSheet(
         textTheme: textTheme,
         screenWidth: screenWidth,
         screenHeight: screenHeight,
-        // year: year,
-        // month: month,
-        // day: day,
+        selectedDate: selectedDate,
       );
     },
   );
@@ -39,9 +51,7 @@ class _DiaryBottomSheetContent extends StatefulWidget {
   final TextTheme textTheme;
   final double screenWidth;
   final double screenHeight;
-  // final int year;
-  // final int month;
-  // final int day;
+  final DateTime selectedDate;
 
   const _DiaryBottomSheetContent({
     super.key,
@@ -49,9 +59,7 @@ class _DiaryBottomSheetContent extends StatefulWidget {
     required this.textTheme,
     required this.screenWidth,
     required this.screenHeight,
-    // required this.year,
-    // required this.month,
-    // required this.day,
+    required this.selectedDate,
   });
 
   @override
@@ -62,6 +70,8 @@ class _DiaryBottomSheetContent extends StatefulWidget {
 class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
   int? selectedIndex;
   bool _getAiLetter = true;
+  int? diaryId;
+  final apiService = SpiritAPIService();
 
   final TextEditingController wellDoneController = TextEditingController();
   final TextEditingController hardWorkController = TextEditingController();
@@ -80,7 +90,8 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
     final String wellDone = wellDoneController.text;
     final String hardWork = hardWorkController.text;
     String emotion = 'default';
-    final apiService = SpiritAPIService();
+
+    print('저장 버튼 누름');
 
     if (selectedIndex! >= 0) {
       emotion = emotionList[selectedIndex!];
@@ -88,49 +99,61 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
       print('Invalid index: $selectedIndex');
     }
 
-    print(emotion);
-    print(wellDone);
-    print(wellDoneController.text);
-    print(hardWork);
-    print(hardWorkController.text);
-    print(_getAiLetter);
-
     if (wellDoneController.text.isNotEmpty &&
         hardWorkController.text.isNotEmpty) {
-      final int response = await apiService.postEmotionalDiary(
+      final response = await apiService.postEmotionalDiary(
         wellDone,
         hardWork,
         _getAiLetter,
         emotion,
       );
-
-      if (response == 200) {
+      if (response.statusCode == 200) {
+        final decodedBody = json.decode(utf8.decode(response.bodyBytes));
+        final resultId = decodedBody['result'];
+        print('감정일기 작성 후 반환된 result $resultId');
+        setState(() {
+          diaryId = resultId;
+        });
         Navigator.pop(context);
-        if (_getAiLetter == true) {
-          const ToastBarWidget(
-            title: '감정 일기 작성이 저장되었습니다.\n편지가 도착하면 확인해보실 수 있어요.',
-          ).showToast(context);
-        } else {
-          const ToastBarWidget(
-            title: '감정 일기 작성이 저장되었습니다.',
-          ).showToast(context);
-        }
+        const ToastBarWidget(
+          title: '감정 일기 작성이 저장되었습니다.',
+        ).showToast(context);
       } else if (response == 400) {
         DialogManager.showAlertDialog(
-            context: context, title: '알림', content: '모두 입력해주세요{$response}.');
+            context: context,
+            title: '알림',
+            content: '모두 입력해주세요{${response.statusCode}}.');
       } else {
         DialogManager.showAlertDialog(
           context: context,
           title: '알림',
-          content: '서버에서 오류가 발생하였습니다.\n다시 시도해주세요. $response',
+          content: '서버에서 오류가 발생하였습니다.\n다시 시도해주세요. ${response.statusCode}',
         );
       }
     } else {
       DialogManager.showAlertDialog(
         context: context,
         title: '알림',
-        content: '모두 입력해주세요.(모두 입력 안됨)',
+        content: '모두 입력 해주세요.(모두 입력 안됨)',
       );
+    }
+  }
+
+  //Todo: 서버 요청 (ai 편지 작성 요청)
+  Future<void> _postAiLetter(int diaryId) async {
+    final response = await apiService.postLetterTrue(diaryId);
+
+    print('ai 편지 작성 요청하는 diaryId $diaryId');
+    if (response == 200) {
+      print('편지 요청 성공!');
+      DialogManager.showAlertDialog(
+          context: context,
+          title: '편지 요청 성공',
+          content: '편지가 도착하면 확인해 볼 수 있어요.');
+    } else {
+      print('편지 요청 실패 $response');
+      print('편지 요청한 아이디 $diaryId');
+      ToastBarWidget(title: '편지 요청에 실패하였습니다. $response}').showToast(context);
     }
   }
 
@@ -140,16 +163,20 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
       title: widget.title,
       onButtonPressed: (AnimationController) async {
         await _submitEmotionalDiary();
+        if (_getAiLetter == true) {
+          await _postAiLetter(diaryId!);
+        }
       },
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: widget.screenWidth * 0.1),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Text(
-            //   '${widget.year}년 ${widget.month}월 ${widget.day}일',
-            //   style: widget.textTheme.titleSmall,
-            // ),
-            //SizedBox(height: widget.screenHeight * 0.03),
+            Text(
+              '${widget.selectedDate.year}년 ${widget.selectedDate.month}월 ${widget.selectedDate.day}일',
+              style: widget.textTheme.titleLarge,
+            ),
+            SizedBox(height: widget.screenHeight * 0.03),
             _selectDailyEmotion(),
             SizedBox(height: widget.screenHeight * 0.03),
             _wellDoneRecord(),

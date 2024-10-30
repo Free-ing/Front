@@ -10,7 +10,7 @@ class SleepAPIService {
   static const String _viewAllSleepRoutineEndpoint = '$_baseUrl/sleep-service/routine/all';
 
   //Todo: 수면 루틴 추가
-  Future<int> postSleepRoutine(
+  Future<http.Response> postSleepRoutine(
     String sleepRoutineName,
     startTime,
     endTime,
@@ -52,7 +52,7 @@ class SleepAPIService {
       }),
     );
 
-    return response.statusCode;
+    return response;
   }
 
   //Todo: 수면 리스트 조회

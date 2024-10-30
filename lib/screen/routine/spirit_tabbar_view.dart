@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/toggled_routine_card.dart';
-import 'package:freeing/common/service/spirit_api_sevice.dart';
+import 'package:freeing/common/service/spirit_api_service.dart';
 import 'package:freeing/model/spirit/spirit_list.dart';
 import 'package:freeing/screen/routine/edit_routine_screen.dart';
 

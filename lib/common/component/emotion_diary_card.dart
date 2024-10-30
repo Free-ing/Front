@@ -1,32 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
-import 'package:freeing/common/service/spirit_api_sevice.dart';
+import 'package:freeing/common/service/spirit_api_service.dart';
 import 'package:freeing/screen/chart/ai_letter.dart';
 
 class EmotionDiaryCard extends StatefulWidget {
   final int diaryId;
-  final int year;
-  final int month;
-  final int selectedDate;
+  final DateTime date;
   final int letterId;
   final bool scrap;
   final String emotionImage;
   final String wellDone;
   final String hardWork;
   final VoidCallback deleteDiary;
+  final String from;
 
   const EmotionDiaryCard({
     super.key,
     required this.diaryId,
-    required this.year,
-    required this.month,
-    required this.selectedDate,
+    required this.date,
     required this.letterId,
     required this.scrap,
     required this.emotionImage,
     required this.wellDone,
     required this.hardWork,
     required this.deleteDiary,
+    required this.from,
   });
 
   @override
@@ -95,7 +93,9 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
               ListTile(
                   leading: Icon(Icons.delete_forever_outlined),
                   title: const Text('일기 삭제하기'),
-                  onTap: (){widget.deleteDiary;}),
+                  onTap: () {
+                    widget.deleteDiary;
+                  }),
             ],
           ),
         );
@@ -130,7 +130,7 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
                   children: [
                     /// 날짜 표시
                     Text(
-                      '${widget.year}년 ${widget.month}월 ${widget.selectedDate}일',
+                      '${widget.date.year}년 ${widget.date.month}월 ${widget.date.day}일',
                       style: textTheme.titleSmall,
                     ),
                     SizedBox(width: screenWidth * 0.02),
@@ -145,7 +145,12 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => AiLetter(),
+                                builder: (context) => AiLetter(
+                                  diaryId: widget.diaryId,
+                                  date: widget.date,
+                                  letterId: widget.letterId,
+                                  from: widget.from,
+                                ),
                               ),
                             );
                           },
@@ -262,14 +267,8 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
                           padding: EdgeInsets.all(screenWidth * 0.02),
                           child: LayoutBuilder(
                             builder: (context, constraints) {
-                              return Text(
-                                widget.wellDone,
-                                // '딱 백자. 딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.'
-                                // '딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자',
-                                style: textTheme.bodySmall,
-                                maxLines: null, // 텍스트가 줄바꿈 되도록 설정
-                                overflow: TextOverflow.clip,
-                              );
+                              return _buildRecordText(
+                                  widget.wellDone, textTheme);
                             },
                           ),
                         ),
@@ -292,13 +291,8 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
                           padding: EdgeInsets.all(screenWidth * 0.02),
                           child: LayoutBuilder(
                             builder: (context, constraints) {
-                              return Text(
-                                widget.hardWork,
-                                //'딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자.딱 백자',
-                                style: textTheme.bodySmall,
-                                maxLines: null, // 텍스트가 줄바꿈 되도록 설정
-                                overflow: TextOverflow.clip,
-                              );
+                              return _buildRecordText(
+                                  widget.hardWork, textTheme);
                             },
                           ),
                         ),
@@ -312,6 +306,17 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
         ),
         SizedBox(height: screenHeight * 0.1),
       ],
+    );
+  }
+
+  Widget _buildRecordText(text, textTheme) {
+    return SingleChildScrollView(
+      child: Text(
+        widget.hardWork,
+        style: textTheme.bodySmall,
+        maxLines: null,
+        overflow: TextOverflow.clip,
+      ),
     );
   }
 }

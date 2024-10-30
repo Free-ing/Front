@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
+import 'package:freeing/common/component/dialog_manager.dart';
+import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
-import 'package:freeing/common/service/spirit_api_sevice.dart';
+import 'package:freeing/common/service/spirit_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/screen/routine/routine_page.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
@@ -49,13 +53,15 @@ class EditRoutineScreen extends StatefulWidget {
       this.sunday,
       this.startTime,
       this.endTime,
-      this.explanation, this.status});
+      this.explanation,
+      this.status});
 
   @override
   State<EditRoutineScreen> createState() => _EditRoutineScreenState();
 }
 
 class _EditRoutineScreenState extends State<EditRoutineScreen> {
+  String? errorText;
   List<WeekDay> weekDays = [];
   final _formKey = GlobalKey<FormState>();
 
@@ -125,19 +131,24 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       final String hobbyName = _nameController.text;
 
       final apiService = HobbyAPIService();
-      final int response = await apiService.patchHobbyRoutine(
+      final response = await apiService.patchHobbyRoutine(
           hobbyName, imageUrl, widget.routineId);
 
-      if (response == 200) {
+      if (response.statusCode == 200) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 2)),
         );
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('취미 루틴이 수정되었습니다.')));
+        ToastBarWidget(
+          title: '취미 루틴이 수정되었습니다.',
+          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+        ).showToast(context);
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('취미 루틴 수정에 실패하였습니다.')));
-        print(response);
+        final errorData = json.decode(utf8.decode(response.bodyBytes));
+        DialogManager.showAlertDialog(
+          context: context,
+          title: '취미 수정 실패',
+          content: '${errorData['message']}\n(오류 코드: ${response.statusCode})',
+        );
       }
     }
   }
@@ -147,17 +158,19 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     final responseCode =
         await HobbyAPIService().deleteHobbyRoutine(widget.routineId);
     if (responseCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('취미 루틴이 삭제되었습니다.')),
-      );
+      ToastBarWidget(
+        title: '취미 루틴이 삭제되었습니다.',
+        leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+      ).showToast(context);
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const RoutinePage(index: 2)),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('취미 루틴이 삭제되지 않았습니다 ${responseCode}')),
-      );
+      ToastBarWidget(
+        title: '취미 루틴이 삭제되지 않았습니다. $responseCode',
+        leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+      ).showToast(context);
     }
   }
 
@@ -176,7 +189,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       print("루틴 켜졌니 ${widget.status}");
 
       final apiService = SpiritAPIService();
-      final int response = await apiService.patchSpiritRoutine(
+      final response = await apiService.patchSpiritRoutine(
         spiritName,
         imageUrl,
         weekDays[0].isSelected,
@@ -193,16 +206,21 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
         widget.routineId,
       );
 
-      if (response == 200) {
+      if (response.statusCode == 200) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
         );
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('마음 채우기 루틴이 수정되었습니다')));
+        ToastBarWidget(
+          title: '마음채우기 루틴이 수정되었습니다.',
+          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+        ).showToast(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('마음 채우기 루틴 수정에 실패했습니다. $response')));
-        print(response);
+        final errorData = json.decode(utf8.decode(response.bodyBytes));
+        DialogManager.showAlertDialog(
+          context: context,
+          title: '마음 채우기 루틴 수정 실패',
+          content: '${errorData['message']}\n(오류 코드: ${response.statusCode})',
+        );
       }
     }
   }
@@ -212,17 +230,17 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     final responseCode =
         await SpiritAPIService().deleteSpiritRoutine(widget.routineId);
     if (responseCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('마음 채우기 루틴이 삭제되었습니다.')),
-      );
-
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
       );
+      ToastBarWidget(
+        title: '마음채우기 루틴이 삭제되었습니다.',
+        leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+      ).showToast(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('마음 채우기 루틴이 삭제되지 않았습니다 $responseCode')),
-      );
+      ToastBarWidget(
+        title: '마음채우기 루틴이 삭제되지 않았습니다. $responseCode',
+      ).showToast(context);
     }
   }
 
@@ -296,10 +314,10 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                   onPressed: () {
                     switch (selectedValue) {
                       case '운동':
-                      //_editExerciseRoutine();
+                        //_editExerciseRoutine();
                         break;
                       case '수면':
-                      // _editSleepRoutine();
+                        // _editSleepRoutine();
                         break;
                       case '취미':
                         _editHobbyRoutine();
@@ -337,86 +355,96 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
 
   //Todo: 루틴 이미지, 제목 입력
   Widget _routineImageTitle(textTheme, screenWidth) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        Card(
-          elevation: 6,
-          shadowColor: YELLOW_SHADOW,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25.0),
-          ),
-          margin: EdgeInsets.all(12),
-          child: Container(
-            width: screenWidth * 0.38,
-            height: screenWidth * 0.38,
-            padding: EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: Colors.black,
+    return Column(
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Card(
+              elevation: 6,
+              shadowColor: YELLOW_SHADOW,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              margin: EdgeInsets.all(12),
+              child: Container(
+                width: screenWidth * 0.38,
+                height: screenWidth * 0.38,
+                padding: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: Colors.black,
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    _routineImage(imageUrl: imageUrl),
+                    _routineTitle(textTheme: textTheme, title: "제목 입력"),
+                  ],
+                ),
               ),
             ),
-            child: Stack(
-              children: [
-                _routineImage(imageUrl: imageUrl),
-                _routineTitle(textTheme: textTheme, title: "제목 입력"),
-              ],
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Column(
-            children: [
-              Stack(
-                children: <Widget>[
-                  Card(
-                    shadowColor: YELLOW_SHADOW,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                    margin: EdgeInsets.all(12),
-                    child: Container(
-                      width: screenWidth * 0.12,
-                      height: screenWidth * 0.12,
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.black,
+            Align(
+              alignment: Alignment.centerRight,
+              child: Column(
+                children: [
+                  Stack(
+                    children: <Widget>[
+                      Card(
+                        shadowColor: YELLOW_SHADOW,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                        margin: EdgeInsets.all(12),
+                        child: Container(
+                          width: screenWidth * 0.12,
+                          height: screenWidth * 0.12,
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      IconButton(
+                        onPressed: () async {
+                          final result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SelectRoutineImageScreen(selectImage: imageUrl),
+                            ),
+                          );
+                          if (result != null && result is String) {
+                            setState(() {
+                              imageUrl = result; // 선택된 이미지를 imageUrl에 저장
+                            });
+                          }
+                        },
+                        icon: Image.network(imageUrl,
+                            width: screenWidth * 0.14,
+                            height: screenWidth * 0.14,
+                            fit: BoxFit.cover),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    onPressed: () async {
-                      final result = await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              SelectRoutineImageScreen(selectImage: imageUrl),
-                        ),
-                      );
-                      if (result != null && result is String) {
-                        setState(() {
-                          imageUrl = result; // 선택된 이미지를 imageUrl에 저장
-                        });
-                      }
-                    },
-                    icon: Image.network(imageUrl,
-                        width: screenWidth * 0.14,
-                        height: screenWidth * 0.14,
-                        fit: BoxFit.cover),
-                  ),
+                  Text("그림 변경"),
                 ],
               ),
-              Text("그림 변경"),
-            ],
-          ),
+            ),
+          ],
         ),
+        if (errorText != null)
+          Text(
+            errorText!,
+            style: textTheme.bodySmall?.copyWith(color: Colors.red),
+          ),
       ],
+
     );
   }
 
@@ -726,7 +754,13 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return '루틴의 제목을 입력해주세요.';
+                setState(() {
+                  errorText = '제목을 입력 해주세요';
+                });
+              } else {
+                setState(() {
+                  errorText = null;
+                });
               }
               return null;
             },
@@ -814,7 +848,6 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                               setState(
                                 () {
                                   onTimeChanged(selectTime);
-                                  //_formatTime(selectTime);
                                   int hour = selectTime.hour;
                                   String period = hour >= 12 ? 'PM' : 'AM';
                                   hour = hour > 12

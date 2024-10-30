@@ -33,7 +33,8 @@ class SelectRecommendCategory extends StatelessWidget {
                 onSelected: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (BuildContext context) => SurveyExerciseScreen(),
+                      builder: (BuildContext context) =>
+                          const SurveyExerciseScreen(),
                     ),
                   );
                 },
@@ -45,10 +46,10 @@ class SelectRecommendCategory extends StatelessWidget {
                 onSelected: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (BuildContext context) => SurveyHobbyScreen(),
+                      builder: (BuildContext context) =>
+                          const SurveyHobbyScreen(),
                     ),
                   );
-                  print('취미 카테고리 선택');
                 },
               ),
             ],

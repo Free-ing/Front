@@ -2,13 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/bottom_sheet.dart';
+import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/text_form_fields.dart';
+import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/screen/home/select_hobby_name.dart';
 import 'package:image_picker/image_picker.dart';
 
-//Todo: 취미 기록
+//Todo: 취미 기록 --- 아직 홈화면 구현 전 이어서 selectedDate==오늘 날짜
 void showHobbyBottomSheet(BuildContext context, String title) {
   final TextEditingController hobbyMemoController = TextEditingController();
   final screenWidth = MediaQuery.of(context).size.width;
@@ -24,28 +26,35 @@ void showHobbyBottomSheet(BuildContext context, String title) {
     final apiService = HobbyAPIService();
 
     // 이미지 파일 객체가 있는지 확인
-    if (imageNotifier.value != null) {
+    if (selectedHobbyNotifier.value != '취미 선택' &&
+        imageNotifier.value != null &&
+        hobbyMemoController.text.isNotEmpty) {
       // 취미 기록 요청
       final int response = await apiService.postHobbyRecord(
-          selectedHobbyNotifier.value,
-          imageNotifier.value!,
-          hobbyMemoController.text // 취미 내용
-          );
+        selectedHobbyNotifier.value,
+        imageNotifier.value!,
+        hobbyMemoController.text, // 취미 내용
+        selectedDate,
+      );
 
       // 응답 처리
       if (response == 200) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('취미 기록이 추가되었습니다')));
+        ToastBarWidget(
+          title: '취미 기록이 추가되었습니다.',
+          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+        ).showToast(context);
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('취미 기록 추가에 실패했습니다.')));
-        print(response); // 에러 코드 출력
+        ToastBarWidget(
+          title: '취미 기록 추가에 실패했습니다. $response',
+        ).showToast(context);
       }
     } else {
-      // 이미지 파일이 없는 경우 사용자에게 알림
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('이미지를 선택해 주세요.')));
+      DialogManager.showAlertDialog(
+        context: context,
+        title: '알림',
+        content: '모두 입력 해주세요.(모두 입력 안됨)',
+      );
     }
   }
 

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:freeing/common/component/hobby_card.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 
@@ -8,12 +7,14 @@ class ChartLayout extends StatefulWidget {
   final String title;
   final Widget chartWidget;
   final Function(DateTime) onDateSelected;
+  final bool? selectMonth;
 
   const ChartLayout({
     super.key,
     required this.title,
     required this.chartWidget,
     required this.onDateSelected,
+    this.selectMonth,
   });
 
   @override
@@ -23,6 +24,7 @@ class ChartLayout extends StatefulWidget {
 class _ChartLayoutState extends State<ChartLayout> {
   //DateTime selectedDate = DateTime.now();
   DateTime? selectedDate;
+  late final bool _selectMonth = widget.selectMonth ?? true;
 
   void initState() {
     super.initState();
@@ -36,7 +38,7 @@ class _ChartLayoutState extends State<ChartLayout> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     // Todo: 년, 월 선택
-    selectMonth(){
+    selectMonth() {
       showMonthPicker(
         context: context,
         initialDate: DateTime.now(),
@@ -44,14 +46,14 @@ class _ChartLayoutState extends State<ChartLayout> {
           headerSettings: PickerHeaderSettings(
             headerBackgroundColor: PRIMARY_COLOR,
             headerPadding: EdgeInsets.all(screenWidth * 0.05),
-            headerIconsSize: 35,
+            headerIconsSize: 30,
             headerIconsColor: Colors.black,
-            headerCurrentPageTextStyle:
-            textTheme.headlineMedium?.copyWith(
+            headerCurrentPageTextStyle: textTheme.headlineSmall?.copyWith(
+              fontSize: 24,
               fontWeight: FontWeight.w300,
+              color: Colors.black,
             ),
-            headerSelectedIntervalTextStyle:
-            textTheme.headlineSmall?.copyWith(
+            headerSelectedIntervalTextStyle: textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w300,
               color: Colors.black,
             ),
@@ -96,12 +98,27 @@ class _ChartLayoutState extends State<ChartLayout> {
                 padding: EdgeInsets.zero,
                 constraints: BoxConstraints(),
               ),
-              Expanded(child: Text(widget.title, style: textTheme.headlineLarge, textAlign: TextAlign.center,)),
-              IconButton(
-                onPressed: selectMonth,
-                icon: Image.asset(
-                  "assets/icons/calendar_icon.png",
-                  width: 25,
+              Expanded(
+                  child: Text(
+                widget.title,
+                style: textTheme.headlineLarge,
+                textAlign: TextAlign.center,
+              )),
+              Visibility(
+                visible: !_selectMonth,
+                child: SizedBox(width: 45),
+              ),
+              Visibility(
+                visible: _selectMonth,
+                child: SizedBox(
+                  width: 45,
+                  child: IconButton(
+                    onPressed: selectMonth,
+                    icon: Image.asset(
+                      "assets/icons/calendar_icon.png",
+                      width: 25,
+                    ),
+                  ),
                 ),
               ),
             ],

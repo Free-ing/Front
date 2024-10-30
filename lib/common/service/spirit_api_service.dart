@@ -9,7 +9,7 @@ class SpiritAPIService {
   final String _baseUrl = BaseUrl.baseUrl;
 
   //Todo: 마음 채우기 루틴 추가
-  Future<int> postSpiritRoutine(
+  Future<http.Response> postSpiritRoutine(
     String routineName,
     String imageUrl,
     bool monday,
@@ -50,7 +50,7 @@ class SpiritAPIService {
       }),
     );
 
-    return response.statusCode;
+    return response;
   }
 
   //Todo: 마음 채우기 루틴 조회
@@ -78,7 +78,7 @@ class SpiritAPIService {
   }
 
   //Todo: 마음 채우기 루틴 수정
-  Future<int> patchSpiritRoutine(
+  Future<http.Response> patchSpiritRoutine(
     String spiritName,
     String imageUrl,
     bool monday,
@@ -125,7 +125,7 @@ class SpiritAPIService {
       ),
     );
 
-    return response.statusCode;
+    return response;
   }
 
   //Todo: 마음 채우기 루틴 삭제
@@ -196,11 +196,12 @@ class SpiritAPIService {
   }
 
   //Todo: 감정 일기 작성 하기
-  Future<int> postEmotionalDiary(String wellDone, String hardWork,
+  Future<http.Response> postEmotionalDiary(String wellDone, String hardWork,
       bool getAiLetter, String emotion) async {
+    final int recordId= 6;
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse('$_baseUrl/spirit-service/emotional-diary');
+    final url = Uri.parse('$_baseUrl/spirit-service/emotional-diary/$recordId');
 
     final response = await http.post(
       url,
@@ -214,6 +215,23 @@ class SpiritAPIService {
         'getAiLetter': getAiLetter,
         'emotion': emotion,
       }),
+    );
+
+    return response;
+  }
+
+  //Todo: ai 편지 받기 요청
+  Future<int> postLetterTrue(int diaryId) async{
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/spirit-service/ai/emotional-record/$diaryId');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
     );
 
     return response.statusCode;
@@ -250,12 +268,12 @@ class SpiritAPIService {
     );
   }
 
-  //Todo: ai 편지
-  Future<http.Response> getAiLetter(int diaryId) async {
+  //Todo: ai 편지 조회
+  Future<http.Response> getAiLetter(int letterId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url =
-        Uri.parse('$_baseUrl/spirit-service/ai/emotional-record/$diaryId');
+        Uri.parse('$_baseUrl/spirit-service/ai/emotional-record/$letterId');
 
     return http.get(
       url,
@@ -264,6 +282,19 @@ class SpiritAPIService {
         'Authorization': 'Bearer $accessToken',
       },
     );
+  }
+
+  //Todo: 스크랩한 감정 일기 조회
+  Future<http.Response> getScrapList() async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url =
+        Uri.parse('$_baseUrl/spirit-service/emotional-record-list/scrap');
+
+    return http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    });
   }
 
   //Todo: 감정 일기 스크랩 하기
@@ -308,13 +339,24 @@ class SpiritAPIService {
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/spirit-service/emotional-diary/$diaryId');
 
-    final response = await http.delete(
-      url,
-      headers: {
-        'Content-Type':'application/json',
-        'Authorization':'Bearer $accessToken',
-      }
-    );
+    final response = await http.delete(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    });
+
+    return response.statusCode;
+  }
+
+  //Todo: ai 편지 삭제
+  Future<int> deleteAiLetter(int letterId) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/spirit-service/ai/$letterId');
+
+    final response = await http.delete(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    });
 
     return response.statusCode;
   }

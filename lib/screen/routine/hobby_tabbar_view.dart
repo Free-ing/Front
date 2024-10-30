@@ -18,12 +18,8 @@ class _HobbyTabBarViewState extends State<HobbyTabBarView> {
 
   //Todo: 서버 요청 (취미 리스트 조회)
   Future<List<HobbyList>> _fetchHobbyList() async {
-    print("Fetching hobby list");
-
     final apiService = HobbyAPIService();
     final response = await apiService.getHobbyList();
-
-    print(response.statusCode);
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
@@ -36,7 +32,6 @@ class _HobbyTabBarViewState extends State<HobbyTabBarView> {
           _hobbyList.add(hobbyCard);
         }
       }
-      print(_hobbyList);
       return _hobbyList;
     } else if (response.statusCode == 404) {
       return _hobbyList = [];
@@ -59,7 +54,7 @@ class _HobbyTabBarViewState extends State<HobbyTabBarView> {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       itemCount: _hobbyList.length,
       itemBuilder: (context, index) {
         final hobbyList = _hobbyList[index];

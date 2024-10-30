@@ -144,9 +144,7 @@ class HomePage extends StatelessWidget {
                         showDiaryBottomSheet(
                           context,
                           '오늘 하루 어땠나요?',
-                          // DateTime.now().year,
-                          // DateTime.now().month,
-                          // DateTime.now().day,
+                          DateTime.now()
                         );
                       },
                     ),

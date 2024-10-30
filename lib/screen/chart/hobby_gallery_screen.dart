@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/show_chart_date.dart';
+import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/layout/chart_layout.dart';
@@ -59,17 +60,18 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
   Future<void> _deleteHobbyRecord(int recordId) async {
     final responseCode = await HobbyAPIService().deleteHobbyRecord(recordId);
     if (responseCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('기록이 삭제되었습니다.')),
-      );
+      ToastBarWidget(
+        title: '취미 기록이 삭제되었습니다.',
+        leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+      ).showToast(context);
       setState(() {
         _hobbyAlbums.removeWhere((album) => album.recordId == recordId);
       });
       Navigator.of(context).pop();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('기록이 삭제되지 않았습니다 ')),
-      );
+      ToastBarWidget(
+        title:'취미 기록이 삭제되지 않았습니다. ${responseCode}',
+      ).showToast(context);
       print(responseCode);
     }
   }
@@ -233,8 +235,6 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    TextEditingController bodyController = TextEditingController(text: title);
-    bool _isEditing = false;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),

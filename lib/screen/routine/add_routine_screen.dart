@@ -1,14 +1,18 @@
+import 'dart:convert';
+
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
+import 'package:freeing/common/component/dialog_manager.dart';
+import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/common/service/sleep_api_service.dart';
-import 'package:freeing/common/service/spirit_api_sevice.dart';
+import 'package:freeing/common/service/spirit_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/screen/routine/routine_page.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
-import 'package:freeing/screen/routine/sleep_tabbar_view.dart';
 import 'package:intl/intl.dart';
 
 //Todo: 날짜 선택 유뮤
@@ -38,6 +42,7 @@ class AddRoutineScreen extends StatefulWidget {
 
 class _AddRoutineScreenState extends State<AddRoutineScreen> {
   final _formKey = GlobalKey<FormState>();
+  String? errorText;
 
   final List<String> options = ['운동', '수면', '취미', '마음 채우기'];
   String selectedValue = '운동';
@@ -110,7 +115,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
           _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
 
       final apiService = SleepAPIService();
-      final int response = await apiService.postSleepRoutine(
+      final response = await apiService.postSleepRoutine(
         sleepName,
         startTime,
         endTime,
@@ -125,16 +130,23 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         imageUrl,
       );
 
-      if (response == 201) {
+      if (response.statusCode == 201) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 1)),
         );
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('수면 루틴이 추가되었습니다')));
+        ToastBarWidget(
+          title: '수면 루틴이 추가되었습니다.',
+          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+        ).showToast(context);
+        // ScaffoldMessenger.of(context)
+        //     .showSnackBar(const SnackBar(content: Text('수면 루틴이 추가되었습니다')));
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('수면 루틴 추가에 실패했습니다.')));
-        print(response);
+        final errorData = json.decode(utf8.decode(response.bodyBytes));
+        DialogManager.showAlertDialog(
+            context: context,
+            title: '수면 루틴 추가 실패',
+            content:
+                '${errorData['message']}\n(오류 코드: ${response.statusCode})');
       }
     }
   }
@@ -146,19 +158,23 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       final String hobbyName = _nameController.text;
 
       final apiService = HobbyAPIService();
-      final int response =
-          await apiService.postHobbyRoutine(hobbyName, imageUrl);
+      final response = await apiService.postHobbyRoutine(hobbyName, imageUrl);
 
-      if (response == 200) {
+      if (response.statusCode == 200) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 2)),
         );
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('취미 루틴이 추가되었습니다')));
+        ToastBarWidget(
+          title: '취미 루틴이 추가되었습니다.',
+          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+        ).showToast(context);
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('취미 루틴 추가에 실패했습니다.')));
-        print(response);
+        final errorData = json.decode(utf8.decode(response.bodyBytes));
+        DialogManager.showAlertDialog(
+            context: context,
+            title: '취미 루틴 추가 실패',
+            content:
+                '${errorData['message']}\n(오류 코드: ${response.statusCode})');
       }
     }
   }
@@ -176,7 +192,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
           _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
 
       final apiService = SpiritAPIService();
-      final int response = await apiService.postSpiritRoutine(
+      final response = await apiService.postSpiritRoutine(
         spiritName,
         imageUrl,
         weekDays[0].isSelected,
@@ -191,15 +207,22 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         explanation,
       );
 
-      if (response == 200) {
+      if (response.statusCode == 200) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
         );
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('마음 채우기 루틴이 추가되었습니다')));
+        ToastBarWidget(
+          title: '마음 채우기 루틴이 추가되었습니다.',
+          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+        ).showToast(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('마음 채우기 루틴 추가에 실패했습니다. $response}')));
+        final errorData = json.decode(utf8.decode(response.bodyBytes));
+
+        DialogManager.showAlertDialog(
+          context: context,
+          title: '마음 채우기 루틴 추가 실패',
+          content: '${errorData['message']}\n(오류 코드: ${response.statusCode})',
+        );
       }
     }
   }
@@ -221,7 +244,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             child: Column(
               children: [
                 // 제목과 이미지 입력
-                _routineImageTitle(textTheme, screenWidth),
+                _routineImageTitle(textTheme, screenWidth, screenHeight),
                 SizedBox(height: screenHeight * 0.03),
                 // 카테고리 선택
                 _selectCategory(textTheme, screenWidth, screenHeight),
@@ -296,86 +319,98 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   }
 
   //Todo: 루틴 이미지, 제목 입력
-  Widget _routineImageTitle(textTheme, screenWidth) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        Card(
-          elevation: 6,
-          shadowColor: YELLOW_SHADOW,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25.0),
-          ),
-          margin: EdgeInsets.all(12),
-          child: Container(
-            width: screenWidth * 0.38,
-            height: screenWidth * 0.38,
-            padding: EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: Colors.black,
+  Widget _routineImageTitle(textTheme, screenWidth, screenHeight) {
+    return Column(
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Card(
+              elevation: 6,
+              shadowColor: YELLOW_SHADOW,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              margin: EdgeInsets.all(12),
+              child: Container(
+                width: screenWidth * 0.38,
+                height: screenWidth * 0.38,
+                padding: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: Colors.black,
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    _routineImage(imageUrl: imageUrl),
+                    _routineTitle(
+                      textTheme: textTheme,
+                      title: "제목 입력",
+                    ),
+                  ],
+                ),
               ),
             ),
-            child: Stack(
-              children: [
-                _routineImage(imageUrl: imageUrl),
-                _routineTitle(textTheme: textTheme, title: "제목 입력"),
-              ],
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Column(
-            children: [
-              Stack(
-                children: <Widget>[
-                  Card(
-                    shadowColor: YELLOW_SHADOW,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                    margin: EdgeInsets.all(12),
-                    child: Container(
-                      width: screenWidth * 0.12,
-                      height: screenWidth * 0.12,
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.black,
+            Align(
+              alignment: Alignment.centerRight,
+              child: Column(
+                children: [
+                  Stack(
+                    children: <Widget>[
+                      Card(
+                        shadowColor: YELLOW_SHADOW,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                        margin: EdgeInsets.all(12),
+                        child: Container(
+                          width: screenWidth * 0.12,
+                          height: screenWidth * 0.12,
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      IconButton(
+                        onPressed: () async {
+                          final result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SelectRoutineImageScreen(
+                                  selectImage: imageUrl),
+                            ),
+                          );
+                          if (result != null && result is String) {
+                            setState(() {
+                              imageUrl = result; // 선택된 이미지를 imageUrl에 저장
+                            });
+                          }
+                        },
+                        icon: Image.network(imageUrl,
+                            width: screenWidth * 0.14,
+                            height: screenWidth * 0.14,
+                            fit: BoxFit.cover),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    onPressed: () async {
-                      final result = await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              SelectRoutineImageScreen(selectImage: imageUrl),
-                        ),
-                      );
-                      if (result != null && result is String) {
-                        setState(() {
-                          imageUrl = result; // 선택된 이미지를 imageUrl에 저장
-                        });
-                      }
-                    },
-                    icon: Image.network(imageUrl,
-                        width: screenWidth * 0.14,
-                        height: screenWidth * 0.14,
-                        fit: BoxFit.cover),
-                  ),
+                  Text("그림 변경"),
                 ],
               ),
-              Text("그림 변경"),
-            ],
-          ),
+            ),
+          ],
         ),
+        if (errorText != null)
+          Text(
+            errorText!,
+            style: textTheme.bodySmall?.copyWith(color: Colors.red),
+          ),
       ],
     );
   }
@@ -388,31 +423,42 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         Text('루틴 카테고리 선택', style: textTheme.bodyMedium),
         Expanded(
           child: Container(
-            margin: EdgeInsets.only(left: screenWidth * 0.15),
-            height: screenHeight * 0.038,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Colors.black,
-              ),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: selectedValue,
-                items: options.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
-                      child: Text(value),
-                    ),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
+              margin: EdgeInsets.only(left: screenWidth * 0.15),
+              height: screenHeight * 0.038,
+              child: DropdownButtonFormField2<String>(
+                isExpanded: true,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(screenWidth * 0.01),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.black, width: 1.5),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                        color: Colors.black, width: 1), // 클릭되지 않았을 때의 테두리
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.black, width: 1),
+                  ),
+                ),
+                value: selectedValue.isNotEmpty ? selectedValue : null,
+                items: options
+                    .where((e) => e.isNotEmpty)
+                    .map((e) => DropdownMenuItem(
+                        value: e,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 1.0),
+                          child: Text(
+                            e,
+                            style: textTheme.bodySmall,
+                          ),
+                        )))
+                    .toList(),
+                onChanged: (value) {
                   setState(() {
-                    selectedValue = newValue!;
-                    print('카테고리 선택한 카테고리 $newValue');
+                    selectedValue = value!;
 
                     selectedValue == '취미'
                         ? _selectHobby = false
@@ -423,18 +469,55 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                         : _selectSleep = true;
                   });
                 },
-                icon: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Icon(Icons.arrow_drop_down, color: Colors.black),
+                dropdownStyleData: DropdownStyleData(
+                  //maxHeight: screenHeight * 0.15,
+                  padding: EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Colors.black, width: 1),
+                  ),
                 ),
-                iconSize: 24,
-                isExpanded: true,
-                dropdownColor: Colors.white,
-                style: textTheme.bodyMedium,
-                borderRadius: BorderRadius.circular(15),
+              )
+              // child: DropdownButtonHideUnderline(
+              //   child: DropdownButton<String>(
+              //     value: selectedValue,
+              //     items: options.map((String value) {
+              //       return DropdownMenuItem<String>(
+              //         value: value,
+              //         child: Padding(
+              //           padding:
+              //               EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
+              //           child: Text(value),
+              //         ),
+              //       );
+              //     }).toList(),
+              //     onChanged: (newValue) {
+              //       setState(() {
+              //         selectedValue = newValue!;
+              //         print('카테고리 선택한 카테고리 $newValue');
+              //
+              //         selectedValue == '취미'
+              //             ? _selectHobby = false
+              //             : _selectHobby = true;
+              //
+              //         selectedValue == '수면'
+              //             ? _selectSleep = false
+              //             : _selectSleep = true;
+              //       });
+              //     },
+              //     icon: Padding(
+              //       padding: const EdgeInsets.only(right: 8.0),
+              //       child: Icon(Icons.arrow_drop_down, color: Colors.black),
+              //     ),
+              //     iconSize: 24,
+              //     isExpanded: true,
+              //     dropdownColor: Colors.white,
+              //     style: textTheme.bodyMedium,
+              //     borderRadius: BorderRadius.circular(15),
+              //   ),
+              // ),
               ),
-            ),
-          ),
         )
       ],
     );
@@ -657,13 +740,16 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   }
 
   //Todo: 루틴 제목
-  Widget _routineTitle({required TextTheme textTheme, required String title}) {
+  Widget _routineTitle({
+    required TextTheme textTheme,
+    required String title,
+  }) {
     return Positioned(
-        bottom: -5,
+        bottom: -60,
         left: 0,
         right: 0,
         child: SizedBox(
-          height: 50,
+          height: 100,
           child: TextFormField(
             textAlign: TextAlign.center,
             controller: _nameController,
@@ -702,7 +788,13 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return '루틴의 제목을 입력해주세요.';
+                setState(() {
+                  errorText = '제목을 입력 해주세요';
+                });
+              } else {
+                setState(() {
+                  errorText = null;
+                });
               }
               return null;
             },

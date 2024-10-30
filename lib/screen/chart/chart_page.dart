@@ -4,9 +4,6 @@ import 'package:freeing/screen/chart/ai_letter.dart';
 
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
 import 'package:freeing/screen/chart/mood_calendar.dart';
-import 'package:freeing/screen/member/login.dart';
-import 'package:freeing/screen/routine/add_routine_screen.dart';
-import 'package:freeing/screen/routine/edit_routine_screen.dart';
 import 'package:freeing/screen/routine/survey_response_screen.dart';
 
 import '../../model/hobby/recommend_hobby.dart';
@@ -63,13 +60,18 @@ class ChartPage extends StatelessWidget {
                       category: '취미',
                       recommend: recommendedHobbies,
                       answers: [],
-                  remain: 2),
+                      remain: 0),
                   context: context,
                 ),
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/sleep_report.png',
                   title: "수면 리포트\n몰아보기",
-                  navigatePage: AiLetter(),
+                  navigatePage: AiLetter(
+                    diaryId: 3,
+                    date: DateTime.now(),
+                    letterId: 2,
+                    from: '스크랩',
+                  ),
                   context: context,
                 ),
                 _chartCard(

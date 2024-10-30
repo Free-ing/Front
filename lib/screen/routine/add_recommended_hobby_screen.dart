@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
+import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
 
@@ -30,17 +33,20 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
 
     final apiService = HobbyAPIService();
 
-    final int response =
+    final response =
         await apiService.postHobbyRoutine(widget.hobbyName, imageUrl);
 
-    if (response == 200) {
+    if (response.statusCode == 200) {
       Navigator.pop(context, true);
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('취미 루틴이 추가되었습니다')));
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('취미 루틴 추가에 실패했습니다.')));
-      print(response);
+      final errorData = json.decode(utf8.decode(response.bodyBytes));
+      DialogManager.showAlertDialog(
+          context: context,
+          title: '취미 루틴 추가 실패',
+          content:
+          '${errorData['message']}\n(오류 코드: ${response.statusCode})');
     }
   }
 

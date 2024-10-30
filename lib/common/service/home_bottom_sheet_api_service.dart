@@ -5,9 +5,9 @@ import 'token_manager.dart';
 import 'base_url.dart';
 
 class HomeBottomSheetApiService {
-  //static const String _baseUrl = BaseUrl.baseUrl;
+  static const String _baseUrl = BaseUrl.baseUrl;
   static const String _sleepTimeRecordEndpoint =
-      'http://192.168.0.40:8000/sleep-service/sleep-time/record';
+      '$_baseUrl/sleep-service/sleep-time/record';
 
   Future<http.Response> sleepTimeRecord({
     required String wakeUpTime,

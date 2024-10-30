@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freeing/common/component/hobby_card.dart';
-import 'package:freeing/common/component/toggled_routine_card.dart';
-import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/navigationbar/category_tabbar.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/routine/exercise_tabbar_view.dart';
@@ -50,15 +47,15 @@ class _RoutinePageState extends State<RoutinePage> {
                 horizontal: screenWidth * 0.06, vertical: screenHeight * 0.02),
             child: CategoryTabBar(
               index: widget.index,
-              exercise: ExerciseTabBarView(),
-              sleep: SleepTabBarView(),
-              hobby: HobbyTabBarView(),
-              spirit: SpiritTabBarView(),
+              exercise: const ExerciseTabBarView(),
+              sleep: const SleepTabBarView(),
+              hobby: const HobbyTabBarView(),
+              spirit: const SpiritTabBarView(),
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           floatingActionButton: FloatingActionMenu(),
-          bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 1),
+          bottomNavigationBar: const CustomBottomNavigationBar(selectedIndex: 1),
         ),
       ],
     );
