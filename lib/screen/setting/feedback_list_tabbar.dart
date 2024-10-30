@@ -48,12 +48,11 @@ class _FeedbackListTabbarState extends State<FeedbackListTabbar> {
         final decodedBody = utf8.decode(response.bodyBytes);
         final List<dynamic> noticeData = json.decode(decodedBody);
         setState(() {
-          // _feedbackList =
-          //     noticeData.map((json) => FeedbackList.fromJson(json)).toList();
           _feedbackList = noticeData
               .map((json) => json != null ? FeedbackList.fromJson(json) : null)
               .whereType<FeedbackList>() // null 필터링
               .toList();
+          _feedbackList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
           _isLoading = false;
         });
