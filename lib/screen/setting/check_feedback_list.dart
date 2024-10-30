@@ -37,8 +37,6 @@ class CheckFeedbackList extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     SizedBox verticalSpace = SizedBox(height: screenHeight * 0.02);
 
-    final bool isReply = false;
-
     return SettingLayout(
         title: '문의 확인',
         child: Padding(
@@ -131,6 +129,7 @@ class CheckFeedbackList extends StatelessWidget {
                 Visibility(
                     visible: isReply,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           '답변',

@@ -96,6 +96,7 @@ class _FeedbackListTabbarState extends State<FeedbackListTabbar> {
                         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: screenHeight * 0.01),
                         child: GestureDetector(
                           onTap: () {
+                            print('isReply : $isReply');
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
