@@ -50,7 +50,10 @@ class ScreenLayout extends StatelessWidget {
                       DialogManager.showConfirmDialog(
                         context: context,
                         title: '루틴 삭제',
-                        content: '삭제된 루틴은 임시보관함에 보관되고,\n30일 이후 자동으로 영구 삭제됩니다.\n삭제하시겠습니까?',
+                        content: '삭제된 루틴은 임시보관함에 보관되고,'
+                            '\n30일 이후 자동으로 영구 삭제됩니다.'
+                            '\n루틴과 관련된 모든 기록도 함께 삭제됩니다.'
+                            '\n삭제하시겠습니까?',
                         onConfirm: onDeletePressed ?? (){},
                       );
                     },

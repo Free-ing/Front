@@ -63,7 +63,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   //Todo: 서버 요청 (운동 루틴 추가)
   Future<void> _submitExerciseRoutine() async {
-    // if (_formKey.currentState!.validate()) {
+    // if (_formKey.currentState!.validate() && _nameController.text.isNotEmpty) {
     //   FocusScope.of(context).unfocus();
     //   final String spiritName = _nameController.text;
     //   final String explanation = _boddyController.text;
@@ -98,13 +98,15 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
     //         const SnackBar(content: Text('운동 채우기 루틴 추가에 실패했습니다.')));
     //     print(response);
     //   }
+    // } else {
+    //null;
     // }
   }
 
   //Todo: 서버 요청 (수면 루틴 추가)
   Future<void> _submitSleepRoutine() async {
     print('수면 루틴 추가');
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _nameController.text.isNotEmpty) {
       FocusScope.of(context).unfocus();
       final String sleepName = _nameController.text;
       final String explanation = _explanationController.text;
@@ -148,12 +150,14 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             content:
                 '${errorData['message']}\n(오류 코드: ${response.statusCode})');
       }
+    } else {
+      null;
     }
   }
 
   //Todo: 서버 요청 (취미 루틴 추가)
   Future<void> _submitHobbyRoutine() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _nameController.text.isNotEmpty) {
       FocusScope.of(context).unfocus();
       final String hobbyName = _nameController.text;
 
@@ -176,12 +180,14 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             content:
                 '${errorData['message']}\n(오류 코드: ${response.statusCode})');
       }
+    } else {
+      null;
     }
   }
 
   //Todo: 서버 요청 (마음 채우기 루틴 추가)
   Future<void> _submitSpiritRoutine() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _nameController.text.isNotEmpty) {
       FocusScope.of(context).unfocus();
       final String spiritName = _nameController.text;
       final String explanation = _explanationController.text;
@@ -224,6 +230,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
           content: '${errorData['message']}\n(오류 코드: ${response.statusCode})',
         );
       }
+    } else {
+      null;
     }
   }
 
@@ -245,7 +253,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
               children: [
                 // 제목과 이미지 입력
                 _routineImageTitle(textTheme, screenWidth, screenHeight),
-                SizedBox(height: screenHeight * 0.03),
+
                 // 카테고리 선택
                 _selectCategory(textTheme, screenWidth, screenHeight),
                 SizedBox(height: screenHeight * 0.02),
@@ -409,8 +417,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         if (errorText != null)
           Text(
             errorText!,
-            style: textTheme.bodySmall?.copyWith(color: Colors.red),
+            style: textTheme.bodyMedium?.copyWith(color: Colors.red),
           ),
+        SizedBox(height: errorText !=null ? screenHeight * 0.004: screenHeight*0.03),
       ],
     );
   }

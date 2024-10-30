@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/emotion_diary_card.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
-import 'package:freeing/layout/chart_layout.dart';
 import 'package:freeing/model/spirit/emotion_diary.dart';
 import 'package:freeing/screen/chart/mood_calendar.dart';
 

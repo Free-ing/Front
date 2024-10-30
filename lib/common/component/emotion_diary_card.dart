@@ -85,11 +85,11 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
         return SafeArea(
           child: Wrap(
             children: <Widget>[
-              ListTile(
-                leading: Icon(Icons.edit_note_rounded),
-                title: const Text('일기 수정하기'),
-                onTap: () {},
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.edit_note_rounded),
+              //   title: const Text('일기 수정하기'),
+              //   onTap: () {},
+              // ),
               ListTile(
                   leading: Icon(Icons.delete_forever_outlined),
                   title: const Text('일기 삭제하기'),

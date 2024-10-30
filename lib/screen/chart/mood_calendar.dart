@@ -24,12 +24,12 @@ class MoodCalendar extends StatefulWidget {
 
 class _MoodCalendarState extends State<MoodCalendar> {
   final tokenStorage = TokenStorage();
-  DateTime selectedMonth = DateTime.now();
+  DateTime select = DateTime.now();
   late int selectedDate = DateTime.now().day;
-  late int year = DateTime.now().year;
-  late int month = DateTime.now().month;
-  int getFirstDayOfMonth() => DateTime(year, month, 1).weekday;
-  int getDaysInMonth() => DateTime(year, month + 1, 0).day;
+  late int selectYear = DateTime.now().year;
+  late int selectMonth = DateTime.now().month;
+  int getFirstDayOfMonth() => DateTime(selectYear, selectMonth, 1).weekday;
+  int getDaysInMonth() => DateTime(selectYear, selectMonth + 1, 0).day;
   final apiService = SpiritAPIService();
 
   Map<int, String> emotionDataByDay = {};
@@ -38,7 +38,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
   //Todo: 서버 요청 (월별 감정 조회)
   Future<List<MoodMonthly>> _fetchMonthlyEmotion(int year, int month) async {
-    print('Fetching Monthly Emotion');
+    print('Fetching Monthly Emotion $year - $month');
     final response = await apiService.getMoodList(year, month);
 
     print(response.statusCode);
@@ -104,7 +104,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
   //Todo: 서버 요청 (일일 감정 일기 기록 조회)
   Future<void> _fetchEmotionDiary(int diaryId) async {
-    print('Fetching Emotion Diary');
+    print('Fetching Emotion Diary ');
     print(diaryId);
     final response = await apiService.getEmotionDiary(diaryId);
 
@@ -142,7 +142,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
         const SnackBar(content: Text('감정일기가 삭제되었습니다.')),
       );
       setState(() {
-        getEmotionDataByDay(year, month);
+        getEmotionDataByDay(selectYear, selectMonth);
       });
       Navigator.pop(context);
     } else {
@@ -155,8 +155,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
   @override
   void initState() {
     super.initState();
-
-    getEmotionDataByDay(year, month).then((data) {
+    getEmotionDataByDay(selectYear, selectMonth).then((data) {
       setState(() {
         emotionDataByDay = Map<int, String>.from(data['emotions']!);
         diaryIdByDay = Map<int, int>.from(data['diaryIds']!);
@@ -173,12 +172,13 @@ class _MoodCalendarState extends State<MoodCalendar> {
   //Todo: 날짜 update
   Future<void> updateSelectedMonth(DateTime date) async {
     setState(() {
-      year = selectedMonth.year;
-      month = selectedMonth.month;
-      selectedMonth = date;
+      select = date;
+      selectYear = select.year;
+      selectMonth = select.month;
+
     });
 
-    final emotionList = await getEmotionDataByDay(year, month);
+    final emotionList = await getEmotionDataByDay(selectYear, selectMonth);
 
     setState(() {
       emotionDataByDay = Map<int, String>.from(emotionList['emotions']!);
@@ -251,7 +251,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
         children: [
           Center(
             child: ShowChartDate(
-              selectedDate: selectedMonth,
+              selectedDate: select ,
               onDateChanged: updateSelectedMonth,
             ),
           ),
@@ -364,7 +364,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
   Widget _viewEmotionalDiary() {
     return EmotionDiaryCard(
       diaryId: selectedDiary?.diaryId ?? -1,
-      date: DateTime(year, month, selectedDate),
+      date: DateTime(selectYear, selectMonth, selectedDate),
       letterId: selectedDiary?.letterId ?? -1,
       scrap: selectedDiary?.scrap ?? false,
       emotionImage: getEmotionImagePath(selectedDiary?.emotion ?? ''),
@@ -390,7 +390,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              '$year년 $month월 $selectedDate일',
+              '$selectYear년 $selectMonth월 $selectedDate일',
               style: textTheme.titleSmall,
             ),
           ),
@@ -422,7 +422,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
                     child: OutlinedButton(
                       onPressed: () {
                         showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
-                            DateTime(year, month, selectedDate));
+                            DateTime(selectYear, selectMonth, selectedDate));
                       },
                       child: Text('일기 작성하기', style: textTheme.bodySmall),
                       style: OutlinedButton.styleFrom(

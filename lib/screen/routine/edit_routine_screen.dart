@@ -799,14 +799,14 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
               hintText: '미설정',
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_GREY),
               contentPadding: EdgeInsets.symmetric(
-                  vertical: 10, horizontal: 16), // 텍스트 필드 내부 패딩
+                  vertical: 10, horizontal: 16),
               filled: true,
-              fillColor: Colors.white, // 배경색
+              fillColor: Colors.white,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
+                borderRadius: BorderRadius.circular(15),
                 borderSide: BorderSide(
-                  color: Colors.black, // 테두리 색상
-                  width: 1, // 테두리 두께
+                  color: Colors.black,
+                  width: 1,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -875,7 +875,6 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
           ),
         ),
         Container(
-          //color: Colors.pink,
           child: IconButton(
             onPressed: () {
               setState(() {
