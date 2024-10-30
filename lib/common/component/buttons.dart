@@ -219,17 +219,18 @@ class _TimePickerButtonState extends State<TimePickerButton> {
   void _showTimePicker() {
     final screenHeight = MediaQuery.of(context).size.height;
     final textTheme = Theme.of(context).textTheme;
-    Duration selectedDuration = Duration(hours: 1);
+    DateTime selectedDateTime = DateTime.now();
 
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          //height: screenHeight * 0,
+          //height: screenHeight * 0.4,
           color: Colors.white,
           child: Wrap(
             children: [
               Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     height: screenHeight * 0.05,
@@ -253,8 +254,12 @@ class _TimePickerButtonState extends State<TimePickerButton> {
                         TextButton(
                           onPressed: () {
                             setState(() {
-                              selectedTime = _formatDuration(selectedDuration);
-                              widget.controller.text = selectedTime;
+                              // 24시간 형식을 controller.text에 저장
+                              widget.controller.text = _formatDateTime(selectedDateTime);
+                              // AM/PM 형식으로 화면에 표시할 selectedTime 업데이트
+                              selectedTime = _formatTimeToAMPM(selectedDateTime);
+                              // selectedTime = _formatDateTime(selectedDateTime);
+                              // widget.controller.text = selectedTime;
                             });
                             //widget.onTimeChanged(selectedDuration);
                             // 선택된 시간을 저장하고 팝업 닫기
@@ -270,14 +275,22 @@ class _TimePickerButtonState extends State<TimePickerButton> {
                       ],
                     ),
                   ),
-                  CustomTimePicker(
-                    selectedTime: Duration(hours: 1),
-                    onTimeChanged: (duration) {
-                      selectedDuration = duration;
-                      // selectedDuration = newDuration;
-                      // print("Selected duration: $newDuration");
-                    },
+                  SizedBox(
+                    height: screenHeight * 0.25,
+                    child: Localizations.override(
+                      context: context,
+                      locale: const Locale('en'),
+                      child: CustomTimePicker(
+                        selectedTime: DateTime.now(),
+                        onTimeChanged: (newDateTime) {
+                          selectedDateTime = newDateTime;
+                          // selectedDuration = newDuration;
+                          // print("Selected duration: $newDuration");
+                        },
+                      ),
+                    ),
                   ),
+
                 ],
               ),
             ],
@@ -287,12 +300,24 @@ class _TimePickerButtonState extends State<TimePickerButton> {
     );
   }
 
-  String _formatDuration(Duration duration) {
+  // 15:35 형식으로 변환하는 함수 (서버에게 보내는 용도)
+  String _formatDateTime(DateTime dateTime) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String hours = twoDigits(duration.inHours);
-    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String hours = twoDigits(dateTime.hour);
+    String minutes = twoDigits(dateTime.minute);
     return "$hours:$minutes";
   }
+
+  // AM/PM 형식으로 변환하는 함수
+  String _formatTimeToAMPM(DateTime dateTime) {
+    String period = dateTime.hour >= 12 ? 'PM' : 'AM';
+    int hour = dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour;
+    hour = hour == 0 ? 12 : hour; // 0시를 12로 변환
+    String minute = dateTime.minute.toString().padLeft(2, '0');
+    return "$hour:$minute $period";
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
