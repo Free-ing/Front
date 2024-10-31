@@ -5,14 +5,21 @@ import '../const/colors.dart';
 
 
 // TODO : 넘어온 날짜가 오늘과 같은 경우 초록원!!!
-class CircleWidget extends StatelessWidget {
+class CircleWidget extends StatefulWidget {
   final DateTime date;
   final String dayName;
-  CircleWidget({required this.dayName, required this.date});
+  final bool isSelected;
+  CircleWidget({required this.dayName, required this.date,required this.isSelected});
 
+  @override
+  State<CircleWidget> createState() => _CircleWidgetState();
+}
+
+class _CircleWidgetState extends State<CircleWidget> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     final textTheme = Theme.of(context).textTheme;
 
 
@@ -21,18 +28,51 @@ class CircleWidget extends StatelessWidget {
       child: Container(
         color: Colors.transparent, // 배경색 설정
         child: SizedBox(
-          //width: screenWidth * 0.15, // 원하는 너비로 설정
-          height: screenWidth * 0.15, // 원하는 높이로 설정
+          width: screenWidth * 0.1,
+          height: 80,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(
-                dayName,
-                style: textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
-              ),
-              CustomPaint(
-                size: Size(screenWidth * 0.07, screenWidth * 0.07),
-                painter: ColorfulCirclePainter(date: date),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  if(widget.isSelected)
+                    Container(
+                      width: screenWidth * 0.105,
+                      height: screenHeight * 0.0889,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFFFBF0), // Ivory color
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.black, width: 1),
+                      ),
+                    ),
+                    // Positioned(
+                    //   child: Container(
+                    //     width: screenWidth * 0.105,
+                    //     height: screenHeight * 0.0889,
+                    //     decoration: BoxDecoration(
+                    //       color: Color(0xFFFFFBF0), // Ivory color
+                    //       borderRadius: BorderRadius.circular(20),
+                    //       border: Border.all(color: Colors.black, width: 1)
+                    //     ),
+                    //   ),
+                    // ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.dayName,
+                        style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: screenHeight * 0.01,),
+                      CustomPaint(
+                        size: Size(30,30),
+                        painter: ColorfulCirclePainter(date: widget.date),
+                      ),
+                    ],
+                  ),
+
+                ],
               ),
             ],
           ),
@@ -85,7 +125,7 @@ class ColorfulCirclePainter extends CustomPainter {
       }
       // 하얀 원 그리기
       paint.color = Colors.white;
-      double innerCircleRadius = radius * 0.7; // 바깥 원의 40% 크기 예시
+      double innerCircleRadius = radius * 0.75;
       canvas.drawCircle(center, innerCircleRadius, paint);
 
     }
@@ -103,7 +143,7 @@ class ColorfulCirclePainter extends CustomPainter {
         text: date.day.toString(),
         style: TextStyle(
           color: Colors.black,
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: FontWeight.w300,
           fontFamily: 'scdream',
         ),

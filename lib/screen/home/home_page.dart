@@ -17,28 +17,44 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int selectedIndex = -1;
+  DateTime now = DateTime.now().toUtc().add(Duration(hours: 9));
+  late String formattedDate;
+  late String todayDayName;
+  late List<DateTime> dates;
+  // String formattedDate = DateFormat('yyyy년 MM월 dd일').format(now);
+  //
+  // String todayDayName = DateFormat('EEE', 'ko').format(now);
+  // final dayOfWeek = now.weekday;
+  // final dates = List.generate(7, (index) {
+  //   return now.subtract(Duration(days: dayOfWeek - 1 - index));
+  // });
+
+  final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
+
+  @override
+  void initState() {
+    super.initState();
+    final dayOfWeek = now.weekday;
+
+    // formattedDate와 todayDayName 초기화
+    formattedDate = DateFormat('yyyy년 MM월 dd일').format(now);
+    todayDayName = DateFormat('EEE', 'ko').format(now);
+
+    // dates 리스트 초기화
+    dates = List.generate(7, (index) {
+      return now.subtract(Duration(days: dayOfWeek - 1 - index));
+    });
+    final today = DateTime.now();
+    selectedIndex = dates.indexWhere((date) =>
+    date.year == today.year && date.month == today.month && date.day == today.day);
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-
-    DateTime now = DateTime.now().toUtc().add(Duration(hours: 9));
-    //DateTime now = DateTime.now();
-    print(now);
-    String formattedDate = DateFormat('yyyy년 MM월 dd일').format(now);
-
-    String todayDayName = DateFormat('EEE', 'ko').format(now);
-    final dayOfWeek = now.weekday;
-    // Create a list of DateTimes for the week
-    final dates = List.generate(7, (index) {
-    // Adjust the index based on today's weekday
-    return now.subtract(Duration(days: dayOfWeek - 1 - index));
-    });
-
-    final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
-
-
 
     return Stack(
       children: <Widget>[
@@ -96,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Container(
                   width: screenWidth * 0.9,
-                  height: screenHeight * 0.1,
+                  height: screenHeight * 0.106,
                   margin: EdgeInsets.symmetric(
                     vertical: screenHeight * 0.02,
                   ),
@@ -116,9 +132,13 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: List<Widget>.generate(7, (index){
-                        return CircleWidget(dayName: dayNames[index], date: dates[index]);
+                      final date = dates[index];
+                        return GestureDetector(onTap: (){setState(() {
+                          selectedIndex = index;
+                        });}, child: CircleWidget(dayName: dayNames[index], date: dates[index], isSelected: selectedIndex == index));
                       }),
                   ),
                 ),
