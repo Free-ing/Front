@@ -93,14 +93,15 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
 
     print('저장 버튼 누름');
 
-    if (selectedIndex! >= 0) {
+    if (selectedIndex != null && selectedIndex! >= 0) {
       emotion = emotionList[selectedIndex!];
     } else {
       print('Invalid index: $selectedIndex');
     }
 
     if (wellDoneController.text.isNotEmpty &&
-        hardWorkController.text.isNotEmpty) {
+        hardWorkController.text.isNotEmpty &&
+        selectedIndex! >= 0) {
       final response = await apiService.postEmotionalDiary(
         wellDone,
         hardWork,
@@ -163,7 +164,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
       title: widget.title,
       onButtonPressed: (AnimationController) async {
         await _submitEmotionalDiary();
-        if (_getAiLetter == true) {
+        if (_getAiLetter == true && diaryId != null) {
           await _postAiLetter(diaryId!);
         }
       },

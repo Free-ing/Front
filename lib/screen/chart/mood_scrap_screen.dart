@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/emotion_diary_card.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
+import 'package:freeing/layout/chart_layout.dart';
 import 'package:freeing/model/spirit/emotion_diary.dart';
-import 'package:freeing/screen/chart/mood_calendar.dart';
+import 'package:freeing/screen/chart/mood_calendar_screen.dart';
 
 class MoodScrap extends StatefulWidget {
   const MoodScrap({super.key});
@@ -100,7 +101,42 @@ class _MoodScrapState extends State<MoodScrap> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
+    return ChartLayout(
+      title: '스크랩',
+      backToPage: () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const MoodCalendar()),
+        );
+      },
+      chartWidget: ListView.builder(
+        itemCount: _scrapDiaryList.length,
+        itemBuilder: (BuildContext context, int index) {
+          final scrapDiaryList = _scrapDiaryList[index];
+          return Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.05, vertical: screenHeight * 0.05),
+            child: EmotionDiaryCard(
+              diaryId: scrapDiaryList.diaryId,
+              date: scrapDiaryList.date,
+              letterId: scrapDiaryList.letterId,
+              scrap: scrapDiaryList.scrap,
+              emotionImage: getEmotionImagePath(scrapDiaryList.emotion),
+              wellDone: scrapDiaryList.wellDone,
+              hardWork: scrapDiaryList.hardWork,
+              deleteDiary: () {
+                _deleteEmotionDiary(scrapDiaryList.diaryId);
+              },
+              from: 'scrap',
+            ),
+          );
+        },
+      ),
+      selectMonth: false,
+      onDateSelected: (date) {},
+    );
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
@@ -112,7 +148,8 @@ class _MoodScrapState extends State<MoodScrap> {
               IconButton(
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const MoodCalendar()),
+                    MaterialPageRoute(
+                        builder: (context) => const MoodCalendar()),
                   );
                 },
                 icon: Icon(Icons.arrow_back_ios_rounded),
@@ -136,7 +173,8 @@ class _MoodScrapState extends State<MoodScrap> {
         itemBuilder: (BuildContext context, int index) {
           final scrapDiaryList = _scrapDiaryList[index];
           return Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight*0.05),
+            padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.05, vertical: screenHeight * 0.05),
             child: EmotionDiaryCard(
               diaryId: scrapDiaryList.diaryId,
               date: scrapDiaryList.date,
