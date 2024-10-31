@@ -1,56 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/bottom_sheet.dart';
 import 'package:freeing/common/component/buttons.dart';
-import 'package:freeing/common/component/home_expansion_tile.dart';
+import 'package:freeing/common/component/circle_widget.dart';
 import 'package:freeing/common/const/colors.dart';
-import 'package:freeing/layout/default_layout.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/home/diary_bottom_sheet.dart';
 import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
 import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
-import 'package:icon_decoration/icon_decoration.dart';
 import 'package:intl/intl.dart';
 
-import 'hobby_record_bottom_sheet.dart';
-
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    DateTime now = DateTime.now();
+    DateTime now = DateTime.now().toUtc().add(Duration(hours: 9));
+    //DateTime now = DateTime.now();
+    print(now);
     String formattedDate = DateFormat('yyyy년 MM월 dd일').format(now);
+
+    String todayDayName = DateFormat('EEE', 'ko').format(now);
+    final dayOfWeek = now.weekday;
+    // Create a list of DateTimes for the week
+    final dates = List.generate(7, (index) {
+    // Adjust the index based on today's weekday
+    return now.subtract(Duration(days: dayOfWeek - 1 - index));
+    });
+
+    final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
+
+
 
     return Stack(
       children: <Widget>[
         Positioned.fill(
-          child: Image.asset(
-            'assets/imgs/background/background_image_home.png',
-            fit: BoxFit.cover,
-          ),
+          child: Image.asset('assets/imgs/background/background_image_home.png',
+              fit: BoxFit.cover),
         ),
         Positioned(
-          top: 50,
-          left: 20,
-          child: Image.asset(
-            'assets/imgs/home/logo.png',
-            width: 200,
-            height: 46,
-            fit: BoxFit.contain,
-          ),
-        ),
+            top: 50,
+            left: 20,
+            child: Image.asset('assets/imgs/home/logo.png',
+                width: 200, height: 46, fit: BoxFit.contain)),
         Scaffold(
           backgroundColor: Colors.transparent,
+          //backgroundColor: Colors.black,
           body: Padding(
             padding: EdgeInsets.only(
-              left: screenWidth * 0.06,
-              right: screenWidth * 0.06,
-              top: screenWidth * 0.33,
-            ),
+                left: screenWidth * 0.06,
+                right: screenWidth * 0.06,
+                top: screenWidth * 0.33),
             child: Column(
               children: [
                 Row(
@@ -109,20 +117,16 @@ class HomePage extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text('월'),
-                      Text('화'),
-                      Text('수'),
-                      Text('목'),
-                      Text('금'),
-                      Text('토'),
-                      Text('일'),
-                    ],
+                    children: List<Widget>.generate(7, (index){
+                        return CircleWidget(dayName: dayNames[index], date: dates[index]);
+                      }),
                   ),
                 ),
-                Column(
+                Row(
                   children: [
-                    SizedBox(height: screenHeight * 0.03,),
+                    SizedBox(
+                      height: screenHeight * 0.03,
+                    ),
                     // ExpansionTileBox(
                     //     text: '운동', width: 300, lists: ['정적 스트레칭', '걷기']),
                     PlayButton(
@@ -143,10 +147,7 @@ class HomePage extends StatelessWidget {
                     LogButton(
                       onPressed: () {
                         showDiaryBottomSheet(
-                          context,
-                          '오늘 하루 어땠나요?',
-                          DateTime.now()
-                        );
+                            context, '오늘 하루 어땠나요?', DateTime.now());
                       },
                     ),
                     LogButton(

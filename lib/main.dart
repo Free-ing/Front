@@ -81,6 +81,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/member/login.dart';
 
 void main() async {
@@ -152,7 +153,7 @@ class MyApp extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('오류가 발생했습니다.')); // 오류 메시지
           } else {
-            return Login(); // 초기화 후 로그인 화면으로 이동
+            return HomePage(); // 초기화 후 로그인 화면으로 이동
           }
         },
       ),
