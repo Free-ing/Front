@@ -37,6 +37,7 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
 
   //Todo: 서버 요청 (감정 일기 스크랩 하기)
   Future<void> _scrapEmotionDiary(int diaryId) async {
+    print(widget.wellDone);
     print('감정 일기 스크랩 하기');
     final responseCode = await apiService.scrapEmotionDiary(diaryId);
     if (responseCode == 200) {
@@ -312,7 +313,7 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
   Widget _buildRecordText(text, textTheme) {
     return SingleChildScrollView(
       child: Text(
-        widget.hardWork,
+        text,
         style: textTheme.bodySmall,
         maxLines: null,
         overflow: TextOverflow.clip,
