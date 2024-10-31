@@ -15,7 +15,7 @@ void showHobbyBottomSheet(BuildContext context, String title) {
   final TextEditingController hobbyMemoController = TextEditingController();
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime(2024, 10, 29);
 
   final ValueNotifier<String> selectedHobbyNotifier = ValueNotifier('취미 선택');
   final ValueNotifier<File?> imageNotifier = ValueNotifier<File?>(null);

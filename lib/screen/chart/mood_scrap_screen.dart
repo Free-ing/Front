@@ -108,14 +108,13 @@ class _MoodScrapState extends State<MoodScrap> {
           MaterialPageRoute(builder: (context) => const MoodCalendar()),
         );
       },
-      chartWidget: ListView.builder(
-        itemCount: _scrapDiaryList.length,
-        itemBuilder: (BuildContext context, int index) {
-          final scrapDiaryList = _scrapDiaryList[index];
-          return Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.05, vertical: screenHeight * 0.05),
-            child: EmotionDiaryCard(
+      chartWidget: Padding(
+        padding: EdgeInsets.symmetric(vertical: screenHeight*0.02),
+        child: ListView.builder(
+          itemCount: _scrapDiaryList.length,
+          itemBuilder: (BuildContext context, int index) {
+            final scrapDiaryList = _scrapDiaryList[index];
+            return EmotionDiaryCard(
               diaryId: scrapDiaryList.diaryId,
               date: scrapDiaryList.date,
               letterId: scrapDiaryList.letterId,
@@ -127,9 +126,9 @@ class _MoodScrapState extends State<MoodScrap> {
                 _deleteEmotionDiary(scrapDiaryList.diaryId);
               },
               from: 'scrap',
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
       selectMonth: false,
       onDateSelected: (date) {},

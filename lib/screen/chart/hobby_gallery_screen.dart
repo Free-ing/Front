@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/show_chart_date.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
@@ -64,13 +65,14 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
         title: '취미 기록이 삭제되었습니다.',
         leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
       ).showToast(context);
+      Navigator.pop(context);
       setState(() {
         _hobbyAlbums.removeWhere((album) => album.recordId == recordId);
       });
       Navigator.of(context).pop();
     } else {
       ToastBarWidget(
-        title:'취미 기록이 삭제되지 않았습니다. ${responseCode}',
+        title: '취미 기록이 삭제되지 않았습니다. ${responseCode}',
       ).showToast(context);
       print(responseCode);
     }
@@ -280,11 +282,15 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                       // ),
                       /// 취미 기록 삭제
                       SizedBox(
-                        height: screenHeight*0.045,
+                        height: screenHeight * 0.045,
                         width: screenWidth * 0.07,
                         child: IconButton(
                           onPressed: () {
-                            _deleteHobbyRecord(recordId);
+                            DialogManager.showConfirmDialog(
+                                context: context,
+                                title: '취미 기록 삭제',
+                                content: '삭제된 취미 기록은 복구할 수 없습니다.\n삭제하시겠습니까?',
+                                onConfirm:  (){_deleteHobbyRecord(recordId);});
                           },
                           icon: Icon(
                             Icons.delete_forever,
