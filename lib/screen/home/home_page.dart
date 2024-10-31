@@ -122,8 +122,9 @@ class HomePage extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    ExpansionTileBox(
-                        text: '운동', width: 300, lists: ['정적 스트레칭', '걷기']),
+                    SizedBox(height: screenHeight * 0.03,),
+                    // ExpansionTileBox(
+                    //     text: '운동', width: 300, lists: ['정적 스트레칭', '걷기']),
                     PlayButton(
                         onPressed: () {
                           showExerciseBottomSheet(context, '정적 스트레칭');

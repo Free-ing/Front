@@ -155,7 +155,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
             QuestionMark(
                 title: '수면 기록하기 설명',
                 description:
-                    '잠을 잔 시간, 자고 일어난 후의 상태를 기록해요!\n주간(월간) 통계와 피드백을 받을 수 있어요!'),
+                    '잠을 잔 시간, 자고 일어난 후의\n 상태를 기록해요!\n\n주간(월간) 통계와 피드백을 받을 수 있어요!'),
             Spacer(),
             toggle(),
           ],
@@ -176,7 +176,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
             QuestionMark(
                 title: '수면 루틴 만들기 설명',
                 description:
-                    '꿀잠을 위한 루틴을 만들어 보세요!\n추천해드리는걸 해도 되고, 직접 세워봐도 좋아요!'),
+                    '꿀잠을 위한 루틴을 만들어 보세요!\n\n추천해드리는걸 해도 되고,\n직접 세워봐도 좋아요!'),
           ],
         ),
         Container(
