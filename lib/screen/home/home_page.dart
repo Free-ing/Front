@@ -22,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   late String formattedDate;
   late String todayDayName;
   late List<DateTime> dates;
+  final today = DateTime.now();
   // String formattedDate = DateFormat('yyyy년 MM월 dd일').format(now);
   //
   // String todayDayName = DateFormat('EEE', 'ko').format(now);
@@ -45,7 +46,6 @@ class _HomePageState extends State<HomePage> {
     dates = List.generate(7, (index) {
       return now.subtract(Duration(days: dayOfWeek - 1 - index));
     });
-    final today = DateTime.now();
     selectedIndex = dates.indexWhere((date) =>
     date.year == today.year && date.month == today.month && date.day == today.day);
   }
@@ -89,7 +89,10 @@ class _HomePageState extends State<HomePage> {
                       width: 79.60,
                       height: 30,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {setState(() {
+                          selectedIndex = dates.indexWhere((date) =>
+                          date.year == today.year && date.month == today.month && date.day == today.day);
+                        });},
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
                           side:
