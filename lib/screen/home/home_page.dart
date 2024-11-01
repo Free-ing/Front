@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   late String todayDayName;
   late List<DateTime> dates;
   final today = DateTime.now();
+  late DateTime currentWeekStartDate;
   // String formattedDate = DateFormat('yyyy년 MM월 dd일').format(now);
   //
   // String todayDayName = DateFormat('EEE', 'ko').format(now);
@@ -41,6 +42,9 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     final dayOfWeek = now.weekday;
 
+    currentWeekStartDate = now.subtract(Duration(days: now.weekday - 1));
+    _generateDates();
+
     // formattedDate와 todayDayName 초기화
     formattedDate = DateFormat('yyyy년 MM월 dd일').format(now);
     todayDayName = DateFormat('EEE', 'ko').format(now);
@@ -53,6 +57,13 @@ class _HomePageState extends State<HomePage> {
         date.year == today.year &&
         date.month == today.month &&
         date.day == today.day);
+  }
+
+  void _generateDates() {
+    dates = List<DateTime>.generate(
+      7,
+          (index) => currentWeekStartDate.add(Duration(days: index)),
+    );
   }
 
   @override
@@ -146,21 +157,48 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List<Widget>.generate(7, (index) {
-                      //final date = dates[index];
-                      return GestureDetector(
+                    children: [
+
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            currentWeekStartDate = currentWeekStartDate.subtract(Duration(days: 7));
+                            _generateDates();
+                            selectedIndex = -1; // Reset selection if needed
+                          });
+                        },
+                        child: Icon(Icons.arrow_back_ios),
+                      ),
+                      // Week Days
+                      ...List<Widget>.generate(7, (index) {
+                        return GestureDetector(
                           onTap: () {
                             setState(() {
                               selectedIndex = index;
                             });
                           },
                           child: CircleWidget(
-                              dayName: dayNames[index],
-                              date: dates[index],
-                              isSelected: selectedIndex == index));
-                    }),
+                            dayName: dayNames[index],
+                            date: dates[index],
+                            isSelected: selectedIndex == index,
+                          ),
+                        );
+                      }),
+                      // Next Week Button
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            currentWeekStartDate = currentWeekStartDate.add(Duration(days: 7));
+                            _generateDates();
+                            selectedIndex = -1; // Reset selection if needed
+                          });
+                        },
+                        child: Icon(Icons.arrow_forward_ios),
+                      ),
+
+                    ]
                   ),
                 ),
                 Row(
