@@ -6,10 +6,10 @@ import 'buttons.dart';
 
 class HomeExpansionTileBox extends StatefulWidget {
   String text;
-  double width;
+  //double width;
   List lists;
   HomeExpansionTileBox(
-      {Key? key, required this.text, required this.width, required this.lists})
+      {Key? key, required this.text,  required this.lists})
       : super(key: key);
 
   @override
@@ -27,45 +27,54 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   }
 
   Widget listsWidget() {
-    return Column(
-      children: widget.lists.asMap().entries.map((entry) {
-        int index = entry.key;
-        var item = entry.value;
-
-        return ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
-          minLeadingWidth: 0.0,
-          leading: Container(
-            width: 4,
-            height: 4,
-            decoration:
-                BoxDecoration(shape: BoxShape.circle, color: Colors.black),
-          ),
-          title: GestureDetector(
-            onTap: () {},
-            child: Text(
-              item,
-              style: TextStyle(fontSize: 14, fontFamily: 'scdream'),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Column(
+        children: widget.lists.asMap().entries.map((entry) {
+          int index = entry.key;
+          var item = entry.value;
+          return ListTile(
+            contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+            minLeadingWidth: 0.0,
+            leading: Container(
+              width: 4,
+              height: 4,
+              decoration:
+                  BoxDecoration(shape: BoxShape.circle, color: Colors.black),
             ),
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PlayButton(
-                  onPressed: () {
-                    showExerciseBottomSheet(context, '정적 스트레칭');
-                  },
-                  iconColor: PINK_PLAY_BUTTON),
-              SizedBox(width: 15.0),
-              GestureDetector(
-                  onTap: (){setState(() {
-                    _isChecked[index] = !_isChecked[index];
-                  });},
-                  child: Image.asset( _isChecked[index] ? 'assets/icons/after_checkbox.png' : 'assets/icons/before_checkbox.png')),
-            ],
-          ),
-        );
-      }).toList(),
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () {},
+                  child: Text(
+                    item,
+                    style: TextStyle(fontSize: 14, fontFamily: 'scdream'),
+                  ),
+                ),
+                SizedBox(width: 5.0,),
+                Text('11:00', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: TEXT_PURPLE),)
+              ],
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PlayButton(
+                    onPressed: () {
+                      showExerciseBottomSheet(context, '정적 스트레칭');
+                    },
+                    iconColor: PINK_PLAY_BUTTON),
+                SizedBox(width: 15.0),
+                GestureDetector(
+                    onTap: (){setState(() {
+                      _isChecked[index] = !_isChecked[index];
+                    });},
+                    child: Image.asset( _isChecked[index] ? 'assets/icons/after_checkbox.png' : 'assets/icons/before_checkbox.png')),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -76,7 +85,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       case '수면':
         return HOME_BLUE_TEXT; // 수면 색상 설정
       case '마음 채우기':
-        return HOME_YELLOW_TEXT; // 마음 채우기 색상 설정
+        return HOME_GREEN_TEXT; // 마음 채우기 색상 설정
       default:
         return Colors.black; // 기본 색상 설정
     }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freeing/common/component/bottom_sheet.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/circle_widget.dart';
 import 'package:freeing/common/const/colors.dart';
@@ -10,6 +9,7 @@ import 'package:freeing/screen/home/meditation_bottom_sheet.dart';
 import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
 import 'package:intl/intl.dart';
 
+import '../../common/component/bottom_sheet.dart';
 import '../../common/component/expansion_tile.dart';
 
 class HomePage extends StatefulWidget {
@@ -60,6 +60,9 @@ class _HomePageState extends State<HomePage> {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    SizedBox verticalSpace = SizedBox(
+      height: screenHeight * 0.02,
+    );
 
     return Stack(
       children: <Widget>[
@@ -79,7 +82,7 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.only(
                 left: screenWidth * 0.06,
                 right: screenWidth * 0.06,
-                top: screenWidth * 0.33),
+                top: screenWidth * 0.3),
             child: Column(
               children: [
                 Row(
@@ -161,6 +164,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     SizedBox(
                       height: screenHeight * 0.03,
@@ -193,8 +197,62 @@ class _HomePageState extends State<HomePage> {
                     )
                   ],
                 ),
-                HomeExpansionTileBox(
-                    text: '운동', width: screenWidth * 0.9, lists: ['정적 스트레칭', '걷기']),
+                Container(
+                  height: screenHeight * 0.5,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        HomeExpansionTileBox(
+                            text: '운동', lists: ['정적 스트레칭', '걷기']),
+                        verticalSpace,
+                        HomeExpansionTileBox(
+                            text: '수면', lists: ['수면 기록하기', '따듯한 물 마시기']),
+                        verticalSpace,
+                        HomeExpansionTileBox(
+                            text: '마음 채우기', lists: ['감정일기 작성', '명상하기']),
+                        verticalSpace,
+                        Container(
+                          width: screenWidth * 0.9,
+                          height: screenHeight * 0.05,
+                          decoration: BoxDecoration(
+                              color: LIGHT_IVORY,
+                              border: Border.all(width: 1),
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                RichText(
+                                  text: TextSpan(
+                                      text: '오늘은 어떤 ',
+                                      style: textTheme.bodyMedium,
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                            text: '취미',
+                                            style: textTheme.bodyMedium?.copyWith(
+                                                color: HOME_YELLOW_TEXT,
+                                                fontWeight: FontWeight.w600)),
+                                        TextSpan(
+                                          text: '를 했나요?'
+                                        )
+                                      ]),
+                                ),
+                                LogButton(
+                                  onPressed: () {
+                                    showHobbyBottomSheet(
+                                        context, '오늘 했던 취미는 어땠나요? ');
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        verticalSpace
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

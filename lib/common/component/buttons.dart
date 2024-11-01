@@ -182,16 +182,13 @@ class LogButton extends StatelessWidget {
     //   ),
     //   onPressed: onPressed,
     // );
-    return Padding(
-      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
-      child: InkWell(
-        onTap: onPressed,
-        child: Image.asset(
-          'assets/imgs/home/record_icon.png',
-          width: MediaQuery.of(context).size.width * 0.06,
-          height: MediaQuery.of(context).size.height * 0.03,
-          fit: BoxFit.contain,
-        ),
+    return InkWell(
+      onTap: onPressed,
+      child: Image.asset(
+        'assets/imgs/home/record_icon.png',
+        //width: ,
+        //height: MediaQuery.of(context).size.height * 0.03,
+        fit: BoxFit.contain,
       ),
     );
   }
