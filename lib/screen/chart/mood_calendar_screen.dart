@@ -33,6 +33,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
   int getDaysInMonth() => DateTime(selectYear, selectMonth + 1, 0).day;
   final apiService = SpiritAPIService();
 
+
   Map<int, String> emotionDataByDay = {};
   Map<int, int> diaryIdByDay = {};
   EmotionDiary? selectedDiary;
@@ -49,13 +50,13 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
       if (jsonData is Map<String, dynamic>) {
         List<dynamic> moodList = jsonData['result'];
-        print(jsonData);
-        print(jsonData['result']);
+        print('이건 jsonData 이고 $jsonData');
+        print('json Data result야 !!!!!${jsonData['result']}');
         List<MoodMonthly> moodMonthlyList = moodList.map((data) {
           return MoodMonthly.fromJson(data);
         }).toList();
 
-        print(moodMonthlyList);
+        print('이게 바로 moodMonthlyList야 ~~~$moodMonthlyList');
 
         return moodMonthlyList;
       } else {
@@ -87,8 +88,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
   }
 
   //Todo: 날짜별 감정 데이터로 전환
-  Future<Map<String, Map<int, dynamic>>> getEmotionDataByDay(
-      int year, int month) async {
+  Future<Map<String, Map<int, dynamic>>> getEmotionDataByDay(int year, int month) async {
     List<MoodMonthly> moodMonthlyList = await _fetchMonthlyEmotion(year, month);
 
     Map<int, String> emotions = {};
@@ -100,12 +100,16 @@ class _MoodCalendarState extends State<MoodCalendar> {
       diaryIds[day] = mood.diaryId;
     }
 
+    print('최종 emotions 맵: $emotions');
+    print('최종 diaryIds 맵: $diaryIds');
+
     return {'emotions': emotions, 'diaryIds': diaryIds};
   }
 
+
   //Todo: 서버 요청 (일일 감정 일기 기록 조회)
   Future<void> _fetchEmotionDiary(int diaryId) async {
-    print('Fetching Emotion Diary ');
+    print('일일 감정 일기 조회');
     print(diaryId);
     final response = await apiService.getEmotionDiary(diaryId);
 
@@ -161,13 +165,19 @@ class _MoodCalendarState extends State<MoodCalendar> {
         diaryIdByDay = Map<int, int>.from(data['diaryIds']!);
       });
 
-      print(diaryIdByDay);
-      print(diaryIdByDay[selectedDate]);
-      if (diaryIdByDay[selectedDate] != null) {
-        _fetchEmotionDiary(diaryIdByDay[selectedDate]!);
+      // 비동기 작업 완료 후 diaryIdByDay[selectedDate] 접근
+      if (diaryIdByDay.containsKey(selectedDate)) {
+        print('선택 날짜 다이어리 아이디: ${diaryIdByDay[selectedDate]}');
+        _fetchEmotionDiary(diaryIdByDay[selectedDate]!); // 일기 데이터를 불러오는 함수 호출
+      } else {
+        print('선택한 날짜에 해당하는 일기 데이터가 없습니다.');
       }
+    }).catchError((error) {
+      print('에러 발생: $error');
     });
   }
+
+
 
   //Todo: 날짜 update
   Future<void> updateSelectedMonth(DateTime date) async {
@@ -181,11 +191,18 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
     setState(() {
       emotionDataByDay = Map<int, String>.from(emotionList['emotions']!);
+      diaryIdByDay = Map<int, int>.from(emotionList['diaryIds']!); // 추가된 코드
+
+      // 데이터를 모두 업데이트한 후 selectedDate에 대한 일기 데이터 확인
       if (diaryIdByDay[selectedDate] != null) {
         _fetchEmotionDiary(diaryIdByDay[selectedDate]!);
+
+      } else {
+        print('선택한 날짜에 해당하는 일기 데이터가 없습니다.');
       }
     });
   }
+
 
   //Todo: 감정 별 이미지 경로
   String getEmotionImagePath(String emotion) {
@@ -233,7 +250,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
                   daysInMonth, firstDayOfMonth),
               SizedBox(height: screenHeight * 0.017),
               // 선택된 날짜 상세 보기
-              emotionDataByDay[selectedDate] != null
+              diaryIdByDay[selectedDate] != null
                   ? _viewEmotionalDiary()
                   : _noneEmotionDiary(textTheme, screenWidth, screenHeight),
               SizedBox(height: screenHeight * 0.08),
@@ -339,16 +356,22 @@ class _MoodCalendarState extends State<MoodCalendar> {
               String imagePath = getEmotionImagePath(emotion);
               return GestureDetector(
                 onTap: () async {
+                  print('선택된 날짜: $selectedDate');
                   setState(() {
-                    selectedDate = dayNumber;
+                    selectedDate = dayNumber; // 날짜 업데이트
                   });
 
                   if (diaryIdByDay.containsKey(dayNumber)) {
                     await _fetchEmotionDiary(diaryIdByDay[dayNumber]!);
-                  } else
-                    (print('기록없음'));
+                  } else {
+                    setState(() {
+                      selectedDiary = null; // 또는 EmotionDiary()와 같이 초기화
+                    });
+                    print('기록없음');
+                  }
+
                 },
-                child: Column(
+              child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(imagePath, width: screenWidth * 0.115),
@@ -366,6 +389,8 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
   // Todo: 상세 보기 (선택된 날짜에 감정 일기 있을 때)
   Widget _viewEmotionalDiary() {
+    print('넘어가는 scrap값 : ${selectedDiary?.scrap ?? ''}');
+
     return EmotionDiaryCard(
       diaryId: selectedDiary?.diaryId ?? -1,
       date: DateTime(selectYear, selectMonth, selectedDate),

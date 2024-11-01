@@ -30,7 +30,7 @@ class SpiritList {
       required this.status,
       required this.startTime,
       required this.endTime,
-      required this.explanation});
+      required this.explanation,});
 
   factory SpiritList.fromJson(Map<String, dynamic> json) {
     DateTime? parsedStartTime = json['startTime'] != null
@@ -54,7 +54,7 @@ class SpiritList {
         status: json['status'],
         startTime: parsedStartTime,
         endTime: parsedEndTime,
-        explanation: json['explanation'] ?? '');
+        explanation: json['explanation'] ?? '저장된 설명이 없습니다.');
   }
 
   Map<String, dynamic> toJson() {

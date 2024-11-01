@@ -7,6 +7,7 @@ import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
+import 'package:freeing/common/service/sleep_api_service.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/screen/routine/routine_page.dart';
@@ -61,7 +62,8 @@ class EditRoutineScreen extends StatefulWidget {
 }
 
 class _EditRoutineScreenState extends State<EditRoutineScreen> {
-  String? errorText;
+  String? nameErrorText;
+  String? timeErrorText;
   List<WeekDay> weekDays = [];
   final _formKey = GlobalKey<FormState>();
 
@@ -123,9 +125,78 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     return '$formattedHour:$formattedMinute $period';
   }
 
+  //Todo: 서버 요청 (수면 루틴 수정)
+  Future<void> _editSleepRoutine() async {
+    if (_formKey.currentState!.validate() &&
+        _nameController.text.isNotEmpty &&
+        timeErrorText == null) {
+      FocusScope.of(context).unfocus();
+      final String sleepName = _nameController.text;
+
+      final startTime =
+          _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+      final endTime =
+          _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+
+      final apiService = SleepAPIService();
+
+      final response = await apiService.patchSleepRoutine(
+        sleepName,
+        startTime,
+        endTime,
+        weekDays[0].isSelected,
+        weekDays[1].isSelected,
+        weekDays[2].isSelected,
+        weekDays[3].isSelected,
+        weekDays[4].isSelected,
+        weekDays[5].isSelected,
+        weekDays[6].isSelected,
+        widget.status ?? true,
+        imageUrl,
+        widget.routineId,
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 1)),
+        );
+        ToastBarWidget(
+          title: '수면 루틴이 수정되었습니다.',
+          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+        ).showToast(context);
+      } else {
+        final errorData = json.decode(utf8.decode(response.bodyBytes));
+        DialogManager.showAlertDialog(
+          context: context,
+          title: '수면 루틴 수정 실패',
+          content: '${errorData['message']}\n(오류 코드: ${response.statusCode})',
+        );
+      }
+    }
+  }
+
+  //Todo: 서버 요청 (수면 루틴 삭제)
+  Future<void> _deleteSleepRoutine() async {
+    final responseCode =
+        await SleepAPIService().deleteSleepRoutine(widget.routineId);
+    if (responseCode == 200) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const RoutinePage(index: 1)),
+      );
+      ToastBarWidget(
+        title: '수면 루틴이 삭제되었습니다.',
+        leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+      ).showToast(context);
+    } else {
+      ToastBarWidget(
+        title: '수면 루틴이 삭제되지 않았습니다. $responseCode',
+      ).showToast(context);
+    }
+  }
+
   //Todo: 서버 요청 (취미 루틴 수정)
   Future<void> _editHobbyRoutine() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _nameController.text.isNotEmpty) {
       FocusScope.of(context).unfocus();
 
       final String hobbyName = _nameController.text;
@@ -176,7 +247,9 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
 
   //Todo: 서버 요청 (마음 채우기 루틴 수정)
   Future<void> _editSpiritRoutine() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() &&
+        _nameController.text.isNotEmpty &&
+        timeErrorText == null) {
       FocusScope.of(context).unfocus();
       final String spiritName = _nameController.text;
       final String explanation = _explanationController.text;
@@ -267,8 +340,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             child: Column(
               children: [
                 // 제목과 이미지 입력
-                _routineImageTitle(textTheme, screenWidth),
-                SizedBox(height: screenHeight * 0.03),
+                _routineImageTitle(textTheme, screenWidth, screenHeight),
+
                 // 카테고리 선택
                 _selectCategory(textTheme, screenWidth, screenHeight),
                 SizedBox(height: screenHeight * 0.02),
@@ -309,8 +382,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                 // 추가하기 버튼
                 SizedBox(
                     height: _selectHobby
-                        ? screenHeight * 0.012
-                        : screenHeight * 0.469),
+                        ? screenHeight * 0.042
+                        : screenHeight * 0.499),
                 GreenButton(
                   width: screenWidth * 0.6,
                   text: '수정하기',
@@ -320,7 +393,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                         //_editExerciseRoutine();
                         break;
                       case '수면':
-                        // _editSleepRoutine();
+                        _editSleepRoutine();
                         break;
                       case '취미':
                         _editHobbyRoutine();
@@ -343,7 +416,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             //_deleteExerciseRoutine();
             break;
           case '수면':
-            // _deleteSleepRoutine();
+            _deleteSleepRoutine();
             break;
           case '취미':
             _deleteHobbyRoutine();
@@ -357,7 +430,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
   }
 
   //Todo: 루틴 이미지, 제목 입력
-  Widget _routineImageTitle(textTheme, screenWidth) {
+  Widget _routineImageTitle(textTheme, screenWidth, screenHeight) {
     return Column(
       children: [
         Stack(
@@ -418,8 +491,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                         onPressed: () async {
                           final result = await Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  SelectRoutineImageScreen(selectImage: imageUrl),
+                              builder: (context) => SelectRoutineImageScreen(
+                                  selectImage: imageUrl),
                             ),
                           );
                           if (result != null && result is String) {
@@ -441,13 +514,16 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             ),
           ],
         ),
-        if (errorText != null)
+        if (nameErrorText != null)
           Text(
-            errorText!,
+            nameErrorText!,
             style: textTheme.bodySmall?.copyWith(color: Colors.red),
           ),
+        SizedBox(
+            height: nameErrorText != null
+                ? screenHeight * 0.004
+                : screenHeight * 0.03),
       ],
-
     );
   }
 
@@ -656,7 +732,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       visible: _timePickerOpen,
       child: Container(
         width: screenWidth,
-        height: screenHeight * 0.13,
+        height:
+            timeErrorText != null ? screenHeight * 0.17 : screenHeight * 0.13,
         decoration: BoxDecoration(
           color: IVORY,
           borderRadius: BorderRadius.circular(20),
@@ -685,12 +762,37 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
               title: '종료 시간',
               controller: _endTimeController,
               onTimeChanged: (DateTime selectTime) {
-                setState(() => _endTime = selectTime);
+                setState(() {
+                  if (_startTime != null && selectTime.isBefore(_startTime!)) {
+                    timeErrorText = '종료 시간이 시작 시간 보다 빠릅니다.';
+                  } else {
+                    _endTime = selectTime;
+                    timeErrorText = null;
+                    print(selectTime);
+                  }
+                });
               },
               resetTime: () {
                 _endTime = null;
+                timeErrorText = null;
               },
             ),
+            if (timeErrorText != null)
+              Column(
+                children: [
+                  SizedBox(height: screenHeight * 0.01),
+                  SizedBox(
+                    height: screenHeight * 0.03,
+                    child: Center(
+                      child: Text(
+                        timeErrorText!,
+                        style:
+                            textTheme.bodyMedium?.copyWith(color: Colors.red),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),
@@ -758,11 +860,11 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 setState(() {
-                  errorText = '제목을 입력 해주세요';
+                  nameErrorText = '제목을 입력 해주세요';
                 });
               } else {
                 setState(() {
-                  errorText = null;
+                  nameErrorText = null;
                 });
               }
               return null;
@@ -796,13 +898,13 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
         SizedBox(
           width: screenWidth * 0.46,
           height: screenHeight * 0.047,
-          child: TextField(
+          child: TextFormField(
             controller: controller,
             decoration: InputDecoration(
               hintText: '미설정',
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_GREY),
-              contentPadding: EdgeInsets.symmetric(
-                  vertical: 10, horizontal: 16),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(

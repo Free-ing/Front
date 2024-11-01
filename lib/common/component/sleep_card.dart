@@ -8,11 +8,36 @@ import '../service/token_storage.dart';
 import 'dialog_manager.dart';
 
 class SleepCard extends StatefulWidget {
-  int routineId;
+  final int routineId;
   final String imageUrl;
   final String title;
+  final bool monday;
+  final bool tuesday;
+  final bool wednesday;
+  final bool thursday;
+  final bool friday;
+  final bool saturday;
+  final bool sunday;
+  final DateTime? startTime;
+  final DateTime? endTime;
+  final bool status;
 
-  SleepCard({super.key, required this.routineId, required this.imageUrl, required this.title});
+  SleepCard({
+    super.key,
+    required this.routineId,
+    required this.imageUrl,
+    required this.title,
+    required this.monday,
+    required this.tuesday,
+    required this.wednesday,
+    required this.thursday,
+    required this.friday,
+    required this.saturday,
+    required this.sunday,
+    this.startTime,
+    this.endTime,
+    required this.status,
+  });
 
   @override
   State<SleepCard> createState() => _SleepCardState();
@@ -105,7 +130,22 @@ class _SleepCardState extends State<SleepCard> {
     return GestureDetector(
       onLongPress: () async {
         await Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => EditRoutineScreen(routineId: widget.routineId, title: widget.title, selectImage: widget.imageUrl, category: '수면',),
+          builder: (context) => EditRoutineScreen(
+            routineId: widget.routineId,
+            title: widget.title,
+            selectImage: widget.imageUrl,
+            category: '수면',
+            monday: widget.monday,
+            tuesday: widget.tuesday,
+            wednesday: widget.wednesday,
+            thursday: widget.thursday,
+            friday: widget.friday,
+            saturday: widget.saturday,
+            sunday: widget.sunday,
+            startTime: widget.startTime,
+            endTime: widget.endTime,
+            status: widget.status,
+          ),
         ));
       },
       child: Card(
@@ -170,7 +210,7 @@ class _SleepCardState extends State<SleepCard> {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            if(isSwitched){
+            if (isSwitched) {
               deactivateSleepRoutine(widget.routineId);
             } else {
               activateSleepRoutine(widget.routineId);
@@ -224,5 +264,4 @@ class _SleepCardState extends State<SleepCard> {
       ),
     );
   }
-
 }

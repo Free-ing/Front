@@ -42,7 +42,8 @@ class AddRoutineScreen extends StatefulWidget {
 
 class _AddRoutineScreenState extends State<AddRoutineScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? errorText;
+  String? nameErrorText;
+  String? timeErrorText;
 
   final List<String> options = ['운동', '수면', '취미', '마음 채우기'];
   String selectedValue = '운동';
@@ -106,10 +107,11 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   //Todo: 서버 요청 (수면 루틴 추가)
   Future<void> _submitSleepRoutine() async {
     print('수면 루틴 추가');
-    if (_formKey.currentState!.validate() && _nameController.text.isNotEmpty) {
+    if (_formKey.currentState!.validate() &&
+        _nameController.text.isNotEmpty &&
+        timeErrorText == null) {
       FocusScope.of(context).unfocus();
       final String sleepName = _nameController.text;
-      final String explanation = _explanationController.text;
 
       final startTime =
           _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
@@ -128,7 +130,6 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         weekDays[4].isSelected,
         weekDays[5].isSelected,
         weekDays[6].isSelected,
-        explanation,
         imageUrl,
       );
 
@@ -187,7 +188,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   //Todo: 서버 요청 (마음 채우기 루틴 추가)
   Future<void> _submitSpiritRoutine() async {
-    if (_formKey.currentState!.validate() && _nameController.text.isNotEmpty) {
+    if (_formKey.currentState!.validate() &&
+        _nameController.text.isNotEmpty &&
+        timeErrorText == null) {
       FocusScope.of(context).unfocus();
       final String spiritName = _nameController.text;
       final String explanation = _explanationController.text;
@@ -294,8 +297,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 // 추가하기 버튼
                 SizedBox(
                     height: _selectHobby
-                        ? screenHeight * 0.012
-                        : screenHeight * 0.469),
+                        ? screenHeight * 0.042
+                        : screenHeight * 0.499),
+
                 GreenButton(
                   width: screenWidth * 0.6,
                   text: '추가하기',
@@ -414,12 +418,15 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             ),
           ],
         ),
-        if (errorText != null)
+        if (nameErrorText != null)
           Text(
-            errorText!,
+            nameErrorText!,
             style: textTheme.bodyMedium?.copyWith(color: Colors.red),
           ),
-        SizedBox(height: errorText !=null ? screenHeight * 0.004: screenHeight*0.03),
+        SizedBox(
+            height: nameErrorText != null
+                ? screenHeight * 0.004
+                : screenHeight * 0.03),
       ],
     );
   }
@@ -487,46 +494,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                     border: Border.all(color: Colors.black, width: 1),
                   ),
                 ),
-              )
-              // child: DropdownButtonHideUnderline(
-              //   child: DropdownButton<String>(
-              //     value: selectedValue,
-              //     items: options.map((String value) {
-              //       return DropdownMenuItem<String>(
-              //         value: value,
-              //         child: Padding(
-              //           padding:
-              //               EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
-              //           child: Text(value),
-              //         ),
-              //       );
-              //     }).toList(),
-              //     onChanged: (newValue) {
-              //       setState(() {
-              //         selectedValue = newValue!;
-              //         print('카테고리 선택한 카테고리 $newValue');
-              //
-              //         selectedValue == '취미'
-              //             ? _selectHobby = false
-              //             : _selectHobby = true;
-              //
-              //         selectedValue == '수면'
-              //             ? _selectSleep = false
-              //             : _selectSleep = true;
-              //       });
-              //     },
-              //     icon: Padding(
-              //       padding: const EdgeInsets.only(right: 8.0),
-              //       child: Icon(Icons.arrow_drop_down, color: Colors.black),
-              //     ),
-              //     iconSize: 24,
-              //     isExpanded: true,
-              //     dropdownColor: Colors.white,
-              //     style: textTheme.bodyMedium,
-              //     borderRadius: BorderRadius.circular(15),
-              //   ),
-              // ),
-              ),
+              )),
         )
       ],
     );
@@ -690,7 +658,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
       visible: _timePickerOpen,
       child: Container(
         width: screenWidth,
-        height: screenHeight * 0.13,
+        height:
+            timeErrorText != null ? screenHeight * 0.17 : screenHeight * 0.13,
         decoration: BoxDecoration(
           color: IVORY,
           borderRadius: BorderRadius.circular(20),
@@ -706,10 +675,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 title: '시작 시간',
                 controller: _startTimeController,
                 onTimeChanged: (DateTime selectTime) {
-                  setState(
-                    () => _startTime = selectTime,
-                  );
-                  print('시작시간 바뀜~~~ $_startTime');
+                  setState(() => _startTime = selectTime);
                 },
                 resetTime: () {
                   _startTime = null;
@@ -722,12 +688,37 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
               title: '종료 시간',
               controller: _endTimeController,
               onTimeChanged: (DateTime selectTime) {
-                setState(() => _endTime = selectTime);
+                setState(() {
+                  if (_startTime != null && selectTime.isBefore(_startTime!)) {
+                    timeErrorText = '종료 시간이 시작 시간 보다 빠릅니다.';
+                  } else {
+                    _endTime = selectTime;
+                    timeErrorText = null;
+                    print(selectTime);
+                  }
+                });
               },
               resetTime: () {
                 _endTime = null;
+                timeErrorText = null;
               },
             ),
+            if (timeErrorText != null)
+              Column(
+                children: [
+                  SizedBox(height: screenHeight * 0.01),
+                  SizedBox(
+                    height: screenHeight * 0.03,
+                    child: Center(
+                      child: Text(
+                        timeErrorText!,
+                        style:
+                            textTheme.bodyMedium?.copyWith(color: Colors.red),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),
@@ -798,11 +789,11 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 setState(() {
-                  errorText = '제목을 입력 해주세요';
+                  nameErrorText = '제목을 입력 해주세요';
                 });
               } else {
                 setState(() {
-                  errorText = null;
+                  nameErrorText = null;
                 });
               }
               return null;

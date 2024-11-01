@@ -7,7 +7,8 @@ import 'base_url.dart';
 
 class SleepAPIService {
   static const String _baseUrl = BaseUrl.baseUrl;
-  static const String _viewAllSleepRoutineEndpoint = '$_baseUrl/sleep-service/routine/all';
+  static const String _viewAllSleepRoutineEndpoint =
+      '$_baseUrl/sleep-service/routine/all';
 
   //Todo: 수면 루틴 추가
   Future<http.Response> postSleepRoutine(
@@ -21,13 +22,11 @@ class SleepAPIService {
     bool friday,
     bool saturday,
     bool sunday,
-    String explanation,
     String imageUrl,
   ) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse(
-        'http://freeing-apigateway-service-893483672.ap-northeast-2.elb.amazonaws.com/sleep-service/routine/add');
+    final url = Uri.parse('$_baseUrl/sleep-service/routine/add');
 
     final response = await http.post(
       url,
@@ -46,13 +45,73 @@ class SleepAPIService {
         'friday': friday,
         'saturday': saturday,
         'sunday': sunday,
-        'explanation': explanation,
         'status': true,
         'url': imageUrl,
       }),
     );
 
     return response;
+  }
+
+  //Todo: 수면 루틴 수정
+  Future<http.Response> patchSleepRoutine(
+      String sleepRoutineName,
+      startTime,
+      endTime,
+      bool monday,
+      bool tuesday,
+      bool wednesday,
+      bool thursday,
+      bool friday,
+      bool saturday,
+      bool sunday,
+      bool status,
+      String imageUrl,
+      int routineId) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/sleep-service/routine/update/$routineId');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: json.encode({
+        'sleepRoutineName': sleepRoutineName,
+        'startTime': startTime,
+        'endTime': endTime,
+        'monday': monday,
+        'tuesday': tuesday,
+        'wednesday': wednesday,
+        'thursday': thursday,
+        'friday': friday,
+        'saturday': saturday,
+        'sunday': sunday,
+        'status': status,
+        'url': imageUrl,
+      }),
+    );
+
+    return response;
+  }
+
+  //Todo: 수면 루틴 삭제
+  Future<int> deleteSleepRoutine(int routineId) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/sleep-service/routine/remove/$routineId');
+
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    return response.statusCode;
   }
 
   //Todo: 수면 리스트 조회
@@ -74,8 +133,8 @@ class SleepAPIService {
   Future<int> activateSleepRoutine(int routineId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse(
-        '$_baseUrl/sleep-service/routine/$routineId/activate');
+    final url =
+        Uri.parse('$_baseUrl/sleep-service/routine/$routineId/activate');
 
     try {
       var response = await http.patch(
@@ -99,8 +158,8 @@ class SleepAPIService {
   Future<int> deactivateSleepRoutine(int routineId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse(
-        '$_baseUrl/sleep-service/routine/$routineId/deactivate');
+    final url =
+        Uri.parse('$_baseUrl/sleep-service/routine/$routineId/deactivate');
 
     try {
       var response = await http.patch(
