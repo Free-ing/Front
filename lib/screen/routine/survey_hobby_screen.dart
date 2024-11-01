@@ -77,7 +77,10 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => SurveyResponseScreen(
-                    category: '취미', recommend: _recommendList, answers: answers, remain: 2)));
+                    category: '취미',
+                    recommend: _recommendList,
+                    answers: answers,
+                    remain: 2)));
         return _recommendList;
       } else if (response.statusCode == 404) {
         return _recommendList = [];
@@ -209,7 +212,7 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
                 crossAxisSpacing: screenWidth * 0.076,
                 mainAxisSpacing: screenWidth * 0.076,
                 children: List.generate(
-                  6,
+                  labels.length,
                   (index) {
                     final imageUrls = [
                       'https://freeingimage.s3.ap-northeast-2.amazonaws.com/reading.png',
@@ -241,11 +244,13 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
 
   //Todo: 2. 어떤 활동이 스트레스를 줄이는 데 가장 도움이 된다고 느끼나요?
   Widget _buildMostHelpful(textTheme, screenWidth, screenHeight) {
-    final labels = [
-      '신체활동',
-      '창의적인 작업',
-      '감각적 즐거움 (음악/예술)',
-    ]; // 라벨 목록
+    final labels = ['신체활동', '창의적인 작업', '감각적 즐거움 (음악/예술)']; // 라벨 목록
+    final imageUrls = [
+      'https://freeingimage.s3.ap-northeast-2.amazonaws.com/physical_activity.png',
+      'https://freeingimage.s3.ap-northeast-2.amazonaws.com/watching_tv.png',
+      'https://freeingimage.s3.ap-northeast-2.amazonaws.com/stroll.png',
+    ]; // 이미지 파일 경로
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -262,14 +267,8 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
             child: ListView(
               physics: NeverScrollableScrollPhysics(),
               children: List.generate(
-                3,
+                labels.length,
                 (index) {
-                  final imageUrls = [
-                    'https://freeingimage.s3.ap-northeast-2.amazonaws.com/physical_activity.png',
-                    'https://freeingimage.s3.ap-northeast-2.amazonaws.com/watching_tv.png',
-                    'https://freeingimage.s3.ap-northeast-2.amazonaws.com/stroll.png',
-                  ]; // 이미지 파일 경로
-
                   return Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: screenHeight * 0.03),

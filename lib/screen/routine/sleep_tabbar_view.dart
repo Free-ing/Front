@@ -29,12 +29,12 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
     final response = await apiService.getSleepList();
 
     if (response.statusCode == 200) {
-
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
-      if(jsonData is List){
+      if (jsonData is List) {
         setState(() {
-          _sleepList = jsonData.map((data) => SleepList.fromJson(data)).toList();
+          _sleepList =
+              jsonData.map((data) => SleepList.fromJson(data)).toList();
         });
       } else {
         print('Unexpected JSON format');
@@ -191,6 +191,16 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
                 routineId: sleepList.routineId,
                 imageUrl: sleepList.imageUrl,
                 title: sleepList.sleepRoutineName,
+                monday: sleepList.monday,
+                tuesday: sleepList.tuesday,
+                wednesday: sleepList.wednesday,
+                thursday: sleepList.thursday,
+                friday: sleepList.friday,
+                saturday: sleepList.saturday,
+                sunday: sleepList.sunday,
+                startTime: sleepList.startTime,
+                endTime: sleepList.endTime,
+                status: sleepList.status,
               );
             },
           ),

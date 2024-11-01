@@ -42,6 +42,10 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
     final responseCode = await apiService.scrapEmotionDiary(diaryId);
     if (responseCode == 200) {
       print('감정일기 스크랩 성공');
+      setState(() {
+        _isScrap = !_isScrap;
+      });
+      print('이제 출력해야할 값: true, 실제 출력 값: $_isScrap');
     } else {
       print('감정일기 스크랩 실패(${responseCode})');
     }
@@ -53,6 +57,10 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
     final responseCode = await apiService.scrapCancelEmotionDiary(diaryId);
     if (responseCode == 200) {
       print('감정일기 스크랩 취소 성공');
+      setState(() {
+        _isScrap = !_isScrap;
+      });
+      print('이제 출력해야할 값: false, 실제 출력 값: $_isScrap');
     } else {
       print('감정일기 스크랩 취소 실패($responseCode');
     }
@@ -104,13 +112,13 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _isScrap = widget.scrap;
-
-    print('초기 스크랩 상태: $_isScrap'); // 초기 상태 출력
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   _isScrap = widget.scrap;
+  //   print('초기 스크랩 상태: $_isScrap');
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +126,11 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
+    setState(() {
+      print('넘어와서 화면에 출력해야하는 scrap 값 ${widget.scrap}');
+      _isScrap = widget.scrap;
+      print('화면에 실제 출력할 값 $_isScrap');
+    });
     return Column(
       children: [
         /// 날짜 표시, 편지 보기 버튼, 스크랩 버튼
@@ -175,27 +188,27 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
 
               /// 스크랩 버튼
               Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _isScrap = !_isScrap;
-                        print('스크랩 상태 변경: $_isScrap'); // 상태 변경 출력
-
-                        _isScrap
-                            ? _scrapEmotionDiary(widget.diaryId)
-                            : _scrapCancelEmotionDiary(widget.diaryId);
-                      });
-                    },
-                    icon: Image.asset(
-                      _isScrap
-                          ? 'assets/icons/bookmark_icon_on.png'
-                          : 'assets/icons/bookmark_icon_off.png',
-                      width: screenWidth * 0.07,
-                    ),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ))
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  onPressed: () async {
+                    // setState(() {
+                    //   _isScrap = !_isScrap;
+                    //   print('스크랩 상태 변경: $_isScrap'); // 상태 변경 출력
+                    // });
+                    !_isScrap
+                        ? await _scrapEmotionDiary(widget.diaryId)
+                        : await _scrapCancelEmotionDiary(widget.diaryId);
+                  },
+                  icon: Image.asset(
+                    _isScrap
+                        ? 'assets/icons/bookmark_icon_on.png'
+                        : 'assets/icons/bookmark_icon_off.png',
+                    width: screenWidth * 0.07,
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ),
             ],
           ),
         ),
@@ -239,7 +252,7 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
                           children: [
                             Text('칭찬하고 싶은 일'),
 
-                            /// 감정 일기 편집 버튼
+                            /// 감정 일기 삭제 버튼
                             Container(
                               width: screenWidth * 0.07,
                               height: screenHeight * 0.035,

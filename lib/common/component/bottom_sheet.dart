@@ -21,25 +21,6 @@ void showExerciseBottomSheet(BuildContext context, String title) {
   );
 }
 
-//Todo: 명상
-void showMeditationBottomSheet(BuildContext context, String title) {
-  showCustomModalBottomSheet(
-    context: context,
-    builder: (BuildContext context, TextTheme textTheme) {
-      return BaseAnimatedBottomSheetContent(
-        title: title,
-        // 완료 버튼 눌렸을때 실행되는 함수 호출
-        onButtonPressed: (AnimationController) async{
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [Text('?')],
-        ),
-      );
-    },
-  );
-}
-
 
 //Todo: 기본 BottomSheet
 void showCustomModalBottomSheet({

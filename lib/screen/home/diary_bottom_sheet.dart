@@ -9,20 +9,6 @@ import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
 
-// class DiaryId {
-//   final int diaryId;
-//
-//   DiaryId({
-//     required this.diaryId,
-// });
-//
-//   factory DiaryId.fromJson(Map<String, dynamic> json) {
-//     return DiaryId(
-//
-//     )
-//   }
-// }
-
 //Todo: 감정 일기
 void showDiaryBottomSheet(
   BuildContext context,

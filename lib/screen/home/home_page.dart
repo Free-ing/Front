@@ -7,6 +7,7 @@ import 'package:freeing/layout/default_layout.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/home/diary_bottom_sheet.dart';
 import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
+import 'package:freeing/screen/home/meditation_bottom_sheet.dart';
 import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
 import 'package:icon_decoration/icon_decoration.dart';
 import 'package:intl/intl.dart';
