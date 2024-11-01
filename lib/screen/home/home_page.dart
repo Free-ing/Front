@@ -9,6 +9,8 @@ import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
 import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
 import 'package:intl/intl.dart';
 
+import '../../common/component/expansion_tile.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -47,7 +49,9 @@ class _HomePageState extends State<HomePage> {
       return now.subtract(Duration(days: dayOfWeek - 1 - index));
     });
     selectedIndex = dates.indexWhere((date) =>
-    date.year == today.year && date.month == today.month && date.day == today.day);
+        date.year == today.year &&
+        date.month == today.month &&
+        date.day == today.day);
   }
 
   @override
@@ -59,9 +63,9 @@ class _HomePageState extends State<HomePage> {
     return Stack(
       children: <Widget>[
         Positioned.fill(
-          child: Image.asset('assets/imgs/background/background_image_home.png',
-              fit: BoxFit.cover),
-        ),
+            child: Image.asset(
+                'assets/imgs/background/background_image_home.png',
+                fit: BoxFit.cover)),
         Positioned(
             top: 50,
             left: 20,
@@ -89,10 +93,14 @@ class _HomePageState extends State<HomePage> {
                       width: 79.60,
                       height: 30,
                       child: TextButton(
-                        onPressed: () {setState(() {
-                          selectedIndex = dates.indexWhere((date) =>
-                          date.year == today.year && date.month == today.month && date.day == today.day);
-                        });},
+                        onPressed: () {
+                          setState(() {
+                            selectedIndex = dates.indexWhere((date) =>
+                                date.year == today.year &&
+                                date.month == today.month &&
+                                date.day == today.day);
+                          });
+                        },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
                           side:
@@ -104,10 +112,9 @@ class _HomePageState extends State<HomePage> {
                         child: const Text(
                           'today',
                           style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20,
-                          ),
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20),
                         ),
                       ),
                     ),
@@ -137,12 +144,19 @@ class _HomePageState extends State<HomePage> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List<Widget>.generate(7, (index){
-                      final date = dates[index];
-                        return GestureDetector(onTap: (){setState(() {
-                          selectedIndex = index;
-                        });}, child: CircleWidget(dayName: dayNames[index], date: dates[index], isSelected: selectedIndex == index));
-                      }),
+                    children: List<Widget>.generate(7, (index) {
+                      //final date = dates[index];
+                      return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = index;
+                            });
+                          },
+                          child: CircleWidget(
+                              dayName: dayNames[index],
+                              date: dates[index],
+                              isSelected: selectedIndex == index));
+                    }),
                   ),
                 ),
                 Row(
@@ -150,8 +164,6 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(
                       height: screenHeight * 0.03,
                     ),
-                    // ExpansionTileBox(
-                    //     text: '운동', width: 300, lists: ['정적 스트레칭', '걷기']),
                     PlayButton(
                         onPressed: () {
                           showExerciseBottomSheet(context, '정적 스트레칭');
@@ -180,6 +192,8 @@ class _HomePageState extends State<HomePage> {
                     )
                   ],
                 ),
+                HomeExpansionTileBox(
+                    text: '운동', width: screenWidth * 0.9, lists: ['정적 스트레칭', '걷기']),
               ],
             ),
           ),

@@ -146,9 +146,9 @@ class PlayButton extends StatelessWidget {
     return IconButton(
       icon: DecoratedIcon(
         icon: Icon(
-          Icons.play_arrow_rounded,
+          Icons.play_arrow_sharp,
           color: iconColor,
-          size: 40,
+          size: 25,
         ),
         decoration: IconDecoration(
           border: IconBorder(color: Colors.black, width: 3),

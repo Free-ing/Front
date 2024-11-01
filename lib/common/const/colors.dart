@@ -48,3 +48,15 @@ const PINK_PLAY_BUTTON = Color(0xFFD679D6);
 
 // 홈 초록 재생 버튼 색상
 const GREEN_PLAY_BUTTON = Color(0xFF539481);
+
+// 홈 핑크 글자 색상
+const HOME_PINK_TEXT = Color(0xFFD679D6);
+
+// 홈 파랑 글자 색상
+const HOME_BLUE_TEXT = Color(0xFF5A92D1);
+
+// 홈 초록 글자 색상
+const HOME_GREEN_TEXT = Color(0xFF539481);
+
+// 홈 노랑 글자 색상
+const HOME_YELLOW_TEXT = Color(0xFFFAB457);
