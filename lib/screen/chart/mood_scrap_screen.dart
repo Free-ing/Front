@@ -17,6 +17,7 @@ class MoodScrap extends StatefulWidget {
 class _MoodScrapState extends State<MoodScrap> {
   final apiService = SpiritAPIService();
   List<EmotionDiary> _scrapDiaryList = [];
+  bool _isScrap = false;
 
   //Todo: 서버 요청 (스크랩한 감정 일기 / AI 편지 조회)
   Future<List<EmotionDiary>> _fetchScrapDiaryList() async {
@@ -33,11 +34,12 @@ class _MoodScrapState extends State<MoodScrap> {
         List<dynamic> scrapList = jsonData['result'];
         _scrapDiaryList.clear();
         for (dynamic data in scrapList) {
-          // Map<String, dynamic> 타입인 data를 EmotionDiary 객체로 변환
           EmotionDiary emotionDiary =
               EmotionDiary.fromJson(data as Map<String, dynamic>);
           _scrapDiaryList.add(emotionDiary);
         }
+
+        _scrapDiaryList.sort((a, b) => b.date.compareTo(a.date));
       }
       print(_scrapDiaryList);
       return _scrapDiaryList;
@@ -74,6 +76,34 @@ class _MoodScrapState extends State<MoodScrap> {
     }
   }
 
+// Todo: 서버 요청 (감정 일기 스크랩 하기)
+  Future<void> _scrapEmotionDiary(int diaryId, int index) async {
+    print('감정 일기 스크랩 하기');
+    final responseCode = await apiService.scrapEmotionDiary(diaryId);
+    if (responseCode == 200) {
+      print('감정일기 스크랩 성공');
+      setState(() {
+        _scrapDiaryList[index].scrap = true; // 특정 아이템의 scrap 상태만 변경
+      });
+    } else {
+      print('감정일기 스크랩 실패(${responseCode})');
+    }
+  }
+
+// Todo: 서버 요청 (감정 일기 스크랩 취소 하기)
+  Future<void> _scrapCancelEmotionDiary(int diaryId, int index) async {
+    print('감정 일기 스크랩 취소 하기');
+    final responseCode = await apiService.scrapCancelEmotionDiary(diaryId);
+    if (responseCode == 200) {
+      print('감정일기 스크랩 취소 성공');
+      setState(() {
+        _scrapDiaryList[index].scrap = false; // 특정 아이템의 scrap 상태만 변경
+      });
+    } else {
+      print('감정일기 스크랩 취소 실패(${responseCode})');
+    }
+  }
+
   //Todo: 서버 요청 (감정 일기 삭제)
   Future<void> _deleteEmotionDiary(int diaryId) async {
     final responseCode = await apiService.deleteEmotionDiary(diaryId);
@@ -97,8 +127,6 @@ class _MoodScrapState extends State<MoodScrap> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return ChartLayout(
@@ -109,87 +137,37 @@ class _MoodScrapState extends State<MoodScrap> {
         );
       },
       chartWidget: Padding(
-        padding: EdgeInsets.symmetric(vertical: screenHeight*0.02),
+        padding: EdgeInsets.only(top: screenHeight * 0.02),
         child: ListView.builder(
           itemCount: _scrapDiaryList.length,
           itemBuilder: (BuildContext context, int index) {
             final scrapDiaryList = _scrapDiaryList[index];
+            _isScrap = scrapDiaryList.scrap;
+            final diaryId = scrapDiaryList.diaryId;
+
             return EmotionDiaryCard(
-              diaryId: scrapDiaryList.diaryId,
+              diaryId: diaryId,
               date: scrapDiaryList.date,
               letterId: scrapDiaryList.letterId,
-              scrap: scrapDiaryList.scrap,
+              scrap: _isScrap,
               emotionImage: getEmotionImagePath(scrapDiaryList.emotion),
               wellDone: scrapDiaryList.wellDone,
               hardWork: scrapDiaryList.hardWork,
               deleteDiary: () {
-                _deleteEmotionDiary(scrapDiaryList.diaryId);
+                _deleteEmotionDiary(diaryId);
               },
               from: 'scrap',
+              onScrapToggle: () async {
+                !_scrapDiaryList[index].scrap
+                    ? await _scrapEmotionDiary(diaryId, index)
+                    : await _scrapCancelEmotionDiary(diaryId, index);
+              },
             );
           },
         ),
       ),
       selectMonth: false,
       onDateSelected: (date) {},
-    );
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        title: Padding(
-          padding: EdgeInsets.only(top: screenHeight * 0.03),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                        builder: (context) => const MoodCalendar()),
-                  );
-                },
-                icon: Icon(Icons.arrow_back_ios_rounded),
-                iconSize: 30.0,
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(),
-              ),
-              Expanded(
-                  child: Text(
-                '스크랩',
-                style: textTheme.headlineLarge,
-                textAlign: TextAlign.center,
-              )),
-              SizedBox(width: 45),
-            ],
-          ),
-        ),
-      ),
-      body: ListView.builder(
-        itemCount: _scrapDiaryList.length,
-        itemBuilder: (BuildContext context, int index) {
-          final scrapDiaryList = _scrapDiaryList[index];
-          return Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.05, vertical: screenHeight * 0.05),
-            child: EmotionDiaryCard(
-              diaryId: scrapDiaryList.diaryId,
-              date: scrapDiaryList.date,
-              letterId: scrapDiaryList.letterId,
-              scrap: scrapDiaryList.scrap,
-              emotionImage: getEmotionImagePath(scrapDiaryList.emotion),
-              wellDone: scrapDiaryList.wellDone,
-              hardWork: scrapDiaryList.hardWork,
-              deleteDiary: () {
-                _deleteEmotionDiary(scrapDiaryList.diaryId);
-              },
-              from: 'scrap',
-            ),
-          );
-        },
-      ),
     );
   }
 }

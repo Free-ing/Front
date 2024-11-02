@@ -33,10 +33,10 @@ class _MoodCalendarState extends State<MoodCalendar> {
   int getDaysInMonth() => DateTime(selectYear, selectMonth + 1, 0).day;
   final apiService = SpiritAPIService();
 
-
   Map<int, String> emotionDataByDay = {};
   Map<int, int> diaryIdByDay = {};
   EmotionDiary? selectedDiary;
+  bool _isScrap = false;
 
   //Todo: 서버 요청 (월별 감정 조회)
   Future<List<MoodMonthly>> _fetchMonthlyEmotion(int year, int month) async {
@@ -88,7 +88,8 @@ class _MoodCalendarState extends State<MoodCalendar> {
   }
 
   //Todo: 날짜별 감정 데이터로 전환
-  Future<Map<String, Map<int, dynamic>>> getEmotionDataByDay(int year, int month) async {
+  Future<Map<String, Map<int, dynamic>>> getEmotionDataByDay(
+      int year, int month) async {
     List<MoodMonthly> moodMonthlyList = await _fetchMonthlyEmotion(year, month);
 
     Map<int, String> emotions = {};
@@ -105,7 +106,6 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
     return {'emotions': emotions, 'diaryIds': diaryIds};
   }
-
 
   //Todo: 서버 요청 (일일 감정 일기 기록 조회)
   Future<void> _fetchEmotionDiary(int diaryId) async {
@@ -156,6 +156,36 @@ class _MoodCalendarState extends State<MoodCalendar> {
     }
   }
 
+  //Todo: 서버 요청 (감정 일기 스크랩 하기)
+  Future<void> _scrapEmotionDiary(int diaryId) async {
+    print('감정 일기 스크랩 하기');
+    final responseCode = await apiService.scrapEmotionDiary(diaryId);
+    if (responseCode == 200) {
+      print('감정일기 스크랩 성공');
+      setState(() {
+        _isScrap = !_isScrap;
+      });
+      print('이제 출력해야할 값: true, 실제 출력 값: $_isScrap');
+    } else {
+      print('감정일기 스크랩 실패(${responseCode})');
+    }
+  }
+
+  //Todo: 서버 요청 (감정 일기 스크랩 취소 하기)
+  Future<void> _scrapCancelEmotionDiary(int diaryId) async {
+    print('감정 일기 스크랩 취소 하기');
+    final responseCode = await apiService.scrapCancelEmotionDiary(diaryId);
+    if (responseCode == 200) {
+      print('감정일기 스크랩 취소 성공');
+      setState(() {
+        _isScrap = !_isScrap;
+      });
+      print('이제 출력해야할 값: false, 실제 출력 값: $_isScrap');
+    } else {
+      print('감정일기 스크랩 취소 실패($responseCode');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -165,10 +195,9 @@ class _MoodCalendarState extends State<MoodCalendar> {
         diaryIdByDay = Map<int, int>.from(data['diaryIds']!);
       });
 
-      // 비동기 작업 완료 후 diaryIdByDay[selectedDate] 접근
       if (diaryIdByDay.containsKey(selectedDate)) {
         print('선택 날짜 다이어리 아이디: ${diaryIdByDay[selectedDate]}');
-        _fetchEmotionDiary(diaryIdByDay[selectedDate]!); // 일기 데이터를 불러오는 함수 호출
+        _fetchEmotionDiary(diaryIdByDay[selectedDate]!);
       } else {
         print('선택한 날짜에 해당하는 일기 데이터가 없습니다.');
       }
@@ -176,8 +205,6 @@ class _MoodCalendarState extends State<MoodCalendar> {
       print('에러 발생: $error');
     });
   }
-
-
 
   //Todo: 날짜 update
   Future<void> updateSelectedMonth(DateTime date) async {
@@ -196,13 +223,11 @@ class _MoodCalendarState extends State<MoodCalendar> {
       // 데이터를 모두 업데이트한 후 selectedDate에 대한 일기 데이터 확인
       if (diaryIdByDay[selectedDate] != null) {
         _fetchEmotionDiary(diaryIdByDay[selectedDate]!);
-
       } else {
         print('선택한 날짜에 해당하는 일기 데이터가 없습니다.');
       }
     });
   }
-
 
   //Todo: 감정 별 이미지 경로
   String getEmotionImagePath(String emotion) {
@@ -363,15 +388,16 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
                   if (diaryIdByDay.containsKey(dayNumber)) {
                     await _fetchEmotionDiary(diaryIdByDay[dayNumber]!);
+                    _isScrap = selectedDiary?.scrap ?? false;
+                    print('불러온 일기 스크랩 여부 $_isScrap');
                   } else {
                     setState(() {
                       selectedDiary = null; // 또는 EmotionDiary()와 같이 초기화
                     });
                     print('기록없음');
                   }
-
                 },
-              child: Column(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(imagePath, width: screenWidth * 0.115),
@@ -390,19 +416,25 @@ class _MoodCalendarState extends State<MoodCalendar> {
   // Todo: 상세 보기 (선택된 날짜에 감정 일기 있을 때)
   Widget _viewEmotionalDiary() {
     print('넘어가는 scrap값 : ${selectedDiary?.scrap ?? ''}');
+    final diaryId = selectedDiary?.diaryId ?? -1;
 
     return EmotionDiaryCard(
-      diaryId: selectedDiary?.diaryId ?? -1,
+      diaryId: diaryId,
       date: DateTime(selectYear, selectMonth, selectedDate),
       letterId: selectedDiary?.letterId ?? -1,
-      scrap: selectedDiary?.scrap ?? false,
+      scrap: _isScrap,
       emotionImage: getEmotionImagePath(selectedDiary?.emotion ?? ''),
       wellDone: selectedDiary?.wellDone ?? '',
       hardWork: selectedDiary?.hardWork ?? '',
       deleteDiary: () {
-        _deleteEmotionDiary;
+        _deleteEmotionDiary(diaryId);
       },
       from: 'calendar',
+      onScrapToggle: () async {
+        !_isScrap
+        ? await _scrapEmotionDiary(diaryId)
+        : await _scrapCancelEmotionDiary(diaryId);
+      },
     );
   }
 

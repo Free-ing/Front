@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
 import 'package:freeing/screen/chart/ai_letter.dart';
@@ -13,6 +14,7 @@ class EmotionDiaryCard extends StatefulWidget {
   final String hardWork;
   final VoidCallback deleteDiary;
   final String from;
+  final VoidCallback onScrapToggle;
 
   const EmotionDiaryCard({
     super.key,
@@ -25,6 +27,7 @@ class EmotionDiaryCard extends StatefulWidget {
     required this.hardWork,
     required this.deleteDiary,
     required this.from,
+    required this.onScrapToggle,
   });
 
   @override
@@ -34,37 +37,6 @@ class EmotionDiaryCard extends StatefulWidget {
 class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
   late bool _isScrap;
   final apiService = SpiritAPIService();
-
-  //Todo: 서버 요청 (감정 일기 스크랩 하기)
-  Future<void> _scrapEmotionDiary(int diaryId) async {
-    print(widget.wellDone);
-    print('감정 일기 스크랩 하기');
-    final responseCode = await apiService.scrapEmotionDiary(diaryId);
-    if (responseCode == 200) {
-      print('감정일기 스크랩 성공');
-      setState(() {
-        _isScrap = !_isScrap;
-      });
-      print('이제 출력해야할 값: true, 실제 출력 값: $_isScrap');
-    } else {
-      print('감정일기 스크랩 실패(${responseCode})');
-    }
-  }
-
-  //Todo: 서버 요청 (감정 일기 스크랩 취소 하기)
-  Future<void> _scrapCancelEmotionDiary(int diaryId) async {
-    print('감정 일기 스크랩 취소 하기');
-    final responseCode = await apiService.scrapCancelEmotionDiary(diaryId);
-    if (responseCode == 200) {
-      print('감정일기 스크랩 취소 성공');
-      setState(() {
-        _isScrap = !_isScrap;
-      });
-      print('이제 출력해야할 값: false, 실제 출력 값: $_isScrap');
-    } else {
-      print('감정일기 스크랩 취소 실패($responseCode');
-    }
-  }
 
   //Todo: 서버 요청 (감정 일기 삭제)
   Future<void> _deleteEmotionDiary(int diaryId) async {
@@ -103,22 +75,19 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
                   leading: Icon(Icons.delete_forever_outlined),
                   title: const Text('일기 삭제하기'),
                   onTap: () {
-                    widget.deleteDiary;
-                  }),
+                    DialogManager.showConfirmDialog(
+                      context: context,
+                      title: '감정일기 삭제',
+                      content: '삭제된 감정 일기는 복구할 수 없습니다.\n삭제하시겠습니까?',
+                      onConfirm: widget.deleteDiary,
+                    );
+                  })
             ],
           ),
         );
       },
     );
   }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //   _isScrap = widget.scrap;
-  //   print('초기 스크랩 상태: $_isScrap');
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -190,15 +159,7 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  onPressed: () async {
-                    // setState(() {
-                    //   _isScrap = !_isScrap;
-                    //   print('스크랩 상태 변경: $_isScrap'); // 상태 변경 출력
-                    // });
-                    !_isScrap
-                        ? await _scrapEmotionDiary(widget.diaryId)
-                        : await _scrapCancelEmotionDiary(widget.diaryId);
-                  },
+                  onPressed: widget.onScrapToggle,
                   icon: Image.asset(
                     _isScrap
                         ? 'assets/icons/bookmark_icon_on.png'

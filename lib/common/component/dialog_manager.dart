@@ -54,7 +54,7 @@ class DialogManager {
     required BuildContext context,
     required String userName,
     required String topic,
-    required Image image,
+    required String image,
     required VoidCallback onConfirm,
     String confirmButtonText = '확인',
     String cancelButtonText = '취소',
@@ -174,7 +174,7 @@ class DialogManager {
     BuildContext context,
     String userName,
     String topic,
-    Image image,
+    String image,
     VoidCallback onConfirm,
     String cancelButtonText,
     String confirmButtonText,
@@ -186,7 +186,7 @@ class DialogManager {
         Row(
           children: [
             _buildCustomText(context, userName, topic),
-            SizedBox(width: 77, height: 100, child: image),
+            SizedBox(width: 77, height: 100, child: Image.asset(image)),
           ],
         ),
         _buildDialogButtons(
