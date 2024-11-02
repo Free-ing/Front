@@ -324,51 +324,6 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
             ),
 
             SizedBox(height: screenHeight * 0.015),
-            // Expanded(
-            //   child: Container(
-            //     decoration: BoxDecoration(
-            //       color: Colors.white,
-            //       border: Border.all(color: Colors.black),
-            //       borderRadius: BorderRadius.circular(20.0),
-            //     ),
-            //     padding: const EdgeInsets.all(8),
-            //     child: TextField(
-            //       readOnly: _isEditing,
-            //       controller: bodyController,
-            //       style: textTheme.bodyMedium,
-            //       keyboardType: TextInputType.text,
-            //       maxLength: 100,
-            //       maxLines: 5,
-            //       decoration: InputDecoration(
-            //         contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
-            //         border: OutlineInputBorder(
-            //           borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
-            //           borderSide: BorderSide(
-            //             width: 1, // 테두리 두께
-            //           ),
-            //         ),
-            //         enabledBorder: OutlineInputBorder(
-            //           borderRadius: BorderRadius.circular(15),
-            //           borderSide: BorderSide(
-            //             width: 1,
-            //           ),
-            //         ),
-            //         focusedBorder: OutlineInputBorder(
-            //           borderRadius: BorderRadius.circular(15),
-            //           borderSide: BorderSide(
-            //             width: 1,
-            //           ),
-            //         ),
-            //         errorBorder: OutlineInputBorder(
-            //           borderSide: BorderSide(
-            //             width: 1,
-            //           ),
-            //         ),
-            //       ),
-            //     )
-            //   ),
-            // ),
-            // 설명 텍스트
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
