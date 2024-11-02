@@ -78,6 +78,8 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     );
   }
 
+
+
   Color getTextColor() {
     switch (widget.text) {
       case '운동':
@@ -111,6 +113,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         child: ExpansionTile(
           tilePadding: EdgeInsets.symmetric(
               horizontal: screenWidth * 0.05, vertical: 0.0),
+          childrenPadding: EdgeInsets.zero,
           title: Padding(
             padding: const EdgeInsets.symmetric(vertical: 0.0),
             child: Text(
@@ -122,10 +125,12 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             ),
           ),
           children: <Widget>[
+            //Divider(thickness: 1, color: Colors.black,),
             Container(
               width: screenWidth * 0.9,
               decoration: BoxDecoration(
                   color: Colors.white,
+                  border: Border(top: BorderSide(color: Colors.black, width: 1.0)),
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
