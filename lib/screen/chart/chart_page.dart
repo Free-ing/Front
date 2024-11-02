@@ -6,7 +6,8 @@ import 'package:freeing/screen/chart/exercise_report_screen.dart';
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
 import 'package:freeing/screen/chart/mood_calendar_screen.dart';
 import 'package:freeing/layout/select_week_layout.dart';
-import 'package:freeing/screen/chart/sleep_report_screen.dart';
+import 'package:freeing/screen/chart/select_exercise_report_screen.dart';
+import 'package:freeing/screen/chart/select_sleep_report_screen.dart';
 import 'package:freeing/screen/routine/survey_response_screen.dart';
 
 import '../../model/hobby/recommend_hobby.dart';
