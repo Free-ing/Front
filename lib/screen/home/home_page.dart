@@ -290,7 +290,7 @@ class _HomePageState extends State<HomePage> {
                               borderRadius: BorderRadius.circular(15)),
                           child: Padding(
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
+                                EdgeInsets.only(left: 20.0, right: 8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

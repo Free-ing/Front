@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
 
+import '../../screen/home/diary_bottom_sheet.dart';
+import '../../screen/home/meditation_bottom_sheet.dart';
+import '../../screen/home/sleep_record_bottom_sheet.dart';
 import 'bottom_sheet.dart';
 import 'buttons.dart';
 
@@ -8,8 +11,7 @@ class HomeExpansionTileBox extends StatefulWidget {
   String text;
   //double width;
   List lists;
-  HomeExpansionTileBox(
-      {Key? key, required this.text,  required this.lists})
+  HomeExpansionTileBox({Key? key, required this.text, required this.lists})
       : super(key: key);
 
   @override
@@ -52,24 +54,33 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                     style: TextStyle(fontSize: 14, fontFamily: 'scdream'),
                   ),
                 ),
-                SizedBox(width: 5.0,),
-                Text('11:00', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: TEXT_PURPLE),)
+                SizedBox(width: 5.0),
+                Text('11:00',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: TEXT_PURPLE))
               ],
             ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                PlayButton(
-                    onPressed: () {
-                      showExerciseBottomSheet(context, '정적 스트레칭');
-                    },
-                    iconColor: PINK_PLAY_BUTTON),
+                getPerformanceButton(item),
+                // PlayButton(
+                //     onPressed: () {
+                //       showExerciseBottomSheet(context, '정적 스트레칭');
+                //     },
+                //     iconColor: PINK_PLAY_BUTTON),
                 SizedBox(width: 15.0),
                 GestureDetector(
-                    onTap: (){setState(() {
-                      _isChecked[index] = !_isChecked[index];
-                    });},
-                    child: Image.asset( _isChecked[index] ? 'assets/icons/after_checkbox.png' : 'assets/icons/before_checkbox.png')),
+                    onTap: () {
+                      setState(() {
+                        _isChecked[index] = !_isChecked[index];
+                      });
+                    },
+                    child: Image.asset(_isChecked[index]
+                        ? 'assets/icons/after_checkbox.png'
+                        : 'assets/icons/before_checkbox.png')),
               ],
             ),
           );
@@ -77,8 +88,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       ),
     );
   }
-
-
 
   Color getTextColor() {
     switch (widget.text) {
@@ -90,6 +99,43 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         return HOME_GREEN_TEXT; // 마음 채우기 색상 설정
       default:
         return Colors.black; // 기본 색상 설정
+    }
+  }
+
+  Widget getPerformanceButton(String item) {
+    switch (item) {
+      case '정적 스트레칭':
+        return PlayButton(
+            onPressed: () {
+              showExerciseBottomSheet(context, '정적 스트레칭');
+            },
+            iconColor: PINK_PLAY_BUTTON);
+      case '동적 스트레칭':
+        return PlayButton(
+            onPressed: () {
+              showExerciseBottomSheet(context, '동적 스트레칭');
+            },
+            iconColor: PINK_PLAY_BUTTON);
+      case '명상하기':
+        return PlayButton(
+            onPressed: () {
+              showMeditationBottomSheet(context, '명상하기');
+            },
+            iconColor: GREEN_PLAY_BUTTON);
+      case '수면 기록하기':
+        return LogButton(
+          onPressed: () {
+            showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
+          },
+        );
+      case '감정일기 작성':
+        return LogButton(
+          onPressed: () {
+            showDiaryBottomSheet(context, '오늘 하루 어땠나요?', DateTime.now());
+          },
+        );
+      default:
+        return SizedBox.shrink();
     }
   }
 
@@ -131,7 +177,8 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               width: screenWidth * 0.9,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border(top: BorderSide(color: Colors.black, width: 1.0)),
+                  border:
+                      Border(top: BorderSide(color: Colors.black, width: 1.0)),
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
