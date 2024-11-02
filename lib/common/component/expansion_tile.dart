@@ -111,6 +111,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             listTileTheme: ListTileTheme.of(context)
                 .copyWith(dense: true, minTileHeight: screenHeight * 0.03)),
         child: ExpansionTile(
+          iconColor: Colors.black,
           tilePadding: EdgeInsets.symmetric(
               horizontal: screenWidth * 0.05, vertical: 0.0),
           childrenPadding: EdgeInsets.zero,

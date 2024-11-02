@@ -3,7 +3,6 @@ import 'dart:math';
 
 import '../const/colors.dart';
 
-
 // // TODO : 넘어온 날짜가 오늘과 같은 경우 초록원!!!
 // class CircleWidget extends StatefulWidget {
 //   final DateTime date;
@@ -164,11 +163,6 @@ import '../const/colors.dart';
 //   bool shouldRepaint(CustomPainter oldDelegate) => false;
 // }
 
-import 'package:flutter/material.dart';
-import 'dart:math';
-
-import '../const/colors.dart';
-
 class CircleWidget extends StatefulWidget {
   final DateTime date;
   final String dayName;
@@ -186,10 +180,13 @@ class _CircleWidgetState extends State<CircleWidget> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final textTheme = Theme.of(context).textTheme;
-    final today = DateTime.now();
-    final isToday = widget.date.year == today.year &&
-        widget.date.month == today.month &&
-        widget.date.day == today.day;
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final widgetDate = DateTime(widget.date.year, widget.date.month, widget.date.day);
+
+    final isToday = widgetDate == today;
+    final isAfterToday = widgetDate.isAfter(today);
 
     return Center(
       child: Container(
@@ -203,7 +200,7 @@ class _CircleWidgetState extends State<CircleWidget> {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  if (isToday) // Show ivory oval if today
+                  if (isToday)
                     Container(
                       width: screenWidth * 0.105,
                       height: screenHeight * 0.0889,
@@ -226,6 +223,7 @@ class _CircleWidgetState extends State<CircleWidget> {
                         painter: ColorfulCirclePainter(
                           date: widget.date,
                           isSelected: widget.isSelected,
+                          isAfterToday: isAfterToday,
                         ),
                       ),
                     ],
@@ -243,8 +241,9 @@ class _CircleWidgetState extends State<CircleWidget> {
 class ColorfulCirclePainter extends CustomPainter {
   final DateTime date;
   final bool isSelected;
+  final bool isAfterToday;
 
-  ColorfulCirclePainter({required this.date, required this.isSelected});
+  ColorfulCirclePainter({required this.date, required this.isSelected, required this.isAfterToday});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -255,19 +254,19 @@ class ColorfulCirclePainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
-    if (isSelected) {
-      paint.color = PRIMARY_COLOR; // Green circle if selected
+    if(isAfterToday && !isSelected){
+      paint.color = Colors.white;
+      canvas.drawCircle(center, radius, paint);
+    } else if(isSelected){
+      paint.color = PRIMARY_COLOR;
       canvas.drawCircle(center, radius, paint);
     } else {
-      // Default circle style with multi-color segments if not selected
       final colors = [
         Color(0xFF61D0B0),
         Color(0xFFFFCB85),
         Color(0xFFF69BF6),
         Color(0xFF609BDE)
       ];
-
-      // Draw each quarter-circle with different colors
       for (int i = 0; i < 4; i++) {
         paint.color = colors[i];
         final startAngle = i * pi / 2;
@@ -281,13 +280,13 @@ class ColorfulCirclePainter extends CustomPainter {
           paint,
         );
       }
-      // Draw white inner circle
       paint.color = Colors.white;
       double innerCircleRadius = radius * 0.75;
       canvas.drawCircle(center, innerCircleRadius, paint);
+
     }
 
-    // Black outline
+        // Black outline
     paint
       ..color = Colors.black
       ..style = PaintingStyle.stroke

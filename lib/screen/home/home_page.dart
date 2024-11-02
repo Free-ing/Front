@@ -27,13 +27,7 @@ class _HomePageState extends State<HomePage> {
   late List<DateTime> dates;
   final today = DateTime.now();
   late DateTime currentWeekStartDate;
-  // String formattedDate = DateFormat('yyyy년 MM월 dd일').format(now);
-  //
-  // String todayDayName = DateFormat('EEE', 'ko').format(now);
-  // final dayOfWeek = now.weekday;
-  // final dates = List.generate(7, (index) {
-  //   return now.subtract(Duration(days: dayOfWeek - 1 - index));
-  // });
+  late DateTime selectedDate;
 
   final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
 
@@ -42,8 +36,18 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     final dayOfWeek = now.weekday;
 
-    currentWeekStartDate = now.subtract(Duration(days: now.weekday - 1));
+    // 현재 주의 시작 날짜 설정
+    currentWeekStartDate = getStartOfWeek(now);
     _generateDates();
+
+    // 선택된 날짜를 오늘로 초기화
+    selectedDate = today;
+
+    // selectedIndex 초기화 : 오늘의 인덱스 찾음
+    selectedIndex = today.weekday -1;
+    if(selectedIndex < 0 || selectedIndex > 6){
+      selectedIndex = 0;
+    }
 
     // formattedDate와 todayDayName 초기화
     formattedDate = DateFormat('yyyy년 MM월 dd일').format(now);
@@ -53,17 +57,22 @@ class _HomePageState extends State<HomePage> {
     dates = List.generate(7, (index) {
       return now.subtract(Duration(days: dayOfWeek - 1 - index));
     });
-    selectedIndex = dates.indexWhere((date) =>
-        date.year == today.year &&
-        date.month == today.month &&
-        date.day == today.day);
+
+  //   selectedIndex = dates.indexWhere((date) =>
+  //       date.year == today.year &&
+  //       date.month == today.month &&
+  //       date.day == today.day);
   }
 
   void _generateDates() {
     dates = List<DateTime>.generate(
       7,
-          (index) => currentWeekStartDate.add(Duration(days: index)),
+      (index) => currentWeekStartDate.add(Duration(days: index)),
     );
+  }
+
+  DateTime getStartOfWeek(DateTime date) {
+    return date.subtract(Duration(days: date.weekday - 1));
   }
 
   @override
@@ -88,7 +97,6 @@ class _HomePageState extends State<HomePage> {
                 width: 200, height: 46, fit: BoxFit.contain)),
         Scaffold(
           backgroundColor: Colors.transparent,
-          //backgroundColor: Colors.black,
           body: Padding(
             padding: EdgeInsets.only(
                 left: screenWidth * 0.06,
@@ -99,21 +107,30 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      formattedDate,
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
-                    ),
+                    Text(formattedDate,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 20)),
                     SizedBox(
                       width: 79.60,
                       height: 30,
                       child: TextButton(
                         onPressed: () {
                           setState(() {
-                            selectedIndex = dates.indexWhere((date) =>
-                                date.year == today.year &&
-                                date.month == today.month &&
-                                date.day == today.day);
+                            currentWeekStartDate = getStartOfWeek(today);
+                            _generateDates();
+
+                            selectedIndex = today.weekday -1;
+                            if (selectedIndex < 0 || selectedIndex > 6) {
+                              selectedIndex = 0;
+                            }
+                            // selectedIndex = dates.indexWhere((date) =>
+                            //     date.year == today.year &&
+                            //     date.month == today.month &&
+                            //     date.day == today.day);
+
+                            selectedDate = today;
+                            formattedDate = DateFormat('yyyy년 MM월 dd일').format(selectedDate);
+                            todayDayName = DateFormat('EEE', 'ko').format(selectedDate);
                           });
                         },
                         style: TextButton.styleFrom(
@@ -157,49 +174,64 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            currentWeekStartDate = currentWeekStartDate.subtract(Duration(days: 7));
-                            _generateDates();
-                            selectedIndex = -1; // Reset selection if needed
-                          });
-                        },
-                        child: Icon(Icons.arrow_back_ios),
-                      ),
-                      // Week Days
-                      ...List<Widget>.generate(7, (index) {
-                        return GestureDetector(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
                           onTap: () {
                             setState(() {
-                              selectedIndex = index;
+                              currentWeekStartDate = currentWeekStartDate
+                                  .subtract(Duration(days: 7));
+                              _generateDates();
+                              selectedIndex = today.weekday -1;
+                              if (selectedIndex < 0 || selectedIndex > 6) {
+                                selectedIndex = 0;
+                              }
+                              selectedDate = currentWeekStartDate.add(Duration(days: selectedIndex ));
+                              formattedDate = DateFormat('yyyy년 MM월 dd일').format(selectedDate);
+                              todayDayName = DateFormat('EEE', 'ko').format(selectedDate);
                             });
                           },
-                          child: CircleWidget(
-                            dayName: dayNames[index],
-                            date: dates[index],
-                            isSelected: selectedIndex == index,
-                          ),
-                        );
-                      }),
-                      // Next Week Button
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            currentWeekStartDate = currentWeekStartDate.add(Duration(days: 7));
-                            _generateDates();
-                            selectedIndex = -1; // Reset selection if needed
-                          });
-                        },
-                        child: Icon(Icons.arrow_forward_ios),
-                      ),
-
-                    ]
-                  ),
+                          child: Icon(Icons.arrow_back_ios),
+                        ),
+                        // Week Days
+                        ...List<Widget>.generate(7, (index) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedIndex = index;
+                                selectedDate = dates[index];
+                                formattedDate = DateFormat('yyyy년 MM월 dd일').format(selectedDate);
+                                todayDayName = DateFormat('EEE', 'ko').format(selectedDate);
+                              });
+                            },
+                            child: CircleWidget(
+                              dayName: dayNames[index],
+                              date: dates[index],
+                              isSelected: selectedIndex == index,
+                            ),
+                          );
+                        }),
+                        // Next Week Button
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              currentWeekStartDate =
+                                  currentWeekStartDate.add(Duration(days: 7));
+                              _generateDates();
+                              selectedIndex = today.weekday - 1;
+                              if (selectedIndex < 0 || selectedIndex > 6) {
+                                selectedIndex = 0;
+                              }
+                              selectedDate =
+                                  currentWeekStartDate.add(Duration(days: selectedIndex));
+                              formattedDate = DateFormat('yyyy년 MM월 dd일').format(selectedDate);
+                              todayDayName = DateFormat('EEE', 'ko').format(selectedDate);
+                            });
+                          },
+                          child: Icon(Icons.arrow_forward_ios),
+                        ),
+                      ]),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -257,7 +289,8 @@ class _HomePageState extends State<HomePage> {
                               border: Border.all(width: 1),
                               borderRadius: BorderRadius.circular(15)),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -268,12 +301,12 @@ class _HomePageState extends State<HomePage> {
                                       children: <TextSpan>[
                                         TextSpan(
                                             text: '취미',
-                                            style: textTheme.bodyMedium?.copyWith(
-                                                color: HOME_YELLOW_TEXT,
-                                                fontWeight: FontWeight.w600)),
-                                        TextSpan(
-                                          text: '를 했나요?'
-                                        )
+                                            style: textTheme.bodyMedium
+                                                ?.copyWith(
+                                                    color: HOME_YELLOW_TEXT,
+                                                    fontWeight:
+                                                        FontWeight.w600)),
+                                        TextSpan(text: '를 했나요?')
                                       ]),
                                 ),
                                 LogButton(
