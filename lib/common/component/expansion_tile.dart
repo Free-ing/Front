@@ -107,12 +107,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       case '정적 스트레칭':
         return PlayButton(
             onPressed: () {
+              // TODO: 정적 스트레칭 bottom sheet로 바꾸기
               showExerciseBottomSheet(context, '정적 스트레칭');
             },
             iconColor: PINK_PLAY_BUTTON);
       case '동적 스트레칭':
         return PlayButton(
             onPressed: () {
+              // TODO: 동적 스트레칭 bottom sheet로 바꾸기
               showExerciseBottomSheet(context, '동적 스트레칭');
             },
             iconColor: PINK_PLAY_BUTTON);

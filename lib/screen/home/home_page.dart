@@ -192,7 +192,10 @@ class _HomePageState extends State<HomePage> {
                               todayDayName = DateFormat('EEE', 'ko').format(selectedDate);
                             });
                           },
-                          child: Icon(Icons.arrow_back_ios),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0, top: 25.0),
+                            child: Icon(Icons.arrow_back_ios, size: 15,),
+                          ),
                         ),
                         // Week Days
                         ...List<Widget>.generate(7, (index) {
@@ -229,7 +232,10 @@ class _HomePageState extends State<HomePage> {
                               todayDayName = DateFormat('EEE', 'ko').format(selectedDate);
                             });
                           },
-                          child: Icon(Icons.arrow_forward_ios),
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0, top: 25.0),
+                            child: Icon(Icons.arrow_forward_ios, size: 15,),
+                          ),
                         ),
                       ]),
                 ),
