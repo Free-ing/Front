@@ -51,5 +51,8 @@
     <key>NSPhotoLibraryUsageDescription</key>
     <string>We need access to your photo library to upload a picture.</string>
 
+    <key>GADApplicationIdentifier</key>
+    <string>ca-app-pub-8035769642129886~5164447400</string>
+
 </dict>
 </plist>
