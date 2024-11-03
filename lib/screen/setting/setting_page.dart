@@ -232,9 +232,8 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                 ),
                 SizedBox(
-                  height: screenHeight * 0.028,
+                  height: screenHeight * 0.02,
                 ),
-
                 /// 배너 광고
                 // Image.asset('assets/imgs/setting/setting_add.png'),
                 _bannerAd == null
