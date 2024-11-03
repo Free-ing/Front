@@ -1,8 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/survey_buttons.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/ad_mob_service.dart';
+import 'package:freeing/common/service/exercise_api_service.dart';
 import 'package:freeing/layout/survey_layout.dart';
+import 'package:freeing/model/exercise/recommended_exercise.dart';
+import 'package:freeing/screen/routine/ai_loading_screen.dart';
+import 'package:freeing/screen/routine/survey_response_screen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class SurveyExerciseScreen extends StatefulWidget {
   const SurveyExerciseScreen({super.key});
@@ -18,9 +26,47 @@ class _SurveyExerciseScreenState extends State<SurveyExerciseScreen> {
   int currentQuestionIndex = 0;
 
   final PageController _pageController = PageController();
-
   final int _totalPages = 5; // 총 페이지 수
   double _progress = 1 / (5 - 1); // 초기 진행 상태
+
+  List<RecommendedExercise> _recommendList = [];
+  InterstitialAd? _interstitialAd;
+
+  //Todo: 전면 광고 로드
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdMobService.interstitialAdUnitId!,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
+        _interstitialAd = ad;
+        _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+          onAdDismissedFullScreenContent: (ad) {
+            ad.dispose();
+
+            // 광고가 닫히면 로딩 화면으로 이동
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AiLoadingScreen(category: '운동'),
+              ),
+            );
+          },
+        );
+
+        /// 광고가 로드되면 표시
+        _interstitialAd!.show();
+      }, onAdFailedToLoad: (error) {
+        _interstitialAd = null;
+        // 광고 로드 실패 시 로딩 화면으로 이동
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AiLoadingScreen(category: '운동'),
+          ),
+        );
+      }),
+    );
+  }
 
   @override
   void initState() {
@@ -39,8 +85,50 @@ class _SurveyExerciseScreenState extends State<SurveyExerciseScreen> {
   }
 
   //Todo: 서버 요청 (ai 운동 추천)
-  Future<void> _submitAnswers() async {
+  Future<List<RecommendedExercise>> _submitAnswers() async {
     print('Submitting Answers: ${answers}');
+
+    _loadInterstitialAd();
+
+    try {
+      final apiService = ExerciseAPIService();
+
+      final response = await apiService.recommendExercise(answers);
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(utf8.decode(response.bodyBytes));
+
+        if (jsonData is Map<String, dynamic>) {
+          List<dynamic> recommendList = jsonData['result'];
+          _recommendList.clear();
+          for (dynamic data in recommendList) {
+            RecommendedExercise exercise = RecommendedExercise.fromJson(data);
+            _recommendList.add(exercise);
+          }
+        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SurveyResponseScreen(
+              category: '운동',
+              recommend: _recommendList,
+              answers: answers,
+              remain: 2,
+            ),
+          ),
+        );
+        return _recommendList;
+      }
+      else if (response.statusCode == 404) {
+        return _recommendList = [];
+      }
+      else {
+        throw Exception('운동 루틴 추천 가져오기 실패 ${response.statusCode}');
+      }
+    } catch (error) {
+      debugPrint('응답 실패 $error');
+      return _recommendList = [];
+    }
   }
 
   //Todo: 다음 질문
@@ -55,7 +143,7 @@ class _SurveyExerciseScreenState extends State<SurveyExerciseScreen> {
     if (index < answers.length - 1) {
       _pageController.animateToPage(
         index + 1,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.ease,
       );
     } else {
@@ -73,7 +161,7 @@ class _SurveyExerciseScreenState extends State<SurveyExerciseScreen> {
 
       _pageController.animateToPage(
         currentQuestionIndex,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.ease,
       );
     }
@@ -110,13 +198,13 @@ class _SurveyExerciseScreenState extends State<SurveyExerciseScreen> {
 
     return SurveyLayout(
       title: PreferredSize(
-        preferredSize: Size(double.infinity, 4.0),
+        preferredSize: const Size(double.infinity, 4.0),
         child: Container(
           width: screenWidth * 0.51,
           child: LinearProgressIndicator(
             value: _progress,
             backgroundColor: BASIC_GREY,
-            valueColor: AlwaysStoppedAnimation<Color>(ORANGE),
+            valueColor: const AlwaysStoppedAnimation<Color>(ORANGE),
           ),
         ),
       ),
@@ -152,7 +240,7 @@ class _SurveyExerciseScreenState extends State<SurveyExerciseScreen> {
               context: context,
               removeTop: true,
               child: GridView.count(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 2,
                 crossAxisSpacing: screenWidth * 0.076,
                 mainAxisSpacing: screenWidth * 0.076,
@@ -206,7 +294,7 @@ class _SurveyExerciseScreenState extends State<SurveyExerciseScreen> {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.025),
             child: ListView(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               children: List.generate(
                 labels.length,
                 (index) {
@@ -253,7 +341,7 @@ class _SurveyExerciseScreenState extends State<SurveyExerciseScreen> {
               context: context,
               removeTop: true,
               child: GridView.count(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: labels.length,
                 crossAxisSpacing: screenWidth * 0.076,
                 mainAxisSpacing: screenWidth * 0.076,
@@ -301,7 +389,7 @@ class _SurveyExerciseScreenState extends State<SurveyExerciseScreen> {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.025),
             child: ListView(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               children: List.generate(
                 labels.length,
                 (index) {
@@ -327,7 +415,7 @@ class _SurveyExerciseScreenState extends State<SurveyExerciseScreen> {
     );
   }
 
-//Todo: page control button -- 아직 서버 답변 전송 안넣음
+//Todo: page control button
   Widget _pageControlButton({required List labels}) {
     return PairedButtons(
       greenText: currentQuestionIndex == answers.length - 1 ? '추천받기' : '다음',

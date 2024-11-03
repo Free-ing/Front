@@ -57,7 +57,6 @@ class _MeditationBottomSheetContentState
   bool isPlaying = false;
   double volume = 0.5;
   bool isVolumeDisabled = false;
-  bool _isPlaying = false;
 
   @override
   void initState() {

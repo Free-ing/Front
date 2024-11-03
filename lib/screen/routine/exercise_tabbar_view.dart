@@ -20,27 +20,25 @@ class _ExerciseTabBarViewState extends State<ExerciseTabBarView> {
 
   //Todo: 서버 요청 (운동 리스트 조회)
   Future<List<ExerciseList>> _fetchExerciseList() async {
-    print("Fetching Spirit list");
+    debugPrint("Fetching Exercise list");
     final response = await apiService.getExerciseList();
-
-    print(response.statusCode);
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
       if (jsonData is Map<String, dynamic>) {
-        List<dynamic> spiritList = jsonData['result'];
+        List<dynamic> exerciseList = jsonData['result'];
         _exerciseList.clear();
-        for (dynamic data in spiritList) {
-          ExerciseList spiritCard = ExerciseList.fromJson(data);
-          _exerciseList.add(spiritCard);
+        for (dynamic data in exerciseList) {
+          ExerciseList exerciseCard = ExerciseList.fromJson(data);
+          _exerciseList.add(exerciseCard);
         }
       }
       return _exerciseList;
     } else if (response.statusCode == 404) {
       return _exerciseList = [];
     } else {
-      throw Exception('마음 채우기 리스트 가져오기 실패 ${response.statusCode}');
+      throw Exception('운동 리스트 가져오기 실패 ${response.statusCode}');
     }
   }
 
@@ -58,40 +56,77 @@ class _ExerciseTabBarViewState extends State<ExerciseTabBarView> {
     return GridView.builder(
       gridDelegate:
           const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemCount: 5,
+      itemCount: _exerciseList.length,
       itemBuilder: (context, index) {
-        return ToggledRoutineCard(
-          imageUrl: 'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_exercise.png',
-          title: '운동 루틴',
-          status: false,
-          explanation: '운동 루틴에 대한 설명',
-          onSwitch: () {},
-          offSwitch: () {},
-        );
+        final exerciseList = _exerciseList[index];
 
-        //   final hobbyList = _hobbyList[index];
-        //   return GestureDetector(
-        //     onLongPress: () async {
-        //       await Navigator.of(context).push(
-        //         MaterialPageRoute(
-        //           builder: (context) => EditRoutineScreen(
-        //             routineId: hobbyList.routineId,
-        //             title: hobbyList.hobbyName,
-        //             selectImage: hobbyList.imageUrl,
-        //             category: '운동',
-        //           ),
-        //         ),
-        //       );
-        //     },
-        //     child: ToggledRoutineCard(
-        //       imageUrl: '',
-        //       title: '',
-        //       status: null,
-        //       explanation: '',
-        //       onSwitch: () {},
-        //       offSwitch: () {},
-        //     ),
-        //   );
+        //Todo: 서버 요청 (운동 루틴 켜기)
+        Future<void> _onExerciseRoutine() async {
+          final responseCode =
+              await apiService.onExerciseRoutine(exerciseList.routineId);
+          if (responseCode == 200) {
+            setState(() {
+              exerciseList.status = !exerciseList.status;
+            });
+            debugPrint('운동 루틴 (${exerciseList.exerciseName}) 킴 on');
+          } else {
+            debugPrint('운동 루틴 (${exerciseList.exerciseName}) 켜는 중 오류 발생');
+          }
+        }
+
+        //Todo: 서버 요청 (운동 루틴 끄기)
+        Future<void> _offExerciseRoutine() async {
+          final responseCode =
+              await apiService.offExerciseRoutine(exerciseList.routineId);
+          if (responseCode == 200) {
+            setState(() {
+              exerciseList.status = !exerciseList.status;
+            });
+            debugPrint('운동 루틴 (${exerciseList.exerciseName}) 끔 off');
+          } else {
+            debugPrint('운동 루틴 (${exerciseList.exerciseName}) 끄는 중 오류 발생');
+          }
+        }
+
+        return GestureDetector(
+          onLongPress: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => EditRoutineScreen(
+                  routineId: exerciseList.routineId,
+                  title: exerciseList.exerciseName,
+                  selectImage: exerciseList.imageUrl,
+                  category: '운동',
+                  monday: exerciseList.monday,
+                  tuesday: exerciseList.tuesday,
+                  wednesday: exerciseList.wednesday,
+                  thursday: exerciseList.thursday,
+                  friday: exerciseList.friday,
+                  saturday: exerciseList.saturday,
+                  sunday: exerciseList.sunday,
+                  startTime: exerciseList.endTime,
+                  endTime: exerciseList.endTime,
+                  explanation: exerciseList.explanation,
+                  status: exerciseList.status,
+                ),
+              ),
+            );
+          },
+          child: ToggledRoutineCard(
+            imageUrl: exerciseList.imageUrl,
+            title: exerciseList.exerciseName,
+            status: exerciseList.status,
+            explanation: exerciseList.explanation ?? '저장된 운동 루틴 설명이 없습니다.',
+            onSwitch: () {
+              _onExerciseRoutine();
+              print('켜');
+            },
+            offSwitch: () {
+              _offExerciseRoutine();
+              print('꺼');
+            },
+          ),
+        );
       },
     );
   }

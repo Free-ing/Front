@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
+import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/screen/routine/select_routine_image_screen.dart';
 
@@ -11,7 +12,6 @@ import '../../common/service/hobby_api_service.dart';
 
 class AddRecommendedHobbyScreen extends StatefulWidget {
   final String hobbyName;
-
 
   const AddRecommendedHobbyScreen({super.key, required this.hobbyName});
 
@@ -38,15 +38,16 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
 
     if (response.statusCode == 200) {
       Navigator.pop(context, true);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('취미 루틴이 추가되었습니다')));
+      ToastBarWidget(
+        title: '취미 루틴이 수정되었습니다.',
+        leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+      ).showToast(context);
     } else {
       final errorData = json.decode(utf8.decode(response.bodyBytes));
       DialogManager.showAlertDialog(
           context: context,
           title: '취미 루틴 추가 실패',
-          content:
-          '${errorData['message']}\n(오류 코드: ${response.statusCode})');
+          content: '${errorData['message']}\n(오류 코드: ${response.statusCode})');
     }
   }
 
@@ -69,7 +70,8 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
             _selectCategory(textTheme, screenWidth, screenHeight),
             SizedBox(height: screenHeight * 0.02),
             Expanded(child: Container()),
-            GreenButton(width: screenWidth * 0.6, onPressed: _submitHobbyRoutine),
+            GreenButton(
+                width: screenWidth * 0.6, onPressed: _submitHobbyRoutine),
             SizedBox(height: screenHeight * 0.033),
           ],
         ),
@@ -79,9 +81,7 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
 
   //Todo: 루틴 이미지, 제목 입력
   Widget _routineImageTitle(textTheme, screenWidth) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
+    return Stack(alignment: Alignment.center, children: <Widget>[
       Card(
         elevation: 6,
         shadowColor: YELLOW_SHADOW,
@@ -107,7 +107,11 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
                   bottom: 5,
                   left: 0,
                   right: 0,
-                  child: Text(widget.hobbyName, style: textTheme.bodyMedium, textAlign: TextAlign.center,)),
+                  child: Text(
+                    widget.hobbyName,
+                    style: textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  )),
             ],
           ),
         ),
@@ -161,8 +165,8 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
             Text("그림 변경"),
           ],
         ),
-      ),]
-    );
+      ),
+    ]);
   }
 
   //Todo: 루틴 카테고리 선택

@@ -14,7 +14,8 @@ class HobbyAPIService {
   final String _baseUrl = BaseUrl.baseUrl;
 
   //Todo: 취미 루틴 추가
-  Future<http.Response> postHobbyRoutine(String hobbyName, String imageUrl) async {
+  Future<http.Response> postHobbyRoutine(
+      String hobbyName, String imageUrl) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/hobby-service/routine');
@@ -102,7 +103,8 @@ class HobbyAPIService {
       final formattedDate = DateFormat('yyyy-MM-dd').format(date);
       final tokenStorage = TokenManager();
       final accessToken = await tokenStorage.getAccessToken();
-      final url = Uri.parse('$_baseUrl/hobby-service/record?date=$formattedDate');
+      final url =
+          Uri.parse('$_baseUrl/hobby-service/record?date=$formattedDate');
 
       // 기본 요청 데이터 생성
       var request = http.MultipartRequest('POST', url);
@@ -199,15 +201,17 @@ class HobbyAPIService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',
       },
-      body: json.encode({
-        'leisureActivities': answers[0],
-        'stressReliefActivities': answers[1],
-        'hobbyPreference': answers[2],
-        'activityLocation': answers[3],
-        'stressResponse': answers[4],
-        'newActivityPreference': answers[5],
-        'budget': answers[6],
-      }),
+      body: json.encode(
+        {
+          'leisureActivities': answers[0],
+          'stressReliefActivities': answers[1],
+          'hobbyPreference': answers[2],
+          'activityLocation': answers[3],
+          'stressResponse': answers[4],
+          'newActivityPreference': answers[5],
+          'budget': answers[6],
+        },
+      ),
     );
   }
 }
