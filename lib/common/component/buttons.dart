@@ -381,6 +381,7 @@ class SettingTextButton extends StatelessWidget {
   final String modalTitle;
   final String modalContent;
   final VoidCallback? modalOnConfirm;
+  final String confirmButtonText;
   //final VoidCallback onTap;
 
   const SettingTextButton({
@@ -393,6 +394,7 @@ class SettingTextButton extends StatelessWidget {
     this.modalTitle = '',
     this.modalContent = '',
     this.modalOnConfirm,
+    this.confirmButtonText = '확인',
     //required this.onTap,
   }) : super(key: key);
 
@@ -412,6 +414,7 @@ class SettingTextButton extends StatelessWidget {
               title: modalTitle,
               content: modalContent,
               onConfirm: modalOnConfirm!,
+              confirmButtonText: confirmButtonText,
             );
           } else if (targetPage != null) {
             Navigator.push(

@@ -98,4 +98,48 @@ class SettingAPIService {
     );
   }
 
+  Future<http.Response> removeUser() async {
+    try {
+      final accessToken = await tokenStorage.getAccessToken();
+      final String _removeUserEndpoint = '$_baseUrl/user-service/user/remove';
+      final url = Uri.parse(_removeUserEndpoint);
+
+      return await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+    } catch (e) {
+      // 예외 발생 시 예외를 다시 던지거나 기본 응답을 반환
+      throw Exception('Failed to remove user: $e');
+      // 또는 기본 응답을 반환할 경우
+      // return http.Response('Error', 500);
+    }
+  }
+
+  Future<http.Response> resetData() async {
+    try {
+      final accessToken = await tokenStorage.getAccessToken();
+      final String _resetDataEndpoint = '$_baseUrl/user-service/user/reset';
+      final url = Uri.parse(_resetDataEndpoint);
+
+      return await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+    } catch (e) {
+      // 예외 발생 시 예외를 다시 던지거나 기본 응답을 반환
+      throw Exception('Failed to reset Data: $e');
+      // 또는 기본 응답을 반환할 경우
+      // return http.Response('Error', 500);
+    }
+  }
+
+
+
 }

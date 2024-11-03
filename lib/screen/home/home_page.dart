@@ -21,7 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = -1;
-  DateTime now = DateTime.now().toUtc().add(Duration(hours: 9));
+  DateTime now = DateTime.now();
   late String formattedDate;
   late String todayDayName;
   late List<DateTime> dates;
