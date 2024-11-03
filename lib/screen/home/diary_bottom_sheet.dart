@@ -10,15 +10,16 @@ import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
 
 //Todo: 감정 일기
-void showDiaryBottomSheet(
+Future<bool> showDiaryBottomSheet(
   BuildContext context,
   String title,
   DateTime selectedDate,
-) {
+) async {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
+  bool isSuccess = false;
 
-  showCustomModalBottomSheet(
+  isSuccess = await showCustomModalBottomSheet(
     context: context,
     builder: (BuildContext context, TextTheme textTheme) {
       return _DiaryBottomSheetContent(
@@ -27,9 +28,13 @@ void showDiaryBottomSheet(
         screenWidth: screenWidth,
         screenHeight: screenHeight,
         selectedDate: selectedDate,
+        onSubmissionSuccess: (){
+          isSuccess = true;
+        }
       );
     },
-  );
+  )?? false;
+  return isSuccess;
 }
 
 class _DiaryBottomSheetContent extends StatefulWidget {
@@ -38,6 +43,7 @@ class _DiaryBottomSheetContent extends StatefulWidget {
   final double screenWidth;
   final double screenHeight;
   final DateTime selectedDate;
+  final VoidCallback onSubmissionSuccess;
 
   const _DiaryBottomSheetContent({
     super.key,
@@ -46,6 +52,7 @@ class _DiaryBottomSheetContent extends StatefulWidget {
     required this.screenWidth,
     required this.screenHeight,
     required this.selectedDate,
+    required this.onSubmissionSuccess
   });
 
   @override
@@ -72,7 +79,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
   }
 
   //Todo: 서버 요청 (감정 일기 작성)
-  Future<void> _submitEmotionalDiary() async {
+  Future<bool> _submitEmotionalDiary() async {
     final String wellDone = wellDoneController.text;
     final String hardWork = hardWorkController.text;
     String emotion = 'default';
@@ -101,23 +108,27 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         setState(() {
           diaryId = resultId;
         });
+        widget.onSubmissionSuccess();
         if(_getAiLetter == false){
           Navigator.pop(context);
         }
         const ToastBarWidget(
           title: '감정 일기 작성이 저장되었습니다.',
         ).showToast(context);
+        return true;
       } else if (response == 400) {
         DialogManager.showAlertDialog(
             context: context,
             title: '알림',
-            content: '모두 입력해주세요{${response.statusCode}}.');
+            content: '모두 입력해주세요.');
+        return false;
       } else {
         DialogManager.showAlertDialog(
           context: context,
           title: '알림',
           content: '서버에서 오류가 발생하였습니다.\n다시 시도해주세요. ${response.statusCode}',
         );
+        return false;
       }
     } else {
       DialogManager.showAlertDialog(
@@ -125,6 +136,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         title: '알림',
         content: '모두 입력 해주세요.(모두 입력 안됨)',
       );
+      return false;
     }
   }
 

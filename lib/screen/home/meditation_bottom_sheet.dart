@@ -15,11 +15,11 @@ class PositionData {
 }
 
 //Todo: 명상
-void showMeditationBottomSheet(
+Future<bool> showMeditationBottomSheet(
   BuildContext context,
   String title,
-) {
-  showCustomModalBottomSheet(
+) async{
+  final isSuccess = await showCustomModalBottomSheet(
     context: context,
     builder: (
       BuildContext context,
@@ -30,7 +30,8 @@ void showMeditationBottomSheet(
         textTheme: textTheme,
       );
     },
-  );
+  )?? false;
+  return isSuccess;
 }
 
 class _MeditationBottomSheetContent extends StatefulWidget {
@@ -79,7 +80,16 @@ class _MeditationBottomSheetContentState
   }
 
   //Todo: 서버 요청 (루틴 완료(기록))
-  Future<void> _submitMeditationRoutine() async {}
+  Future<void> _submitMeditationRoutine() async {
+    try{
+      print('명상하기 루틴 기록 시도오오');
+      Navigator.pop(context, true);
+
+    } catch(e){
+      print("루틴 기록하는데 에러 발생");
+
+    }
+  }
 
   Stream<PositionData> get _positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(

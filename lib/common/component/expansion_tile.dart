@@ -124,15 +124,21 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             iconColor: PINK_PLAY_BUTTON);
       case '명상하기':
         return PlayButton(
-            onPressed: () {
-              showMeditationBottomSheet(context, '명상하기');
+            onPressed: () async {
+              bool success = await showMeditationBottomSheet(context, '명상하기');
+              if(success){
+                setState(() {
+                  print('명상하기 성공적!!!!!');
+                  _isChecked[index] = true;
+                  _isVisible[index] = false;
+                });
+              }
             },
             iconColor: GREEN_PLAY_BUTTON);
       case '수면 기록하기':
         return LogButton(
           onPressed: () async {
             bool success = await showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
-            print('sucess값은!!!!!!  $success');
             if(success){
               setState(() {
                 print('sleep bottom sheet 성공적!!!!!');
@@ -144,8 +150,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         );
       case '감정일기 작성':
         return LogButton(
-          onPressed: () {
-            showDiaryBottomSheet(context, '오늘 하루 어땠나요?', DateTime.now());
+          onPressed: () async {
+            bool success = await showDiaryBottomSheet(context, '오늘 하루 어땠나요?', DateTime.now());
+            print('sucess값은!!!!!!  $success');
+            if(success){
+              print('감정일기 작성 성공적');
+              _isChecked[index] = true;
+              _isVisible[index] = false;
+            }
           },
         );
       default:
