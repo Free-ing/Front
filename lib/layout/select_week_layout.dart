@@ -179,7 +179,8 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
                     '${week.last.month.toString().padLeft(2, ' ')}월 ${week.last.day.toString().padLeft(2, ' ')}일';
 
                 // 현재 날짜와 비교
-                bool isFutureWeek = week.last.isAfter(DateTime.now());
+                DateTime nextMonday = week.last.add(Duration(days: 1));
+                bool isFutureWeek = nextMonday.isAfter(DateTime.now());
 
                 return Padding(
                   padding: EdgeInsets.all(screenHeight * 0.017),
@@ -204,11 +205,11 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
                                     Navigator.pop(context);
                                     await _showRewardedAd();
                                   } else {
-                                    print('광고가 아직 로드되지 않았습니다');
-                                    // Navigator.of(context).push(
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) =>
-                                    //             widget.routePage));
+                                    debugPrint('광고가 아직 로드되지 않았습니다');
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                widget.routePage));
                                   }
                                 },
                               );

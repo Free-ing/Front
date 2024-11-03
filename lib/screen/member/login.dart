@@ -91,7 +91,7 @@ class _LoginState extends State<Login> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
-            "assets/imgs/login/login_top.png",
+          'assets/imgs/login/login_top.png',
             width: MediaQuery.of(context).size.width,
             fit: BoxFit.fitWidth,
           ),
@@ -103,43 +103,42 @@ class _LoginState extends State<Login> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.07),
+
                       const Text(
                         '스트레스로부터',
                         style: TextStyle(
                           fontFamily: 'scdream',
                           fontSize: 18,
-                          fontWeight: FontWeight.w300,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                       const Row(
                         children: [
                           Text(
-                            'Freeing',
+                            'Freeing ',
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
+                                fontSize: 22, fontWeight: FontWeight.w600),
                           ),
                           Text(
                             '할 준비 되셨나요?',
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w300),
+                                fontSize: 18, fontWeight: FontWeight.w400),
                           ),
                         ],
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.028),
+                          height: MediaQuery.of(context).size.height * 0.02),
                       const Text(
                         '나를 위한 힐링을 시작해보세요.',
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w300),
+                            fontSize: 18, fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
                   Column(
                     children: [
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.055),
+                          height: MediaQuery.of(context).size.height * 0.045),
                       const Text(
                         '로그인',
                         style: TextStyle(
@@ -148,7 +147,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.03),
+                          height: MediaQuery.of(context).size.height * 0.023),
                       GrayTextFormField(
                         controller: _emailController,
                         labelText: '이메일',
@@ -232,7 +231,7 @@ class _LoginState extends State<Login> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.07),
+            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.023),
             child: Image.asset(
               "assets/imgs/login/login_bottom.png",
               width: MediaQuery.of(context).size.width,
