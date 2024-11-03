@@ -144,6 +144,7 @@ class PlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
+      padding: EdgeInsets.zero,
       icon: DecoratedIcon(
         icon: Icon(
           Icons.play_arrow_sharp,
@@ -184,11 +185,14 @@ class LogButton extends StatelessWidget {
     // );
     return InkWell(
       onTap: onPressed,
-      child: Image.asset(
-        'assets/imgs/home/record_icon.png',
-        //width: ,
-        //height: MediaQuery.of(context).size.height * 0.03,
-        fit: BoxFit.contain,
+      child: Padding(
+        padding: const EdgeInsets.all(11),
+        child: Image.asset(
+          'assets/imgs/home/record_icon.png',
+          //width: ,
+          //height: MediaQuery.of(context).size.height * 0.03,
+          fit: BoxFit.contain,
+        ),
       ),
     );
   }
