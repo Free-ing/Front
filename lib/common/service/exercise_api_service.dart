@@ -67,21 +67,21 @@ class ExerciseAPIService {
 
   //Todo: 운동 루틴 수정
   Future<http.Response> patchExerciseRoutine(
-      String routineName,
-      String imageUrl,
-      bool monday,
-      bool tuesday,
-      bool wednesday,
-      bool thursday,
-      bool friday,
-      bool saturday,
-      bool sunday,
-      startTime,
-      endTime,
-      String explanation,
-      bool status,
-      int routineId,
-      ) async {
+    String routineName,
+    String imageUrl,
+    bool monday,
+    bool tuesday,
+    bool wednesday,
+    bool thursday,
+    bool friday,
+    bool saturday,
+    bool sunday,
+    startTime,
+    endTime,
+    String explanation,
+    bool status,
+    int routineId,
+  ) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/exercise-service/$routineId');
@@ -117,7 +117,7 @@ class ExerciseAPIService {
   }
 
   //Todo: 운동 루틴 삭제
-  Future<int> deleteSpiritRoutine(int routineId) async {
+  Future<int> deleteExerciseRoutine(int routineId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/exercise-service/$routineId');
@@ -133,7 +133,7 @@ class ExerciseAPIService {
     return response.statusCode;
   }
 
-  //Todo: 마음 채우기 루틴 켜기
+  //Todo: 운동 채우기 루틴 켜기
   Future<int> onExerciseRoutine(int routineId) async {
     DateTime? date = DateTime(
       DateTime.now().year,
@@ -144,8 +144,8 @@ class ExerciseAPIService {
     print(formattedDate);
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url =
-    Uri.parse('$_baseUrl/exercise-service/$routineId/on?date=$formattedDate');
+    final url = Uri.parse(
+        '$_baseUrl/exercise-service/$routineId/on?date=$formattedDate');
 
     final response = await http.patch(
       url,
@@ -158,7 +158,7 @@ class ExerciseAPIService {
     return response.statusCode;
   }
 
-  //Todo: 마음 채우기 루틴 끄기
+  //Todo: 운동 루틴 끄기
   Future<int> offExerciseRoutine(int routineId) async {
     DateTime? date = DateTime(
       DateTime.now().year,
@@ -183,4 +183,26 @@ class ExerciseAPIService {
     return response.statusCode;
   }
 
+//Todo: AI 운동 추천
+  Future<http.Response> recommendExercise(List answers) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/exercise-service/ai/recommend');
+
+    return http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: json.encode(
+        {
+          '': answers[0],
+          '': answers[1],
+          '': answers[2],
+          '': answers[3],
+        },
+      ),
+    );
+  }
 }

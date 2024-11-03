@@ -19,7 +19,7 @@ class AiLoadingScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: screenHeight*0.1),
-            Text('후링이가 \n추천해드릴 $category 찾고있어요', style: textTheme.bodyLarge, textAlign: TextAlign.center,),
+            Text('후링이가 \n추천해드릴 $category을(를) 찾고있어요', style: textTheme.bodyLarge, textAlign: TextAlign.center,),
             Image.asset(
               'assets/imgs/etc/searching_mascot.png',
               width: screenWidth*0.8,

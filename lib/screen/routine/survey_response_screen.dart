@@ -3,18 +3,22 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/ad_mob_service.dart';
+import 'package:freeing/common/service/exercise_api_service.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
+import 'package:freeing/model/exercise/recommended_exercise.dart';
 import 'package:freeing/model/hobby/recommend_hobby.dart';
 import 'package:freeing/screen/routine/add_recommended_hobby_screen.dart';
 import 'package:freeing/screen/setting/setting_page.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'ai_loading_screen.dart';
 import 'routine_page.dart';
 
 class SurveyResponseScreen extends StatefulWidget {
   final String category;
-  final List<RecommendedHobby> recommend;
+  final List<dynamic> recommend;
   final List<String?> answers;
   final int remain;
 
@@ -34,7 +38,9 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
   String _name = '';
   bool _isAdded = false;
   late List<bool> _isAddedList;
-  List<RecommendedHobby> _recommendList = [];
+  List<RecommendedHobby> _recommendHobbyList = [];
+  List<RecommendedExercise> _recommendExerciseList = [];
+  InterstitialAd? _interstitialAd;
 
   // Todo: 서버 요청 (사용자 이름 받아오기)
   Future<void> _viewUserInfo() async {
@@ -58,17 +64,47 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
     _isAddedList = List<bool>.filled(widget.recommend.length, false);
   }
 
-  //Todo: 서버 요청 (ai 재추천)
-  Future<List<RecommendedHobby>> _reRecommend() async {
-    print('Re Recommend: ${widget.answers}');
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AiLoadingScreen(
-          category: '취미를',
-        ),
-      ),
+  //Todo: 전면 광고 로드
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdMobService.interstitialAdUnitId!,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
+        _interstitialAd = ad;
+        _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+          onAdDismissedFullScreenContent: (ad) {
+            ad.dispose();
+
+            // 광고가 닫히면 로딩 화면으로 이동
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AiLoadingScreen(category: '취미를'),
+              ),
+            );
+          },
+        );
+
+        /// 광고가 로드되면 표시
+        _interstitialAd!.show();
+      }, onAdFailedToLoad: (error) {
+        _interstitialAd = null;
+        // 광고 로드 실패 시 로딩 화면으로 이동
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AiLoadingScreen(category: widget.category),
+          ),
+        );
+      }),
     );
+  }
+
+  //Todo: 서버 요청 (취미 AI 재추천)
+  Future<List<RecommendedHobby>> _reRecommendHobby() async {
+    print('${widget.category} Re Recommend: ${widget.answers}');
+
+    _loadInterstitialAd();
 
     try {
       final apiService = HobbyAPIService();
@@ -80,32 +116,77 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
 
         if (jsonData is Map<String, dynamic>) {
           List<dynamic> recommendList = jsonData['result'];
-          _recommendList.clear();
+          _recommendHobbyList.clear();
           for (dynamic data in recommendList) {
             RecommendedHobby hobby = RecommendedHobby.fromJson(data);
-            _recommendList.add(hobby);
+            _recommendHobbyList.add(hobby);
           }
         }
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => SurveyResponseScreen(
-              category: '취미',
-              recommend: _recommendList,
+              category: widget.category,
+              recommend: _recommendHobbyList,
               answers: widget.answers,
               remain: widget.remain - 1,
             ),
           ),
         );
-        return _recommendList;
+        return _recommendHobbyList;
       } else if (response.statusCode == 404) {
-        return _recommendList = [];
+        return _recommendHobbyList = [];
       } else {
         throw Exception('취미 추천 가져오기 실패 ${response.statusCode}');
       }
     } catch (error) {
       print("응답 실패 $error");
-      return _recommendList = [];
+      return _recommendHobbyList = [];
+    }
+  }
+
+  //Todo: 서버 요청 (운동 ai 재추천)
+  Future<List<RecommendedExercise>> _reRecommendExercise() async {
+    print('${widget.category} Re Recommend: ${widget.answers}');
+
+    _loadInterstitialAd();
+
+    try {
+      final apiService = ExerciseAPIService();
+
+      final response = await apiService.recommendExercise(widget.answers);
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(utf8.decode(response.bodyBytes));
+
+        if (jsonData is Map<String, dynamic>) {
+          List<dynamic> recommendList = jsonData['result'];
+          _recommendExerciseList.clear();
+          for (dynamic data in recommendList) {
+            RecommendedExercise exercise = RecommendedExercise.fromJson(data);
+            _recommendExerciseList.add(exercise);
+          }
+        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SurveyResponseScreen(
+              category: widget.category,
+              recommend: _recommendHobbyList,
+              answers: widget.answers,
+              remain: widget.remain - 1,
+            ),
+          ),
+        );
+        return _recommendExerciseList;
+      } else if (response.statusCode == 404) {
+        return _recommendExerciseList = [];
+      } else {
+        throw Exception('운동 루틴 추천 가져오기 실패 ${response.statusCode}');
+      }
+    } catch (error) {
+      print("응답 실패 $error");
+      return _recommendExerciseList = [];
     }
   }
 
@@ -286,7 +367,11 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
         );
       },
       onGrayPressed: () {
-        widget.remain == 0 ? null : _reRecommend();
+        widget.remain == 0
+            ? null
+            : widget.category == '취미'
+                ? _reRecommendHobby()
+                : _reRecommendExercise();
       },
       greenText: '완료',
       grayText: '다시 추천',

@@ -24,21 +24,20 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
   List<String?> answers = List.filled(7, null);
   List<int?> selectedIndices = List.filled(7, null);
   int currentQuestionIndex = 0;
-  List<RecommendedHobby> _recommendList = [];
-  InterstitialAd? _interstitialAd;
 
   final PageController _pageController = PageController();
-
   final int _totalPages = 8; // 총 페이지 수
   double _progress = 1 / (8 - 1); // 초기 진행 상태
+
+  List<RecommendedHobby> _recommendList = [];
+  InterstitialAd? _interstitialAd;
 
   //Todo: 전면 광고 로드
   void _loadInterstitialAd() {
     InterstitialAd.load(
       adUnitId: AdMobService.interstitialAdUnitId!,
       request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
+      adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
         _interstitialAd = ad;
         _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
           onAdDismissedFullScreenContent: (ad) {
@@ -48,26 +47,24 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AiLoadingScreen(category: '취미를'),
+                builder: (context) => AiLoadingScreen(category: '취미'),
               ),
             );
           },
         );
 
         /// 광고가 로드되면 표시
-          _interstitialAd!.show();
-      },
-        onAdFailedToLoad: (error) {
-          _interstitialAd = null;
-          // 광고 로드 실패 시 로딩 화면으로 이동
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AiLoadingScreen(category: '취미를'),
-            ),
-          );
-        }
-      ),
+        _interstitialAd!.show();
+      }, onAdFailedToLoad: (error) {
+        _interstitialAd = null;
+        // 광고 로드 실패 시 로딩 화면으로 이동
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AiLoadingScreen(category: '취미'),
+          ),
+        );
+      }),
     );
   }
 
@@ -110,13 +107,16 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
           }
         }
         Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SurveyResponseScreen(
-                    category: '취미',
-                    recommend: _recommendList,
-                    answers: answers,
-                    remain: 2)));
+          context,
+          MaterialPageRoute(
+            builder: (context) => SurveyResponseScreen(
+              category: '취미',
+              recommend: _recommendList,
+              answers: answers,
+              remain: 2,
+            ),
+          ),
+        );
         return _recommendList;
       } else if (response.statusCode == 404) {
         return _recommendList = [];

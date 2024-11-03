@@ -7,6 +7,7 @@ import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/exercise_api_service.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/common/service/sleep_api_service.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
@@ -64,44 +65,54 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   //Todo: 서버 요청 (운동 루틴 추가)
   Future<void> _submitExerciseRoutine() async {
-    // if (_formKey.currentState!.validate() && _nameController.text.isNotEmpty) {
-    //   FocusScope.of(context).unfocus();
-    //   final String spiritName = _nameController.text;
-    //   final String explanation = _boddyController.text;
-    //
-    //   final startTime =
-    //       _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
-    //   final endTime =
-    //       _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
-    //
-    //   final apiService = ExerciseAPIService();
-    //   final int response = await apiService.postExerciseRoutine(
-    //     spiritName,
-    //     imageUrl,
-    //     weekDays[0].isSelected,
-    //     weekDays[1].isSelected,
-    //     weekDays[2].isSelected,
-    //     weekDays[3].isSelected,
-    //     weekDays[4].isSelected,
-    //     weekDays[5].isSelected,
-    //     weekDays[6].isSelected,
-    //     startTime,
-    //     endTime,
-    //     explanation,
-    //   );
-    //
-    //   if (response == 200) {
-    //     Navigator.pop(context);
-    //     ScaffoldMessenger.of(context)
-    //         .showSnackBar(const SnackBar(content: Text('운동 루틴이 추가되었습니다')));
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //         const SnackBar(content: Text('운동 채우기 루틴 추가에 실패했습니다.')));
-    //     print(response);
-    //   }
-    // } else {
-    //null;
-    // }
+    if (_formKey.currentState!.validate() &&
+        _nameController.text.isNotEmpty &&
+        timeErrorText == null) {
+      FocusScope.of(context).unfocus();
+      final String spiritName = _nameController.text;
+      final String explanation = _explanationController.text;
+
+      final startTime =
+      _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+      final endTime =
+      _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+
+      final apiService = ExerciseAPIService();
+      final response = await apiService.postExerciseRoutine(
+        spiritName,
+        imageUrl,
+        weekDays[0].isSelected,
+        weekDays[1].isSelected,
+        weekDays[2].isSelected,
+        weekDays[3].isSelected,
+        weekDays[4].isSelected,
+        weekDays[5].isSelected,
+        weekDays[6].isSelected,
+        startTime,
+        endTime,
+        explanation,
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
+        );
+        ToastBarWidget(
+          title: '운동 루틴이 추가되었습니다.',
+          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+        ).showToast(context);
+      } else {
+        final errorData = json.decode(utf8.decode(response.bodyBytes));
+
+        DialogManager.showAlertDialog(
+          context: context,
+          title: '운동 루틴 추가 실패',
+          content: '${errorData['message']}\n(오류 코드: ${response.statusCode})',
+        );
+      }
+    } else {
+      null;
+    }
   }
 
   //Todo: 서버 요청 (수면 루틴 추가)
@@ -297,8 +308,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 // 추가하기 버튼
                 SizedBox(
                     height: _selectHobby
-                        ? screenHeight * 0.042
-                        : screenHeight * 0.499),
+                        ? screenHeight * 0.012
+                        : screenHeight * 0.469),
 
                 GreenButton(
                   width: screenWidth * 0.6,

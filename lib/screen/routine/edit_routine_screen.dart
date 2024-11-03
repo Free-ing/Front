@@ -6,6 +6,7 @@ import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/exercise_api_service.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/common/service/sleep_api_service.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
@@ -123,6 +124,78 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     String formattedHour = hour.toString();
     String formattedMinute = time.minute.toString().padLeft(2, '0');
     return '$formattedHour:$formattedMinute $period';
+  }
+
+  //Todo: 서버 요청 (운동 루틴 수정)
+  Future<void> _editExerciseRoutine() async {
+    if (_formKey.currentState!.validate() &&
+        _nameController.text.isNotEmpty &&
+        timeErrorText == null) {
+      FocusScope.of(context).unfocus();
+      final String exerciseName = _nameController.text;
+      final String explanation = _explanationController.text;
+
+      final startTime =
+      _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+      final endTime =
+      _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+
+      print("루틴 켜졌니 ${widget.status}");
+
+      final apiService = ExerciseAPIService();
+      final response = await apiService.patchExerciseRoutine(
+        exerciseName,
+        imageUrl,
+        weekDays[0].isSelected,
+        weekDays[1].isSelected,
+        weekDays[2].isSelected,
+        weekDays[3].isSelected,
+        weekDays[4].isSelected,
+        weekDays[5].isSelected,
+        weekDays[6].isSelected,
+        startTime,
+        endTime,
+        explanation,
+        widget.status ?? true,
+        widget.routineId,
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 0)),
+        );
+        ToastBarWidget(
+          title: '운동 루틴이 수정되었습니다.',
+          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+        ).showToast(context);
+      } else {
+        final errorData = json.decode(utf8.decode(response.bodyBytes));
+        DialogManager.showAlertDialog(
+          context: context,
+          title: '운동 루틴 수정 실패',
+          content: '${errorData['message']}\n(오류 코드: ${response.statusCode})',
+        );
+      }
+    }
+  }
+  
+  //Todo: 서버 요청 (운동 루틴 삭제)
+  Future<void> _deleteExerciseRoutine() async {
+    final responseCode =
+    await ExerciseAPIService().deleteExerciseRoutine(widget.routineId);
+    if (responseCode == 200) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
+      );
+      ToastBarWidget(
+        title: '운동 루틴이 삭제되었습니다.',
+        leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+      ).showToast(context);
+    } else {
+      ToastBarWidget(
+        title: '운동 루틴이 삭제되지 않았습니다. $responseCode',
+      ).showToast(context);
+    }
   }
 
   //Todo: 서버 요청 (수면 루틴 수정)
@@ -317,9 +390,6 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     }
   }
 
-  //Todo: 서버 요청 ( 수면 루틴 삭제 )
-
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -382,15 +452,15 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                 // 추가하기 버튼
                 SizedBox(
                     height: _selectHobby
-                        ? screenHeight * 0.042
-                        : screenHeight * 0.499),
+                        ? screenHeight * 0.012
+                        : screenHeight * 0.469),
                 GreenButton(
                   width: screenWidth * 0.6,
                   text: '수정하기',
                   onPressed: () {
                     switch (selectedValue) {
                       case '운동':
-                        //_editExerciseRoutine();
+                        _editExerciseRoutine();
                         break;
                       case '수면':
                         _editSleepRoutine();
