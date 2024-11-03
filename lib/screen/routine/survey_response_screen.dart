@@ -9,7 +9,7 @@ import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/model/exercise/recommended_exercise.dart';
 import 'package:freeing/model/hobby/recommend_hobby.dart';
-import 'package:freeing/screen/routine/add_recommended_screen.dart';
+import 'package:freeing/screen/routine/add_recommended_routine_screen.dart';
 import 'package:freeing/screen/setting/setting_page.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -219,9 +219,9 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
                       child: ListView.builder(
                           itemCount: widget.recommend.length,
                           itemBuilder: (context, index) {
-                            final hobby = widget.recommend[index];
+                            final recommend = widget.recommend[index];
                             final isAdded = _isAddedList[index];
-                            return _buildCard(hobby, textTheme, screenWidth,
+                            return _buildCard(recommend, textTheme, screenWidth,
                                 screenHeight, isAdded, index);
                           }),
                     ),
@@ -275,8 +275,14 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
   }
 
   //Todo: 추천 리스트
-  Widget _buildCard(RecommendedHobby hobby, TextTheme textTheme,
-      double screenWidth, double screenHeight, bool isAdded, int index) {
+  Widget _buildCard(
+    recommend,
+    textTheme,
+    screenWidth,
+    screenHeight,
+    isAdded,
+    index,
+  ) {
     return Container(
       child: Column(
         children: [
@@ -307,7 +313,9 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            hobby.hobbyName,
+                            widget.category == '취미'
+                                ? recommend.hobbyName
+                                : recommend.exerciseName,
                             style: textTheme.titleLarge?.copyWith(
                                 color: isAdded ? Colors.white : Colors.black),
                           ),
@@ -315,7 +323,7 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
                             height: screenHeight * 0.01,
                           ),
                           Text(
-                            hobby.explanation,
+                            recommend.explanation,
                             style: textTheme.bodySmall?.copyWith(
                                 color: isAdded ? Colors.white : Colors.black),
                           ),
@@ -332,8 +340,13 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      AddRecommendedHobbyScreen(
-                                          hobbyName: hobby.hobbyName),
+                                      AddRecommendedRoutineScreen(
+                                    routineName: widget.category == '취미'
+                                        ? recommend.hobbyName
+                                        : recommend.exerciseName,
+                                    category: widget.category,
+                                    explanation: recommend.explanation,
+                                  ),
                                 ),
                               );
 

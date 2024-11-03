@@ -245,9 +245,6 @@ class _SettingPageState extends State<SettingPage> {
                           ad: _bannerAd!,
                         ),
                       ),
-                SizedBox(
-                  height: screenHeight * 0.012,
-                ),
                 GestureDetector(
                     onTap: _launchInstagram,
                     child: Image.asset(

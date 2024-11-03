@@ -10,22 +10,35 @@ import 'package:freeing/screen/routine/select_routine_image_screen.dart';
 import '../../common/const/colors.dart';
 import '../../common/service/hobby_api_service.dart';
 
-class AddRecommendedHobbyScreen extends StatefulWidget {
-  final String hobbyName;
+class AddRecommendedRoutineScreen extends StatefulWidget {
+  final String category;
+  final String routineName;
+  final String? explanation;
 
-  const AddRecommendedHobbyScreen({super.key, required this.hobbyName});
+  const AddRecommendedRoutineScreen({
+    super.key,
+    required this.category,
+    required this.routineName,
+    this.explanation,
+  });
 
   @override
-  State<AddRecommendedHobbyScreen> createState() =>
-      _AddRecommendedHobbyScreenState();
+  State<AddRecommendedRoutineScreen> createState() =>
+      _AddRecommendedRoutineScreenState();
 }
 
-class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
+class _AddRecommendedRoutineScreenState
+    extends State<AddRecommendedRoutineScreen> {
+  String selectedValue = '취미';
+  final List<String> options = ['취미', '운동'];
+
   String imageUrl =
       'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png';
 
-  String selectedValue = '취미';
-  final List<String> options = ['취미'];
+  TextEditingController _explanationController = TextEditingController();
+  TextEditingController _startTimeController = TextEditingController();
+  TextEditingController _endTimeController = TextEditingController();
+
 
   //Todo: 취미 루틴 추가 요청
   Future<void> _submitHobbyRoutine() async {
@@ -34,7 +47,7 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
     final apiService = HobbyAPIService();
 
     final response =
-        await apiService.postHobbyRoutine(widget.hobbyName, imageUrl);
+        await apiService.postHobbyRoutine(widget.routineName, imageUrl);
 
     if (response.statusCode == 200) {
       Navigator.pop(context, true);
@@ -57,6 +70,8 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
+    final bool _selectHobby = widget.category == '취미' ? true : false;
+
     return ScreenLayout(
       title: 'AI추천 취미 추가하기',
       body: Padding(
@@ -70,6 +85,9 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
             _selectCategory(textTheme, screenWidth, screenHeight),
             SizedBox(height: screenHeight * 0.02),
             Expanded(child: Container()),
+
+
+
             GreenButton(
                 width: screenWidth * 0.6, onPressed: _submitHobbyRoutine),
             SizedBox(height: screenHeight * 0.033),
@@ -81,92 +99,95 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
 
   //Todo: 루틴 이미지, 제목 입력
   Widget _routineImageTitle(textTheme, screenWidth) {
-    return Stack(alignment: Alignment.center, children: <Widget>[
-      Card(
-        elevation: 6,
-        shadowColor: YELLOW_SHADOW,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25.0),
-        ),
-        margin: EdgeInsets.all(12),
-        child: Container(
-          width: screenWidth * 0.38,
-          height: screenWidth * 0.38,
-          padding: EdgeInsets.all(2),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(25),
-            border: Border.all(
-              color: Colors.black,
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        Card(
+          elevation: 6,
+          shadowColor: YELLOW_SHADOW,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25.0),
+          ),
+          margin: EdgeInsets.all(12),
+          child: Container(
+            width: screenWidth * 0.38,
+            height: screenWidth * 0.38,
+            padding: EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: Colors.black,
+              ),
+            ),
+            child: Stack(
+              children: [
+                _routineImage(imageUrl: imageUrl),
+                Positioned(
+                    bottom: 5,
+                    left: 0,
+                    right: 0,
+                    child: Text(
+                      widget.routineName,
+                      style: textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    )),
+              ],
             ),
           ),
-          child: Stack(
-            children: [
-              _routineImage(imageUrl: imageUrl),
-              Positioned(
-                  bottom: 5,
-                  left: 0,
-                  right: 0,
-                  child: Text(
-                    widget.hobbyName,
-                    style: textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  )),
-            ],
-          ),
         ),
-      ),
-      Align(
-        alignment: Alignment.centerRight,
-        child: Column(
-          children: [
-            Stack(
-              children: <Widget>[
-                Card(
-                  shadowColor: YELLOW_SHADOW,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
-                  margin: EdgeInsets.all(12),
-                  child: Container(
-                    width: screenWidth * 0.12,
-                    height: screenWidth * 0.12,
-                    padding: EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.black,
+        Align(
+          alignment: Alignment.centerRight,
+          child: Column(
+            children: [
+              Stack(
+                children: <Widget>[
+                  Card(
+                    shadowColor: YELLOW_SHADOW,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
+                    margin: EdgeInsets.all(12),
+                    child: Container(
+                      width: screenWidth * 0.12,
+                      height: screenWidth * 0.12,
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () async {
-                    final result = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            SelectRoutineImageScreen(selectImage: imageUrl),
-                      ),
-                    );
-                    if (result != null && result is String) {
-                      setState(() {
-                        imageUrl = result;
-                      });
-                    }
-                  },
-                  icon: Image.network(imageUrl,
-                      width: screenWidth * 0.14,
-                      height: screenWidth * 0.14,
-                      fit: BoxFit.cover),
-                ),
-              ],
-            ),
-            Text("그림 변경"),
-          ],
+                  IconButton(
+                    onPressed: () async {
+                      final result = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              SelectRoutineImageScreen(selectImage: imageUrl),
+                        ),
+                      );
+                      if (result != null && result is String) {
+                        setState(() {
+                          imageUrl = result;
+                        });
+                      }
+                    },
+                    icon: Image.network(imageUrl,
+                        width: screenWidth * 0.14,
+                        height: screenWidth * 0.14,
+                        fit: BoxFit.cover),
+                  ),
+                ],
+              ),
+              Text("그림 변경"),
+            ],
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   //Todo: 루틴 카테고리 선택
@@ -187,7 +208,7 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                value: selectedValue,
+                value: widget.category,
                 items: options.map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -198,9 +219,7 @@ class _AddRecommendedHobbyScreenState extends State<AddRecommendedHobbyScreen> {
                     ),
                   );
                 }).toList(),
-                onChanged: (newValue) {
-                  null;
-                },
+                onChanged: null,
                 icon: Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Icon(Icons.arrow_drop_down, color: Colors.black),

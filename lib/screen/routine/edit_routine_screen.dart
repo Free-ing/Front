@@ -164,7 +164,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 0)),
         );
-        ToastBarWidget(
+        const ToastBarWidget(
           title: '운동 루틴이 수정되었습니다.',
           leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
         ).showToast(context);
@@ -187,7 +187,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
       );
-      ToastBarWidget(
+      const ToastBarWidget(
         title: '운동 루틴이 삭제되었습니다.',
         leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
       ).showToast(context);
@@ -233,7 +233,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 1)),
         );
-        ToastBarWidget(
+        const ToastBarWidget(
           title: '수면 루틴이 수정되었습니다.',
           leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
         ).showToast(context);
@@ -256,7 +256,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const RoutinePage(index: 1)),
       );
-      ToastBarWidget(
+      const ToastBarWidget(
         title: '수면 루틴이 삭제되었습니다.',
         leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
       ).showToast(context);
@@ -282,7 +282,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 2)),
         );
-        ToastBarWidget(
+        const ToastBarWidget(
           title: '취미 루틴이 수정되었습니다.',
           leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
         ).showToast(context);
@@ -302,7 +302,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     final responseCode =
         await HobbyAPIService().deleteHobbyRoutine(widget.routineId);
     if (responseCode == 200) {
-      ToastBarWidget(
+      const ToastBarWidget(
         title: '취미 루틴이 삭제되었습니다.',
         leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
       ).showToast(context);
@@ -356,7 +356,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
         );
-        ToastBarWidget(
+        const ToastBarWidget(
           title: '마음채우기 루틴이 수정되었습니다.',
           leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
         ).showToast(context);
@@ -379,7 +379,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
       );
-      ToastBarWidget(
+      const ToastBarWidget(
         title: '마음채우기 루틴이 삭제되었습니다.',
         leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
       ).showToast(context);
@@ -396,7 +396,6 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    print(DateTime.now());
 
     return ScreenLayout(
       showIconButton: true,
@@ -483,7 +482,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       onDeletePressed: () {
         switch (selectedValue) {
           case '운동':
-            //_deleteExerciseRoutine();
+            _deleteExerciseRoutine();
             break;
           case '수면':
             _deleteSleepRoutine();
@@ -512,11 +511,11 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.0),
               ),
-              margin: EdgeInsets.all(12),
+              margin: const EdgeInsets.all(12),
               child: Container(
                 width: screenWidth * 0.38,
                 height: screenWidth * 0.38,
-                padding: EdgeInsets.all(2),
+                padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25),
@@ -543,11 +542,11 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25.0),
                         ),
-                        margin: EdgeInsets.all(12),
+                        margin: const EdgeInsets.all(12),
                         child: Container(
                           width: screenWidth * 0.12,
                           height: screenWidth * 0.12,
-                          padding: EdgeInsets.all(2),
+                          padding: const EdgeInsets.all(2),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
@@ -578,7 +577,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                       ),
                     ],
                   ),
-                  Text("그림 변경"),
+                  const Text("그림 변경"),
                 ],
               ),
             ),
@@ -627,8 +626,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                   );
                 }).toList(),
                 onChanged: null,
-                icon: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
+                icon: const Padding(
+                  padding: EdgeInsets.only(right: 8.0),
                   child: Icon(Icons.arrow_drop_down, color: Colors.black),
                 ),
                 iconSize: 24,
@@ -669,7 +668,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                     onTap: () {
                       setState(() {
                         weekDays[i].isSelected = !weekDays[i].isSelected;
-                        print(
+                        debugPrint(
                             '이미지 눌림 ${weekDays[i].day} ${weekDays[i].isSelected}');
                       });
                     },
@@ -725,26 +724,26 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             decoration: InputDecoration(
               hintText: "루틴에 대한 설명",
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
-              contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   width: 1, // 테두리 두께
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   width: 1,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   width: 1,
                 ),
               ),
-              errorBorder: OutlineInputBorder(
+              errorBorder: const OutlineInputBorder(
                 borderSide: BorderSide(
                   width: 1,
                 ),
@@ -786,10 +785,9 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             onPressed: () {
               setState(() {
                 _timePickerOpen = !_timePickerOpen;
-                print('시간 선택 눌림');
               });
             },
-            icon: Icon(Icons.arrow_forward_ios),
+            icon: const Icon(Icons.arrow_forward_ios),
           )
         ],
       ),
@@ -838,7 +836,6 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                   } else {
                     _endTime = selectTime;
                     timeErrorText = null;
-                    print(selectTime);
                   }
                 });
               },
@@ -899,29 +896,29 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             decoration: InputDecoration(
               hintText: "제목 입력",
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
-              contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: Colors.transparent,
                   width: 0, // 테두리 두께
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: Colors.transparent,
                   width: 0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: Colors.transparent,
                   width: 0,
                 ),
               ),
-              errorBorder: OutlineInputBorder(
+              errorBorder: const OutlineInputBorder(
                   borderSide: BorderSide(
                 color: Colors.transparent,
                 width: 0,
@@ -974,19 +971,19 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
               hintText: '미설정',
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_GREY),
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: Colors.black,
                   width: 1,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(color: Colors.black, width: 1),
+                borderSide: const BorderSide(color: Colors.black, width: 1),
               ),
             ),
             style: textTheme.bodyMedium
@@ -1049,21 +1046,19 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             },
           ),
         ),
-        Container(
-          child: IconButton(
-            onPressed: () {
-              setState(() {
-                resetTime();
-                controller.clear();
-              });
-            },
-            icon: Icon(Icons.restart_alt_rounded),
-            padding: EdgeInsets.zero,
-            constraints: BoxConstraints(),
-            visualDensity: VisualDensity.compact,
-            iconSize: 24,
-            color: DARK_GREY,
-          ),
+        IconButton(
+          onPressed: () {
+            setState(() {
+              resetTime();
+              controller.clear();
+            });
+          },
+          icon: const Icon(Icons.restart_alt_rounded),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+          visualDensity: VisualDensity.compact,
+          iconSize: 24,
+          color: DARK_GREY,
         )
       ],
     );
