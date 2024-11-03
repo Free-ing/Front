@@ -1,19 +1,21 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:freeing/common/service/ad_mob_service.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/show_chart_date.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/layout/chart_layout.dart';
 import 'package:freeing/screen/setting/setting_page.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 class SelectWeekLayout extends StatefulWidget {
   final String title;
-  final VoidCallback onPressed;
+  final Widget routePage;
   const SelectWeekLayout(
-      {super.key, required this.title, required this.onPressed});
+      {super.key, required this.title, required this.routePage});
 
   @override
   State<SelectWeekLayout> createState() => _SelectWeekLayoutState();
@@ -26,11 +28,67 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
   List<List<DateTime>> weeks = [];
   String _name = '';
 
+  RewardedInterstitialAd? _rewardedAd;
+  bool _isRewardedAdReady = false;
+
   @override
   void initState() {
     super.initState();
-    _viewUserInfo();
-    calculateWeeks();
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    await _viewUserInfo();
+    await _loadRewardedInterstitialAd();
+    await calculateWeeks();
+  }
+
+  Future<void> _loadRewardedInterstitialAd() async {
+    await RewardedInterstitialAd.load(
+      adUnitId: AdMobService.rewardedInterstitialAdUnitId!,
+      request: AdRequest(),
+      rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _rewardedAd = ad;
+          setState(() {
+            _isRewardedAdReady = true;
+          });
+        },
+        onAdFailedToLoad: (error) {
+          print('보상형 광고 로드 실패: $error');
+          _rewardedAd = null;
+          setState(() {
+            _isRewardedAdReady = false;
+          });
+          Future.delayed(Duration(seconds: 5), _loadRewardedInterstitialAd);
+        },
+      ),
+    );
+  }
+
+ Future<void> _showRewardedAd() async{
+    if (_rewardedAd != null) {
+      _rewardedAd!.show(
+          onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+        print('보상형 광고 보상 획득: ${reward.amount} ${reward.type}');
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => widget.routePage));
+      });
+      _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) async {
+          ad.dispose();
+          await _loadRewardedInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) async {
+          ad.dispose();
+          await _loadRewardedInterstitialAd();
+        },
+      );
+    } else {
+      print('보상형 광고가 로드되지 않음');
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => widget.routePage));
+    }
   }
 
   //Todo: 날짜 update
@@ -47,7 +105,7 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
   }
 
   //Todo: 주차별 날짜 계산
-  void calculateWeeks() {
+  Future<void> calculateWeeks() async {
     DateTime firstDayOfMonth = DateTime(selectedYear, selectedMonth, 1);
 
     // 첫 번째 월요일 찾기
@@ -137,11 +195,23 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
                             }
                           : () {
                               DialogManager.showImageDialog(
-                                  context: context,
-                                  userName: _name,
-                                  topic: '${widget.title} 리포트',
-                                  image: 'assets/imgs/etc/report_mascot.png',
-                                  onConfirm: widget.onPressed);
+                                context: context,
+                                userName: _name,
+                                topic: '${widget.title} 리포트',
+                                image: 'assets/imgs/etc/report_mascot.png',
+                                onConfirm: () async {
+                                  if (_isRewardedAdReady) {
+                                    Navigator.pop(context);
+                                    await _showRewardedAd();
+                                  } else {
+                                    print('광고가 아직 로드되지 않았습니다');
+                                    // Navigator.of(context).push(
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) =>
+                                    //             widget.routePage));
+                                  }
+                                },
+                              );
                             },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

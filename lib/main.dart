@@ -83,11 +83,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/member/login.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // 초기화 작업이 필요하면 여기에서 비동기로 처리합니다.
+  MobileAds.instance.initialize(); // 광고 초기화~~
   runApp(MyApp());
 }
 

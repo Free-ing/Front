@@ -49,10 +49,10 @@ class _AiLetterState extends State<AiLetter> {
     if (response.statusCode == 200) {
       final data = utf8.decode(response.bodyBytes);
       final jsonData = json.decode(data);
-      final content = jsonData['result']['content']; // content 추출
+      final content = jsonData['result']['content'];
 
       setState(() {
-        letterText = content; // letterText에 content 할당
+        letterText = content;
       });
     } else {
       throw Exception('편지 가져오기 실패 ${response.statusCode}');

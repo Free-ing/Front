@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:freeing/common/service/ad_mob_service.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/survey_buttons.dart';
 import 'package:freeing/common/const/colors.dart';
@@ -9,6 +10,7 @@ import 'package:freeing/layout/survey_layout.dart';
 import 'package:freeing/model/hobby/recommend_hobby.dart';
 import 'package:freeing/screen/routine/ai_loading_screen.dart';
 import 'package:freeing/screen/routine/survey_response_screen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class SurveyHobbyScreen extends StatefulWidget {
   const SurveyHobbyScreen({super.key});
@@ -23,11 +25,51 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
   List<int?> selectedIndices = List.filled(7, null);
   int currentQuestionIndex = 0;
   List<RecommendedHobby> _recommendList = [];
+  InterstitialAd? _interstitialAd;
 
   final PageController _pageController = PageController();
 
   final int _totalPages = 8; // 총 페이지 수
   double _progress = 1 / (8 - 1); // 초기 진행 상태
+
+  //Todo: 전면 광고 로드
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdMobService.interstitialAdUnitId!,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+        _interstitialAd = ad;
+        _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+          onAdDismissedFullScreenContent: (ad) {
+            ad.dispose();
+
+            // 광고가 닫히면 로딩 화면으로 이동
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AiLoadingScreen(category: '취미를'),
+              ),
+            );
+          },
+        );
+
+        /// 광고가 로드되면 표시
+          _interstitialAd!.show();
+      },
+        onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+          // 광고 로드 실패 시 로딩 화면으로 이동
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AiLoadingScreen(category: '취미를'),
+            ),
+          );
+        }
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -48,14 +90,8 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
   //Todo: 서버 요청 (ai 취미 추천)
   Future<List<RecommendedHobby>> _submitAnswers() async {
     print('Submitting Answers: ${answers}');
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AiLoadingScreen(
-          category: '취미를',
-        ),
-      ),
-    );
+
+    _loadInterstitialAd();
 
     try {
       final apiService = HobbyAPIService();

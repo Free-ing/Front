@@ -47,6 +47,9 @@ dependencies:
   url_launcher: ^6.3.1
   path: ^1.8.3
   dropdown_button2: ^2.3.9
+  google_mobile_ads: ^5.2.0
+  just_audio: ^0.9.42
+  rxdart: ^0.28.0
 
 
 
@@ -84,6 +87,7 @@ flutter:
     - assets/imgs/home/
     - assets/imgs/setting/
     - assets/icons/
+    - assets/audio/meditation_audio.mp3
 
   fonts:
     - family: scdream

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:freeing/common/service/ad_mob_service.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
@@ -8,6 +9,7 @@ import 'package:freeing/screen/setting/account_management_page.dart';
 import 'package:freeing/screen/setting/feedback_page.dart';
 import 'package:freeing/screen/setting/notice_page.dart';
 import 'package:freeing/screen/setting/ready_page.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class User {
@@ -36,6 +38,7 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   String _email = '';
   String _name = '';
+  BannerAd? _bannerAd;
   final String _instagramUrl =
       'https://www.instagram.com/free.ing_official?igsh=bm94Nm1nZGg0cXVi';
 
@@ -66,6 +69,17 @@ class _SettingPageState extends State<SettingPage> {
   void initState() {
     super.initState();
     _viewUserInfo();
+    _loadBannerAd();
+  }
+
+  //Todo: 배너 광고 생성
+  void _loadBannerAd() {
+    _bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: AdMobService.bannerAdUnitId!,
+      listener: AdMobService.bannerAdListener,
+      request: const AdRequest(),
+    )..load();
   }
 
   @override
@@ -182,7 +196,9 @@ class _SettingPageState extends State<SettingPage> {
                 SettingTextButton(
                   address: 'assets/icons/setting_alarm.png',
                   text: '알림 설정',
-                  targetPage: ReadyPage(appBarTitle: '알림 설정',),
+                  targetPage: ReadyPage(
+                    appBarTitle: '알림 설정',
+                  ),
                 ),
                 SettingTextButton(
                   address: 'assets/icons/setting_notice.png',
@@ -192,7 +208,9 @@ class _SettingPageState extends State<SettingPage> {
                 SettingTextButton(
                   address: 'assets/icons/setting_manual.png',
                   text: '이용 설명서',
-                  targetPage: ReadyPage(appBarTitle: '이용 설명서',),
+                  targetPage: ReadyPage(
+                    appBarTitle: '이용 설명서',
+                  ),
                 ),
                 SettingTextButton(
                   address: 'assets/icons/setting_inquiry.png',
@@ -202,17 +220,31 @@ class _SettingPageState extends State<SettingPage> {
                 SettingTextButton(
                   address: 'assets/icons/setting_review.png',
                   text: '앱 리뷰 남기기',
-                  targetPage: ReadyPage(appBarTitle: '앱 리뷰 남기기',),
+                  targetPage: ReadyPage(
+                    appBarTitle: '앱 리뷰 남기기',
+                  ),
                 ),
                 SettingTextButton(
                   address: 'assets/icons/setting_storage.png',
                   text: '임시 보관함',
-                  targetPage: ReadyPage(appBarTitle: '임시 보관함',),
+                  targetPage: ReadyPage(
+                    appBarTitle: '임시 보관함',
+                  ),
                 ),
                 SizedBox(
                   height: screenHeight * 0.028,
                 ),
-                Image.asset('assets/imgs/setting/setting_add.png'),
+
+                /// 배너 광고
+                // Image.asset('assets/imgs/setting/setting_add.png'),
+                _bannerAd == null
+                    ? Container()
+                    : Container(
+                        height: 75,
+                        child: AdWidget(
+                          ad: _bannerAd!,
+                        ),
+                      ),
                 SizedBox(
                   height: screenHeight * 0.012,
                 ),
