@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../../common/component/bottom_sheet.dart';
 import '../../common/component/buttons.dart';
 import '../../common/component/dialog_manager.dart';
@@ -11,7 +10,7 @@ import '../../common/service/token_storage.dart';
 import '../member/login.dart';
 
 //Todo: 수면 기록
-void showSleepBottomSheet(BuildContext context, String title) {
+Future<bool> showSleepBottomSheet(BuildContext context, String title) async{
   final TextEditingController _sleepTimeController = TextEditingController();
   final TextEditingController _wakeUpTimeController = TextEditingController();
   final TextEditingController _sleepMemoController = TextEditingController();
@@ -22,6 +21,7 @@ void showSleepBottomSheet(BuildContext context, String title) {
   final screenHeight = MediaQuery.of(context).size.height;
   int selectedIndex = -1;
   List<String> sleepStatusList = ['REFRESHED', 'STIFF', 'UNRESTED'];
+  bool isSuccess = false;
 
   Future<void> _sleepTimeRecord(AnimationController controller) async {
     final sleepTime = _sleepTimeController.text;
@@ -32,8 +32,6 @@ void showSleepBottomSheet(BuildContext context, String title) {
     DateTime now = DateTime.now();
     final String recordDay = DateFormat("yyyy-MM-dd").format(now);
     print('sleep Time : $sleepTime');
-
-    print('sleepTImeRecord 안!!!!!!!!!!!!!!!!!!!!!!!');
 
     if( selectedIndex >= 0){
       sleepStatus = sleepStatusList[selectedIndex];
@@ -55,12 +53,14 @@ void showSleepBottomSheet(BuildContext context, String title) {
       if (response.statusCode == 200) {
         // 성공 되었다는 메시지 띄우기
         print('성공');
+        isSuccess = true;
         await controller.reverse();
-        Navigator.pop(context);
-        ToastBarWidget(
+        Navigator.pop(context, isSuccess);
+        Future.microtask(()=> ToastBarWidget(
           title: '수면 기록이 저장되었습니다.',
           leadingImagePath: "assets/imgs/home/sleep_record_success.png",
-        ).showToast(context);
+        ).showToast(context));
+
       } else if (response.statusCode == 400) {
         DialogManager.showAlertDialog(
           context: context,
@@ -105,7 +105,7 @@ void showSleepBottomSheet(BuildContext context, String title) {
     }
   }
 
-  showCustomModalBottomSheet(
+  isSuccess = await showCustomModalBottomSheet(
     context: context,
     builder: (BuildContext context, TextTheme textTheme) {
       return StatefulBuilder(
@@ -210,5 +210,8 @@ void showSleepBottomSheet(BuildContext context, String title) {
         },
       );
     },
-  );
+  ) ?? false;
+
+  print('수면 바텀 시트: $isSuccess');
+  return isSuccess ?? false;
 }

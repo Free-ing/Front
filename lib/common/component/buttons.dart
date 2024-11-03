@@ -322,9 +322,9 @@ class _TimePickerButtonState extends State<TimePickerButton> {
 
   @override
   Widget build(BuildContext context) {
-    final defaultWidth = MediaQuery.of(context).size.width * 0.36;
+    final defaultWidth = MediaQuery.of(context).size.width * 0.378;
     final defaultHeight = MediaQuery.of(context).size.height * 0.045;
-    final defaultSizedBox = MediaQuery.of(context).size.width * 0.02;
+    final defaultSizedBox = MediaQuery.of(context).size.width * 0.015;
 
     return Center(
       child: SizedBox(
@@ -343,7 +343,7 @@ class _TimePickerButtonState extends State<TimePickerButton> {
           onPressed: _showTimePicker,
           child: Center(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
                   selectedTime,
@@ -357,9 +357,9 @@ class _TimePickerButtonState extends State<TimePickerButton> {
                           .bodyMedium
                           ?.copyWith(color: Colors.black),
                 ),
-                // SizedBox(
-                //   width: defaultSizedBox,
-                // ),
+                SizedBox(
+                  width: defaultSizedBox,
+                ),
                 Icon(Icons.access_time_rounded,
                     color:
                         selectedTime == '시간 선택' ? Colors.grey : Colors.black),

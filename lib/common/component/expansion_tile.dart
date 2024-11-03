@@ -20,12 +20,14 @@ class HomeExpansionTileBox extends StatefulWidget {
 
 class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   late List<bool> _isChecked;
+  late List<bool> _isVisible;
 
   @override
   void initState() {
     super.initState();
     // 각 리스트 항목에 대한 초기 체크 상태를 false로 설정
     _isChecked = List<bool>.filled(widget.lists.length, false);
+    _isVisible = List<bool>.filled(widget.lists.length, true);
   }
 
   Widget listsWidget() {
@@ -65,12 +67,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                getPerformanceButton(item),
-                // PlayButton(
-                //     onPressed: () {
-                //       showExerciseBottomSheet(context, '정적 스트레칭');
-                //     },
-                //     iconColor: PINK_PLAY_BUTTON),
+                getPerformanceButton(item, index),
                 SizedBox(width: 15.0),
                 GestureDetector(
                     onTap: () {
@@ -102,7 +99,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     }
   }
 
-  Widget getPerformanceButton(String item) {
+  Widget getPerformanceButton(String item, int index) {
+    return Visibility(
+      visible: _isVisible[index],
+      child: _buildButton(item, index),
+    );
+  }
+
+  Widget _buildButton(String item, int index){
     switch (item) {
       case '정적 스트레칭':
         return PlayButton(
@@ -126,8 +130,16 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             iconColor: GREEN_PLAY_BUTTON);
       case '수면 기록하기':
         return LogButton(
-          onPressed: () {
-            showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
+          onPressed: () async {
+            bool success = await showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
+            print('sucess값은!!!!!!  $success');
+            if(success){
+              setState(() {
+                print('sleep bottom sheet 성공적!!!!!');
+                _isChecked[index] = true;
+                _isVisible[index] = false;
+              });
+            }
           },
         );
       case '감정일기 작성':

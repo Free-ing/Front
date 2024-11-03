@@ -23,18 +23,34 @@ void showExerciseBottomSheet(BuildContext context, String title) {
 
 
 //Todo: 기본 BottomSheet
-void showCustomModalBottomSheet({
-  required BuildContext context,
-  required Widget Function(BuildContext, TextTheme) builder,
-}) {
-  final textTheme = Theme.of(context).textTheme;
+// void showCustomModalBottomSheet({
+//   required BuildContext context,
+//   required Widget Function(BuildContext, TextTheme) builder,
+// }) {
+//   final textTheme = Theme.of(context).textTheme;
+//
+//   showModalBottomSheet(
+//     context: context,
+//     isScrollControlled: true,
+//     backgroundColor: Colors.transparent,
+//     barrierColor: Colors.black.withOpacity(0.3),
+//     builder: (BuildContext context) {
+//       return builder(context, textTheme);
+//     },
+//   );
+// }
 
-  showModalBottomSheet(
+Future<T?> showCustomModalBottomSheet<T>({
+  required BuildContext context,
+  required Widget Function(BuildContext context, TextTheme textTheme) builder,
+}) {
+  return showModalBottomSheet<T>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black.withOpacity(0.3),
     builder: (BuildContext context) {
+      final textTheme = Theme.of(context).textTheme;
       return builder(context, textTheme);
     },
   );
