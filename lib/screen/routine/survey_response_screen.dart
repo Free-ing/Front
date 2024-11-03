@@ -9,7 +9,7 @@ import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/model/exercise/recommended_exercise.dart';
 import 'package:freeing/model/hobby/recommend_hobby.dart';
-import 'package:freeing/screen/routine/add_recommended_hobby_screen.dart';
+import 'package:freeing/screen/routine/add_recommended_screen.dart';
 import 'package:freeing/screen/setting/setting_page.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 

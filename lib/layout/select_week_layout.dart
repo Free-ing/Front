@@ -204,11 +204,11 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
                                     Navigator.pop(context);
                                     await _showRewardedAd();
                                   } else {
-                                    print('광고가 아직 로드되지 않았습니다');
-                                    // Navigator.of(context).push(
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) =>
-                                    //             widget.routePage));
+                                    debugPrint('광고가 아직 로드되지 않았습니다');
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                widget.routePage));
                                   }
                                 },
                               );
