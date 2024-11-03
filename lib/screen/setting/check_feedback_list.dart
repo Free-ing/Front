@@ -80,7 +80,12 @@ class CheckFeedbackList extends StatelessWidget {
                     SizedBox(
                       width: screenWidth * 0.08,
                     ),
-                    Text(feedbackList.inquiriesTitle)
+                    Expanded(
+                        child: Text(
+                      feedbackList.inquiriesTitle,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+                    ))
                   ],
                 ),
                 verticalSpace,
@@ -121,8 +126,12 @@ class CheckFeedbackList extends StatelessWidget {
                       ),
                       child: Padding(
                         padding: EdgeInsets.all(15.0),
-                        child: Text(feedbackList.content, style: textTheme.bodyMedium,
-                          maxLines: null, overflow: TextOverflow.visible,),
+                        child: Text(
+                          feedbackList.content,
+                          style: textTheme.bodyMedium,
+                          maxLines: null,
+                          overflow: TextOverflow.visible,
+                        ),
                       )),
                 ),
                 verticalSpace,
@@ -151,9 +160,12 @@ class CheckFeedbackList extends StatelessWidget {
                               ),
                               child: Padding(
                                 padding: EdgeInsets.all(15.0),
-                                child: Text(feedbackList.answer?.content ?? '답변 없음', style: textTheme.bodyMedium,
+                                child: Text(
+                                  feedbackList.answer?.content ?? '답변 없음',
+                                  style: textTheme.bodyMedium,
                                   maxLines: null,
-                                  overflow: TextOverflow.visible,),
+                                  overflow: TextOverflow.visible,
+                                ),
                               )),
                         ),
                       ],
@@ -162,7 +174,11 @@ class CheckFeedbackList extends StatelessWidget {
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: GreenButton(
-                        text: '확인', width: screenWidth * 0.61, onPressed: () {Navigator.of(context).pop();})),
+                        text: '확인',
+                        width: screenWidth * 0.61,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        })),
                 verticalSpace,
                 verticalSpace,
               ],

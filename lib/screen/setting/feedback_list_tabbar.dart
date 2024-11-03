@@ -37,7 +37,7 @@ class _FeedbackListTabbarState extends State<FeedbackListTabbar> {
     final dateTime = DateTime.parse(createdDate);
     return DateFormat('yyyy년 MM월 dd일').format(dateTime);
   }
-  
+
   // TODO: 문의/버그 리스트 서버 요청
   Future<void> _getFeedbackList() async {
     print('getFeedbackList안!!');
@@ -84,63 +84,72 @@ class _FeedbackListTabbarState extends State<FeedbackListTabbar> {
         body: _isLoading
             ? CustomCircularProgressIndicator()
             : Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.015, bottom: screenHeight * 0.03),
-              child: ListView.builder(
-                  itemCount: _feedbackList.length,
-                  itemBuilder: (context, index) {
-                    final feedbackList = _feedbackList[index];
-                    final isReply = feedbackList.answer != null;
+                padding: EdgeInsets.only(
+                    top: screenHeight * 0.015, bottom: screenHeight * 0.03),
+                child: ListView.builder(
+                    itemCount: _feedbackList.length,
+                    itemBuilder: (context, index) {
+                      final feedbackList = _feedbackList[index];
+                      final isReply = feedbackList.answer != null;
 
-                    return SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: screenHeight * 0.01),
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.06,
+                            vertical: screenHeight * 0.01),
                         child: GestureDetector(
                           onTap: () {
                             print('isReply : $isReply');
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => CheckFeedbackList(feedbackList: feedbackList, isReply: isReply,)));
+                                    builder: (context) => CheckFeedbackList(
+                                          feedbackList: feedbackList,
+                                          isReply: isReply,
+                                        )));
                           },
                           child: Container(
                             width: screenWidth * 0.89,
                             height: screenHeight * 0.093,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.black, width: 1.5),
+                              border:
+                                  Border.all(color: Colors.black, width: 1.5),
                             ),
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: screenWidth * 0.04,
                                   vertical: screenHeight * 0.018),
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
                                       Text(
                                         '[${_getDisplayCategory(feedbackList.category)}]',
-                                        style: textTheme.bodySmall
-                                            ?.copyWith(fontWeight: FontWeight.w600),
+                                        style: textTheme.bodySmall?.copyWith(
+                                            fontWeight: FontWeight.w600),
                                       ),
-                                      SizedBox(
-                                        width: screenWidth * 0.01,
-                                      ),
-                                      Text(
-                                        '${feedbackList.inquiriesTitle}',
-                                        style: textTheme.bodySmall
-                                            ?.copyWith(fontWeight: FontWeight.w500),
+                                      SizedBox(width: screenWidth * 0.01),
+                                      Expanded(
+                                        child: Text(
+                                          '${feedbackList.inquiriesTitle}',
+                                          style: textTheme.bodySmall?.copyWith(
+                                              fontWeight: FontWeight.w500),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
                                       )
                                     ],
                                   ),
                                   Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         '${_formatDateOnly(feedbackList.createdAt)}',
-                                        style: textTheme.bodySmall
-                                            ?.copyWith(fontWeight: FontWeight.w300),
+                                        style: textTheme.bodySmall?.copyWith(
+                                            fontWeight: FontWeight.w300),
                                       ),
                                       Text(
                                         isReply ? '답변 완료' : '답변 미완료',
@@ -158,9 +167,8 @@ class _FeedbackListTabbarState extends State<FeedbackListTabbar> {
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-            ));
+                      );
+                    }),
+              ));
   }
 }
