@@ -159,6 +159,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             listTileTheme: ListTileTheme.of(context)
                 .copyWith(dense: true, minTileHeight: screenHeight * 0.03)),
         child: ExpansionTile(
+          initiallyExpanded: true,
           iconColor: Colors.black,
           tilePadding: EdgeInsets.symmetric(
               horizontal: screenWidth * 0.05, vertical: 0.0),
@@ -177,7 +178,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             //Divider(thickness: 1, color: Colors.black,),
             Container(
               width: screenWidth * 0.9,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.white,
                   border:
                       Border(top: BorderSide(color: Colors.black, width: 1.0)),
