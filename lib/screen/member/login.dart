@@ -231,7 +231,7 @@ class _LoginState extends State<Login> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),
+            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.023),
             child: Image.asset(
               "assets/imgs/login/login_bottom.png",
               width: MediaQuery.of(context).size.width,
