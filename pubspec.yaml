@@ -79,13 +79,11 @@ flutter:
     - assets/imgs/background/
     - assets/imgs/etc/
     - assets/imgs/chart/
-    - assets/imgs/exercise/
-    - assets/imgs/hobby/
     - assets/imgs/mind/
-    - assets/imgs/sleep/
-    - assets/imgs/login/
+    - assets/imgs/exercise/
     - assets/imgs/home/
     - assets/imgs/setting/
+    - assets/imgs/login/
     - assets/icons/
     - assets/audio/meditation_audio.mp3
 

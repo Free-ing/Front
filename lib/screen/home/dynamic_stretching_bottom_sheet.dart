@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/bottom_sheet.dart';
 
-//Todo: 정적 스트레칭
-void showStaticStretchingBottomSheet(BuildContext context, String title) {
+//Todo: 동적 스트레칭
+void showDynamicStretchingBottomSheet(BuildContext context, String title) {
   showCustomModalBottomSheet(
     context: context,
     builder: (BuildContext context, TextTheme textTheme) {
-      return _StaticStretchingBottomSheetContent(
+      return _DynamicStretchingBottomSheetContent(
         title: title,
       );
     },
   );
 }
 
-class _StaticStretchingBottomSheetContent extends StatefulWidget {
+class _DynamicStretchingBottomSheetContent extends StatefulWidget {
   final String title;
 
-  const _StaticStretchingBottomSheetContent({
+  const _DynamicStretchingBottomSheetContent({
     super.key,
     required this.title,
   });
 
   @override
-  State<_StaticStretchingBottomSheetContent> createState() =>
-      _StaticStretchingBottomSheetContentState();
+  State<_DynamicStretchingBottomSheetContent> createState() =>
+      _DynamicStretchingBottomSheetContentState();
 }
 
-class _StaticStretchingBottomSheetContentState
-    extends State<_StaticStretchingBottomSheetContent> {
+class _DynamicStretchingBottomSheetContentState
+    extends State<_DynamicStretchingBottomSheetContent> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;

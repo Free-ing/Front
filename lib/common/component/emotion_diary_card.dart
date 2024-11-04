@@ -223,6 +223,7 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
                           topic: '편지',
                           image: 'assets/imgs/etc/letter_mascot.png',
                           onConfirm: () async {
+                            print('광고 로드 상태: $_isRewardedAdReady');
                             if (_isRewardedAdReady) {
                               Navigator.pop(context);
                               await _showRewardedAd();

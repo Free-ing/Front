@@ -18,19 +18,20 @@ class PositionData {
 Future<bool> showMeditationBottomSheet(
   BuildContext context,
   String title,
-) async{
+) async {
   final isSuccess = await showCustomModalBottomSheet(
-    context: context,
-    builder: (
-      BuildContext context,
-      TextTheme textTheme,
-    ) {
-      return _MeditationBottomSheetContent(
-        title: title,
-        textTheme: textTheme,
-      );
-    },
-  )?? false;
+        context: context,
+        builder: (
+          BuildContext context,
+          TextTheme textTheme,
+        ) {
+          return _MeditationBottomSheetContent(
+            title: title,
+            textTheme: textTheme,
+          );
+        },
+      ) ??
+      false;
   return isSuccess;
 }
 
@@ -81,13 +82,11 @@ class _MeditationBottomSheetContentState
 
   //Todo: 서버 요청 (루틴 완료(기록))
   Future<void> _submitMeditationRoutine() async {
-    try{
+    try {
       print('명상하기 루틴 기록 시도오오');
       Navigator.pop(context, true);
-
-    } catch(e){
+    } catch (e) {
       print("루틴 기록하는데 에러 발생");
-
     }
   }
 
@@ -166,7 +165,7 @@ class _MeditationBottomSheetContentState
             'assets/imgs/etc/meditaiton_mascot.png',
             width: screenWidth * 0.8,
           ),
-          SizedBox(height: screenHeight*0.05),
+          SizedBox(height: screenHeight * 0.05),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
             child: StreamBuilder<PositionData>(
@@ -213,19 +212,19 @@ class _MeditationBottomSheetContentState
               },
             ),
           ),
-          SizedBox(height: screenHeight*0.02),
+          SizedBox(height: screenHeight * 0.02),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               IconButton(
-                onPressed: (){
-                  switch (isVolumeDisabled){
+                onPressed: () {
+                  switch (isVolumeDisabled) {
                     case true:
                       return _activateVolume();
                     default:
                       return _disabledVolume();
                   }
-    },
+                },
                 icon: Icon(
                   _getVolumeIcon(),
                   size: 40,

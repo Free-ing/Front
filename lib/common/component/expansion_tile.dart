@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/screen/home/dynamic_stretching_bottom_sheet.dart';
 import 'package:freeing/screen/home/static_stretching_bottom_sheet.dart';
 
 import '../../screen/home/diary_bottom_sheet.dart';
@@ -120,7 +121,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         return PlayButton(
             onPressed: () {
               // TODO: 동적 스트레칭 bottom sheet로 바꾸기
-              showStaticStretchingBottomSheet(context, '동적 스트레칭');
+              showDynamicStretchingBottomSheet(context, '동적 스트레칭');
             },
             iconColor: PINK_PLAY_BUTTON);
       case '명상하기':

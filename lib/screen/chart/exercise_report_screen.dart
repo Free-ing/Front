@@ -12,7 +12,7 @@ class ExerciseReportScreen extends StatelessWidget {
         backgroundColor: IVORY,
       ),
       body: Center(
-        child: Image.asset('assets/imgs/etc/mascot.png'),
+        child: Image.asset('assets/imgs/etc/report_mascot.png'),
       )
     );
   }
