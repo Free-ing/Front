@@ -42,6 +42,7 @@ class _SettingPageState extends State<SettingPage> {
   final String _instagramUrl =
       'https://www.instagram.com/free.ing_official?igsh=bm94Nm1nZGg0cXVi';
 
+  // TODO: 인스타그램으로 이동
   Future<void> _launchInstagram() async {
     final Uri url = Uri.parse(_instagramUrl);
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
@@ -49,7 +50,7 @@ class _SettingPageState extends State<SettingPage> {
     }
   }
 
-  // Todo: 서버 요청
+  // TODO: 서버 요청
   Future<void> _viewUserInfo() async {
     final response = await SettingAPIService().getUserInfo();
 

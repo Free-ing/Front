@@ -9,7 +9,6 @@ import 'buttons.dart';
 
 class HomeExpansionTileBox extends StatefulWidget {
   String text;
-  //double width;
   List lists;
   HomeExpansionTileBox({Key? key, required this.text, required this.lists})
       : super(key: key);
@@ -25,12 +24,28 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   @override
   void initState() {
     super.initState();
-    // 각 리스트 항목에 대한 초기 체크 상태를 false로 설정
-    _isChecked = List<bool>.filled(widget.lists.length, false);
-    _isVisible = List<bool>.filled(widget.lists.length, true);
+    _initializeCheckLists();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeExpansionTileBox oldWidget){
+    super.didUpdateWidget(oldWidget);
+    if(oldWidget.lists.length != widget.lists.length){
+      _initializeCheckLists();
+    }
+  }
+
+  // TODO: 각 리스트 항목에 대한 초기 체크 상태를 false로 되어있는데 받아와야함!!!
+  void _initializeCheckLists(){
+    _isChecked = widget.lists.isNotEmpty ? List<bool>.filled(widget.lists.length, false) : [];
+    _isVisible = widget.lists.isNotEmpty ? List<bool>.filled(widget.lists.length, true) : [];
   }
 
   Widget listsWidget() {
+    if(widget.lists.isEmpty){
+      return Center(child: Text(' '));
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Column(

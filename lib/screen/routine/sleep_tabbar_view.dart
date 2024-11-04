@@ -1,14 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
 import '../../common/component/dialog_manager.dart';
 import '../../common/component/sleep_card.dart';
 import '../../common/const/colors.dart';
 import '../../common/service/sleep_api_service.dart';
 import '../../common/service/token_storage.dart';
 import '../../model/sleep/sleep_list.dart';
-import '../member/login.dart';
 
 class SleepTabBarView extends StatefulWidget {
   const SleepTabBarView({super.key});
@@ -21,6 +19,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
   final apiService = SleepAPIService();
   final tokenStorage = TokenStorage();
   List<SleepList> _sleepList = [];
+  bool isSwitched = false;
 
   // TODO: 서버 요청
   Future<List<SleepList>> fetchSleepList() async {
@@ -51,6 +50,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
     }
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -78,6 +78,12 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
                     '잠을 잔 시간, 자고 일어난 후의\n 상태를 기록해요!\n\n주간(월간) 통계와 피드백을 받을 수 있어요!'),
             Spacer(),
             toggle(),
+            // GestureDetector(
+            //   onTap: (){
+            //     setState(() {
+            //       isSwitched = !isSwitched;
+            //     });
+            //   },),
           ],
         ),
         Container(
@@ -157,6 +163,7 @@ class QuestionMark extends StatelessWidget {
     );
   }
 }
+
 
 class toggle extends StatefulWidget {
   const toggle({super.key});

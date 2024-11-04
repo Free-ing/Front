@@ -90,6 +90,7 @@ import 'common/component/custom_circular_progress_indicator.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize(); // 광고 초기화~~
+  WidgetsFlutterBinding.ensureInitialized(); // Flutter 엔진 초기화 for SharedPreferences
   runApp(MyApp());
 }
 
