@@ -65,6 +65,7 @@ class EditRoutineScreen extends StatefulWidget {
 class _EditRoutineScreenState extends State<EditRoutineScreen> {
   String? nameErrorText;
   String? timeErrorText;
+
   List<WeekDay> weekDays = [];
   final _formKey = GlobalKey<FormState>();
 
@@ -74,6 +75,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
   DateTime? _startTime = DateTime.now();
   DateTime? _endTime = DateTime.now();
   bool _timePickerOpen = false;
+  bool _selectExercise = true;
   bool _selectHobby = true;
   bool _selectSleep = true;
 
@@ -93,6 +95,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     selectedValue = widget.category;
     selectedValue == '취미' ? _selectHobby = false : _selectHobby = true;
     selectedValue == '수면' ? _selectSleep = false : _selectSleep = true;
+    selectedValue == '운동' ? _selectExercise = true : _selectExercise = false;
     weekDays = [
       WeekDay("월", widget.monday ?? true),
       WeekDay("화", widget.tuesday ?? true),
@@ -128,17 +131,19 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
 
   //Todo: 서버 요청 (운동 루틴 수정)
   Future<void> _editExerciseRoutine() async {
+
+
     if (_formKey.currentState!.validate() &&
         _nameController.text.isNotEmpty &&
-        timeErrorText == null) {
+        timeErrorText == null ) {
       FocusScope.of(context).unfocus();
       final String exerciseName = _nameController.text;
       final String explanation = _explanationController.text;
 
       final startTime =
-      _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+          _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
       final endTime =
-      _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+          _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
 
       print("루틴 켜졌니 ${widget.status}");
 
@@ -178,14 +183,14 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       }
     }
   }
-  
+
   //Todo: 서버 요청 (운동 루틴 삭제)
   Future<void> _deleteExerciseRoutine() async {
     final responseCode =
-    await ExerciseAPIService().deleteExerciseRoutine(widget.routineId);
+        await ExerciseAPIService().deleteExerciseRoutine(widget.routineId);
     if (responseCode == 200) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
+        MaterialPageRoute(builder: (context) => const RoutinePage(index: 0)),
       );
       const ToastBarWidget(
         title: '운동 루틴이 삭제되었습니다.',
@@ -396,7 +401,6 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-
     return ScreenLayout(
       showIconButton: true,
       title: "루틴 수정하기",
@@ -429,7 +433,20 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                           height: _timePickerOpen ? screenHeight * 0.01 : 0),
                       // 시간 설정
                       _startEndTime(textTheme, screenWidth, screenHeight),
-                      SizedBox(height: screenHeight * 0.02),
+                      // 운동 선택 시 시간 설정 알림 텍스트
+                      Visibility(
+                        visible: _selectExercise,
+                        child: Column(
+                          children: [
+                            SizedBox(height: screenHeight * 0.005),
+                            Text(
+                              '* 시간 선택 시 더 좋은 ai의 피드백을 받을 수 있어요!\n  제목에 시간을 입력하는 것도 좋아요. (예, 10분 걷기)',
+                              style: textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.03),
                       // 설명 입력
                       Visibility(
                           visible: _selectSleep,
@@ -438,7 +455,10 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                       SizedBox(
                           height: _timePickerOpen
                               ? screenWidth * 0.06
-                              : screenWidth * 0.2),
+                              : _selectExercise
+                              ? screenHeight * 0.05
+                              : screenHeight * 0.102),
+                      // 수면 선택 시 추가 공백 높이
                       SizedBox(
                           height: _selectSleep
                               ? 0
@@ -451,8 +471,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                 // 추가하기 버튼
                 SizedBox(
                     height: _selectHobby
-                        ? screenHeight * 0.012
-                        : screenHeight * 0.469),
+                        ? screenHeight * 0.025
+                        : screenHeight * 0.502),
                 GreenButton(
                   width: screenWidth * 0.6,
                   text: '수정하기',
@@ -715,37 +735,40 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
           constraints: BoxConstraints(
             minHeight: screenHeight * 0.045,
           ),
-          child: TextField(
-            controller: _explanationController,
-            style: textTheme.bodyMedium,
-            keyboardType: TextInputType.text,
-            maxLength: 50,
-            maxLines: 3,
-            decoration: InputDecoration(
-              hintText: "루틴에 대한 설명",
-              hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
-                borderSide: const BorderSide(
-                  width: 1, // 테두리 두께
+          child: SingleChildScrollView(
+            child: TextField(
+              controller: _explanationController,
+              style: textTheme.bodyMedium,
+              keyboardType: TextInputType.text,
+              maxLength: 100,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: "루틴에 대한 설명",
+                hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
+                  borderSide: const BorderSide(
+                    width: 1, // 테두리 두께
+                  ),
                 ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(
-                  width: 1,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: const BorderSide(
+                    width: 1,
+                  ),
                 ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(
-                  width: 1,
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: const BorderSide(
+                    width: 1,
+                  ),
                 ),
-              ),
-              errorBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1,
+                errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 1,
+                  ),
                 ),
               ),
             ),
@@ -814,7 +837,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                 textTheme: textTheme,
                 screenWidth: screenWidth,
                 screenHeight: screenHeight,
-                title: '시작 시간',
+                title: '시작 시각',
                 controller: _startTimeController,
                 onTimeChanged: (DateTime selectTime) {
                   setState(() => _startTime = selectTime);
@@ -827,12 +850,12 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
               textTheme: textTheme,
               screenWidth: screenWidth,
               screenHeight: screenHeight,
-              title: '종료 시간',
+              title: '종료 시각',
               controller: _endTimeController,
               onTimeChanged: (DateTime selectTime) {
                 setState(() {
                   if (_startTime != null && selectTime.isBefore(_startTime!)) {
-                    timeErrorText = '종료 시간이 시작 시간 보다 빠릅니다.';
+                    timeErrorText = '종료 시각이 시작 시각 보다 빠릅니다.';
                   } else {
                     _endTime = selectTime;
                     timeErrorText = null;
@@ -896,7 +919,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             decoration: InputDecoration(
               hintText: "제목 입력",
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
                 borderSide: const BorderSide(

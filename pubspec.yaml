@@ -49,6 +49,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   google_mobile_ads: ^5.2.0
   just_audio: ^0.9.42
+  audioplayers: ^6.1.0
   rxdart: ^0.28.0
 
 
@@ -79,13 +80,11 @@ flutter:
     - assets/imgs/background/
     - assets/imgs/etc/
     - assets/imgs/chart/
-    - assets/imgs/exercise/
-    - assets/imgs/hobby/
     - assets/imgs/mind/
-    - assets/imgs/sleep/
-    - assets/imgs/login/
+    - assets/imgs/exercise/
     - assets/imgs/home/
     - assets/imgs/setting/
+    - assets/imgs/login/
     - assets/icons/
     - assets/audio/meditation_audio.mp3
 

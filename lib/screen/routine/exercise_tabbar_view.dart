@@ -68,9 +68,9 @@ class _ExerciseTabBarViewState extends State<ExerciseTabBarView> {
             setState(() {
               exerciseList.status = !exerciseList.status;
             });
-            debugPrint('운동 루틴 (${exerciseList.exerciseName}) 킴 on');
+            debugPrint('운동 루틴 (${exerciseList.routineName}) 킴 on');
           } else {
-            debugPrint('운동 루틴 (${exerciseList.exerciseName}) 켜는 중 오류 발생');
+            debugPrint('운동 루틴 (${exerciseList.routineName}) 켜는 중 오류 발생');
           }
         }
 
@@ -82,11 +82,12 @@ class _ExerciseTabBarViewState extends State<ExerciseTabBarView> {
             setState(() {
               exerciseList.status = !exerciseList.status;
             });
-            debugPrint('운동 루틴 (${exerciseList.exerciseName}) 끔 off');
+            debugPrint('운동 루틴 (${exerciseList.routineName}) 끔 off');
           } else {
-            debugPrint('운동 루틴 (${exerciseList.exerciseName}) 끄는 중 오류 발생');
+            debugPrint('운동 루틴 (${exerciseList.routineName}) 끄는 중 오류 발생');
           }
         }
+        print(exerciseList.routineName);
 
         return GestureDetector(
           onLongPress: () async {
@@ -94,7 +95,7 @@ class _ExerciseTabBarViewState extends State<ExerciseTabBarView> {
               MaterialPageRoute(
                 builder: (context) => EditRoutineScreen(
                   routineId: exerciseList.routineId,
-                  title: exerciseList.exerciseName,
+                  title: exerciseList.routineName,
                   selectImage: exerciseList.imageUrl,
                   category: '운동',
                   monday: exerciseList.monday,
@@ -104,7 +105,7 @@ class _ExerciseTabBarViewState extends State<ExerciseTabBarView> {
                   friday: exerciseList.friday,
                   saturday: exerciseList.saturday,
                   sunday: exerciseList.sunday,
-                  startTime: exerciseList.endTime,
+                  startTime: exerciseList.startTime,
                   endTime: exerciseList.endTime,
                   explanation: exerciseList.explanation,
                   status: exerciseList.status,
@@ -114,7 +115,7 @@ class _ExerciseTabBarViewState extends State<ExerciseTabBarView> {
           },
           child: ToggledRoutineCard(
             imageUrl: exerciseList.imageUrl,
-            title: exerciseList.exerciseName,
+            title: exerciseList.routineName,
             status: exerciseList.status,
             explanation: exerciseList.explanation ?? '저장된 운동 루틴 설명이 없습니다.',
             onSwitch: () {

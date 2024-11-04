@@ -266,15 +266,15 @@ class _SignUpState extends State<SignUp> {
             ),
           ),
           Image.asset(
-            "assets/imgs/login/login_bottom.png",
+            "assets/imgs/login/signup.png",
             width: MediaQuery.of(context).size.width,
             fit: BoxFit.fitWidth,
           ),
-          Image.asset(
-            "assets/imgs/login/login_top.png",
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.fitWidth,
-          ),
+          // Image.asset(
+          //   "assets/imgs/login/login_top.png",
+          //   width: MediaQuery.of(context).size.width,
+          //   fit: BoxFit.fitWidth,
+          // ),
         ],
       ),
     );

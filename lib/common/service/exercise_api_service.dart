@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 
 class ExerciseAPIService {
   final String _baseUrl = BaseUrl.baseUrl;
+  //final String _baseUrl = 'http://192.168.219.220:1234';
 
   //Todo: 운동 루틴 추가
   Future<http.Response> postExerciseRoutine(
@@ -187,7 +188,7 @@ class ExerciseAPIService {
   Future<http.Response> recommendExercise(List answers) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse('$_baseUrl/exercise-service/ai/recommend');
+    final url = Uri.parse('$_baseUrl/exercise-service/routine/ai');
 
     return http.post(
       url,
@@ -197,10 +198,10 @@ class ExerciseAPIService {
       },
       body: json.encode(
         {
-          '': answers[0],
-          '': answers[1],
-          '': answers[2],
-          '': answers[3],
+          'exerciseType': answers[0],
+          'preferredTime': answers[1],
+          'preferredPlace': answers[2],
+          'exercisePurpose': answers[3],
         },
       ),
     );

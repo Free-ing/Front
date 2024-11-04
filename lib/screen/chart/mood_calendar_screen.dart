@@ -417,6 +417,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
   Widget _viewEmotionalDiary() {
     print('넘어가는 scrap값 : ${selectedDiary?.scrap ?? ''}');
     final diaryId = selectedDiary?.diaryId ?? -1;
+    print('letterId: ${selectedDiary?.letterId ?? -1}');
 
     return EmotionDiaryCard(
       diaryId: diaryId,

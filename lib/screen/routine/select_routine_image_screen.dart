@@ -35,8 +35,6 @@ class _SelectRoutineImageScreenState extends State<SelectRoutineImageScreen> {
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_exercise.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/walking.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/running.png',
-
-    'https://freeingimage.s3.ap-northeast-2.amazonaws.com/bicycle.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/muscle.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/aerobic.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/core.png',
@@ -44,6 +42,7 @@ class _SelectRoutineImageScreenState extends State<SelectRoutineImageScreen> {
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/diet.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/stamina.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/rehabilitation.png',
+    'https://freeingimage.s3.ap-northeast-2.amazonaws.com/static_stretching.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/dynamic_stretching.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/flexiblility.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/inside.png',
@@ -53,6 +52,8 @@ class _SelectRoutineImageScreenState extends State<SelectRoutineImageScreen> {
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/afternoon.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/night.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/exercise_report.png',
+    'https://freeingimage.s3.ap-northeast-2.amazonaws.com/bicycle.png',
+
   ];
 
   // 수면 이미지 리스트

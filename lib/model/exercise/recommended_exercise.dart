@@ -16,8 +16,8 @@ class RecommendedExercise {
 
   Map<String, dynamic> toJson() {
     return {
-      'exerciseName': exerciseName,
-      'explanation': explanation,
+      'exerciseName': exerciseName ?? '',
+      'explanation': explanation ?? '',
     };
   }
 }

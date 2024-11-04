@@ -43,6 +43,7 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
     await calculateWeeks();
   }
 
+  //Todo: 보상형 전면 광고 로드
   Future<void> _loadRewardedInterstitialAd() async {
     await RewardedInterstitialAd.load(
       adUnitId: AdMobService.rewardedInterstitialAdUnitId!,
@@ -66,7 +67,8 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
     );
   }
 
- Future<void> _showRewardedAd() async{
+  //Todo: 보상형 전면 광고 보여줌
+  Future<void> _showRewardedAd() async {
     if (_rewardedAd != null) {
       _rewardedAd!.show(
           onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
@@ -179,8 +181,9 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
                     '${week.last.month.toString().padLeft(2, ' ')}월 ${week.last.day.toString().padLeft(2, ' ')}일';
 
                 // 현재 날짜와 비교
-                DateTime nextMonday = week.last.add(Duration(days: 1));
-                bool isFutureWeek = nextMonday.isAfter(DateTime.now());
+                DateTime nextMonday3am =
+                    week.last.add(Duration(days: 1)).copyWith(hour: 3);
+                bool isFutureWeek = nextMonday3am.isAfter(DateTime.now());
 
                 return Padding(
                   padding: EdgeInsets.all(screenHeight * 0.017),

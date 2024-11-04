@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 class ExerciseList {
-  String exerciseName;
+  String routineName;
   String imageUrl;
   int routineId;
   bool monday;
@@ -17,7 +17,7 @@ class ExerciseList {
   String? explanation;
 
   ExerciseList(
-      {required this.exerciseName,
+      {required this.routineName,
         required this.imageUrl,
         required this.routineId,
         required this.monday,
@@ -41,7 +41,7 @@ class ExerciseList {
         : null;
 
     return ExerciseList(
-        exerciseName: json['exerciseName'] ?? '',
+        routineName: json['routineName'],
         imageUrl: json['imageUrl'],
         routineId: json['routineId'],
         monday: json['monday'],
@@ -59,7 +59,7 @@ class ExerciseList {
 
   Map<String, dynamic> toJson() {
     return {
-      'exerciseName': exerciseName,
+      'exerciseName': routineName,
       'imageUrl': imageUrl,
       'routineId': routineId,
       'monday': monday,
