@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
+
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/bottom_sheet.dart';
+import 'package:just_audio/just_audio.dart';
 
 //Todo: 정적 스트레칭
 void showStaticStretchingBottomSheet(BuildContext context, String title) {
@@ -60,7 +61,7 @@ class _StaticStretchingBottomSheetContentState
 
   void _playEndSound() async {
     if (!_isMuted) {
-      await _audioPlayer.play('assets/audio/end_stretching.mp3' as Source);
+      //await _audioPlayer.play('assets/audio/end_stretching.mp3' as Source);
     }
   }
 
