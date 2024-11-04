@@ -65,6 +65,8 @@ class EditRoutineScreen extends StatefulWidget {
 class _EditRoutineScreenState extends State<EditRoutineScreen> {
   String? nameErrorText;
   String? timeErrorText;
+  String? selectTimeText;
+
   List<WeekDay> weekDays = [];
   final _formKey = GlobalKey<FormState>();
 
@@ -128,17 +130,24 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
 
   //Todo: 서버 요청 (운동 루틴 수정)
   Future<void> _editExerciseRoutine() async {
+    if (_startTime == null || _endTime == null) {
+      setState(() {
+        selectTimeText = '운동 루틴은 시간을 입력해 주세요.';
+      });
+    }
+
     if (_formKey.currentState!.validate() &&
         _nameController.text.isNotEmpty &&
-        timeErrorText == null) {
+        timeErrorText == null &&
+        selectTimeText == null) {
       FocusScope.of(context).unfocus();
       final String exerciseName = _nameController.text;
       final String explanation = _explanationController.text;
 
       final startTime =
-      _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+          _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
       final endTime =
-      _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+          _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
 
       print("루틴 켜졌니 ${widget.status}");
 
@@ -178,11 +187,11 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       }
     }
   }
-  
+
   //Todo: 서버 요청 (운동 루틴 삭제)
   Future<void> _deleteExerciseRoutine() async {
     final responseCode =
-    await ExerciseAPIService().deleteExerciseRoutine(widget.routineId);
+        await ExerciseAPIService().deleteExerciseRoutine(widget.routineId);
     if (responseCode == 200) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
@@ -396,7 +405,6 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-
     return ScreenLayout(
       showIconButton: true,
       title: "루틴 수정하기",
@@ -429,7 +437,18 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                           height: _timePickerOpen ? screenHeight * 0.01 : 0),
                       // 시간 설정
                       _startEndTime(textTheme, screenWidth, screenHeight),
-                      SizedBox(height: screenHeight * 0.02),
+                      selectTimeText != null
+                          ? Column(
+                              children: [
+                                SizedBox(height: screenHeight * 0.005),
+                                Text(
+                                  selectTimeText!,
+                                  style: textTheme.bodyMedium
+                                      ?.copyWith(color: Colors.red),
+                                ),
+                              ],
+                            )
+                          : SizedBox(height: screenHeight * 0.03),
                       // 설명 입력
                       Visibility(
                           visible: _selectSleep,
@@ -724,7 +743,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             decoration: InputDecoration(
               hintText: "루틴에 대한 설명",
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
                 borderSide: const BorderSide(
@@ -896,7 +916,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
             decoration: InputDecoration(
               hintText: "제목 입력",
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
                 borderSide: const BorderSide(

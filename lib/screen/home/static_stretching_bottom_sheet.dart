@@ -28,6 +28,28 @@ class _StaticStretchingBottomSheetContent extends StatefulWidget {
 
 class _StaticStretchingBottomSheetContentState
     extends State<_StaticStretchingBottomSheetContent> {
+  int currentQuestionIndex = 0;
+
+  final PageController _pageController = PageController();
+
+  //Todo: 다음 질문
+  void _nextPose(int index) {
+    _pageController.animateToPage(
+      index + 1,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+  }
+
+  //Todo: 이전 질문
+  void _previousPose() {
+    _pageController.animateToPage(
+      currentQuestionIndex,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -41,46 +63,63 @@ class _StaticStretchingBottomSheetContentState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                  onPressed: () {}, icon: Icon(Icons.arrow_back_ios_rounded)),
-              Text('1/4'),
-              IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.arrow_forward_ios_rounded)),
-            ],
-          ),
-          SizedBox(height: screenHeight*0.02),
-          Text('코브라 자세', style: textTheme.bodyLarge),
-          SizedBox(height: screenHeight*0.02),
-          Image.asset(
-            'assets/imgs/etc/meditaiton_mascot.png',
-            width: screenWidth * 0.8,
-          ),
-          SizedBox(height: screenHeight*0.02),
-          Text(
-            '허리를 곧게 펴고,\n숨을 내쉽니다.\n이동하세여',
-            style: textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: screenHeight*0.02),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.volume_up_rounded, size: 40),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.play_arrow_rounded, size: 40),
-              )
-            ],
-          )
+          _stretchingStage(textTheme),
+          SizedBox(height: screenHeight * 0.01),
+          _stretchingContent(textTheme, screenWidth, screenHeight),
+          SizedBox(height: screenHeight * 0.01),
+          _volumeAndPlayButton()
         ],
       ),
+    );
+  }
+
+  //Todo: 스트레칭 단계
+  Widget _stretchingStage(textTheme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back_ios_rounded)),
+        Text('1/4', style: textTheme.bodyLarge),
+        IconButton(
+            onPressed: () {}, icon: Icon(Icons.arrow_forward_ios_rounded)),
+      ],
+    );
+  }
+
+  //Todo: 1. 목 스트레칭(30초) - 왼쪽
+  ///앉거나 서서 목을 천천히 한쪽으로 기울여 귀가 어깨에 가까워지도록 합니다.
+  Widget _stretchingContent(textTheme, screenWidth, screenHeight) {
+    return Column(
+      children: [
+        Text('코브라 자세', style: textTheme.bodyLarge),
+        SizedBox(height: screenHeight * 0.02),
+        Image.asset(
+          'assets/imgs/exercise/static_neck.png',
+          width: screenWidth * 0.8,
+        ),
+        SizedBox(height: screenHeight * 0.02),
+        Text(
+          '앉거나 서서 목을 천천히 한 쪽으로 기울여\n귀가 어깨에 가까워지도록 합니다.',
+          style: textTheme.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _volumeAndPlayButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.volume_up_rounded, size: 40),
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.play_arrow_rounded, size: 40),
+        )
+      ],
     );
   }
 }

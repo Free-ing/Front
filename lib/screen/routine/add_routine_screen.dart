@@ -45,6 +45,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   final _formKey = GlobalKey<FormState>();
   String? nameErrorText;
   String? timeErrorText;
+  String? selectTimeText;
 
   final List<String> options = ['운동', '수면', '취미', '마음 채우기'];
   String selectedValue = '운동';
@@ -65,17 +66,23 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   //Todo: 서버 요청 (운동 루틴 추가)
   Future<void> _submitExerciseRoutine() async {
+    if (_startTime == null || _endTime == null) {
+      setState(() {
+        selectTimeText = '운동 루틴은 시간을 입력해 주세요.';
+      });
+    }
     if (_formKey.currentState!.validate() &&
         _nameController.text.isNotEmpty &&
-        timeErrorText == null) {
+        timeErrorText == null &&
+        selectTimeText == null) {
       FocusScope.of(context).unfocus();
       final String exerciseName = _nameController.text;
       final String explanation = _explanationController.text;
 
       final startTime =
-      _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+          _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
       final endTime =
-      _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+          _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
 
       final apiService = ExerciseAPIService();
       final response = await apiService.postExerciseRoutine(
@@ -286,7 +293,18 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                           height: _timePickerOpen ? screenHeight * 0.01 : 0),
                       // 시간 설정
                       _startEndTime(textTheme, screenWidth, screenHeight),
-                      SizedBox(height: screenHeight * 0.02),
+                      selectTimeText != null
+                          ? Column(
+                              children: [
+                                SizedBox(height: screenHeight * 0.005),
+                                Text(
+                                  selectTimeText!,
+                                  style: textTheme.bodyMedium
+                                      ?.copyWith(color: Colors.red),
+                                ),
+                              ],
+                            )
+                          : SizedBox(height: screenHeight * 0.03),
                       // 설명 입력
                       Visibility(
                           visible: _selectSleep,
@@ -309,7 +327,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 SizedBox(
                     height: _selectHobby
                         ? screenHeight * 0.012
-                        : screenHeight * 0.469),
+                        : screenHeight * 0.479),
 
                 GreenButton(
                   width: screenWidth * 0.6,
@@ -458,7 +476,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                   contentPadding: EdgeInsets.all(screenWidth * 0.01),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.black, width: 1.5),
+                    borderSide:
+                        const BorderSide(color: Colors.black, width: 1.5),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -473,7 +492,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 value: selectedValue.isNotEmpty ? selectedValue : null,
                 items: options
                     .where((e) => e.isNotEmpty)
-                    .map((e) => DropdownMenuItem(
+                    .map(
+                      (e) => DropdownMenuItem(
                         value: e,
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 1.0),
@@ -481,20 +501,25 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                             e,
                             style: textTheme.bodySmall,
                           ),
-                        )))
+                        ),
+                      ),
+                    )
                     .toList(),
                 onChanged: (value) {
-                  setState(() {
-                    selectedValue = value!;
+                  setState(
+                    () {
+                      selectTimeText = null;
+                      selectedValue = value!;
 
-                    selectedValue == '취미'
-                        ? _selectHobby = false
-                        : _selectHobby = true;
+                      selectedValue == '취미'
+                          ? _selectHobby = false
+                          : _selectHobby = true;
 
-                    selectedValue == '수면'
-                        ? _selectSleep = false
-                        : _selectSleep = true;
-                  });
+                      selectedValue == '수면'
+                          ? _selectSleep = false
+                          : _selectSleep = true;
+                    },
+                  );
                 },
                 dropdownStyleData: DropdownStyleData(
                   //maxHeight: screenHeight * 0.15,
@@ -592,7 +617,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             decoration: InputDecoration(
               hintText: "루틴에 대한 설명",
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
                 borderSide: const BorderSide(
@@ -769,7 +795,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             decoration: InputDecoration(
               hintText: "제목 입력",
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
                 borderSide: const BorderSide(

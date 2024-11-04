@@ -105,7 +105,7 @@ class _ExerciseTabBarViewState extends State<ExerciseTabBarView> {
                   friday: exerciseList.friday,
                   saturday: exerciseList.saturday,
                   sunday: exerciseList.sunday,
-                  startTime: exerciseList.endTime,
+                  startTime: exerciseList.startTime,
                   endTime: exerciseList.endTime,
                   explanation: exerciseList.explanation,
                   status: exerciseList.status,

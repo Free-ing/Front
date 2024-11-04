@@ -55,8 +55,10 @@ class _AddRecommendedRoutineScreenState
   final List<String> options = ['취미', '운동'];
 
   String? timeErrorText;
-  DateTime? _startTime = DateTime.now();
-  DateTime? _endTime = DateTime.now();
+  String? selectTimeText;
+
+  DateTime? _startTime;
+  DateTime? _endTime;
   bool _timePickerOpen = false;
 
   String imageUrl =
@@ -67,21 +69,29 @@ class _AddRecommendedRoutineScreenState
   TextEditingController _endTimeController = TextEditingController();
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _explanationController = TextEditingController(text: widget.explanation);
+    imageUrl = widget.category == '취미'
+        ? 'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png'
+        : 'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_exercise.png';
   }
 
   //Todo: 서버 요청 (운동 루틴 추가)
   Future<void> _submitExerciseRoutine() async {
-    if (timeErrorText == null) {
+    if (_startTime == null || _endTime == null) {
+      setState(() {
+        selectTimeText = '운동 루틴은 시간을 입력해 주세요.';
+      });
+    }
+    if (timeErrorText == null && selectTimeText == null) {
       FocusScope.of(context).unfocus();
       final String explanation = _explanationController.text;
 
       final startTime =
-      _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
+          _startTime != null ? DateFormat('HH:mm').format(_startTime!) : null;
       final endTime =
-      _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
+          _endTime != null ? DateFormat('HH:mm').format(_endTime!) : null;
 
       final apiService = ExerciseAPIService();
       final response = await apiService.postExerciseRoutine(
@@ -151,64 +161,76 @@ class _AddRecommendedRoutineScreenState
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final bool selectHobby = widget.category == '취미' ? true : false;
+    final bool selectHobby = widget.category == '취미' ? false : true;
 
     return ScreenLayout(
-      title: 'AI추천 취미 추가하기',
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.012),
-        child: Column(
-          children: [
-            // 제목과 이미지 입력
-            _routineImageTitle(textTheme, screenWidth),
-            SizedBox(height: screenHeight * 0.03),
-            // 카테고리 선택
-            _selectCategory(textTheme, screenWidth, screenHeight),
-            SizedBox(height: screenHeight * 0.02),
+      title: 'AI추천 ${widget.category} 추가하기',
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.012),
+          child: Column(
+            children: [
+              // 제목과 이미지 입력
+              _routineImageTitle(textTheme, screenWidth),
+              SizedBox(height: screenHeight * 0.03),
+              // 카테고리 선택
+              _selectCategory(textTheme, screenWidth, screenHeight),
+              SizedBox(height: screenHeight * 0.02),
 
-            /// 취미 선택 시 가려짐
-            Visibility(
-              visible: selectHobby,
-              child: Column(
-                children: [
-                  // 반복 요일 설정
-                  _selectRoutineDay(textTheme, screenWidth, screenHeight),
-                  SizedBox(height: screenHeight * 0.02),
-                  // 시간 선택
-                  _selectTime(textTheme, screenWidth, screenHeight),
-                  SizedBox(
-                      height: _timePickerOpen ? screenHeight * 0.01 : 0),
-                  // 시간 설정
-                  _startEndTime(textTheme, screenWidth, screenHeight),
-                  SizedBox(height: screenHeight * 0.02),
-                  // 설명 입력
-                  _routineDescribe(
-                      textTheme, screenWidth, screenHeight),
-                  SizedBox(
-                      height: _timePickerOpen
-                          ? screenWidth * 0.06
-                          : screenWidth * 0.2),
-                ],
+              /// 취미 선택 시 가려짐
+              Visibility(
+                visible: selectHobby,
+                child: Column(
+                  children: [
+                    // 반복 요일 설정
+                    _selectRoutineDay(textTheme, screenWidth, screenHeight),
+                    SizedBox(height: screenHeight * 0.02),
+                    // 시간 선택
+                    _selectTime(textTheme, screenWidth, screenHeight),
+                    SizedBox(height: _timePickerOpen ? screenHeight * 0.01 : 0),
+                    // 시간 설정
+                    _startEndTime(textTheme, screenWidth, screenHeight),
+                    selectTimeText != null
+                        ? Column(
+                            children: [
+                              SizedBox(height: screenHeight * 0.005),
+                              Text(
+                                selectTimeText!,
+                                style: textTheme.bodyMedium
+                                    ?.copyWith(color: Colors.red),
+                              ),
+                            ],
+                          )
+                        : SizedBox(height: screenHeight * 0.03),
+                    // 설명 입력
+                    _routineDescribe(textTheme, screenWidth, screenHeight),
+                    SizedBox(
+                        height: _timePickerOpen
+                            ? screenWidth * 0.06
+                            : screenWidth * 0.2),
+                  ],
+                ),
               ),
-            ),
-            // 추가하기 버튼
-            SizedBox(
-                height: selectHobby
-                    ? screenHeight * 0.012
-                    : screenHeight * 0.469),
-            GreenButton(
-                width: screenWidth * 0.6, onPressed: (){
-                  switch (selectedValue) {
-                    case '운동' :
-                      _submitExerciseRoutine();
-                      break;
-                    case '취미' :
-                      _submitHobbyRoutine();
-                      break;
-                  }
-            }),
-            SizedBox(height: screenHeight * 0.033),
-          ],
+              // 추가하기 버튼
+              SizedBox(
+                  height: selectHobby
+                      ? screenHeight * 0.012
+                      : screenHeight * 0.479),
+              GreenButton(
+                  width: screenWidth * 0.6,
+                  onPressed: () {
+                    switch (widget.category) {
+                      case '운동':
+                        _submitExerciseRoutine();
+                        break;
+                      case '취미':
+                        _submitHobbyRoutine();
+                        break;
+                    }
+                  }),
+              SizedBox(height: screenHeight * 0.033),
+            ],
+          ),
         ),
       ),
     );
@@ -426,37 +448,41 @@ class _AddRecommendedRoutineScreenState
           constraints: BoxConstraints(
             minHeight: screenHeight * 0.045,
           ),
-          child: TextField(
-            controller: _explanationController,
-            style: textTheme.bodyMedium,
-            keyboardType: TextInputType.text,
-            maxLength: 50,
-            maxLines: 3,
-            decoration: InputDecoration(
-              hintText: "루틴에 대한 설명",
-              hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
-              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
-                borderSide: const BorderSide(
-                  width: 1, // 테두리 두께
+          child: SingleChildScrollView(
+            child: TextField(
+              readOnly: true,
+              controller: _explanationController,
+              style: textTheme.bodyMedium,
+              keyboardType: TextInputType.text,
+              maxLength: 100,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: "루틴에 대한 설명",
+                hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
+                  borderSide: const BorderSide(
+                    width: 1, // 테두리 두께
+                  ),
                 ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(
-                  width: 1,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: const BorderSide(
+                    width: 1,
+                  ),
                 ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(
-                  width: 1,
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: const BorderSide(
+                    width: 1,
+                  ),
                 ),
-              ),
-              errorBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1,
+                errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 1,
+                  ),
                 ),
               ),
             ),
@@ -512,7 +538,7 @@ class _AddRecommendedRoutineScreenState
       child: Container(
         width: screenWidth,
         height:
-        timeErrorText != null ? screenHeight * 0.17 : screenHeight * 0.13,
+            timeErrorText != null ? screenHeight * 0.17 : screenHeight * 0.13,
         decoration: BoxDecoration(
           color: IVORY,
           borderRadius: BorderRadius.circular(20),
@@ -565,7 +591,7 @@ class _AddRecommendedRoutineScreenState
                       child: Text(
                         timeErrorText!,
                         style:
-                        textTheme.bodyMedium?.copyWith(color: Colors.red),
+                            textTheme.bodyMedium?.copyWith(color: Colors.red),
                       ),
                     ),
                   ),
@@ -616,7 +642,7 @@ class _AddRecommendedRoutineScreenState
               hintText: '미설정',
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_GREY),
               contentPadding:
-              const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(
@@ -663,7 +689,7 @@ class _AddRecommendedRoutineScreenState
                             mode: CupertinoDatePickerMode.time,
                             onDateTimeChanged: (DateTime selectTime) {
                               setState(
-                                    () {
+                                () {
                                   onTimeChanged(selectTime);
                                   int hour = selectTime.hour;
                                   String period = hour >= 12 ? 'PM' : 'AM';
@@ -677,7 +703,7 @@ class _AddRecommendedRoutineScreenState
                                       .padLeft(2, '0');
 
                                   controller.text =
-                                  '$formattedHour:$formattedMinute $period';
+                                      '$formattedHour:$formattedMinute $period';
                                 },
                               );
                             },
