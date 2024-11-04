@@ -85,6 +85,8 @@ import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import 'common/component/custom_circular_progress_indicator.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize(); // 광고 초기화~~
@@ -149,7 +151,7 @@ class MyApp extends StatelessWidget {
         future: _initializeApp(), // 초기화 함수 호출
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator()); // 로딩 스피너 표시
+            return Center(child: CustomCircularProgressIndicator()); // 로딩 스피너 표시
           } else if (snapshot.hasError) {
             return Center(child: Text('오류가 발생했습니다.')); // 오류 메시지
           } else {
