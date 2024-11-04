@@ -69,7 +69,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         _nameController.text.isNotEmpty &&
         timeErrorText == null) {
       FocusScope.of(context).unfocus();
-      final String spiritName = _nameController.text;
+      final String exerciseName = _nameController.text;
       final String explanation = _explanationController.text;
 
       final startTime =
@@ -79,7 +79,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
       final apiService = ExerciseAPIService();
       final response = await apiService.postExerciseRoutine(
-        spiritName,
+        exerciseName,
         imageUrl,
         weekDays[0].isSelected,
         weekDays[1].isSelected,
@@ -95,9 +95,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
       if (response.statusCode == 200) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
+          MaterialPageRoute(builder: (context) => const RoutinePage(index: 0)),
         );
-        ToastBarWidget(
+        const ToastBarWidget(
           title: '운동 루틴이 추가되었습니다.',
           leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
         ).showToast(context);
@@ -148,7 +148,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 1)),
         );
-        ToastBarWidget(
+        const ToastBarWidget(
           title: '수면 루틴이 추가되었습니다.',
           leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
         ).showToast(context);
@@ -180,7 +180,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 2)),
         );
-        ToastBarWidget(
+        const ToastBarWidget(
           title: '취미 루틴이 추가되었습니다.',
           leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
         ).showToast(context);
@@ -231,7 +231,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
         );
-        ToastBarWidget(
+        const ToastBarWidget(
           title: '마음 채우기 루틴이 추가되었습니다.',
           leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
         ).showToast(context);
@@ -354,11 +354,11 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.0),
               ),
-              margin: EdgeInsets.all(12),
+              margin: const EdgeInsets.all(12),
               child: Container(
                 width: screenWidth * 0.38,
                 height: screenWidth * 0.38,
-                padding: EdgeInsets.all(2),
+                padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25),
@@ -388,11 +388,11 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25.0),
                         ),
-                        margin: EdgeInsets.all(12),
+                        margin: const EdgeInsets.all(12),
                         child: Container(
                           width: screenWidth * 0.12,
                           height: screenWidth * 0.12,
-                          padding: EdgeInsets.all(2),
+                          padding: const EdgeInsets.all(2),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
@@ -423,7 +423,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                       ),
                     ],
                   ),
-                  Text("그림 변경"),
+                  const Text("그림 변경"),
                 ],
               ),
             ),
@@ -458,16 +458,16 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                   contentPadding: EdgeInsets.all(screenWidth * 0.01),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.black, width: 1.5),
+                    borderSide: const BorderSide(color: Colors.black, width: 1.5),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                         color: Colors.black, width: 1), // 클릭되지 않았을 때의 테두리
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.black, width: 1),
+                    borderSide: const BorderSide(color: Colors.black, width: 1),
                   ),
                 ),
                 value: selectedValue.isNotEmpty ? selectedValue : null,
@@ -592,26 +592,26 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             decoration: InputDecoration(
               hintText: "루틴에 대한 설명",
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
-              contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   width: 1, // 테두리 두께
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   width: 1,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   width: 1,
                 ),
               ),
-              errorBorder: OutlineInputBorder(
+              errorBorder: const OutlineInputBorder(
                 borderSide: BorderSide(
                   width: 1,
                 ),
@@ -656,7 +656,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 print('시간 선택 눌림');
               });
             },
-            icon: Icon(Icons.arrow_forward_ios),
+            icon: const Icon(Icons.arrow_forward_ios),
           )
         ],
       ),
@@ -769,29 +769,29 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             decoration: InputDecoration(
               hintText: "제목 입력",
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
-              contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: Colors.transparent,
                   width: 0, // 테두리 두께
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: Colors.transparent,
                   width: 0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: Colors.transparent,
                   width: 0,
                 ),
               ),
-              errorBorder: OutlineInputBorder(
+              errorBorder: const OutlineInputBorder(
                   borderSide: BorderSide(
                 color: Colors.transparent,
                 width: 0,
@@ -843,20 +843,20 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
             decoration: InputDecoration(
               hintText: '미설정',
               hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_GREY),
-              contentPadding: EdgeInsets.symmetric(
+              contentPadding: const EdgeInsets.symmetric(
                   vertical: 10, horizontal: 16), // 텍스트 필드 내부 패딩
               filled: true,
               fillColor: Colors.white, // 배경색
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: Colors.black, // 테두리 색상
                   width: 1, // 테두리 두께
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(color: Colors.black, width: 1),
+                borderSide: const BorderSide(color: Colors.black, width: 1),
               ),
             ),
             style: textTheme.bodyMedium
@@ -929,9 +929,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 controller.clear();
               });
             },
-            icon: Icon(Icons.restart_alt_rounded),
+            icon: const Icon(Icons.restart_alt_rounded),
             padding: EdgeInsets.zero,
-            constraints: BoxConstraints(),
+            constraints: const BoxConstraints(),
             visualDensity: VisualDensity.compact,
             iconSize: 24,
             color: DARK_GREY,

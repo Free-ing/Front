@@ -179,8 +179,8 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
                     '${week.last.month.toString().padLeft(2, ' ')}월 ${week.last.day.toString().padLeft(2, ' ')}일';
 
                 // 현재 날짜와 비교
-                DateTime nextMonday = week.last.add(Duration(days: 1));
-                bool isFutureWeek = nextMonday.isAfter(DateTime.now());
+                DateTime nextMonday3am = week.last.add(Duration(days: 1)).copyWith(hour: 3);
+                bool isFutureWeek = nextMonday3am.isAfter(DateTime.now());
 
                 return Padding(
                   padding: EdgeInsets.all(screenHeight * 0.017),
