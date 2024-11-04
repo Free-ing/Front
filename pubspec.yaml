@@ -49,6 +49,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   google_mobile_ads: ^5.2.0
   just_audio: ^0.9.42
+  audioplayers: ^6.1.0
   rxdart: ^0.28.0
 
 

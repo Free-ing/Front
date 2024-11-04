@@ -54,9 +54,10 @@ class _AddRecommendedRoutineScreenState
   String selectedValue = '취미';
   final List<String> options = ['취미', '운동'];
 
+  final _formKey = GlobalKey<FormState>();
+  String? nameErrorText;
   String? timeErrorText;
-  String? selectTimeText;
-
+  bool _selectExercise = true;
   DateTime? _startTime;
   DateTime? _endTime;
   bool _timePickerOpen = false;
@@ -64,6 +65,7 @@ class _AddRecommendedRoutineScreenState
   String imageUrl =
       'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png';
 
+  TextEditingController _nameController = TextEditingController();
   TextEditingController _explanationController = TextEditingController();
   TextEditingController _startTimeController = TextEditingController();
   TextEditingController _endTimeController = TextEditingController();
@@ -71,6 +73,7 @@ class _AddRecommendedRoutineScreenState
   @override
   void initState() {
     super.initState();
+    _nameController = TextEditingController(text: widget.routineName);
     _explanationController = TextEditingController(text: widget.explanation);
     imageUrl = widget.category == '취미'
         ? 'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png'
@@ -79,13 +82,12 @@ class _AddRecommendedRoutineScreenState
 
   //Todo: 서버 요청 (운동 루틴 추가)
   Future<void> _submitExerciseRoutine() async {
-    if (_startTime == null || _endTime == null) {
-      setState(() {
-        selectTimeText = '운동 루틴은 시간을 입력해 주세요.';
-      });
-    }
-    if (timeErrorText == null && selectTimeText == null) {
+    if (_formKey.currentState!.validate() &&
+        _nameController.text.isNotEmpty &&
+        timeErrorText == null) {
       FocusScope.of(context).unfocus();
+      final String exerciseName = _nameController.text;
+
       final String explanation = _explanationController.text;
 
       final startTime =
@@ -95,7 +97,7 @@ class _AddRecommendedRoutineScreenState
 
       final apiService = ExerciseAPIService();
       final response = await apiService.postExerciseRoutine(
-        widget.routineName,
+        exerciseName,
         imageUrl,
         weekDays[0].isSelected,
         weekDays[1].isSelected,
@@ -133,25 +135,28 @@ class _AddRecommendedRoutineScreenState
 
   //Todo: 취미 루틴 추가 요청
   Future<void> _submitHobbyRoutine() async {
-    FocusScope.of(context).unfocus();
+    if (_formKey.currentState!.validate() && _nameController.text.isNotEmpty){
+      FocusScope.of(context).unfocus();
+      final String hobbyName = _nameController.text;
 
-    final apiService = HobbyAPIService();
+      final apiService = HobbyAPIService();
 
-    final response =
-        await apiService.postHobbyRoutine(widget.routineName, imageUrl);
+      final response =
+      await apiService.postHobbyRoutine(hobbyName, imageUrl);
 
-    if (response.statusCode == 200) {
-      Navigator.pop(context, true);
-      ToastBarWidget(
-        title: '취미 루틴이 추가되었습니다.',
-        leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
-      ).showToast(context);
-    } else {
-      final errorData = json.decode(utf8.decode(response.bodyBytes));
-      DialogManager.showAlertDialog(
-          context: context,
-          title: '취미 루틴 추가 실패',
-          content: '${errorData['message']}\n(오류 코드: ${response.statusCode})');
+      if (response.statusCode == 200) {
+        Navigator.pop(context, true);
+        ToastBarWidget(
+          title: '취미 루틴이 추가되었습니다.',
+          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+        ).showToast(context);
+      } else {
+        final errorData = json.decode(utf8.decode(response.bodyBytes));
+        DialogManager.showAlertDialog(
+            context: context,
+            title: '취미 루틴 추가 실패',
+            content: '${errorData['message']}\n(오류 코드: ${response.statusCode})');
+      }
     }
   }
 
@@ -171,7 +176,7 @@ class _AddRecommendedRoutineScreenState
           child: Column(
             children: [
               // 제목과 이미지 입력
-              _routineImageTitle(textTheme, screenWidth),
+              _routineImageTitle(textTheme, screenWidth, screenHeight),
               SizedBox(height: screenHeight * 0.03),
               // 카테고리 선택
               _selectCategory(textTheme, screenWidth, screenHeight),
@@ -190,32 +195,36 @@ class _AddRecommendedRoutineScreenState
                     SizedBox(height: _timePickerOpen ? screenHeight * 0.01 : 0),
                     // 시간 설정
                     _startEndTime(textTheme, screenWidth, screenHeight),
-                    selectTimeText != null
-                        ? Column(
-                            children: [
-                              SizedBox(height: screenHeight * 0.005),
-                              Text(
-                                selectTimeText!,
-                                style: textTheme.bodyMedium
-                                    ?.copyWith(color: Colors.red),
-                              ),
-                            ],
-                          )
-                        : SizedBox(height: screenHeight * 0.03),
+                    // 운동 선택 시 시간 설정 알림 텍스트
+                    Visibility(
+                      visible: _selectExercise,
+                      child: Column(
+                        children: [
+                          SizedBox(height: screenHeight * 0.005),
+                          Text(
+                            '* 시간 선택 시 더 좋은 ai의 피드백을 받을 수 있어요!\n  제목에 시간을 입력하는 것도 좋아요. (예, 10분 걷기)',
+                            style: textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.03),
                     // 설명 입력
                     _routineDescribe(textTheme, screenWidth, screenHeight),
                     SizedBox(
                         height: _timePickerOpen
                             ? screenWidth * 0.06
-                            : screenWidth * 0.2),
+                            : _selectExercise
+                                ? screenHeight * 0.05
+                                : screenHeight * 0.102),
                   ],
                 ),
               ),
               // 추가하기 버튼
               SizedBox(
                   height: selectHobby
-                      ? screenHeight * 0.012
-                      : screenHeight * 0.479),
+                      ? screenHeight * 0.025
+                      : screenHeight * 0.502),
               GreenButton(
                   width: screenWidth * 0.6,
                   onPressed: () {
@@ -237,94 +246,102 @@ class _AddRecommendedRoutineScreenState
   }
 
   //Todo: 루틴 이미지, 제목 입력
-  Widget _routineImageTitle(textTheme, screenWidth) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        Card(
-          elevation: 6,
-          shadowColor: YELLOW_SHADOW,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25.0),
-          ),
-          margin: EdgeInsets.all(12),
-          child: Container(
-            width: screenWidth * 0.38,
-            height: screenWidth * 0.38,
-            padding: EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: Colors.black,
+  Widget _routineImageTitle(textTheme, screenWidth, screenHeight) {
+    return Column(
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Card(
+              elevation: 6,
+              shadowColor: YELLOW_SHADOW,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              margin: EdgeInsets.all(12),
+              child: Container(
+                width: screenWidth * 0.38,
+                height: screenWidth * 0.38,
+                padding: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: Colors.black,
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    _routineImage(imageUrl: imageUrl),
+                    _routineTitle(
+                      textTheme: textTheme,
+                      title: "제목 입력",
+                    ),
+                  ],
+                ),
               ),
             ),
-            child: Stack(
-              children: [
-                _routineImage(imageUrl: imageUrl),
-                Positioned(
-                    bottom: 5,
-                    left: 0,
-                    right: 0,
-                    child: Text(
-                      widget.routineName,
-                      style: textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    )),
-              ],
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Column(
-            children: [
-              Stack(
-                children: <Widget>[
-                  Card(
-                    shadowColor: YELLOW_SHADOW,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                    margin: EdgeInsets.all(12),
-                    child: Container(
-                      width: screenWidth * 0.12,
-                      height: screenWidth * 0.12,
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.black,
+            Align(
+              alignment: Alignment.centerRight,
+              child: Column(
+                children: [
+                  Stack(
+                    children: <Widget>[
+                      Card(
+                        shadowColor: YELLOW_SHADOW,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                        margin: EdgeInsets.all(12),
+                        child: Container(
+                          width: screenWidth * 0.12,
+                          height: screenWidth * 0.12,
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      IconButton(
+                        onPressed: () async {
+                          final result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SelectRoutineImageScreen(
+                                  selectImage: imageUrl),
+                            ),
+                          );
+                          if (result != null && result is String) {
+                            setState(() {
+                              imageUrl = result;
+                            });
+                          }
+                        },
+                        icon: Image.network(imageUrl,
+                            width: screenWidth * 0.14,
+                            height: screenWidth * 0.14,
+                            fit: BoxFit.cover),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    onPressed: () async {
-                      final result = await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              SelectRoutineImageScreen(selectImage: imageUrl),
-                        ),
-                      );
-                      if (result != null && result is String) {
-                        setState(() {
-                          imageUrl = result;
-                        });
-                      }
-                    },
-                    icon: Image.network(imageUrl,
-                        width: screenWidth * 0.14,
-                        height: screenWidth * 0.14,
-                        fit: BoxFit.cover),
-                  ),
+                  Text("그림 변경"),
                 ],
               ),
-              Text("그림 변경"),
-            ],
-          ),
+            ),
+          ],
         ),
+        if (nameErrorText != null)
+          Text(
+            nameErrorText!,
+            style: textTheme.bodyMedium?.copyWith(color: Colors.red),
+          ),
+        SizedBox(
+            height: nameErrorText != null
+                ? screenHeight * 0.004
+                : screenHeight * 0.03),
       ],
     );
   }
@@ -374,6 +391,76 @@ class _AddRecommendedRoutineScreenState
         )
       ],
     );
+  }
+
+  //Todo: 루틴 제목
+  Widget _routineTitle({
+    required TextTheme textTheme,
+    required String title,
+  }) {
+    return Positioned(
+        bottom: -60,
+        left: 0,
+        right: 0,
+        child: SizedBox(
+          height: 100,
+          child: TextFormField(
+            textAlign: TextAlign.center,
+            controller: _nameController,
+            style: textTheme.bodyMedium,
+            keyboardType: TextInputType.text,
+            decoration: InputDecoration(
+              hintText: "제목 입력",
+              hintStyle: textTheme.bodyMedium?.copyWith(color: TEXT_DARK),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15), // 모서리를 둥글게
+                borderSide: const BorderSide(
+                  color: Colors.transparent,
+                  width: 0, // 테두리 두께
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(
+                  color: Colors.transparent,
+                  width: 0,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(
+                  color: Colors.transparent,
+                  width: 0,
+                ),
+              ),
+              errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                color: Colors.transparent,
+                width: 0,
+              )),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                setState(() {
+                  nameErrorText = '제목을 입력 해주세요';
+                });
+              } else {
+                setState(() {
+                  nameErrorText = null;
+                });
+              }
+              return null;
+            },
+          ),
+        )
+        // child: Text(
+        //   title,
+        //   textAlign: TextAlign.center,
+        //   style: Theme.of(context).textTheme.bodyMedium,
+        // ),
+        );
   }
 
   //Todo: 루틴 반복 요일 설정
@@ -551,7 +638,7 @@ class _AddRecommendedRoutineScreenState
                 textTheme: textTheme,
                 screenWidth: screenWidth,
                 screenHeight: screenHeight,
-                title: '시작 시간',
+                title: '시작 시각',
                 controller: _startTimeController,
                 onTimeChanged: (DateTime selectTime) {
                   setState(() => _startTime = selectTime);
@@ -564,12 +651,12 @@ class _AddRecommendedRoutineScreenState
               textTheme: textTheme,
               screenWidth: screenWidth,
               screenHeight: screenHeight,
-              title: '종료 시간',
+              title: '종료 시각',
               controller: _endTimeController,
               onTimeChanged: (DateTime selectTime) {
                 setState(() {
                   if (_startTime != null && selectTime.isBefore(_startTime!)) {
-                    timeErrorText = '종료 시간이 시작 시간 보다 빠릅니다.';
+                    timeErrorText = '종료 시각이 시작 시각 보다 빠릅니다.';
                   } else {
                     _endTime = selectTime;
                     timeErrorText = null;
