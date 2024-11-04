@@ -44,6 +44,7 @@ class _AiLetterState extends State<AiLetter> {
 
   // Todo: 서버 요청 (AI 편지 조회)
   Future<void> _fetchAiLetter(int letterId) async {
+    print('조회 요청 보내는 편지 아이디 $letterId');
     final response = await apiService.getAiLetter(letterId);
 
     if (response.statusCode == 200) {
@@ -82,7 +83,7 @@ class _AiLetterState extends State<AiLetter> {
   @override
   void initState() {
     super.initState();
-    _fetchAiLetter(widget.diaryId);
+    _fetchAiLetter(widget.letterId);
   }
 
   @override
@@ -186,17 +187,17 @@ class _AiLetterState extends State<AiLetter> {
                 letterText,
                 style: TextStyle(fontSize: 22, fontFamily: 'nadeuri'),
               ),
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.04),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     '${widget.date.year}년 ${widget.date.month}월 ${widget.date.day}일',
-                    style: TextStyle(fontSize: 22, fontFamily: 'nadeuri'),
+                    style: TextStyle(fontSize: 24, fontFamily: 'nadeuri'),
                   ),
                   Text(
-                    '너의 파트너 후링',
-                    style: TextStyle(fontSize: 22, fontFamily: 'nadeuri'),
+                    'From. 후링',
+                    style: TextStyle(fontSize: 24, fontFamily: 'nadeuri'),
                   ),
                 ],
               )
@@ -211,7 +212,7 @@ class _AiLetterState extends State<AiLetter> {
   Widget _deleteLetter(screenWidth, screenHeight) {
     return Positioned(
       top: screenHeight * 0.063,
-      right: screenWidth * 0.1,
+      right: screenWidth * 0.08,
       child: IconButton(
         onPressed: () {
           DialogManager.showConfirmDialog(

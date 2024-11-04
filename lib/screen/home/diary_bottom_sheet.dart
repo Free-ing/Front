@@ -94,7 +94,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
 
     if (wellDoneController.text.isNotEmpty &&
         hardWorkController.text.isNotEmpty &&
-        selectedIndex! >= 0) {
+        selectedIndex != null) {
       final response = await apiService.postEmotionalDiary(
         wellDone,
         hardWork,

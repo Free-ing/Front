@@ -223,15 +223,15 @@ class _ResetPasswordState extends State<ResetPassword> {
             ),
             SizedBox(height: screenHeight * 0.13),
             Image.asset(
-              "assets/imgs/login/login_bottom.png",
+              "assets/imgs/login/signup.png",
               width: screenWidth,
               fit: BoxFit.fitWidth,
             ),
-            Image.asset(
-              "assets/imgs/login/login_top.png",
-              width: screenWidth,
-              fit: BoxFit.fitWidth,
-            ),
+            // Image.asset(
+            //   "assets/imgs/login/login_top.png",
+            //   width: screenWidth,
+            //   fit: BoxFit.fitWidth,
+            // ),
           ],
         ),
       ),

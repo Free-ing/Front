@@ -7,6 +7,7 @@ import 'package:freeing/screen/home/diary_bottom_sheet.dart';
 import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
 import 'package:freeing/screen/home/meditation_bottom_sheet.dart';
 import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
+import 'package:freeing/screen/home/static_stretching_bottom_sheet.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/component/bottom_sheet.dart';
@@ -247,7 +248,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     PlayButton(
                         onPressed: () {
-                          showExerciseBottomSheet(context, '정적 스트레칭');
+                          showStaticStretchingBottomSheet(context, '정적 스트레칭');
                         },
                         iconColor: PINK_PLAY_BUTTON),
                     PlayButton(
