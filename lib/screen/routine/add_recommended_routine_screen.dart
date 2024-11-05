@@ -112,9 +112,7 @@ class _AddRecommendedRoutineScreenState
       );
 
       if (response.statusCode == 200) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const RoutinePage(index: 3)),
-        );
+        Navigator.pop(context, true);
         ToastBarWidget(
           title: '운동 루틴이 추가되었습니다.',
           leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
@@ -173,72 +171,76 @@ class _AddRecommendedRoutineScreenState
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.012),
-          child: Column(
-            children: [
-              // 제목과 이미지 입력
-              _routineImageTitle(textTheme, screenWidth, screenHeight),
-              SizedBox(height: screenHeight * 0.03),
-              // 카테고리 선택
-              _selectCategory(textTheme, screenWidth, screenHeight),
-              SizedBox(height: screenHeight * 0.02),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                // 제목과 이미지 입력
+                _routineImageTitle(textTheme, screenWidth, screenHeight),
+                SizedBox(height: screenHeight * 0.03),
+                // 카테고리 선택
+                _selectCategory(textTheme, screenWidth, screenHeight),
+                SizedBox(height: screenHeight * 0.02),
 
-              /// 취미 선택 시 가려짐
-              Visibility(
-                visible: selectHobby,
-                child: Column(
-                  children: [
-                    // 반복 요일 설정
-                    _selectRoutineDay(textTheme, screenWidth, screenHeight),
-                    SizedBox(height: screenHeight * 0.02),
-                    // 시간 선택
-                    _selectTime(textTheme, screenWidth, screenHeight),
-                    SizedBox(height: _timePickerOpen ? screenHeight * 0.01 : 0),
-                    // 시간 설정
-                    _startEndTime(textTheme, screenWidth, screenHeight),
-                    // 운동 선택 시 시간 설정 알림 텍스트
-                    Visibility(
-                      visible: _selectExercise,
-                      child: Column(
-                        children: [
-                          SizedBox(height: screenHeight * 0.005),
-                          Text(
-                            '* 시간 선택 시 더 좋은 ai의 피드백을 받을 수 있어요!\n  제목에 시간을 입력하는 것도 좋아요. (예, 10분 걷기)',
-                            style: textTheme.bodySmall,
-                          ),
-                        ],
+                /// 취미 선택 시 가려짐
+                Visibility(
+                  visible: selectHobby,
+                  child: Column(
+                    children: [
+                      // 반복 요일 설정
+                      _selectRoutineDay(textTheme, screenWidth, screenHeight),
+                      SizedBox(height: screenHeight * 0.02),
+                      // 시간 선택
+                      _selectTime(textTheme, screenWidth, screenHeight),
+                      SizedBox(height: _timePickerOpen ? screenHeight * 0.01 : 0),
+                      // 시간 설정
+                      _startEndTime(textTheme, screenWidth, screenHeight),
+                      // 운동 선택 시 시간 설정 알림 텍스트
+                      Visibility(
+                        visible: _selectExercise,
+                        child: Column(
+                          children: [
+                            SizedBox(height: screenHeight * 0.005),
+                            Text(
+                              '* 시간 선택 시 더 좋은 ai의 피드백을 받을 수 있어요!\n  제목에 시간을 입력하는 것도 좋아요. (예, 10분 걷기)',
+                              style: textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: screenHeight * 0.03),
-                    // 설명 입력
-                    _routineDescribe(textTheme, screenWidth, screenHeight),
-                    SizedBox(
-                        height: _timePickerOpen
-                            ? screenWidth * 0.06
-                            : _selectExercise
-                                ? screenHeight * 0.05
-                                : screenHeight * 0.102),
-                  ],
+                      SizedBox(height: screenHeight * 0.03),
+                      // 설명 입력
+                      _routineDescribe(textTheme, screenWidth, screenHeight),
+                      SizedBox(
+                          height: _timePickerOpen
+                              ? screenWidth * 0.06
+                              : _selectExercise
+                                  ? screenHeight * 0.05
+                                  : screenHeight * 0.102),
+                    ],
+                  ),
                 ),
-              ),
-              // 추가하기 버튼
-              SizedBox(
-                  height: selectHobby
-                      ? screenHeight * 0.025
-                      : screenHeight * 0.502),
-              GreenButton(
-                  width: screenWidth * 0.6,
-                  onPressed: () {
-                    switch (widget.category) {
-                      case '운동':
-                        _submitExerciseRoutine();
-                        break;
-                      case '취미':
-                        _submitHobbyRoutine();
-                        break;
-                    }
-                  }),
-              SizedBox(height: screenHeight * 0.033),
-            ],
+                // 추가하기 버튼
+                SizedBox(
+                    height: selectHobby
+                        ? screenHeight * 0.025
+                        : screenHeight * 0.502),
+                GreenButton(
+                    width: screenWidth * 0.6,
+                    text: '추가하기',
+                    onPressed: () {
+                      switch (widget.category) {
+                        case '운동':
+                          _submitExerciseRoutine();
+                          break;
+                        case '취미':
+                          _submitHobbyRoutine();
+                          break;
+                      }
+                    }),
+                SizedBox(height: screenHeight * 0.033),
+              ],
+            ),
           ),
         ),
       ),
@@ -537,7 +539,6 @@ class _AddRecommendedRoutineScreenState
           ),
           child: SingleChildScrollView(
             child: TextField(
-              readOnly: true,
               controller: _explanationController,
               style: textTheme.bodyMedium,
               keyboardType: TextInputType.text,

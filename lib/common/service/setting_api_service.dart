@@ -13,7 +13,7 @@ class SettingAPIService {
   Future<http.Response> getUserInfo() async {
     //final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final String _viewUserInfoEndpoint = 'http://freeing-apigateway-service-893483672.ap-northeast-2.elb.amazonaws.com/user-service/user';
+    final String _viewUserInfoEndpoint = '$_baseUrl/user-service/user';
     final url = Uri.parse(_viewUserInfoEndpoint);
 
     return http.get(

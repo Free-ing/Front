@@ -33,6 +33,8 @@ class _ExerciseTabBarViewState extends State<ExerciseTabBarView> {
           ExerciseList exerciseCard = ExerciseList.fromJson(data);
           _exerciseList.add(exerciseCard);
         }
+        _exerciseList.sort((a, b) => a.routineId.compareTo(b.routineId));
+
       }
       return _exerciseList;
     } else if (response.statusCode == 404) {
@@ -70,7 +72,7 @@ class _ExerciseTabBarViewState extends State<ExerciseTabBarView> {
             });
             debugPrint('운동 루틴 (${exerciseList.routineName}) 킴 on');
           } else {
-            debugPrint('운동 루틴 (${exerciseList.routineName}) 켜는 중 오류 발생');
+            debugPrint('운동 루틴 (${exerciseList.routineName}) 켜는 중 오류 발생 ${responseCode}');
           }
         }
 
@@ -91,6 +93,9 @@ class _ExerciseTabBarViewState extends State<ExerciseTabBarView> {
 
         return GestureDetector(
           onLongPress: () async {
+
+            print(exerciseList.routineName);
+            print(exerciseList.routineId);
             await Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => EditRoutineScreen(
