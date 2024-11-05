@@ -48,16 +48,9 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   @override
   void didUpdateWidget(covariant HomeExpansionTileBox oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.sleepDailyRoutines.length !=
-        widget.sleepDailyRoutines.length) {
-      _initializeCheckLists();
-    }
-    if (oldWidget.exerciseDailyRoutines.length !=
-        widget.exerciseDailyRoutines.length) {
-      _initializeCheckLists();
-    }
-    if (oldWidget.spiritDailyRoutines.length !=
-        widget.spiritDailyRoutines.length) {
+    if (oldWidget.sleepDailyRoutines != widget.sleepDailyRoutines ||
+        oldWidget.exerciseDailyRoutines != widget.exerciseDailyRoutines ||
+        oldWidget.spiritDailyRoutines != widget.spiritDailyRoutines) {
       _initializeCheckLists();
     }
   }
@@ -93,27 +86,16 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   }
 
   Widget listsWidget() {
+    List<Widget> tiles = [];
+
     switch (widget.text) {
       case '운동':
         if (widget.exerciseDailyRoutines.isEmpty) {
-          return Center(child: Text(' '));
+          return Center(child: SizedBox.shrink());
         }
-      case '수면':
-        if (widget.sleepDailyRoutines.isEmpty) {
-          return Center(child: Text(' '));
-        }
-      case '마음 채우기':
-        if (widget.spiritDailyRoutines.isEmpty) {
-          return Center(child: Text(' '));
-        }
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Column(
-        children: widget.sleepDailyRoutines.asMap().entries.map((entry) {
+        tiles = widget.exerciseDailyRoutines.asMap().entries.map((entry) {
           int index = entry.key;
-          SleepDailyRoutine sleepRoutine = entry.value;
+          ExerciseRoutineDetail exerciseRoutine = entry.value;
 
           return ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -121,21 +103,17 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             leading: Container(
               width: 4,
               height: 4,
-              decoration:
-                  BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black),
             ),
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    sleepRoutine.sleepRoutineName!,
-                    style: TextStyle(fontSize: 14, fontFamily: 'scdream'),
-                  ),
+                Text(
+                  exerciseRoutine.name!,
+                  style: TextStyle(fontSize: 14, fontFamily: 'scdream'),
                 ),
                 SizedBox(width: 5.0),
-                Text('11:00',
+                Text(getTime('운동', index),
                     style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -145,7 +123,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                getPerformanceButton(getRoutine(widget.text, index), index),
+                getPerformanceButton(widget.text, index),
                 SizedBox(width: 15.0),
                 GestureDetector(
                     onTap: () {
@@ -159,9 +137,110 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               ],
             ),
           );
-        }).toList(),
-      ),
-    );
+        }).toList();
+        break;
+      case '수면':
+        if (widget.sleepDailyRoutines.isEmpty) {
+          return Center(child: SizedBox.shrink());
+        }
+        tiles = widget.sleepDailyRoutines.asMap().entries.map((entry) {
+          int index = entry.key;
+          SleepDailyRoutine sleepRoutine = entry.value;
+
+          return ListTile(
+            contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+            minLeadingWidth: 0.0,
+            leading: Container(
+              width: 4,
+              height: 4,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+            ),
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  sleepRoutine.sleepRoutineName!,
+                  style: TextStyle(fontSize: 14, fontFamily: 'scdream')),
+                SizedBox(width: 5.0),
+                Text(getTime('수면', index),
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: TEXT_PURPLE))
+              ],
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                getPerformanceButton(widget.text, index),
+                SizedBox(width: 15.0),
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _handleCheckboxTap(index);
+                      });
+                    },
+                    child: Image.asset(_isSleepChecked[index]
+                        ? 'assets/icons/after_checkbox.png'
+                        : 'assets/icons/before_checkbox.png')),
+              ],
+            ),
+          );
+        }).toList();
+        break;
+      case '마음 채우기':
+        if (widget.spiritDailyRoutines.isEmpty) {
+          return Center(child: SizedBox.shrink());
+        }
+        tiles = widget.spiritDailyRoutines.asMap().entries.map((entry) {
+          int index = entry.key;
+          SpiritRoutineDetail spiritRoutine = entry.value;
+
+          return ListTile(
+            contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+            minLeadingWidth: 0.0,
+            leading: Container(
+              width: 4,
+              height: 4,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+            ),
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  spiritRoutine.name!,
+                  style: TextStyle(fontSize: 14, fontFamily: 'scdream'),
+                ),
+                SizedBox(width: 5.0),
+                Text(getTime('마음 채우기', index),
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: TEXT_PURPLE))
+              ],
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                getPerformanceButton(widget.text, index),
+                SizedBox(width: 15.0),
+                GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _handleCheckboxTap(index);
+                      });
+                    },
+                    child: Image.asset(_isSleepChecked[index]
+                        ? 'assets/icons/after_checkbox.png'
+                        : 'assets/icons/before_checkbox.png')),
+              ],
+            ),
+          );
+        }).toList();
+        break;
+    }
+
+    return Column(children: tiles);
   }
 
   Color getTextColor() {
@@ -389,3 +468,5 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     );
   }
 }
+
+
