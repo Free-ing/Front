@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/circle_widget.dart';
-import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/home_api_service.dart';
 import 'package:freeing/model/home/exercise_daily_routine.dart';
@@ -16,6 +14,7 @@ import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
 import 'package:freeing/screen/home/meditation_bottom_sheet.dart';
 import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
 import 'package:intl/intl.dart';
+
 import '../../common/component/expansion_tile.dart';
 
 class HomePage extends StatefulWidget {
@@ -37,8 +36,8 @@ class _HomePageState extends State<HomePage> {
   late DateTime currentWeekStartDate;
   late DateTime selectedDate;
   List<SleepDailyRoutine> _sleepDailyRoutine = [];
-  List<ExerciseDailyRoutine> _exerciseDailyRoutine = [];
-  List<SpiritDailyRoutine> _spiritDailyRoutine = [];
+  List<ExerciseRoutineDetail> _exerciseDailyRoutine = [];
+  List<SpiritRoutineDetail> _spiritDailyRoutine = [];
   bool isLoading = true;
 
   final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
@@ -65,7 +64,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // TODO: 수면 루틴 불러오기
+  // 수면 루틴 불러오기
   Future<void> fetchSleepDailyRoutine() async {
     try {
       final response = await homeApiService.getSleepRoutine(
@@ -101,7 +100,6 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
   bool isSleepRoutineActiveOnDay(SleepDailyRoutine routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
@@ -122,7 +120,6 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
-
   List<SleepDailyRoutine> getFilteredSleepRoutines() {
     return _sleepDailyRoutine
         .where((routine) =>
@@ -146,10 +143,10 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
-        if (jsonData is List) {
+        if (jsonData is Map<String, dynamic> && jsonData['result'] is List) {
           setState(() {
-            _exerciseDailyRoutine = jsonData
-                .map((data) => ExerciseDailyRoutine.fromJson(data))
+            _exerciseDailyRoutine = (jsonData['result'] as List)
+                .map((data) => ExerciseRoutineDetail.fromJson(data))
                 .toList();
           });
         } else {
@@ -199,13 +196,8 @@ class _HomePageState extends State<HomePage> {
     List<ExerciseRoutineDetail> allActiveRoutines = [];
 
     for (var routine in _exerciseDailyRoutine) {
-      if (routine.result != null) {
-        allActiveRoutines.addAll(
-          routine.result!.where((detail) {
-            return isExerciseRoutineActiveOnDay(detail, dayOfWeek) &&
-                (detail.status ?? false);
-          }).toList(),
-        );
+      if (isExerciseRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false)) {
+        allActiveRoutines.add(routine);
       }
     }
 
@@ -221,10 +213,10 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
-        if (jsonData is List) {
+        if (jsonData is Map<String, dynamic> && jsonData['result'] is List) {
           setState(() {
-            _spiritDailyRoutine = jsonData
-                .map((data) => SpiritDailyRoutine.fromJson(data))
+            _spiritDailyRoutine = (jsonData['result'] as List)
+                .map((data) => SpiritRoutineDetail.fromJson(data))
                 .toList();
           });
         } else {
@@ -244,7 +236,7 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       print('Error fetching 마음 채우기 routines: $e');
       setState(() {
-        _sleepDailyRoutine = [];
+        _spiritDailyRoutine = [];
       });
     }
   }
@@ -274,16 +266,10 @@ class _HomePageState extends State<HomePage> {
     List<SpiritRoutineDetail> allActiveRoutines = [];
 
     for (var routine in _spiritDailyRoutine) {
-      if (routine.result != null) {
-        allActiveRoutines.addAll(
-          routine.result!.where((detail) {
-            return isSpiritRoutineActiveOnDay(detail, dayOfWeek) &&
-                (detail.status ?? false);
-          }).toList(),
-        );
+      if (isSpiritRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false)) {
+        allActiveRoutines.add(routine);
       }
     }
-
     return allActiveRoutines;
   }
 
@@ -412,7 +398,7 @@ class _HomePageState extends State<HomePage> {
                     vertical: screenHeight * 0.02,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(0xFFF6F6F6),
+                    color: const Color(0xFFF6F6F6),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.black,
@@ -421,7 +407,7 @@ class _HomePageState extends State<HomePage> {
                     boxShadow: [
                       BoxShadow(
                           color: Colors.grey.withOpacity(0.1),
-                          offset: Offset(2, 4),
+                          offset: const Offset(2, 4),
                           blurRadius: 4,
                           spreadRadius: 0)
                     ],
@@ -498,9 +484,9 @@ class _HomePageState extends State<HomePage> {
                                   DateFormat('EEE', 'ko').format(selectedDate);
                             });
                           },
-                          child: Padding(
+                          child: const Padding(
                             padding:
-                                const EdgeInsets.only(right: 8.0, top: 25.0),
+                                EdgeInsets.only(right: 8.0, top: 25.0),
                             child: Icon(
                               Icons.arrow_forward_ios,
                               size: 15,
@@ -571,7 +557,7 @@ class _HomePageState extends State<HomePage> {
                               border: Border.all(width: 1),
                               borderRadius: BorderRadius.circular(15)),
                           child: Padding(
-                            padding: EdgeInsets.only(left: 20.0, right: 8.0),
+                            padding: const EdgeInsets.only(left: 20.0, right: 8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -587,7 +573,7 @@ class _HomePageState extends State<HomePage> {
                                                     color: HOME_YELLOW_TEXT,
                                                     fontWeight:
                                                         FontWeight.w600)),
-                                        TextSpan(text: '를 했나요?')
+                                        const TextSpan(text: '를 했나요?')
                                       ]),
                                 ),
                                 LogButton(
@@ -608,7 +594,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 0),
+          bottomNavigationBar: const CustomBottomNavigationBar(selectedIndex: 0),
         ),
       ],
     );

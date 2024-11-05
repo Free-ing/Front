@@ -134,7 +134,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
       DialogManager.showAlertDialog(
         context: context,
         title: '알림',
-        content: '모두 입력 해주세요.(모두 입력 안됨)',
+        content: '모두 입력 해주세요.',
       );
       return false;
     }
