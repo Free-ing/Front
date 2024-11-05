@@ -11,7 +11,8 @@ class ScreenLayout extends StatelessWidget {
     super.key,
     required this.title,
     required this.body,
-    this.showIconButton, this.onDeletePressed,
+    this.showIconButton,
+    this.onDeletePressed,
   });
 
   @override
@@ -31,15 +32,16 @@ class ScreenLayout extends StatelessWidget {
             alignment: Alignment.center, // Stack의 중앙에 텍스트를 고정
             children: [
               Align(
-                alignment: Alignment.centerLeft,
-                child: IconButton(
-                  iconSize: 30.0,
-                  padding: EdgeInsets.zero,
-                  constraints: BoxConstraints(),
-                  onPressed: (){Navigator.of(context).pop();},
-                  icon: Icon(Icons.arrow_back_ios_rounded),
-                )
-              ),
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    iconSize: 30.0,
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: Icon(Icons.arrow_back_ios_rounded),
+                  )),
               Text(title, style: textTheme.headlineLarge),
               Align(
                 alignment: Alignment.centerRight,
@@ -53,7 +55,7 @@ class ScreenLayout extends StatelessWidget {
                         content: '삭제된 루틴은 복구할 수 없고,'
                             '\n루틴과 관련된 모든 기록도 함께 삭제됩니다.'
                             '\n삭제하시겠습니까?',
-                        onConfirm: onDeletePressed ?? (){},
+                        onConfirm: onDeletePressed ?? () {},
                       );
                     },
                     icon: Icon(Icons.delete_forever_outlined),

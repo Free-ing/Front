@@ -5,8 +5,8 @@ import 'package:freeing/common/service/token_manager.dart';
 import 'package:intl/intl.dart';
 
 class ExerciseAPIService {
-  //final String _baseUrl = BaseUrl.baseUrl;
-  final String _baseUrl = 'http://172.30.1.44:1234';
+  final String _baseUrl = BaseUrl.baseUrl;
+  //final String _baseUrl = 'http://172.30.1.44:1234';
 
   //Todo: 운동 루틴 추가
   Future<http.Response> postExerciseRoutine(

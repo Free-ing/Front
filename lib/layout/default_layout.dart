@@ -12,6 +12,8 @@ class DefaultLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: appBar,
       backgroundColor: Colors.white,
