@@ -5,7 +5,9 @@ import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/circle_widget.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/home_api_service.dart';
+import 'package:freeing/model/home/exercise_daily_routine.dart';
 import 'package:freeing/model/home/sleep_daily_routine.dart';
+import 'package:freeing/model/home/spirit_daily_routine.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/home/diary_bottom_sheet.dart';
 import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
@@ -13,8 +15,6 @@ import 'package:freeing/screen/home/meditation_bottom_sheet.dart';
 import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
 import 'package:freeing/screen/home/static_stretching_bottom_sheet.dart';
 import 'package:intl/intl.dart';
-
-import '../../common/component/bottom_sheet.dart';
 import '../../common/component/expansion_tile.dart';
 
 class HomePage extends StatefulWidget {
@@ -36,6 +36,8 @@ class _HomePageState extends State<HomePage> {
   late DateTime currentWeekStartDate;
   late DateTime selectedDate;
   List<SleepDailyRoutine> _sleepDailyRoutine = [];
+  List<ExerciseDailyRoutine> _exerciseDailyRoutine = [];
+  List<SpiritDailyRoutine> _spiritDailyRoutine = [];
 
   final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
   int dayOfWeek = 0;
@@ -45,7 +47,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> loadInitialData() async {
     try {
       await fetchSleepDailyRoutine();
-      await fetchSleepDailyRoutine();
+      await fetchExerciseDailyRoutine();
       await fetchSpiritDailyRoutine();
     } catch (e) {
       print(e);
@@ -65,34 +67,27 @@ class _HomePageState extends State<HomePage> {
             _sleepDailyRoutine = jsonData.map((data) => SleepDailyRoutine.fromJson(data)).toList();
           });
         } else {
-          print('Unexpected JSON format');
+          print('수면 루틴 불러오기 - Unexpected JSON format');
           setState(() {
             _sleepDailyRoutine = [];
           });
         }
       } else if(response.statusCode == 204){
-        print('아무것도 없어서 nullllllll');
+        print('수면 루틴에 아무것도 없음');
         setState(() {
           _sleepDailyRoutine = [];
         });
       } else{
-        throw Exception('Failed to fetch sleep list ${response.statusCode}');
+        throw Exception('Failed to fetch 수면 list ${response.statusCode}');
       }
     } catch(e){
-      print('Error fetching sleep routines: $e');
+      print('Error fetching 수면 routines: $e');
       setState(() {
         _sleepDailyRoutine = [];
       });
     }
   }
-
-  // TODO: 운동 루틴 불러오기
-  Future<void> fetchExerciseDailyRoutine() async {}
-
-  // TODO: 마음 채우기 루틴 불러오기
-  Future<void> fetchSpiritDailyRoutine() async {}
-
-  bool isRoutineActiveOnDay(SleepDailyRoutine routine, int dayOfWeek){
+  bool isSleepRoutineActiveOnDay(SleepDailyRoutine routine, int dayOfWeek){
     switch(dayOfWeek){
       case 1:
         return routine.monday ?? false;
@@ -112,15 +107,158 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
-
-  List<String> getFilteredSleepRoutines() {
-    final filteredList =  _sleepDailyRoutine
-        .where((routine) => isRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false))
-        .map((routine) => routine.sleepRoutineName ?? "")
+  List<SleepDailyRoutine> getFilteredSleepRoutines() {
+    return _sleepDailyRoutine
+        .where((routine) => isSleepRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false))
         .toList();
-
-    return filteredList.isNotEmpty ? filteredList : [];
+    // final filteredList =  _sleepDailyRoutine
+    //     .where((routine) => isRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false))
+    //     .map((routine) => routine.sleepRoutineName ?? "")
+    //     .toList();
+    //
+    // return filteredList.isNotEmpty ? filteredList : [];
   }
+
+  // TODO: 운동 루틴 불러오기
+  Future<void> fetchExerciseDailyRoutine() async {
+    try{
+      final response = await homeApiService.getExerciseRoutine(formattedDateForServer);
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(utf8.decode(response.bodyBytes));
+
+        if (jsonData is List) {
+          setState(() {
+            _exerciseDailyRoutine = jsonData.map((data) => ExerciseDailyRoutine.fromJson(data)).toList();
+          });
+        } else {
+          print('운동 루틴 불러오기 - Unexpected JSON format');
+          setState(() {
+            _exerciseDailyRoutine = [];
+          });
+        }
+      } else if(response.statusCode == 204){
+        print('운동 루틴에 아무것도 없음');
+        setState(() {
+          _exerciseDailyRoutine = [];
+        });
+      } else{
+        throw Exception('Failed to fetch 운동 list ${response.statusCode}');
+      }
+    } catch(e){
+      print('Error fetching 운동 routines: $e');
+      setState(() {
+        _exerciseDailyRoutine = [];
+      });
+    }
+  }
+  bool isExerciseRoutineActiveOnDay(ExerciseRoutineDetail routine, int dayOfWeek){
+    switch(dayOfWeek){
+      case 1:
+        return routine.monday ?? false;
+      case 2:
+        return routine.tuesday ?? false;
+      case 3:
+        return routine.wednesday ?? false;
+      case 4:
+        return routine.thursday ?? false;
+      case 5:
+        return routine.friday ?? false;
+      case 6:
+        return routine.saturday ?? false;
+      case 7:
+        return routine.sunday ?? false;
+      default:
+        return false;
+    }
+  }
+  List<ExerciseRoutineDetail> getAllFilteredExerciseRoutines(int dayOfWeek) {
+    List<ExerciseRoutineDetail> allActiveRoutines = [];
+
+    for (var routine in _exerciseDailyRoutine) {
+      if (routine.result != null) {
+        allActiveRoutines.addAll(
+          routine.result!.where((detail) {
+            return isExerciseRoutineActiveOnDay(detail, dayOfWeek) && (detail.status ?? false);
+          }).toList(),
+        );
+      }
+    }
+
+    return allActiveRoutines;
+  }
+
+  // TODO: 마음 채우기 루틴 불러오기
+  Future<void> fetchSpiritDailyRoutine() async {
+    try{
+      final response = await homeApiService.getSpiritRoutine(formattedDateForServer);
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(utf8.decode(response.bodyBytes));
+
+        if (jsonData is List) {
+          setState(() {
+            _spiritDailyRoutine = jsonData.map((data) => SpiritDailyRoutine.fromJson(data)).toList();
+          });
+        } else {
+          print('마음 채우기 불러오기 - Unexpected JSON format');
+          setState(() {
+            _spiritDailyRoutine = [];
+          });
+        }
+      } else if(response.statusCode == 204){
+        print('마음 채우기 루틴에 아무것도 없음');
+        setState(() {
+          _spiritDailyRoutine = [];
+        });
+      } else{
+        throw Exception('Failed to fetch 마음 채우기 list ${response.statusCode}');
+      }
+    } catch(e){
+      print('Error fetching 마음 채우기 routines: $e');
+      setState(() {
+        _sleepDailyRoutine = [];
+      });
+    }
+  }
+  bool isSpiritRoutineActiveOnDay(SpiritRoutineDetail routine, int dayOfWeek){
+    switch(dayOfWeek){
+      case 1:
+        return routine.monday ?? false;
+      case 2:
+        return routine.tuesday ?? false;
+      case 3:
+        return routine.wednesday ?? false;
+      case 4:
+        return routine.thursday ?? false;
+      case 5:
+        return routine.friday ?? false;
+      case 6:
+        return routine.saturday ?? false;
+      case 7:
+        return routine.sunday ?? false;
+      default:
+        return false;
+    }
+  }
+  List<SpiritRoutineDetail> getAllFilteredSpiritRoutines(int dayOfWeek) {
+    List<SpiritRoutineDetail> allActiveRoutines = [];
+
+    for (var routine in _spiritDailyRoutine) {
+      if (routine.result != null) {
+        allActiveRoutines.addAll(
+          routine.result!.where((detail) {
+            return isSpiritRoutineActiveOnDay(detail, dayOfWeek) && (detail.status ?? false);
+          }).toList(),
+        );
+      }
+    }
+
+    return allActiveRoutines;
+  }
+
+  // TODO: 상단 상태바도 각각 다 불러오기
+
 
   @override
   void initState() {
@@ -382,13 +520,13 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       children: [
                         HomeExpansionTileBox(
-                            text: '운동', lists: ['정적 스트레칭', '걷기']),
+                            text: '운동', exerciseDailyRoutines: getAllFilteredExerciseRoutines(dayOfWeek)),
                         verticalSpace,
                         HomeExpansionTileBox(
-                            text: '수면', lists: getFilteredSleepRoutines()),
+                            text: '수면', sleepDailyRoutines: getFilteredSleepRoutines()),
                         verticalSpace,
                         HomeExpansionTileBox(
-                            text: '마음 채우기', lists: ['감정일기 작성', '명상하기']),
+                            text: '마음 채우기', spiritDailyRoutines: getAllFilteredSpiritRoutines(dayOfWeek),),
                         verticalSpace,
                         Container(
                           width: screenWidth * 0.9,

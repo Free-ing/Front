@@ -37,5 +37,35 @@ class HomeApiService {
     }
   }
 
+  Future<http.Response> getExerciseRoutine(String queryDate) async {
+    final accessToken = await tokenStorage.getAccessToken();
+    final String _getExerciseRoutineEndpoint =
+        '$_baseUrl/exercise-service/home?date=$queryDate';
+    final url = Uri.parse(_getExerciseRoutineEndpoint);
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+
+  Future<http.Response> getSpiritRoutine(String queryDate) async {
+    final accessToken = await tokenStorage.getAccessToken();
+    final String _getSpiritRoutineEndpoint =
+        '$_baseUrl/spirit-service/home?date=$queryDate';
+    final url = Uri.parse(_getSpiritRoutineEndpoint);
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+
 
 }
