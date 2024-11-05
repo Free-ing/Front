@@ -218,7 +218,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
               isModal: true,
               modalTitle: '데이터 초기화',
               confirmButtonText: '초기화',
-              modalContent: '지금까지의 모든 루틴, 통계, 기록에 대한 정보들이 영구 삭제되며 복구할 수 없습니다.\n초기화 하시겠습니까?',
+              modalContent: '지금까지의 모든 루틴, 통계, 기록에 대한\n정보들이 영구 삭제되며 복구할 수 없습니다.\n\n초기화 하시겠습니까?',
               modalOnConfirm: () {
                 resetData(context);
               },
@@ -273,7 +273,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
               text: '회원 탈퇴',
               isModal: true,
               modalTitle: '회원 탈퇴',
-              modalContent: '정말 회원 탈퇴를 하시겠어요?\n기록된 정보는 모두 삭제됩니다.',
+              modalContent: '정말 회원 탈퇴를 하시겠어요?\n\n기록된 정보는 모두 삭제됩니다.',
               confirmButtonText: '탈퇴',
               modalOnConfirm: () {
                 deleteMember(context);

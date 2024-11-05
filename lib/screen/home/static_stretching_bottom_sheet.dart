@@ -122,12 +122,10 @@ class _StaticStretchingBottomSheetContentState
         if (repeatCount == 1 && !singleRunPoses.contains(currentPoseIndex)) {
           // singleRunPoses에 포함되지 않고 첫 번째 반복 중인 경우
           repeatCount = 0; // 두 번째 반복으로 설정
-
         } else if (currentPoseIndex > 1) {
           // singleRunPoses에 포함된 경우 또는 두 번째 반복인 경우
           repeatCount = 1;
           currentPoseIndex--;
-
         }
 
         _pageController.previousPage(

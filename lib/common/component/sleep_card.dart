@@ -46,6 +46,7 @@ class SleepCard extends StatefulWidget {
 class _SleepCardState extends State<SleepCard> {
   final apiService = SleepAPIService();
   final tokenStorage = TokenStorage();
+  bool isSwitched = false;
 
   // TODO: 수면 루틴 toggle on (활성화)
   Future<void> activateSleepRoutine(int routineId) async {
@@ -123,7 +124,11 @@ class _SleepCardState extends State<SleepCard> {
     }
   }
 
-  bool isSwitched = false;
+  @override
+  void initState(){
+    super.initState();
+    isSwitched = widget.status;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,15 +213,24 @@ class _SleepCardState extends State<SleepCard> {
       top: 2,
       right: 2,
       child: GestureDetector(
-        onTap: () {
+        onTap: () async{
           setState(() {
-            if (isSwitched) {
-              deactivateSleepRoutine(widget.routineId);
-            } else {
-              activateSleepRoutine(widget.routineId);
-            }
             isSwitched = !isSwitched;
           });
+          if (isSwitched) {
+            await activateSleepRoutine(widget.routineId);
+          } else {
+            await deactivateSleepRoutine(widget.routineId);
+          }
+
+          // setState(() {
+          //   if (isSwitched) {
+          //     deactivateSleepRoutine(widget.routineId);
+          //   } else {
+          //     activateSleepRoutine(widget.routineId);
+          //   }
+          //   isSwitched = !isSwitched;
+          // });
         },
         child: Padding(
           padding: const EdgeInsets.all(10.0),
