@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:freeing/common/service/base_url.dart';
 import 'package:freeing/common/service/token_manager.dart';
-import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 
 class ExerciseAPIService {
