@@ -34,6 +34,8 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
         setState(() {
           _sleepList =
               jsonData.map((data) => SleepList.fromJson(data)).toList();
+
+          _sleepList.sort((a, b) => a.routineId.compareTo(b.routineId));
         });
       } else {
         print('Unexpected JSON format');
