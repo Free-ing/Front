@@ -53,7 +53,7 @@ class _MeditationBottomSheetContent extends StatefulWidget {
 class _MeditationBottomSheetContentState
     extends State<_MeditationBottomSheetContent> {
   String imgUrl = 'assets/imgs/etc/meditaiton_mascot.png';
-  String audioUrl = 'assets/audio/meditation_audio.mp3';
+  String audioUrl = 'https://freeingimage.s3.ap-northeast-2.amazonaws.com/meditation_audio.mp3';
 
   late AudioPlayer player;
   bool isPlaying = false;
@@ -69,7 +69,7 @@ class _MeditationBottomSheetContentState
 
   void _initialize() async {
     player = AudioPlayer();
-    await player.setAsset(audioUrl);
+    await player.setUrl(audioUrl);
     await player.setVolume(volume);
     setState(() {});
   }

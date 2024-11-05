@@ -375,8 +375,12 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
   Widget _button(context) {
     return PairedButtons(
       onGreenPressed: () {
-        Navigator.of(context).pushReplacement(
+        widget.category == '취미'
+        ? Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const RoutinePage(index: 2)),
+        )
+            : Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const RoutinePage(index:0 )),
         );
       },
       onGrayPressed: () {

@@ -87,6 +87,7 @@ flutter:
     - assets/imgs/login/
     - assets/icons/
     - assets/audio/meditation_audio.mp3
+    - assets/audio/end_stretching.mp3
 
   fonts:
     - family: scdream
