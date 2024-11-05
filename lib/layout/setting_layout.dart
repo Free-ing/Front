@@ -47,19 +47,30 @@ class _SettingLayoutState extends State<SettingLayout> {
           appBar: AppBar(
             backgroundColor: widget.color,
             automaticallyImplyLeading: false,
-            leading: IconButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              icon: Icon(Icons.arrow_back_ios_rounded),
-              iconSize: 30.0,
-              padding: EdgeInsets.zero,
-              constraints: BoxConstraints(),
-            ),
-            title: Text(
-              widget.title,
-              style: textTheme.headlineLarge,
-              textAlign: TextAlign.center,
+            title: Padding(
+              padding: EdgeInsets.only(top: screenHeight * 0.03),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      iconSize: 30.0,
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(Icons.arrow_back_ios_rounded),
+                    ),
+                  ),
+                  Text(
+                    widget.title,
+                    style: textTheme.headlineLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
             centerTitle: true,
           ),
@@ -71,7 +82,6 @@ class _SettingLayoutState extends State<SettingLayout> {
             ),
             child: widget.child,
           ),
-
         )
       ],
     );

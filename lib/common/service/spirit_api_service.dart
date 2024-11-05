@@ -198,7 +198,7 @@ class SpiritAPIService {
   //Todo: 감정 일기 작성 하기
   Future<http.Response> postEmotionalDiary(String wellDone, String hardWork,
       bool getAiLetter, String emotion) async {
-    final int recordId= 3;
+    final int recordId= 7;
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/spirit-service/emotional-diary/$recordId');

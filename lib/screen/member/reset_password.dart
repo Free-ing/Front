@@ -155,23 +155,40 @@ class _ResetPasswordState extends State<ResetPassword> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
     return DefaultLayout(
       appBar: AppBar(
-        title: Text(
-          '비밀번호 변경',
-          style: Theme.of(context).textTheme.headlineLarge,
-        ),
         backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.chevron_left),
-          iconSize: 35.0,
+        title: Padding(
+          padding: EdgeInsets.only(top: screenHeight * 0.03),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  iconSize: 30.0,
+                  padding: EdgeInsets.zero,
+                  constraints: BoxConstraints(),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(Icons.arrow_back_ios_rounded),
+                ),
+              ),
+              Text(
+                '비밀번호 변경',
+                style: textTheme.headlineLarge,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
       child: SizedBox(

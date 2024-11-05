@@ -29,7 +29,7 @@ class _SignUpState extends State<SignUp> {
 
   bool _isValidEmail(String email) {
     final emailRegex =
-    RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
     return emailRegex.hasMatch(email);
   }
 
@@ -166,116 +166,141 @@ class _SignUpState extends State<SignUp> {
         }
       });
     } else {
-      if(_nameController.text.isEmpty){
-        DialogManager.showAlertDialog(context: context, title: '회원가입 실패', content: '이름을 입력해주세요.');
-      } else if(!_isEmailVerified){
-        DialogManager.showAlertDialog(context: context, title: '회원가입 실패', content: '이메일 인증을 해주세요.');
-      } else if(_passwordController.text.isEmpty || _passwordVerificationController.text.isEmpty){
-        DialogManager.showAlertDialog(context: context, title: '회원가입 실패', content: '비밀번호와 확인 비밀번호를\n 모두 입력해주세요.');
-      } else if(_passwordController.text.length <8 && _passwordVerificationController.text.length <8){
-        DialogManager.showAlertDialog(context: context, title: '회원가입 실패', content: '비밀번호는 8자 이상이여야 합니다.');
-      } else if (_passwordController.text != _passwordVerificationController.text){
-        DialogManager.showAlertDialog(context: context, title: '회원가입 변경 실패', content: '비밀번호와 확인 비밀번호가 다릅니다.');
+      if (_nameController.text.isEmpty) {
+        DialogManager.showAlertDialog(
+            context: context, title: '회원가입 실패', content: '이름을 입력해주세요.');
+      } else if (!_isEmailVerified) {
+        DialogManager.showAlertDialog(
+            context: context, title: '회원가입 실패', content: '이메일 인증을 해주세요.');
+      } else if (_passwordController.text.isEmpty ||
+          _passwordVerificationController.text.isEmpty) {
+        DialogManager.showAlertDialog(
+            context: context,
+            title: '회원가입 실패',
+            content: '비밀번호와 확인 비밀번호를\n 모두 입력해주세요.');
+      } else if (_passwordController.text.length < 8 &&
+          _passwordVerificationController.text.length < 8) {
+        DialogManager.showAlertDialog(
+            context: context, title: '회원가입 실패', content: '비밀번호는 8자 이상이여야 합니다.');
+      } else if (_passwordController.text !=
+          _passwordVerificationController.text) {
+        DialogManager.showAlertDialog(
+            context: context,
+            title: '회원가입 변경 실패',
+            content: '비밀번호와 확인 비밀번호가 다릅니다.');
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
     return DefaultLayout(
       appBar: AppBar(
-        title: Text(
-          '회원가입',
-          style: Theme.of(context).textTheme.headlineLarge,
+        title: Padding(
+          padding: EdgeInsets.only(top: screenHeight * 0.03),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  iconSize: 30.0,
+                  padding: EdgeInsets.zero,
+                  constraints: BoxConstraints(),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(Icons.arrow_back_ios_rounded),
+                ),
+              ),
+              Text(
+                '회원 가입',
+                style: textTheme.headlineLarge,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
         backgroundColor: Colors.white,
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.chevron_left),
-          iconSize: 35.0,
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        automaticallyImplyLeading: false,
       ),
-      child: Column(
-        children: [
-          SizedBox(
-            height: screenHeight * 0.5,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: Column(
-                children: [
-                  GrayTextFormField(
-                    controller: _nameController,
-                    width: screenWidth * 0.777,
-                    labelText: '이름',
-                    hintText: '이름을 입력해주세요',
-                  ),
-                  SizedBox(height: screenHeight * 0.015),
-                  GrayTextFormFieldWithButton(
-                    controller: _emailController,
-                    labelText: '이메일',
-                    hintText: '이메일을 입력해주세요.',
-                    buttonText: '중복 확인',
-                    width: screenWidth * 0.777,
-                    onButtonPressed: checkEmail,
-                    enabled: _isEmailFieldEnabled,
-                  ),
-                  Visibility(
-                    visible: _isEmailSent,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                            height: screenHeight * 0.015),
-                        GrayTextFormFieldWihTimerButton(
-                          controller: _codeController,
-                          onButtonPressed: verifyCode,
-                          enabled: _isCodeFieldEnabled,
-                          isVisible: _isTimerVisible,
-                          width: screenWidth * 0.777,
-                        ),
-                      ],
+      child: Padding(
+        padding: EdgeInsets.only(top: screenHeight * 0.03),
+        child: Column(
+          children: [
+            SizedBox(
+              height: screenHeight * 0.5,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Column(
+                  children: [
+                    GrayTextFormField(
+                      controller: _nameController,
+                      width: screenWidth * 0.777,
+                      labelText: '이름',
+                      hintText: '이름을 입력해주세요',
                     ),
-                  ),
-                  SizedBox(height: screenHeight * 0.015),
-                  GrayTextFormFieldWithEye(
-                    controller: _passwordController,
-                    labelText: '비밀번호',
-                    hintText: '비밀번호를 입력해주세요.',
-                    width: screenWidth * 0.777,
-                  ),
-                  SizedBox(height: screenHeight * 0.015),
-                  GrayTextFormFieldWithEye(
-                    controller: _passwordVerificationController,
-                    labelText: '비밀번호 확인',
-                    hintText: '비밀번호를 한번 더 입력해주세요.',
-                    width: screenWidth * 0.777,
-                  ),
-                  SizedBox(height: screenHeight * 0.035),
-                  GreenButton(
-                    text: '가입 하기',
-                    width: screenWidth * 0.62,
-                    onPressed: attemptSignUp,
-                  ),
-                ],
+                    SizedBox(height: screenHeight * 0.015),
+                    GrayTextFormFieldWithButton(
+                      controller: _emailController,
+                      labelText: '이메일',
+                      hintText: '이메일을 입력해주세요.',
+                      buttonText: '중복 확인',
+                      width: screenWidth * 0.777,
+                      onButtonPressed: checkEmail,
+                      enabled: _isEmailFieldEnabled,
+                    ),
+                    Visibility(
+                      visible: _isEmailSent,
+                      child: Column(
+                        children: [
+                          SizedBox(height: screenHeight * 0.015),
+                          GrayTextFormFieldWihTimerButton(
+                            controller: _codeController,
+                            onButtonPressed: verifyCode,
+                            enabled: _isCodeFieldEnabled,
+                            isVisible: _isTimerVisible,
+                            width: screenWidth * 0.777,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: screenHeight * 0.015),
+                    GrayTextFormFieldWithEye(
+                      controller: _passwordController,
+                      labelText: '비밀번호',
+                      hintText: '비밀번호를 입력해주세요.',
+                      width: screenWidth * 0.777,
+                    ),
+                    SizedBox(height: screenHeight * 0.015),
+                    GrayTextFormFieldWithEye(
+                      controller: _passwordVerificationController,
+                      labelText: '비밀번호 확인',
+                      hintText: '비밀번호를 한번 더 입력해주세요.',
+                      width: screenWidth * 0.777,
+                    ),
+                    SizedBox(height: screenHeight * 0.035),
+                    GreenButton(
+                      text: '가입 하기',
+                      width: screenWidth * 0.62,
+                      onPressed: attemptSignUp,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Image.asset(
-            "assets/imgs/login/signup.png",
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.fitWidth,
-          ),
-          // Image.asset(
-          //   "assets/imgs/login/login_top.png",
-          //   width: MediaQuery.of(context).size.width,
-          //   fit: BoxFit.fitWidth,
-          // ),
-        ],
+            Image.asset(
+              "assets/imgs/login/signup.png",
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.fitWidth,
+            ),
+          ],
+        ),
       ),
     );
   }
