@@ -1,11 +1,21 @@
 import 'dart:convert';
 import 'package:freeing/common/service/token_manager.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'base_url.dart';
 
 class HomeApiService {
   final String _baseUrl = BaseUrl.baseUrl;
   final tokenStorage = TokenManager();
+
+  bool isValidDateFormat(String completeDay) {
+    try {
+      DateFormat('yyyy-MM-dd').parseStrict(completeDay);
+      return true; // 날짜 형식이 맞으면 true 반환
+    } catch (e) {
+      return false; // 형식이 맞지 않으면 false 반환
+    }
+  }
 
   Future<http.Response> getSleepRoutine(int dayOfWeek, String queryDate) async {
     final Map<int, String> dayOfWeekMap = {
@@ -18,7 +28,7 @@ class HomeApiService {
       7: 'SUNDAY',
     };
     final String dayOfWeekString = dayOfWeekMap[dayOfWeek] ?? 'UNKNOWN';
-    if(dayOfWeekString != 'UNKNOWN'){
+    if (dayOfWeekString != 'UNKNOWN') {
       final accessToken = await tokenStorage.getAccessToken();
       final String _getSleepRoutineEndpoint =
           '$_baseUrl/sleep-service/routine/day?dayOfWeek=$dayOfWeekString&queryDate=$queryDate';
@@ -34,6 +44,49 @@ class HomeApiService {
     } else {
       print("요일이 unknown으로 뜸!!!!!");
       return Future.error("Invalid dayOfWeek value!!!!");
+    }
+  }
+
+  Future<bool> checkSleepRoutine(
+      bool isOn, String completeDay, int? sleepRoutineId) async {
+    if (isValidDateFormat(completeDay) && sleepRoutineId != null) {
+      final accessToken = await tokenStorage.getAccessToken();
+      final String _checkSleepEndpoint =
+          '$_baseUrl/sleep-service/routine/record';
+      final url = Uri.parse(_checkSleepEndpoint);
+
+      final response = await (isOn
+          ? http.post(
+              url,
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $accessToken',
+              },
+              body: json.encode({
+                'completeDay': completeDay,
+                'sleepRoutineId': sleepRoutineId,
+              }),
+            )
+          : http.delete(
+              url,
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $accessToken',
+              },
+              body: json.encode({
+                'completeDay': completeDay,
+                'sleepRoutineId': sleepRoutineId,
+              }),
+            ));
+
+      if (response.statusCode == 201) {
+        print('루틴 ${isOn ? '켜기' : '끄기'} 성공');
+      } else {
+        print('루틴 ${isOn ? '켜기' : '끄기'} 실패');
+      }
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -66,6 +119,4 @@ class HomeApiService {
       },
     );
   }
-
-
 }

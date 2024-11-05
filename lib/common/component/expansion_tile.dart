@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/home_api_service.dart';
 import 'package:freeing/model/home/exercise_daily_routine.dart';
 import 'package:freeing/model/home/sleep_daily_routine.dart';
 import 'package:freeing/model/home/spirit_daily_routine.dart';
@@ -15,16 +16,18 @@ import 'buttons.dart';
 
 class HomeExpansionTileBox extends StatefulWidget {
   String text;
-  //List lists;
   final List<SleepDailyRoutine> sleepDailyRoutines;
   final List<SpiritRoutineDetail> spiritDailyRoutines;
   final List<ExerciseRoutineDetail> exerciseDailyRoutines;
+  String completeDay;
+
   HomeExpansionTileBox({
     Key? key,
     required this.text,
     this.sleepDailyRoutines = const [],
     this.spiritDailyRoutines = const [],
     this.exerciseDailyRoutines = const [],
+    required this.completeDay,
   }) : super(key: key);
 
   @override
@@ -38,6 +41,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   late List<bool> _isExerciseVisible;
   late List<bool> _isSpiritChecked;
   late List<bool> _isSpiritVisible;
+  final homeApiService = HomeApiService();
 
   @override
   void initState() {
@@ -55,7 +59,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     }
   }
 
-  // TODO: 각 리스트 항목에 대한 초기 체크 상태를 false로 되어있는데 받아와야함!!!
   void _initializeCheckLists() {
     _isSleepChecked = widget.sleepDailyRoutines.isNotEmpty
         ? widget.sleepDailyRoutines
@@ -127,11 +130,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 const SizedBox(width: 15.0),
                 GestureDetector(
                     onTap: () {
-                      setState(() {
-                        _handleCheckboxTap(index);
-                      });
+                      if(index < _isExerciseChecked.length){
+                        setState(() {
+                          _handleCheckboxTap(index);
+                        });
+                      }
                     },
-                    child: Image.asset(_isExerciseChecked[index]
+                    child: Image.asset(index < _isExerciseChecked.length && _isExerciseChecked[index]
                         ? 'assets/icons/after_checkbox.png'
                         : 'assets/icons/before_checkbox.png')),
               ],
@@ -176,11 +181,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 const SizedBox(width: 15.0),
                 GestureDetector(
                     onTap: () {
-                      setState(() {
-                        _handleCheckboxTap(index);
-                      });
+                      if(index < _isSleepChecked.length){
+                        setState(() {
+                          _handleCheckboxTap(index);
+                        });
+                      }
                     },
-                    child: Image.asset(_isSleepChecked[index]
+                    child: Image.asset(index < _isSleepChecked.length && _isSleepChecked[index]
                         ? 'assets/icons/after_checkbox.png'
                         : 'assets/icons/before_checkbox.png')),
               ],
@@ -226,11 +233,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 const SizedBox(width: 15.0),
                 GestureDetector(
                     onTap: () {
-                      setState(() {
-                        _handleCheckboxTap(index);
-                      });
+                      if(index < _isSpiritChecked.length){
+                        setState(() {
+                          _handleCheckboxTap(index);
+                        });
+                      }
                     },
-                    child: Image.asset(_isSpiritChecked[index]
+                    child: Image.asset(index < _isSpiritChecked.length && _isSpiritChecked[index]
                         ? 'assets/icons/after_checkbox.png'
                         : 'assets/icons/before_checkbox.png')),
               ],
@@ -367,38 +376,114 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     }
   }
 
+  // void _handleCheckboxTap(int index) async {
+  //   SleepDailyRoutine sleepRoutine = widget.sleepDailyRoutines[index];
+  //   ExerciseRoutineDetail exerciseRoutine = widget.exerciseDailyRoutines[index];
+  //   SpiritRoutineDetail spiritRoutine = widget.spiritDailyRoutines[index];
+  //
+  //   bool newStatus = !_isSleepChecked[index];
+  //   bool success = false;
+  //
+  //
+  //   try {
+  //     switch (widget.text) {
+  //       case '수면':
+  //         // TODO: 수면 루틴 완료 상태 업데이트 요청
+  //         success = await homeApiService.checkSleepRoutine(newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
+  //         break;
+  //       case '운동':
+  //         // TODO: 운동 루틴 완료 상태 업데이트 요청
+  //         //success = await apiService.markExerciseRoutineCompleted(routine.sleepRoutineId, newStatus);
+  //         break;
+  //       case '마음 채우기':
+  //         // TODO: 마음 채우기 루틴 완료 상태 업데이트 요청
+  //         //success = await apiService.markSpiritRoutineCompleted(routine.sleepRoutineId, newStatus);
+  //         break;
+  //       default:
+  //         // 다른 경우 처리
+  //         break;
+  //     }
+  //
+  //     if (success) {
+  //       setState(() {
+  //         _isSleepChecked[index] = newStatus;
+  //         if (newStatus) {
+  //           _isSleepVisible[index] = false;
+  //         }
+  //       });
+  //     } else {
+  //       // 서버 요청 실패 시 사용자에게 알림
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('루틴 상태 업데이트에 실패했습니다.')),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     print('Error updating routine status: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('루틴 상태 업데이트 중 오류가 발생했습니다.')),
+  //     );
+  //   }
+  // }
+
   void _handleCheckboxTap(int index) async {
-    SleepDailyRoutine routine = widget.sleepDailyRoutines[index];
-    bool newStatus = !_isSleepChecked[index];
+    bool newStatus = false;
     bool success = false;
 
     try {
       switch (widget.text) {
         case '수면':
-          // TODO: 수면 루틴 완료 상태 업데이트 요청
-          //success = await apiService.markSleepRoutineCompleted(routine.sleepRoutineId, newStatus);
+          if (index < _isSleepChecked.length && index < widget.sleepDailyRoutines.length) {
+            SleepDailyRoutine sleepRoutine = widget.sleepDailyRoutines[index];
+            newStatus = !_isSleepChecked[index];
+            success = await homeApiService.checkSleepRoutine(newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
+            if (success) {
+              setState(() {
+                _isSleepChecked[index] = newStatus;
+                if (newStatus) {
+                  _isSleepVisible[index] = false;
+                }
+              });
+            }
+          }
           break;
+
         case '운동':
-          // TODO: 운동 루틴 완료 상태 업데이트 요청
-          //success = await apiService.markExerciseRoutineCompleted(routine.sleepRoutineId, newStatus);
+          if (index < _isExerciseChecked.length && index < widget.exerciseDailyRoutines.length) {
+            ExerciseRoutineDetail exerciseRoutine = widget.exerciseDailyRoutines[index];
+            newStatus = !_isExerciseChecked[index];
+            // success = await homeApiService.markExerciseRoutineCompleted(exerciseRoutine.exerciseRoutineId, newStatus);
+            if (success) {
+              setState(() {
+                _isExerciseChecked[index] = newStatus;
+                if (newStatus) {
+                  _isExerciseVisible[index] = false;
+                }
+              });
+            }
+          }
           break;
+
         case '마음 채우기':
-          // TODO: 마음 채우기 루틴 완료 상태 업데이트 요청
-          //success = await apiService.markSpiritRoutineCompleted(routine.sleepRoutineId, newStatus);
+          if (index < _isSpiritChecked.length && index < widget.spiritDailyRoutines.length) {
+            SpiritRoutineDetail spiritRoutine = widget.spiritDailyRoutines[index];
+            newStatus = !_isSpiritChecked[index];
+            // success = await homeApiService.markSpiritRoutineCompleted(spiritRoutine.spiritRoutineId, newStatus);
+            if (success) {
+              setState(() {
+                _isSpiritChecked[index] = newStatus;
+                if (newStatus) {
+                  _isSpiritVisible[index] = false;
+                }
+              });
+            }
+          }
           break;
+
         default:
-          // 다른 경우 처리
           break;
       }
 
-      if (success) {
-        setState(() {
-          _isSleepChecked[index] = newStatus;
-          if (newStatus) {
-            _isSleepVisible[index] = false;
-          }
-        });
-      } else {
+      if (!success) {
         // 서버 요청 실패 시 사용자에게 알림
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('루틴 상태 업데이트에 실패했습니다.')),
@@ -411,6 +496,8 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       );
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {

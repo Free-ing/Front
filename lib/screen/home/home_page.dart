@@ -148,6 +148,8 @@ class _HomePageState extends State<HomePage> {
             _exerciseDailyRoutine = (jsonData['result'] as List)
                 .map((data) => ExerciseRoutineDetail.fromJson(data))
                 .toList();
+            print('exercise 루틴 $_exerciseDailyRoutine');
+            print('setState까지 성공함');
           });
         } else {
           print('운동 루틴 불러오기 - Unexpected JSON format');
@@ -204,7 +206,7 @@ class _HomePageState extends State<HomePage> {
     return allActiveRoutines;
   }
 
-  // TODO: 마음 채우기 루틴 불러오기
+  // 마음 채우기 루틴 불러오기
   Future<void> fetchSpiritDailyRoutine() async {
     try {
       final response =
@@ -240,7 +242,6 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
   bool isSpiritRoutineActiveOnDay(SpiritRoutineDetail routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
@@ -261,7 +262,6 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
-
   List<SpiritRoutineDetail> getAllFilteredSpiritRoutines(int dayOfWeek) {
     List<SpiritRoutineDetail> allActiveRoutines = [];
 
@@ -537,16 +537,16 @@ class _HomePageState extends State<HomePage> {
                         HomeExpansionTileBox(
                             text: '운동',
                             exerciseDailyRoutines:
-                                getAllFilteredExerciseRoutines(dayOfWeek)),
+                                getAllFilteredExerciseRoutines(dayOfWeek), completeDay: formattedDateForServer,),
                         verticalSpace,
                         HomeExpansionTileBox(
                             text: '수면',
-                            sleepDailyRoutines: getFilteredSleepRoutines()),
+                            sleepDailyRoutines: getFilteredSleepRoutines(), completeDay: formattedDateForServer,),
                         verticalSpace,
                         HomeExpansionTileBox(
                           text: '마음 채우기',
                           spiritDailyRoutines:
-                              getAllFilteredSpiritRoutines(dayOfWeek),
+                              getAllFilteredSpiritRoutines(dayOfWeek), completeDay: formattedDateForServer,
                         ),
                         verticalSpace,
                         Container(
