@@ -46,7 +46,7 @@ class ExerciseAPIService {
         'startTime': startTime,
         'endTime': endTime,
         'explanation': explanation,
-        'statue': true,
+        'status': true,
       }),
     );
 

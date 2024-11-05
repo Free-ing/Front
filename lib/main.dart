@@ -81,6 +81,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:freeing/screen/chart/exercise_report_screen.dart';
 import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';

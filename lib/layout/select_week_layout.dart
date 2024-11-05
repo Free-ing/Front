@@ -38,9 +38,11 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
   }
 
   Future<void> _initializeData() async {
-    await _viewUserInfo();
-    await _loadRewardedInterstitialAd();
     await calculateWeeks();
+
+    await _loadRewardedInterstitialAd();
+
+    await _viewUserInfo();
   }
 
   //Todo: 보상형 전면 광고 로드

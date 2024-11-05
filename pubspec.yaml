@@ -51,6 +51,7 @@ dependencies:
   just_audio: ^0.9.42
   audioplayers: ^6.1.0
   rxdart: ^0.28.0
+  fl_chart: ^0.69.0
 
 
 

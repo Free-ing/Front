@@ -33,6 +33,7 @@ class _SpiritTabBarViewState extends State<SpiritTabBarView> {
           SpiritList spiritCard = SpiritList.fromJson(data);
           _spiritList.add(spiritCard);
         }
+        _spiritList.sort((a, b) => a.routineId.compareTo(b.routineId));
       }
       return _spiritList;
     } else if (response.statusCode == 404) {

@@ -6,6 +6,7 @@ class ScreenLayout extends StatelessWidget {
   final Widget body;
   final bool? showIconButton;
   final VoidCallback? onDeletePressed;
+  final Color? color;
 
   const ScreenLayout({
     super.key,
@@ -13,6 +14,7 @@ class ScreenLayout extends StatelessWidget {
     required this.body,
     this.showIconButton,
     this.onDeletePressed,
+    this.color,
   });
 
   @override
@@ -22,9 +24,9 @@ class ScreenLayout extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: color ?? Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: color ?? Colors.white,
         automaticallyImplyLeading: false,
         title: Padding(
           padding: EdgeInsets.only(top: screenHeight * 0.03),
