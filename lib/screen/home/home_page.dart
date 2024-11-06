@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/circle_widget.dart';
@@ -8,11 +9,7 @@ import 'package:freeing/model/home/exercise_daily_routine.dart';
 import 'package:freeing/model/home/sleep_daily_routine.dart';
 import 'package:freeing/model/home/spirit_daily_routine.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
-import 'package:freeing/screen/home/diary_bottom_sheet.dart';
-import 'package:freeing/screen/home/dynamic_stretching_bottom_sheet.dart';
 import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
-import 'package:freeing/screen/home/meditation_bottom_sheet.dart';
-import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/component/expansion_tile.dart';
@@ -57,7 +54,7 @@ class _HomePageState extends State<HomePage> {
       ]);
     } catch (e) {
       print(e);
-    } finally{
+    } finally {
       setState(() {
         isLoading = false;
       });
@@ -142,13 +139,13 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
-        //print('jsonData: $jsonData');
+        print('jsonData: $jsonData');
         if (jsonData is Map<String, dynamic> && jsonData['result'] is List) {
           setState(() {
             _exerciseDailyRoutine = (jsonData['result'] as List)
                 .map((data) => ExerciseRoutineDetail.fromJson(data))
                 .toList();
-            //print('exercise 루틴 $_exerciseDailyRoutine');
+            print('exercise 루틴 $_exerciseDailyRoutine');
             //print('setState까지 성공함');
           });
         } else {
@@ -196,7 +193,8 @@ class _HomePageState extends State<HomePage> {
     List<ExerciseRoutineDetail> allActiveRoutines = [];
 
     for (var routine in _exerciseDailyRoutine) {
-      if (isExerciseRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false)) {
+      if (isExerciseRoutineActiveOnDay(routine, dayOfWeek) &&
+          (routine.status ?? false)) {
         allActiveRoutines.add(routine);
       }
     }
@@ -265,7 +263,8 @@ class _HomePageState extends State<HomePage> {
     List<SpiritRoutineDetail> allActiveRoutines = [];
 
     for (var routine in _spiritDailyRoutine) {
-      if (isSpiritRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false)) {
+      if (isSpiritRoutineActiveOnDay(routine, dayOfWeek) &&
+          (routine.status ?? false)) {
         allActiveRoutines.add(routine);
       }
     }
@@ -357,6 +356,10 @@ class _HomePageState extends State<HomePage> {
                       child: TextButton(
                         onPressed: () {
                           setState(() {
+                            selectedDate = today;
+                            formattedDate = DateFormat('yyyy년 MM월 dd일')
+                                .format(selectedDate);
+                            formattedDateForServer = DateFormat('yyyy-MM-dd').format(selectedDate);
                             currentWeekStartDate = getStartOfWeek(today);
                             _generateDates();
 
@@ -364,11 +367,10 @@ class _HomePageState extends State<HomePage> {
                             if (selectedIndex < 0 || selectedIndex > 6) {
                               selectedIndex = 0;
                             }
-                            selectedDate = today;
-                            formattedDate = DateFormat('yyyy년 MM월 dd일')
-                                .format(selectedDate);
                             todayDayName =
                                 DateFormat('EEE', 'ko').format(selectedDate);
+                            loadInitialData();
+
                           });
                         },
                         style: TextButton.styleFrom(
@@ -434,8 +436,7 @@ class _HomePageState extends State<HomePage> {
                             });
                           },
                           child: const Padding(
-                            padding:
-                                EdgeInsets.only(left: 8.0, top: 25.0),
+                            padding: EdgeInsets.only(left: 8.0, top: 25.0),
                             child: Icon(Icons.arrow_back_ios, size: 15),
                           ),
                         ),
@@ -484,8 +485,7 @@ class _HomePageState extends State<HomePage> {
                             });
                           },
                           child: const Padding(
-                            padding:
-                                EdgeInsets.only(right: 8.0, top: 25.0),
+                            padding: EdgeInsets.only(right: 8.0, top: 25.0),
                             child: Icon(
                               Icons.arrow_forward_ios,
                               size: 15,
@@ -494,58 +494,64 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ]),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(
-                      height: screenHeight * 0.03,
-                    ),
-                    PlayButton(
-                        onPressed: () {
-                          showDynamicStretchingBottomSheet(context, '동적 스트레칭');
-                        },
-                        iconColor: PINK_PLAY_BUTTON),
-                    PlayButton(
-                        onPressed: () {
-                          showMeditationBottomSheet(context, '명상하기');
-                        },
-                        iconColor: GREEN_PLAY_BUTTON),
-                    LogButton(
-                      onPressed: () {
-                        showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
-                      },
-                    ),
-                    LogButton(
-                      onPressed: () {
-                        showDiaryBottomSheet(
-                            context, '오늘 하루 어땠나요?', DateTime.now());
-                      },
-                    ),
-                    LogButton(
-                      onPressed: () {
-                        showHobbyBottomSheet(context, '오늘 했던 취미는 어땠나요? ');
-                      },
-                    )
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //   children: [
+                //     SizedBox(
+                //       height: screenHeight * 0.03,
+                //     ),
+                //     PlayButton(
+                //         onPressed: () {
+                //           showDynamicStretchingBottomSheet(context, '동적 스트레칭');
+                //         },
+                //         iconColor: PINK_PLAY_BUTTON),
+                //     PlayButton(
+                //         onPressed: () {
+                //           showMeditationBottomSheet(context, '명상하기');
+                //         },
+                //         iconColor: GREEN_PLAY_BUTTON),
+                //     LogButton(
+                //       onPressed: () {
+                //         showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
+                //       },
+                //     ),
+                //     LogButton(
+                //       onPressed: () {
+                //         showDiaryBottomSheet(
+                //             context, '오늘 하루 어땠나요?', DateTime.now());
+                //       },
+                //     ),
+                //     LogButton(
+                //       onPressed: () {
+                //         showHobbyBottomSheet(context, '오늘 했던 취미는 어땠나요? ');
+                //       },
+                //     )
+                //   ],
+                // ),
+                SizedBox(height: screenHeight * 0.01),
                 Container(
                   height: screenHeight * 0.5,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
                         HomeExpansionTileBox(
-                            text: '운동',
-                            exerciseDailyRoutines:
-                                getAllFilteredExerciseRoutines(dayOfWeek), completeDay: formattedDateForServer,),
+                          text: '운동',
+                          exerciseDailyRoutines:
+                              getAllFilteredExerciseRoutines(dayOfWeek),
+                          completeDay: formattedDateForServer,
+                        ),
                         verticalSpace,
                         HomeExpansionTileBox(
-                            text: '수면',
-                            sleepDailyRoutines: getFilteredSleepRoutines(), completeDay: formattedDateForServer,),
+                          text: '수면',
+                          sleepDailyRoutines: getFilteredSleepRoutines(),
+                          completeDay: formattedDateForServer,
+                        ),
                         verticalSpace,
                         HomeExpansionTileBox(
                           text: '마음 채우기',
                           spiritDailyRoutines:
-                              getAllFilteredSpiritRoutines(dayOfWeek), completeDay: formattedDateForServer,
+                              getAllFilteredSpiritRoutines(dayOfWeek),
+                          completeDay: formattedDateForServer,
                         ),
                         verticalSpace,
                         Container(
@@ -556,7 +562,8 @@ class _HomePageState extends State<HomePage> {
                               border: Border.all(width: 1),
                               borderRadius: BorderRadius.circular(15)),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 20.0, right: 8.0),
+                            padding:
+                                const EdgeInsets.only(left: 20.0, right: 8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -593,7 +600,8 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          bottomNavigationBar: const CustomBottomNavigationBar(selectedIndex: 0),
+          bottomNavigationBar:
+              const CustomBottomNavigationBar(selectedIndex: 0),
         ),
       ],
     );
