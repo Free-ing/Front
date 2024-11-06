@@ -183,7 +183,7 @@ class _StretchingBottomSheetLayoutState
           SizedBox(height: screenHeight * 0.01),
           _viewRemainSeconds(textTheme),
           SizedBox(height: screenHeight * 0.005),
-          _viewStretchingContents(screenHeight),
+          _showStretchingContents(screenHeight),
           _volumeAndPlayButton()
         ],
       ),
@@ -220,7 +220,7 @@ class _StretchingBottomSheetLayoutState
   }
 
   //Todo: 스트레칭 내용
-  Widget _viewStretchingContents(screenHeight){
+  Widget _showStretchingContents(screenHeight){
     return Container(
       height: screenHeight * 0.45,
       child: PageView(

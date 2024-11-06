@@ -39,7 +39,7 @@ class _DynamicStretchingBottomSheetContentState
       singleRunPoses: {3, 4, 5, 6},
       stretchingContents: [
         _dynamicStretchingNeckLeft(),
-        _dynamicStretchinNeckRight(),
+        _dynamicStretchingNeckRight(),
         _dynamicStretchingShoulderFront(),
         _dynamicStretchingShoulderBack(),
         _dynamicStretchingArm(),
@@ -64,7 +64,7 @@ class _DynamicStretchingBottomSheetContentState
   }
 
   //Todo: 1-2. 목회전 - 오른쪽 (30초)
-  Widget _dynamicStretchinNeckRight() {
+  Widget _dynamicStretchingNeckRight() {
     return StretchingContentReverse(
       name: '목회전-오른쪽',
       imageUrl: 'assets/imgs/exercise/dynamic_neck.png',
