@@ -46,7 +46,6 @@ class HomeApiService {
       return Future.error("Invalid dayOfWeek value!!!!");
     }
   }
-
   Future<bool> checkSleepRoutine(
       bool isOn, String completeDay, int? sleepRoutineId) async {
     if (isValidDateFormat(completeDay) && sleepRoutineId != null) {
@@ -80,9 +79,9 @@ class HomeApiService {
             ));
 
       if (response.statusCode == 201) {
-        print('루틴 ${isOn ? '켜기' : '끄기'} 성공');
+        print('수면 루틴 ${isOn ? '켜기' : '끄기'} 성공');
       } else {
-        print('루틴 ${isOn ? '켜기' : '끄기'} 실패');
+        print('수면 루틴 ${isOn ? '켜기' : '끄기'} 실패');
       }
       return true;
     } else {
@@ -91,6 +90,7 @@ class HomeApiService {
   }
 
   Future<http.Response> getExerciseRoutine(String queryDate) async {
+    print('Exercise queryDate!!! $queryDate');
     final accessToken = await tokenStorage.getAccessToken();
     final String _getExerciseRoutineEndpoint =
         '$_baseUrl/exercise-service/home?date=$queryDate';
@@ -103,6 +103,32 @@ class HomeApiService {
         'Authorization': 'Bearer $accessToken',
       },
     );
+  }
+  Future<bool> checkExerciseRoutine(bool isOn, int? exerciseRoutineId) async {
+    if(exerciseRoutineId != null){
+      final accessToken = await tokenStorage.getAccessToken();
+      final String _checkExerciseEndpoint = isOn
+          ? '$_baseUrl/spirit-service/{$exerciseRoutineId}/complete'
+          : '$_baseUrl/spirit-service/{$exerciseRoutineId}/cancel';
+      final url = Uri.parse(_checkExerciseEndpoint);
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('운동 루틴 ${isOn ? '켜기' : '끄기'} 성공');
+      } else {
+        print('운동 루틴 ${isOn ? '켜기' : '끄기'} 실패');
+      }
+      return true;
+    } else{
+      return false;
+    }
   }
 
   Future<http.Response> getSpiritRoutine(String queryDate) async {
@@ -118,5 +144,31 @@ class HomeApiService {
         'Authorization': 'Bearer $accessToken',
       },
     );
+  }
+  Future<bool> checkSpiritRoutine(bool isOn, int? spiritRoutineId) async {
+    if (spiritRoutineId != null) {
+      final accessToken = await tokenStorage.getAccessToken();
+      final String _checkSpiritEndpoint = isOn
+          ? '$_baseUrl/spirit-service/{$spiritRoutineId}/complete'
+          : '$_baseUrl/spirit-service/{$spiritRoutineId}/cancel';
+      final url = Uri.parse(_checkSpiritEndpoint);
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('마음 채우기 루틴 ${isOn ? '켜기' : '끄기'} 성공');
+      } else {
+        print('마음 채우기 루틴 ${isOn ? '켜기' : '끄기'} 실패');
+      }
+      return true;
+    } else {
+      return false;
+    }
   }
 }

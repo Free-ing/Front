@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> {
     // return filteredList.isNotEmpty ? filteredList : [];
   }
 
-  // TODO: 운동 루틴 불러오기
+  // 운동 루틴 불러오기
   Future<void> fetchExerciseDailyRoutine() async {
     try {
       final response =
@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
-
+        print('jsonData: $jsonData');
         if (jsonData is Map<String, dynamic> && jsonData['result'] is List) {
           setState(() {
             _exerciseDailyRoutine = (jsonData['result'] as List)
@@ -172,7 +172,6 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
   bool isExerciseRoutineActiveOnDay(ExerciseRoutineDetail routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
@@ -193,7 +192,6 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
-
   List<ExerciseRoutineDetail> getAllFilteredExerciseRoutines(int dayOfWeek) {
     List<ExerciseRoutineDetail> allActiveRoutines = [];
 
@@ -214,12 +212,13 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
-
+        print('jsonData: $jsonData');
         if (jsonData is Map<String, dynamic> && jsonData['result'] is List) {
           setState(() {
             _spiritDailyRoutine = (jsonData['result'] as List)
                 .map((data) => SpiritRoutineDetail.fromJson(data))
                 .toList();
+            print('spiritDailyROUtine 값!!!! $_spiritDailyRoutine');
           });
         } else {
           print('마음 채우기 불러오기 - Unexpected JSON format');

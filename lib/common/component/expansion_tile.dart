@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/home_api_service.dart';
 import 'package:freeing/model/home/exercise_daily_routine.dart';
@@ -446,12 +447,11 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             }
           }
           break;
-
         case '운동':
           if (index < _isExerciseChecked.length && index < widget.exerciseDailyRoutines.length) {
             ExerciseRoutineDetail exerciseRoutine = widget.exerciseDailyRoutines[index];
             newStatus = !_isExerciseChecked[index];
-            // success = await homeApiService.markExerciseRoutineCompleted(exerciseRoutine.exerciseRoutineId, newStatus);
+            success = await homeApiService.checkExerciseRoutine(newStatus, exerciseRoutine.routineId);
             if (success) {
               setState(() {
                 _isExerciseChecked[index] = newStatus;
@@ -462,12 +462,11 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             }
           }
           break;
-
         case '마음 채우기':
           if (index < _isSpiritChecked.length && index < widget.spiritDailyRoutines.length) {
             SpiritRoutineDetail spiritRoutine = widget.spiritDailyRoutines[index];
             newStatus = !_isSpiritChecked[index];
-            // success = await homeApiService.markSpiritRoutineCompleted(spiritRoutine.spiritRoutineId, newStatus);
+            success = await homeApiService.checkSpiritRoutine(newStatus, spiritRoutine.routineId);
             if (success) {
               setState(() {
                 _isSpiritChecked[index] = newStatus;
@@ -478,25 +477,23 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             }
           }
           break;
-
         default:
           break;
       }
 
       if (!success) {
         // 서버 요청 실패 시 사용자에게 알림
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('루틴 상태 업데이트에 실패했습니다.')),
-        );
+        const ToastBarWidget(
+          title: '루틴 상태 업데이트에 실패했습니다.',
+        ).showToast(context);
       }
     } catch (e) {
       print('Error updating routine status: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('루틴 상태 업데이트 중 오류가 발생했습니다.')),
-      );
+      const ToastBarWidget(
+        title: '루틴 상태 업데이트 중 오류가 발생했습니다.',
+      ).showToast(context);
     }
   }
-
 
 
   @override
