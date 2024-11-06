@@ -77,11 +77,10 @@ class HomeApiService {
                 'sleepRoutineId': sleepRoutineId,
               }),
             ));
-
-      if (response.statusCode == 201) {
-        print('수면 루틴 ${isOn ? '켜기' : '끄기'} 성공');
+      if(isOn ? response.statusCode == 201 : response.statusCode == 204){
+        print('수면 루틴 ${isOn ? '체크' : '체크 취소'} 성공');
       } else {
-        print('수면 루틴 ${isOn ? '켜기' : '끄기'} 실패');
+        print('수면 루틴 ${isOn ? '체크' : '체크 취소'} 실패');
       }
       return true;
     } else {
@@ -90,7 +89,7 @@ class HomeApiService {
   }
 
   Future<http.Response> getExerciseRoutine(String queryDate) async {
-    print('Exercise queryDate!!! $queryDate');
+    //print('Exercise queryDate!!! $queryDate');
     final accessToken = await tokenStorage.getAccessToken();
     final String _getExerciseRoutineEndpoint =
         '$_baseUrl/exercise-service/home?date=$queryDate';
@@ -108,8 +107,8 @@ class HomeApiService {
     if(exerciseRoutineId != null){
       final accessToken = await tokenStorage.getAccessToken();
       final String _checkExerciseEndpoint = isOn
-          ? '$_baseUrl/spirit-service/{$exerciseRoutineId}/complete'
-          : '$_baseUrl/spirit-service/{$exerciseRoutineId}/cancel';
+          ? '$_baseUrl/spirit-service/$exerciseRoutineId/complete'
+          : '$_baseUrl/spirit-service/$exerciseRoutineId/cancel';
       final url = Uri.parse(_checkExerciseEndpoint);
 
       final response = await http.patch(
@@ -121,9 +120,9 @@ class HomeApiService {
       );
 
       if (response.statusCode == 200) {
-        print('운동 루틴 ${isOn ? '켜기' : '끄기'} 성공');
+        print('운동 루틴 ${isOn ? '체크' : '체크 취소'} 성공');
       } else {
-        print('운동 루틴 ${isOn ? '켜기' : '끄기'} 실패');
+        print('운동 루틴 ${isOn ? '체크' : '체크 취소'} 실패');
       }
       return true;
     } else{
@@ -149,8 +148,8 @@ class HomeApiService {
     if (spiritRoutineId != null) {
       final accessToken = await tokenStorage.getAccessToken();
       final String _checkSpiritEndpoint = isOn
-          ? '$_baseUrl/spirit-service/{$spiritRoutineId}/complete'
-          : '$_baseUrl/spirit-service/{$spiritRoutineId}/cancel';
+          ? '$_baseUrl/spirit-service/$spiritRoutineId/complete'
+          : '$_baseUrl/spirit-service/$spiritRoutineId/cancel';
       final url = Uri.parse(_checkSpiritEndpoint);
 
       final response = await http.patch(
@@ -162,12 +161,18 @@ class HomeApiService {
       );
 
       if (response.statusCode == 200) {
-        print('마음 채우기 루틴 ${isOn ? '켜기' : '끄기'} 성공');
-      } else {
-        print('마음 채우기 루틴 ${isOn ? '켜기' : '끄기'} 실패');
+        print('마음 채우기 루틴 ${isOn ? '체크' : '체크 취소'} 성공');
+      } else if(response.statusCode == 201){
+        print('마음채우기 루틴 statuscode == 201');
+      } else if(response.statusCode == 202){
+        print('마음채우기 루틴 statuscode == 202');
+      }else {
+        print('마음 채우기 루틴 ${isOn ? '체크' : '체크 취소'} 실패');
+        print('마음 채우기 루틴 상태 코드: ${response.statusCode}');
       }
       return true;
     } else {
+
       return false;
     }
   }

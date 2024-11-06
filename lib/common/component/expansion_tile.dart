@@ -66,27 +66,31 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             .map((routine) => routine.completed ?? false)
             .toList()
         : [];
-    _isSleepVisible = widget.sleepDailyRoutines.isNotEmpty
-        ? List<bool>.filled(widget.sleepDailyRoutines.length, true)
+    _isSleepVisible = _isSleepChecked.isNotEmpty
+        ? _isSleepChecked.map((checked) => !checked).toList()
         : [];
+
 
     _isExerciseChecked = widget.exerciseDailyRoutines.isNotEmpty
         ? widget.exerciseDailyRoutines
             .map((routine) => routine.complete ?? false)
             .toList()
         : [];
-    _isExerciseVisible = widget.exerciseDailyRoutines.isNotEmpty
-        ? List<bool>.filled(widget.exerciseDailyRoutines.length, true)
+    _isExerciseVisible = _isExerciseChecked.isNotEmpty
+        ? _isExerciseChecked.map((checked) => !checked).toList()
         : [];
+
 
     _isSpiritChecked = widget.spiritDailyRoutines.isNotEmpty
         ? widget.spiritDailyRoutines
             .map((routine) => routine.complete ?? false)
             .toList()
         : [];
-    _isSpiritVisible = widget.spiritDailyRoutines.isNotEmpty
-        ? List<bool>.filled(widget.spiritDailyRoutines.length, true)
+    _isSpiritVisible = _isSpiritChecked.isNotEmpty
+        ? _isSpiritChecked.map((checked) => !checked).toList()
         : [];
+
+
   }
 
   Widget listsWidget() {
@@ -451,7 +455,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           if (index < _isExerciseChecked.length && index < widget.exerciseDailyRoutines.length) {
             ExerciseRoutineDetail exerciseRoutine = widget.exerciseDailyRoutines[index];
             newStatus = !_isExerciseChecked[index];
-            success = await homeApiService.checkExerciseRoutine(newStatus, exerciseRoutine.routineId);
+            success = await homeApiService.checkExerciseRoutine(newStatus, exerciseRoutine.recordId);
             if (success) {
               setState(() {
                 _isExerciseChecked[index] = newStatus;
@@ -466,7 +470,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           if (index < _isSpiritChecked.length && index < widget.spiritDailyRoutines.length) {
             SpiritRoutineDetail spiritRoutine = widget.spiritDailyRoutines[index];
             newStatus = !_isSpiritChecked[index];
-            success = await homeApiService.checkSpiritRoutine(newStatus, spiritRoutine.routineId);
+            success = await homeApiService.checkSpiritRoutine(newStatus, spiritRoutine.recordId);
             if (success) {
               setState(() {
                 _isSpiritChecked[index] = newStatus;

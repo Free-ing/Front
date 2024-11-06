@@ -142,14 +142,14 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
-        print('jsonData: $jsonData');
+        //print('jsonData: $jsonData');
         if (jsonData is Map<String, dynamic> && jsonData['result'] is List) {
           setState(() {
             _exerciseDailyRoutine = (jsonData['result'] as List)
                 .map((data) => ExerciseRoutineDetail.fromJson(data))
                 .toList();
-            print('exercise 루틴 $_exerciseDailyRoutine');
-            print('setState까지 성공함');
+            //print('exercise 루틴 $_exerciseDailyRoutine');
+            //print('setState까지 성공함');
           });
         } else {
           print('운동 루틴 불러오기 - Unexpected JSON format');
@@ -212,13 +212,13 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
-        print('jsonData: $jsonData');
+        //print('jsonData: $jsonData');
         if (jsonData is Map<String, dynamic> && jsonData['result'] is List) {
           setState(() {
             _spiritDailyRoutine = (jsonData['result'] as List)
                 .map((data) => SpiritRoutineDetail.fromJson(data))
                 .toList();
-            print('spiritDailyROUtine 값!!!! $_spiritDailyRoutine');
+            //print('spiritDailyROUtine 값!!!! $_spiritDailyRoutine');
           });
         } else {
           print('마음 채우기 불러오기 - Unexpected JSON format');
