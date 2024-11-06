@@ -11,11 +11,10 @@ import 'package:freeing/screen/home/select_hobby_name.dart';
 import 'package:image_picker/image_picker.dart';
 
 //Todo: 취미 기록 --- 아직 홈화면 구현 전 이어서 selectedDate==오늘 날짜
-void showHobbyBottomSheet(BuildContext context, String title) {
+void showHobbyBottomSheet(BuildContext context, String title, DateTime selectedDate) {
   final TextEditingController hobbyMemoController = TextEditingController();
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
-  DateTime selectedDate = DateTime(2024, 10, 29);
 
   final ValueNotifier<String> selectedHobbyNotifier = ValueNotifier('취미 선택');
   final ValueNotifier<File?> imageNotifier = ValueNotifier<File?>(null);

@@ -157,7 +157,7 @@ class MyApp extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('오류가 발생했습니다.')); // 오류 메시지
           } else {
-            return ExerciseReportScreen(); // 초기화 후 로그인 화면으로 이동
+            return Login(); // 초기화 후 로그인 화면으로 이동
           }
         },
       ),

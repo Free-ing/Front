@@ -34,85 +34,83 @@ class ExerciseReportScreen extends StatelessWidget {
 
     return ScreenLayout(
       title: '주간 운동 리포트',
-      body: Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.03),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              /// 총 운동 시간, 평균 운동 시간
-              _showStartAverageExerciseTime(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: screenHeight * 0.028),
+            /// 총 운동 시간, 평균 운동 시간
+            _showStartAverageExerciseTime(
+              textTheme: textTheme,
+              screenWidth: screenWidth,
+              screenHeight: screenHeight,
+            ),
+            SizedBox(height: screenHeight * 0.028),
+
+            /// 주간 운동 시간 그래프
+            _showWeeklyExerciseTime(
+              textTheme: textTheme,
+              screenWidth: screenWidth,
+              screenHeight: screenHeight,
+            ),
+            SizedBox(height: screenHeight * 0.028),
+
+            /// 루틴별 운동 시간
+            _showRoutineExerciseTime(
                 textTheme: textTheme,
                 screenWidth: screenWidth,
-                screenHeight: screenHeight,
+                screenHeight: screenHeight),
+            SizedBox(height: screenHeight * 0.028),
+
+            /// 피드백
+            Container(
+              width: screenWidth,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: Colors.black, width: 1),
               ),
-              SizedBox(height: screenHeight * 0.028),
-
-              /// 주간 운동 시간 그래프
-              _showWeeklyExerciseTime(
-                textTheme: textTheme,
-                screenWidth: screenWidth,
-                screenHeight: screenHeight,
+              padding: EdgeInsets.all(screenWidth * 0.02),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text('회원이름', style: TextStyle(fontWeight: FontWeight.w600),),
+                                  Text('님을 위한'),
+                                ],
+                              ),
+                              Text(
+                                '분석 결과와 피드백입니다.',
+                                style: textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                          Image.asset(
+                            'assets/imgs/etc/report_mascot.png',
+                            width: screenWidth * 0.2,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: screenHeight * 0.028),
+                      Text('피드백 내용')
+                    ],
+                  );
+                },
               ),
-              SizedBox(height: screenHeight * 0.028),
+            ),
 
-              /// 루틴별 운동 시간
-              _showRoutineExerciseTime(
-                  textTheme: textTheme,
-                  screenWidth: screenWidth,
-                  screenHeight: screenHeight),
-              SizedBox(height: screenHeight * 0.028),
-
-              /// 피드백
-              Container(
-                width: screenWidth,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
-                  border: Border.all(color: Colors.black, width: 1),
-                ),
-                padding: EdgeInsets.all(screenWidth * 0.02),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text('문승주', style: TextStyle(fontWeight: FontWeight.w600),),
-                                    Text('님을 위한'),
-                                  ],
-                                ),
-                                Text(
-                                  '분석 결과와 피드백입니다.',
-                                  style: textTheme.bodyMedium,
-                                ),
-                              ],
-                            ),
-                            Image.asset(
-                              'assets/imgs/etc/report_mascot.png',
-                              width: screenWidth * 0.2,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: screenHeight * 0.028),
-                        Text('피드백 내용')
-                      ],
-                    );
-                  },
-                ),
-              ),
-
-              SizedBox(height: screenHeight * 0.028),
-              GreenButton(width: screenWidth * 0.6, onPressed: () {}),
-              SizedBox(height: screenHeight * 0.028),
-            ],
-          ),
+            SizedBox(height: screenHeight * 0.028),
+            GreenButton(width: screenWidth * 0.6, onPressed: () {}),
+            SizedBox(height: screenHeight * 0.028),
+          ],
         ),
       ),
       color: LIGHT_IVORY,

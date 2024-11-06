@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/emotion_diary_card.dart';
 import 'package:freeing/common/component/show_chart_date.dart';
+import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
 import 'package:freeing/common/service/token_storage.dart';
@@ -15,9 +16,11 @@ import 'package:freeing/screen/chart/chart_page.dart';
 import 'package:freeing/screen/chart/mood_scrap_screen.dart';
 import 'package:freeing/screen/home/diary_bottom_sheet.dart';
 import 'package:freeing/screen/member/login.dart';
+import 'package:freeing/screen/routine/routine_page.dart';
 
 class MoodCalendar extends StatefulWidget {
-  const MoodCalendar({super.key});
+  final DateTime? selectTime;
+  const MoodCalendar({super.key, this.selectTime});
 
   @override
   State<MoodCalendar> createState() => _MoodCalendarState();
@@ -142,17 +145,19 @@ class _MoodCalendarState extends State<MoodCalendar> {
     print(diaryId);
     print(responseCode);
     if (responseCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('감정일기가 삭제되었습니다.')),
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+            builder: (context) => MoodCalendar(
+                  selectTime: DateTime(selectYear, selectMonth, selectedDate),
+                )),
       );
-      setState(() {
-        getEmotionDataByDay(selectYear, selectMonth);
-      });
-      Navigator.pop(context);
+      ToastBarWidget(
+        title: '감정일기가 삭제되었습니다.',
+      ).showToast(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('감정 일기가 삭제되지 않았습니다 ${responseCode}')),
-      );
+      ToastBarWidget(
+        title: '감정일기가 삭제되지 않았습니다. ${responseCode}',
+      ).showToast(context);
     }
   }
 
@@ -189,6 +194,10 @@ class _MoodCalendarState extends State<MoodCalendar> {
   @override
   void initState() {
     super.initState();
+    selectYear = widget.selectTime?.year ?? DateTime.now().year;
+    selectMonth = widget.selectTime?.month ?? DateTime.now().month;
+    selectedDate = widget.selectTime?.day ?? DateTime.now().day;
+
     getEmotionDataByDay(selectYear, selectMonth).then((data) {
       setState(() {
         emotionDataByDay = Map<int, String>.from(data['emotions']!);
@@ -433,8 +442,8 @@ class _MoodCalendarState extends State<MoodCalendar> {
       from: 'calendar',
       onScrapToggle: () async {
         !_isScrap
-        ? await _scrapEmotionDiary(diaryId)
-        : await _scrapCancelEmotionDiary(diaryId);
+            ? await _scrapEmotionDiary(diaryId)
+            : await _scrapCancelEmotionDiary(diaryId);
       },
     );
   }
@@ -473,25 +482,31 @@ class _MoodCalendarState extends State<MoodCalendar> {
                 children: [
                   Text(
                     '작성한 일기가 없어요\n'
-                    '일기를 작성하고 편지를 받아보세요.',
+                    '일기를 작성하고 편지를 받아보세요.'
+                    '\n\n 아직 루틴을 켜지 않았다면?',
                     style: textTheme.bodySmall,
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: screenHeight * 0.005),
                   SizedBox(
-                    width: screenWidth * 0.23,
+                    //width: screenWidth * 0.33,
                     height: screenHeight * 0.035,
                     child: OutlinedButton(
                       onPressed: () {
-                        showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
-                            DateTime(selectYear, selectMonth, selectedDate));
+                        // showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
+                        //     DateTime(selectYear, selectMonth, selectedDate));
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const RoutinePage(index: 3)),
+                        );
                       },
-                      child: Text('일기 작성하기', style: textTheme.bodySmall),
+                      child: Text('루틴 키러 가기', style: textTheme.bodySmall),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: PRIMARY_COLOR,
                         foregroundColor: LIGHT_GREY,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 0),
+                            horizontal: 8, vertical: 0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),

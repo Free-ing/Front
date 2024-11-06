@@ -585,7 +585,7 @@ class _HomePageState extends State<HomePage> {
                                 LogButton(
                                   onPressed: () {
                                     showHobbyBottomSheet(
-                                        context, '오늘 했던 취미는 어땠나요? ');
+                                        context, '오늘 했던 취미는 어땠나요?', selectedDate);
                                   },
                                 )
                               ],
