@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/layout/screen_layout.dart';
 
@@ -64,18 +65,52 @@ class ExerciseReportScreen extends StatelessWidget {
               /// 피드백
               Container(
                 width: screenWidth,
-                height: 300,
-                padding: EdgeInsets.all(screenWidth*0.02),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25),
-                  border: Border.all(
-                    color: Colors.black,
-                  ),
+                  border: Border.all(color: Colors.black, width: 1),
                 ),
-                child: Text('피드백이에용'),
-              )
-              
+                padding: EdgeInsets.all(screenWidth * 0.02),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('문승주', style: TextStyle(fontWeight: FontWeight.w600),),
+                                    Text('님을 위한'),
+                                  ],
+                                ),
+                                Text(
+                                  '분석 결과와 피드백입니다.',
+                                  style: textTheme.bodyMedium,
+                                ),
+                              ],
+                            ),
+                            Image.asset(
+                              'assets/imgs/etc/report_mascot.png',
+                              width: screenWidth * 0.2,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: screenHeight * 0.028),
+                        Text('피드백 내용')
+                      ],
+                    );
+                  },
+                ),
+              ),
+
+              SizedBox(height: screenHeight * 0.028),
+              GreenButton(width: screenWidth * 0.6, onPressed: () {}),
+              SizedBox(height: screenHeight * 0.028),
             ],
           ),
         ),
