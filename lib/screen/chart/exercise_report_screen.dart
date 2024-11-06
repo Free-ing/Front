@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/layout/screen_layout.dart';
@@ -60,6 +61,8 @@ class ExerciseReportScreen extends StatelessWidget {
                   screenHeight: screenHeight),
               SizedBox(height: screenHeight * 0.028),
 
+              /// 피드백
+
             ],
           ),
         ),
@@ -118,7 +121,7 @@ class ExerciseReportScreen extends StatelessWidget {
           elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side: BorderSide(width: 1.0),
+            side: const BorderSide(width: 1.0),
           ),
           color: LIGHT_GREY,
           child: Container(
@@ -189,7 +192,7 @@ class ExerciseReportScreen extends StatelessWidget {
                             ),
                             borderData: FlBorderData(
                               show: true,
-                              border: Border(
+                              border: const Border(
                                 top: BorderSide.none,
                                 left: BorderSide.none,
                                 right: BorderSide.none,
@@ -212,7 +215,7 @@ class ExerciseReportScreen extends StatelessWidget {
                                     toY: minutes / 60,
                                     color: BLUE_PURPLE,
                                     width: 20,
-                                    borderRadius: BorderRadius.only(
+                                    borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(6), // 윗부분 왼쪽 둥글게
                                       topRight:
                                           Radius.circular(6), // 윗부분 오른쪽 둥글게
@@ -359,7 +362,7 @@ class ExerciseReportScreen extends StatelessWidget {
       margin: EdgeInsets.all(screenWidth * 0.01),
       child: Container(
         width: screenWidth * 0.3,
-        padding: EdgeInsets.all(2),
+        padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(25),
