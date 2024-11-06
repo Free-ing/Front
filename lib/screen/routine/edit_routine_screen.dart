@@ -456,8 +456,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                           height: _timePickerOpen
                               ? screenWidth * 0.06
                               : _selectExercise
-                              ? screenHeight * 0.05
-                              : screenHeight * 0.102),
+                              ? screenHeight * 0.043
+                              : screenHeight * 0.095),
                       // 수면 선택 시 추가 공백 높이
                       SizedBox(
                           height: _selectSleep
@@ -471,8 +471,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                 // 추가하기 버튼
                 SizedBox(
                     height: _selectHobby
-                        ? screenHeight * 0.025
-                        : screenHeight * 0.502),
+                        ? 0
+                        : screenHeight * 0.477),
                 GreenButton(
                   width: screenWidth * 0.6,
                   text: '수정하기',

@@ -57,7 +57,7 @@ class _MeditationBottomSheetContentState
 
   late AudioPlayer player;
   bool isPlaying = false;
-  double volume = 0.5;
+  double volume = 1;
   bool isVolumeDisabled = false;
 
   @override

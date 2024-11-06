@@ -204,6 +204,8 @@ class _SleepCardState extends State<SleepCard> {
         title,
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyMedium,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
       ),
     );
   }

@@ -24,16 +24,6 @@ class WeekDay {
   WeekDay(this.day, this.isSelected);
 }
 
-List<WeekDay> weekDays = [
-  WeekDay("월", true),
-  WeekDay("화", true),
-  WeekDay("수", true),
-  WeekDay("목", true),
-  WeekDay("금", true),
-  WeekDay("토", false),
-  WeekDay("일", false),
-];
-
 class AddRoutineScreen extends StatefulWidget {
   const AddRoutineScreen({super.key});
 
@@ -48,6 +38,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   final List<String> options = ['운동', '수면', '취미', '마음 채우기'];
   String selectedValue = '운동';
+
+  List<WeekDay> weekDays = [];
 
   DateTime? _startTime;
   DateTime? _endTime;
@@ -251,6 +243,21 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   }
 
   @override
+  void initState(){
+    super.initState();
+
+    weekDays = [
+      WeekDay("월", true),
+      WeekDay("화", true),
+      WeekDay("수", true),
+      WeekDay("목", true),
+      WeekDay("금", true),
+      WeekDay("토", false),
+      WeekDay("일", false),
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -311,8 +318,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                           height: _timePickerOpen
                               ? screenWidth * 0.06
                               : _selectExercise
-                                  ? screenHeight * 0.05
-                                  : screenHeight * 0.102),
+                              ? screenHeight * 0.043
+                              : screenHeight * 0.095),
                       // 수면 선택 시 추가 공백 높이
                       SizedBox(
                           height: _selectSleep
@@ -326,8 +333,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 // 추가하기 버튼
                 SizedBox(
                     height: _selectHobby
-                        ? screenHeight * 0.025
-                        : screenHeight * 0.502),
+                        ? 0
+                        : screenHeight * 0.477),
 
                 GreenButton(
                   width: screenWidth * 0.6,
@@ -508,6 +515,9 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                   setState(
                     () {
                       selectedValue = value!;
+                      for (int i = 0; i < weekDays.length; i++){
+                        print(weekDays[i].isSelected);
+                      }
 
                       selectedValue == '취미'
                           ? _selectHobby = false

@@ -167,6 +167,8 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
         title,
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyMedium,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
       ),
     );
   }

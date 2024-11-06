@@ -449,6 +449,8 @@ class _MoodCalendarState extends State<MoodCalendar> {
   }
 
   // Todo: 상세 보기 (선택된 날짜에 감정 일기 없을 때)
+  /// 감정 일기 켜져 있을 때 - 일기 작성하기 버튼 -> 바텀 시트 올라옴
+  /// 감정 일기 꺼져 있을 때 - 루틴 키러 가기 버튼 -> 루틴(3) 페이지로 넘어감
   Widget _noneEmotionDiary(
     TextTheme textTheme,
     double screenWidth,
@@ -482,26 +484,25 @@ class _MoodCalendarState extends State<MoodCalendar> {
                 children: [
                   Text(
                     '작성한 일기가 없어요\n'
-                    '일기를 작성하고 편지를 받아보세요.'
-                    '\n\n 아직 루틴을 켜지 않았다면?',
+                    '일기를 작성하고 편지를 받아보세요.',
                     style: textTheme.bodySmall,
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: screenHeight * 0.005),
+                  SizedBox(height: screenHeight * 0.02),
                   SizedBox(
                     //width: screenWidth * 0.33,
                     height: screenHeight * 0.035,
                     child: OutlinedButton(
                       onPressed: () {
-                        // showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
-                        //     DateTime(selectYear, selectMonth, selectedDate));
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const RoutinePage(index: 3)),
-                        );
+                        showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
+                            DateTime(selectYear, selectMonth, selectedDate));
+                        // Navigator.of(context).pushReplacement(
+                        //   MaterialPageRoute(
+                        //       builder: (context) =>
+                        //           const RoutinePage(index: 3)),
+                        // );
                       },
-                      child: Text('루틴 키러 가기', style: textTheme.bodySmall),
+                      child: Text('일기 작성하기', style: textTheme.bodySmall),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: PRIMARY_COLOR,
                         foregroundColor: LIGHT_GREY,

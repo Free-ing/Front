@@ -1,11 +1,34 @@
+import 'dart:convert';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
+import 'package:freeing/screen/setting/setting_page.dart';
 
-class ExerciseReportScreen extends StatelessWidget {
+class ExerciseReportScreen extends StatefulWidget {
   ExerciseReportScreen({super.key});
+
+  @override
+  State<ExerciseReportScreen> createState() => _ExerciseReportScreenState();
+}
+
+class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
+  String name = '';
+  // Todo: 서버 요청 (사용자 이름 받아오기)
+  Future<void> _viewUserInfo() async {
+    final response = await SettingAPIService().getUserInfo();
+
+    if (response.statusCode == 200) {
+      final decodedBody = utf8.decode(response.bodyBytes);
+      final userData = User.fromJson(json.decode(decodedBody));
+       name = userData.name;
+    } else {
+      throw Exception('사용자 정보 가져오기 실패 ${response.statusCode}');
+    }
+  }
 
   //Todo: 주간 운동 시간 예시 데이터(분 단위)
   final Map<String, int> exerciseTimes = {
@@ -78,20 +101,17 @@ class ExerciseReportScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text('회원이름', style: TextStyle(fontWeight: FontWeight.w600),),
-                                  Text('님을 위한'),
-                                ],
-                              ),
-                              Text(
-                                '분석 결과와 피드백입니다.',
-                                style: textTheme.bodyMedium,
-                              ),
-                            ],
+                          RichText(
+                            text: TextSpan(
+                              text: '\n$name',
+                              style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '님을 위한\n분석 결과와 피드백 입니다.',
+                                  style: textTheme.bodyMedium,
+                                )
+                              ]
+                            )
                           ),
                           Image.asset(
                             'assets/imgs/etc/report_mascot.png',

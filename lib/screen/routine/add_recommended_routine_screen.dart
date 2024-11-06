@@ -215,16 +215,16 @@ class _AddRecommendedRoutineScreenState
                           height: _timePickerOpen
                               ? screenWidth * 0.06
                               : _selectExercise
-                                  ? screenHeight * 0.05
-                                  : screenHeight * 0.102),
+                                  ? screenHeight * 0.043
+                                  : screenHeight * 0.095),
                     ],
                   ),
                 ),
                 // 추가하기 버튼
                 SizedBox(
                     height: selectHobby
-                        ? screenHeight * 0.025
-                        : screenHeight * 0.502),
+                        ? 0
+                        : screenHeight * 0.477),
                 GreenButton(
                     width: screenWidth * 0.6,
                     text: '추가하기',
