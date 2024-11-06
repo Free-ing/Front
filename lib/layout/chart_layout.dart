@@ -85,6 +85,7 @@ class _ChartLayoutState extends State<ChartLayout> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
         title: Padding(
           padding: EdgeInsets.only(top: screenHeight * 0.03),

@@ -62,7 +62,20 @@ class ExerciseReportScreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.028),
 
               /// 피드백
-
+              Container(
+                width: screenWidth,
+                height: 300,
+                padding: EdgeInsets.all(screenWidth*0.02),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(
+                    color: Colors.black,
+                  ),
+                ),
+                child: Text('피드백이에용'),
+              )
+              
             ],
           ),
         ),
