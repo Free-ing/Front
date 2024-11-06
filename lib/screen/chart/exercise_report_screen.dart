@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/layout/screen_layout.dart';

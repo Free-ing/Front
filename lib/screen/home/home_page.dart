@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/circle_widget.dart';
@@ -14,8 +13,8 @@ import 'package:freeing/screen/home/dynamic_stretching_bottom_sheet.dart';
 import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
 import 'package:freeing/screen/home/meditation_bottom_sheet.dart';
 import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
-import 'package:freeing/screen/home/static_stretching_bottom_sheet.dart';
 import 'package:intl/intl.dart';
+
 import '../../common/component/expansion_tile.dart';
 
 class HomePage extends StatefulWidget {
@@ -37,8 +36,9 @@ class _HomePageState extends State<HomePage> {
   late DateTime currentWeekStartDate;
   late DateTime selectedDate;
   List<SleepDailyRoutine> _sleepDailyRoutine = [];
-  List<ExerciseDailyRoutine> _exerciseDailyRoutine = [];
-  List<SpiritDailyRoutine> _spiritDailyRoutine = [];
+  List<ExerciseRoutineDetail> _exerciseDailyRoutine = [];
+  List<SpiritRoutineDetail> _spiritDailyRoutine = [];
+  bool isLoading = true;
 
   final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
   int dayOfWeek = 0;
@@ -46,26 +46,38 @@ class _HomePageState extends State<HomePage> {
   // TODO: 운동, 수면, 마음 채우기 루틴 각각 불러오는 서버 요청 하기
   // TODO: 상단 상태바도 각각 다 불러오기
   Future<void> loadInitialData() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
-      await fetchSleepDailyRoutine();
-      await fetchExerciseDailyRoutine();
-      await fetchSpiritDailyRoutine();
+      await Future.wait([
+        fetchSleepDailyRoutine(),
+        fetchExerciseDailyRoutine(),
+        fetchSpiritDailyRoutine(),
+      ]);
     } catch (e) {
       print(e);
+    } finally{
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
-  // TODO: 수면 루틴 불러오기
+  // 수면 루틴 불러오기
   Future<void> fetchSleepDailyRoutine() async {
-    try{
-      final response = await homeApiService.getSleepRoutine(dayOfWeek, formattedDateForServer);
+    try {
+      final response = await homeApiService.getSleepRoutine(
+          dayOfWeek, formattedDateForServer);
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
         if (jsonData is List) {
           setState(() {
-            _sleepDailyRoutine = jsonData.map((data) => SleepDailyRoutine.fromJson(data)).toList();
+            _sleepDailyRoutine = jsonData
+                .map((data) => SleepDailyRoutine.fromJson(data))
+                .toList();
           });
         } else {
           print('수면 루틴 불러오기 - Unexpected JSON format');
@@ -73,23 +85,23 @@ class _HomePageState extends State<HomePage> {
             _sleepDailyRoutine = [];
           });
         }
-      } else if(response.statusCode == 204){
+      } else if (response.statusCode == 204) {
         print('수면 루틴에 아무것도 없음');
         setState(() {
           _sleepDailyRoutine = [];
         });
-      } else{
+      } else {
         throw Exception('Failed to fetch 수면 list ${response.statusCode}');
       }
-    } catch(e){
+    } catch (e) {
       print('Error fetching 수면 routines: $e');
       setState(() {
         _sleepDailyRoutine = [];
       });
     }
   }
-  bool isSleepRoutineActiveOnDay(SleepDailyRoutine routine, int dayOfWeek){
-    switch(dayOfWeek){
+  bool isSleepRoutineActiveOnDay(SleepDailyRoutine routine, int dayOfWeek) {
+    switch (dayOfWeek) {
       case 1:
         return routine.monday ?? false;
       case 2:
@@ -110,7 +122,9 @@ class _HomePageState extends State<HomePage> {
   }
   List<SleepDailyRoutine> getFilteredSleepRoutines() {
     return _sleepDailyRoutine
-        .where((routine) => isSleepRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false))
+        .where((routine) =>
+            isSleepRoutineActiveOnDay(routine, dayOfWeek) &&
+            (routine.status ?? false))
         .toList();
     // final filteredList =  _sleepDailyRoutine
     //     .where((routine) => isRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false))
@@ -120,17 +134,22 @@ class _HomePageState extends State<HomePage> {
     // return filteredList.isNotEmpty ? filteredList : [];
   }
 
-  // TODO: 운동 루틴 불러오기
+  // 운동 루틴 불러오기
   Future<void> fetchExerciseDailyRoutine() async {
-    try{
-      final response = await homeApiService.getExerciseRoutine(formattedDateForServer);
+    try {
+      final response =
+          await homeApiService.getExerciseRoutine(formattedDateForServer);
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
-
-        if (jsonData is List) {
+        //print('jsonData: $jsonData');
+        if (jsonData is Map<String, dynamic> && jsonData['result'] is List) {
           setState(() {
-            _exerciseDailyRoutine = jsonData.map((data) => ExerciseDailyRoutine.fromJson(data)).toList();
+            _exerciseDailyRoutine = (jsonData['result'] as List)
+                .map((data) => ExerciseRoutineDetail.fromJson(data))
+                .toList();
+            //print('exercise 루틴 $_exerciseDailyRoutine');
+            //print('setState까지 성공함');
           });
         } else {
           print('운동 루틴 불러오기 - Unexpected JSON format');
@@ -138,23 +157,23 @@ class _HomePageState extends State<HomePage> {
             _exerciseDailyRoutine = [];
           });
         }
-      } else if(response.statusCode == 204){
+      } else if (response.statusCode == 204) {
         print('운동 루틴에 아무것도 없음');
         setState(() {
           _exerciseDailyRoutine = [];
         });
-      } else{
+      } else {
         throw Exception('Failed to fetch 운동 list ${response.statusCode}');
       }
-    } catch(e){
+    } catch (e) {
       print('Error fetching 운동 routines: $e');
       setState(() {
         _exerciseDailyRoutine = [];
       });
     }
   }
-  bool isExerciseRoutineActiveOnDay(ExerciseRoutineDetail routine, int dayOfWeek){
-    switch(dayOfWeek){
+  bool isExerciseRoutineActiveOnDay(ExerciseRoutineDetail routine, int dayOfWeek) {
+    switch (dayOfWeek) {
       case 1:
         return routine.monday ?? false;
       case 2:
@@ -177,29 +196,29 @@ class _HomePageState extends State<HomePage> {
     List<ExerciseRoutineDetail> allActiveRoutines = [];
 
     for (var routine in _exerciseDailyRoutine) {
-      if (routine.result != null) {
-        allActiveRoutines.addAll(
-          routine.result!.where((detail) {
-            return isExerciseRoutineActiveOnDay(detail, dayOfWeek) && (detail.status ?? false);
-          }).toList(),
-        );
+      if (isExerciseRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false)) {
+        allActiveRoutines.add(routine);
       }
     }
 
     return allActiveRoutines;
   }
 
-  // TODO: 마음 채우기 루틴 불러오기
+  // 마음 채우기 루틴 불러오기
   Future<void> fetchSpiritDailyRoutine() async {
-    try{
-      final response = await homeApiService.getSpiritRoutine(formattedDateForServer);
+    try {
+      final response =
+          await homeApiService.getSpiritRoutine(formattedDateForServer);
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
-
-        if (jsonData is List) {
+        //print('jsonData: $jsonData');
+        if (jsonData is Map<String, dynamic> && jsonData['result'] is List) {
           setState(() {
-            _spiritDailyRoutine = jsonData.map((data) => SpiritDailyRoutine.fromJson(data)).toList();
+            _spiritDailyRoutine = (jsonData['result'] as List)
+                .map((data) => SpiritRoutineDetail.fromJson(data))
+                .toList();
+            //print('spiritDailyROUtine 값!!!! $_spiritDailyRoutine');
           });
         } else {
           print('마음 채우기 불러오기 - Unexpected JSON format');
@@ -207,23 +226,23 @@ class _HomePageState extends State<HomePage> {
             _spiritDailyRoutine = [];
           });
         }
-      } else if(response.statusCode == 204){
+      } else if (response.statusCode == 204) {
         print('마음 채우기 루틴에 아무것도 없음');
         setState(() {
           _spiritDailyRoutine = [];
         });
-      } else{
+      } else {
         throw Exception('Failed to fetch 마음 채우기 list ${response.statusCode}');
       }
-    } catch(e){
+    } catch (e) {
       print('Error fetching 마음 채우기 routines: $e');
       setState(() {
-        _sleepDailyRoutine = [];
+        _spiritDailyRoutine = [];
       });
     }
   }
-  bool isSpiritRoutineActiveOnDay(SpiritRoutineDetail routine, int dayOfWeek){
-    switch(dayOfWeek){
+  bool isSpiritRoutineActiveOnDay(SpiritRoutineDetail routine, int dayOfWeek) {
+    switch (dayOfWeek) {
       case 1:
         return routine.monday ?? false;
       case 2:
@@ -246,20 +265,14 @@ class _HomePageState extends State<HomePage> {
     List<SpiritRoutineDetail> allActiveRoutines = [];
 
     for (var routine in _spiritDailyRoutine) {
-      if (routine.result != null) {
-        allActiveRoutines.addAll(
-          routine.result!.where((detail) {
-            return isSpiritRoutineActiveOnDay(detail, dayOfWeek) && (detail.status ?? false);
-          }).toList(),
-        );
+      if (isSpiritRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false)) {
+        allActiveRoutines.add(routine);
       }
     }
-
     return allActiveRoutines;
   }
 
   // TODO: 상단 상태바도 각각 다 불러오기
-
 
   @override
   void initState() {
@@ -336,7 +349,8 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(formattedDate,
-                        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 20)),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 20)),
                     SizedBox(
                       width: 79.60,
                       height: 30,
@@ -383,7 +397,7 @@ class _HomePageState extends State<HomePage> {
                     vertical: screenHeight * 0.02,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(0xFFF6F6F6),
+                    color: const Color(0xFFF6F6F6),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.black,
@@ -392,7 +406,7 @@ class _HomePageState extends State<HomePage> {
                     boxShadow: [
                       BoxShadow(
                           color: Colors.grey.withOpacity(0.1),
-                          offset: Offset(2, 4),
+                          offset: const Offset(2, 4),
                           blurRadius: 4,
                           spreadRadius: 0)
                     ],
@@ -419,13 +433,10 @@ class _HomePageState extends State<HomePage> {
                                   DateFormat('EEE', 'ko').format(selectedDate);
                             });
                           },
-                          child: Padding(
+                          child: const Padding(
                             padding:
-                                const EdgeInsets.only(left: 8.0, top: 25.0),
-                            child: Icon(
-                              Icons.arrow_back_ios,
-                              size: 15,
-                            ),
+                                EdgeInsets.only(left: 8.0, top: 25.0),
+                            child: Icon(Icons.arrow_back_ios, size: 15),
                           ),
                         ),
                         // Week Days
@@ -437,7 +448,9 @@ class _HomePageState extends State<HomePage> {
                                 selectedDate = dates[index];
                                 formattedDate = DateFormat('yyyy년 MM월 dd일')
                                     .format(selectedDate);
-                                formattedDateForServer = DateFormat('yyyy-MM-dd').format(selectedDate);
+                                formattedDateForServer =
+                                    DateFormat('yyyy-MM-dd')
+                                        .format(selectedDate);
                                 todayDayName = DateFormat('EEE', 'ko')
                                     .format(selectedDate);
                                 dayOfWeek = selectedDate.weekday;
@@ -470,9 +483,9 @@ class _HomePageState extends State<HomePage> {
                                   DateFormat('EEE', 'ko').format(selectedDate);
                             });
                           },
-                          child: Padding(
+                          child: const Padding(
                             padding:
-                                const EdgeInsets.only(right: 8.0, top: 25.0),
+                                EdgeInsets.only(right: 8.0, top: 25.0),
                             child: Icon(
                               Icons.arrow_forward_ios,
                               size: 15,
@@ -521,13 +534,19 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       children: [
                         HomeExpansionTileBox(
-                            text: '운동', exerciseDailyRoutines: getAllFilteredExerciseRoutines(dayOfWeek)),
+                            text: '운동',
+                            exerciseDailyRoutines:
+                                getAllFilteredExerciseRoutines(dayOfWeek), completeDay: formattedDateForServer,),
                         verticalSpace,
                         HomeExpansionTileBox(
-                            text: '수면', sleepDailyRoutines: getFilteredSleepRoutines()),
+                            text: '수면',
+                            sleepDailyRoutines: getFilteredSleepRoutines(), completeDay: formattedDateForServer,),
                         verticalSpace,
                         HomeExpansionTileBox(
-                            text: '마음 채우기', spiritDailyRoutines: getAllFilteredSpiritRoutines(dayOfWeek),),
+                          text: '마음 채우기',
+                          spiritDailyRoutines:
+                              getAllFilteredSpiritRoutines(dayOfWeek), completeDay: formattedDateForServer,
+                        ),
                         verticalSpace,
                         Container(
                           width: screenWidth * 0.9,
@@ -537,7 +556,7 @@ class _HomePageState extends State<HomePage> {
                               border: Border.all(width: 1),
                               borderRadius: BorderRadius.circular(15)),
                           child: Padding(
-                            padding: EdgeInsets.only(left: 20.0, right: 8.0),
+                            padding: const EdgeInsets.only(left: 20.0, right: 8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -553,7 +572,7 @@ class _HomePageState extends State<HomePage> {
                                                     color: HOME_YELLOW_TEXT,
                                                     fontWeight:
                                                         FontWeight.w600)),
-                                        TextSpan(text: '를 했나요?')
+                                        const TextSpan(text: '를 했나요?')
                                       ]),
                                 ),
                                 LogButton(
@@ -574,7 +593,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 0),
+          bottomNavigationBar: const CustomBottomNavigationBar(selectedIndex: 0),
         ),
       ],
     );
