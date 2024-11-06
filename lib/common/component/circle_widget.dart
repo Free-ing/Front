@@ -219,7 +219,7 @@ class _CircleWidgetState extends State<CircleWidget> {
                       ),
                       SizedBox(height: screenHeight * 0.01),
                       CustomPaint(
-                        size: Size(30, 30),
+                        size: Size(31.5, 31.5),
                         painter: ColorfulCirclePainter(
                           date: widget.date,
                           isSelected: widget.isSelected,
@@ -281,7 +281,7 @@ class ColorfulCirclePainter extends CustomPainter {
         );
       }
       paint.color = Colors.white;
-      double innerCircleRadius = radius * 0.75;
+      double innerCircleRadius = radius * 0.74;
       canvas.drawCircle(center, innerCircleRadius, paint);
 
     }
