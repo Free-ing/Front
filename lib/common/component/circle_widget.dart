@@ -205,7 +205,7 @@ class _CircleWidgetState extends State<CircleWidget> {
                       width: screenWidth * 0.105,
                       height: screenHeight * 0.0889,
                       decoration: BoxDecoration(
-                        color: Color(0xFFFFFBF0), // Ivory color
+                        color: const Color(0xFFFFFBF0), // 아이보리 색상
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: Colors.black, width: 1),
                       ),
@@ -219,7 +219,7 @@ class _CircleWidgetState extends State<CircleWidget> {
                       ),
                       SizedBox(height: screenHeight * 0.01),
                       CustomPaint(
-                        size: Size(31.5, 31.5),
+                        size: const Size(31.5, 31.5),
                         painter: ColorfulCirclePainter(
                           date: widget.date,
                           isSelected: widget.isSelected,

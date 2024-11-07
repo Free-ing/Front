@@ -42,6 +42,8 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   late List<bool> _isSpiritChecked;
   late List<bool> _isSpiritVisible;
   final homeApiService = HomeApiService();
+  Offset? _tapPosition;
+
 
   @override
   void initState() {
@@ -69,7 +71,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         ? _isSleepChecked.map((checked) => !checked).toList()
         : [];
 
-
     _isExerciseChecked = widget.exerciseDailyRoutines.isNotEmpty
         ? widget.exerciseDailyRoutines
             .map((routine) => routine.complete ?? false)
@@ -79,7 +80,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         ? _isExerciseChecked.map((checked) => !checked).toList()
         : [];
 
-
     _isSpiritChecked = widget.spiritDailyRoutines.isNotEmpty
         ? widget.spiritDailyRoutines
             .map((routine) => routine.complete ?? false)
@@ -88,9 +88,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     _isSpiritVisible = _isSpiritChecked.isNotEmpty
         ? _isSpiritChecked.map((checked) => !checked).toList()
         : [];
-
-
-
   }
 
   Widget listsWidget() {
@@ -111,14 +108,25 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             leading: Container(
               width: 4,
               height: 4,
-              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: Colors.black),
             ),
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  exerciseRoutine.name!,
-                  style: const TextStyle(fontSize: 14, fontFamily: 'scdream'),
+                GestureDetector(
+                  onTapDown: (TapDownDetails details) {
+                    _tapPosition = details.globalPosition; // 위치를 저장
+                  },
+                  onLongPress: () {
+                    if(_tapPosition != null){
+                      _showCustomMenu(context, _tapPosition!, exerciseRoutine);
+                    }
+                  },
+                  child: Text(
+                    exerciseRoutine.name!,
+                    style: const TextStyle(fontSize: 14, fontFamily: 'scdream'),
+                  ),
                 ),
                 const SizedBox(width: 5.0),
                 Text(getTime('운동', index),
@@ -135,13 +143,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 const SizedBox(width: 15.0),
                 GestureDetector(
                     onTap: () {
-                      if(index < _isExerciseChecked.length){
+                      if (index < _isExerciseChecked.length) {
                         setState(() {
                           _handleCheckboxTap(index);
                         });
                       }
                     },
-                    child: Image.asset(index < _isExerciseChecked.length && _isExerciseChecked[index]
+                    child: Image.asset(index < _isExerciseChecked.length &&
+                            _isExerciseChecked[index]
                         ? 'assets/icons/after_checkbox.png'
                         : 'assets/icons/before_checkbox.png')),
               ],
@@ -163,14 +172,15 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             leading: Container(
               width: 4,
               height: 4,
-              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: Colors.black),
             ),
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  sleepRoutine.sleepRoutineName!,
-                  style: const TextStyle(fontSize: 14, fontFamily: 'scdream')),
+                Text(sleepRoutine.sleepRoutineName!,
+                    style:
+                        const TextStyle(fontSize: 14, fontFamily: 'scdream')),
                 const SizedBox(width: 5.0),
                 Text(getTime('수면', index),
                     style: const TextStyle(
@@ -186,15 +196,16 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 const SizedBox(width: 15.0),
                 GestureDetector(
                     onTap: () {
-                      if(index < _isSleepChecked.length){
+                      if (index < _isSleepChecked.length) {
                         setState(() {
                           _handleCheckboxTap(index);
                         });
                       }
                     },
-                    child: Image.asset(index < _isSleepChecked.length && _isSleepChecked[index]
-                        ? 'assets/icons/after_checkbox.png'
-                        : 'assets/icons/before_checkbox.png')),
+                    child: Image.asset(
+                        index < _isSleepChecked.length && _isSleepChecked[index]
+                            ? 'assets/icons/after_checkbox.png'
+                            : 'assets/icons/before_checkbox.png')),
               ],
             ),
           );
@@ -214,7 +225,8 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             leading: Container(
               width: 4,
               height: 4,
-              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: Colors.black),
             ),
             title: Row(
               mainAxisSize: MainAxisSize.min,
@@ -238,13 +250,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 const SizedBox(width: 15.0),
                 GestureDetector(
                     onTap: () {
-                      if(index < _isSpiritChecked.length){
+                      if (index < _isSpiritChecked.length) {
                         setState(() {
                           _handleCheckboxTap(index);
                         });
                       }
                     },
-                    child: Image.asset(index < _isSpiritChecked.length && _isSpiritChecked[index]
+                    child: Image.asset(index < _isSpiritChecked.length &&
+                            _isSpiritChecked[index]
                         ? 'assets/icons/after_checkbox.png'
                         : 'assets/icons/before_checkbox.png')),
               ],
@@ -254,6 +267,157 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         break;
     }
     return Column(children: tiles);
+  }
+
+
+  void _showCustomMenu(BuildContext context, Offset position, ExerciseRoutineDetail exerciseRoutine) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    showGeneralDialog(
+      context: context,
+      barrierColor: Colors.transparent,
+      barrierDismissible: true,
+      barrierLabel: 'close menu',
+      pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+        return Stack(
+          children: [
+            Positioned(
+              left: position.dx - 30, // x 위치 설정
+              top: position.dy - 10,  // y 위치 설정
+              //right: position.dx + 50,
+              //bottom: position.dx + 20,
+              child: Material(
+                color: Colors.transparent,
+                child: Dialog(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
+                  ),
+                  child: SizedBox(
+                    width:  120,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 120
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        //mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5), // 세로 간격 설정
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                                _restRoutine(exerciseRoutine);
+                              },
+                              child: const Text('오늘은 쉬어가기', style: TextStyle(fontSize: 12)),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                                _viewRoutineExplanation(exerciseRoutine);
+                              },
+                              child: const Text('설명 보기', style: TextStyle(fontSize: 12)),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                                _editRoutine(exerciseRoutine);
+                              },
+                              child: const Text('수정하기', style: TextStyle(fontSize: 12)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+
+      // builder: (context) {
+      //   return Dialog(
+      //     backgroundColor: Colors.white,
+      //     shape: RoundedRectangleBorder(
+      //       borderRadius: BorderRadius.circular(20),
+      //       side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
+      //     ),
+      //     child: Container(
+      //       width: screenWidth * 0.3,
+      //       child: Column(
+      //         mainAxisSize: MainAxisSize.min,
+      //         children: [
+      //           ListTile(
+      //             title: const Text('오늘은 쉬어가기', style: TextStyle(fontSize: 12)),
+      //             onTap: () {
+      //               Navigator.pop(context);
+      //               _restRoutine(exerciseRoutine);
+      //             },
+      //           ),
+      //           ListTile(
+      //             title: const Text('설명 보기', style: TextStyle(fontSize: 12)),
+      //             onTap: () {
+      //               Navigator.pop(context);
+      //               _viewRoutineExplanation(exerciseRoutine);
+      //             },
+      //           ),
+      //           ListTile(
+      //             title: const Text('수정하기', style: TextStyle(fontSize: 12)),
+      //             onTap: () {
+      //               Navigator.pop(context);
+      //               _editRoutine(exerciseRoutine);
+      //             },
+      //           ),
+      //         ],
+      //       ),
+      //     ),
+      //   );
+      // },
+    );
+  }
+
+  // TODO : '오늘 쉬어가기' 구현 - Excercise말고 전체에 되도록 수정
+  void _restRoutine(ExerciseRoutineDetail routine) {
+    // Handle "오늘은 쉬어가기" logic, such as marking the routine as skipped or showing a message
+    print('${routine.name} 루틴은 오늘 쉬어가기');
+  }
+
+  // TODO: '설명 보기' 구현 -  Excercise말고 전체에 되도록 수정
+  void _viewRoutineExplanation(ExerciseRoutineDetail routine) {
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => ExplanationScreen(routine: routine),
+    //   ),
+    // );
+  }
+
+  // TODO: '루틴 수정하기' 구현 - Excercise말고 전체에 되도록 수정
+  void _editRoutine(ExerciseRoutineDetail routine) {
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => EditRoutineScreen(routine: routine),
+    //   ),
+    // );
   }
 
   Color getTextColor() {
@@ -272,11 +436,17 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   dynamic getRoutine(String text, int index) {
     switch (text) {
       case '운동':
-      return widget.exerciseDailyRoutines.isNotEmpty ? widget.exerciseDailyRoutines[index] : null;
+        return widget.exerciseDailyRoutines.isNotEmpty
+            ? widget.exerciseDailyRoutines[index]
+            : null;
       case '수면':
-        return widget.sleepDailyRoutines.isNotEmpty ? widget.sleepDailyRoutines[index] : null;
+        return widget.sleepDailyRoutines.isNotEmpty
+            ? widget.sleepDailyRoutines[index]
+            : null;
       case '마음 채우기':
-        return widget.spiritDailyRoutines.isNotEmpty ? widget.spiritDailyRoutines[index] : null;
+        return widget.spiritDailyRoutines.isNotEmpty
+            ? widget.spiritDailyRoutines[index]
+            : null;
       default:
         return null;
     }
@@ -302,7 +472,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     final routine = getRoutine(text, index);
     if (routine == null) return const SizedBox.shrink();
 
-    switch(widget.text){
+    switch (widget.text) {
       case '운동':
         return Visibility(
           visible: _isExerciseVisible[index],
@@ -328,8 +498,9 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       case '정적 스트레칭':
         return PlayButton(
             onPressed: () async {
-              bool success = await showStaticStretchingBottomSheet(context, '정적 스트레칭');
-              if(success){
+              bool success =
+                  await showStaticStretchingBottomSheet(context, '정적 스트레칭');
+              if (success) {
                 _handleCheckboxTap(index);
               }
             },
@@ -337,8 +508,9 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       case '동적 스트레칭':
         return PlayButton(
             onPressed: () async {
-              bool success = await showDynamicStretchingBottomSheet(context, '동적 스트레칭');
-              if(success){
+              bool success =
+                  await showDynamicStretchingBottomSheet(context, '동적 스트레칭');
+              if (success) {
                 _handleCheckboxTap(index);
               }
             },
@@ -364,8 +536,8 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       case '감정일기 작성':
         return LogButton(
           onPressed: () async {
-            bool success = await showDiaryBottomSheet(
-                context, '오늘 하루 어땠나요?', DateTime.now(), widget.spiritDailyRoutines[index].recordId! );
+            bool success = await showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
+                DateTime.now(), widget.spiritDailyRoutines[index].recordId!);
             print('감정일기 sucess값은!!!!!!  $success');
             if (success) {
               print('감정일기 작성 성공적');
@@ -390,15 +562,15 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   //   try {
   //     switch (widget.text) {
   //       case '수면':
-  //         // TODO: 수면 루틴 완료 상태 업데이트 요청
+  //         //  수면 루틴 완료 상태 업데이트 요청
   //         success = await homeApiService.checkSleepRoutine(newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
   //         break;
   //       case '운동':
-  //         // TODO: 운동 루틴 완료 상태 업데이트 요청
+  //         //  운동 루틴 완료 상태 업데이트 요청
   //         //success = await apiService.markExerciseRoutineCompleted(routine.sleepRoutineId, newStatus);
   //         break;
   //       case '마음 채우기':
-  //         // TODO: 마음 채우기 루틴 완료 상태 업데이트 요청
+  //         //  마음 채우기 루틴 완료 상태 업데이트 요청
   //         //success = await apiService.markSpiritRoutineCompleted(routine.sleepRoutineId, newStatus);
   //         break;
   //       default:
@@ -434,10 +606,12 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     try {
       switch (widget.text) {
         case '수면':
-          if (index < _isSleepChecked.length && index < widget.sleepDailyRoutines.length) {
+          if (index < _isSleepChecked.length &&
+              index < widget.sleepDailyRoutines.length) {
             SleepDailyRoutine sleepRoutine = widget.sleepDailyRoutines[index];
             newStatus = !_isSleepChecked[index];
-            success = await homeApiService.checkSleepRoutine(newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
+            success = await homeApiService.checkSleepRoutine(
+                newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
             if (success && mounted) {
               setState(() {
                 _isSleepChecked[index] = newStatus;
@@ -447,11 +621,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           }
           break;
         case '운동':
-          if (index < _isExerciseChecked.length && index < widget.exerciseDailyRoutines.length) {
+          if (index < _isExerciseChecked.length &&
+              index < widget.exerciseDailyRoutines.length) {
             print('운동 루틴 체크 안!!!!!');
-            ExerciseRoutineDetail exerciseRoutine = widget.exerciseDailyRoutines[index];
+            ExerciseRoutineDetail exerciseRoutine =
+                widget.exerciseDailyRoutines[index];
             newStatus = !_isExerciseChecked[index];
-            success = await homeApiService.checkExerciseRoutine(newStatus, exerciseRoutine.recordId);
+            success = await homeApiService.checkExerciseRoutine(
+                newStatus, exerciseRoutine.recordId);
             if (success && mounted) {
               setState(() {
                 print('운동 루틴 체크 성공적');
@@ -462,11 +639,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           }
           break;
         case '마음 채우기':
-          if (index < _isSpiritChecked.length && index < widget.spiritDailyRoutines.length) {
+          if (index < _isSpiritChecked.length &&
+              index < widget.spiritDailyRoutines.length) {
             //print('마음 채우기 루틴 체크 안!!!!!');
-            SpiritRoutineDetail spiritRoutine = widget.spiritDailyRoutines[index];
+            SpiritRoutineDetail spiritRoutine =
+                widget.spiritDailyRoutines[index];
             newStatus = !_isSpiritChecked[index];
-            success = await homeApiService.checkSpiritRoutine(newStatus, spiritRoutine.recordId);
+            success = await homeApiService.checkSpiritRoutine(
+                newStatus, spiritRoutine.recordId);
             if (success && mounted) {
               setState(() {
                 //print('마음 채우기 루틴 체크 성공적');
@@ -532,10 +712,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               width: screenWidth * 0.9,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  border: widget.text == '운동' && widget.exerciseDailyRoutines.isNotEmpty ||
-                      widget.text == '수면' && widget.sleepDailyRoutines.isNotEmpty ||
-                      widget.text == '마음 채우기' && widget.spiritDailyRoutines.isNotEmpty
-                      ? const Border(top: BorderSide(color: Colors.black, width: 1.0))
+                  border: widget.text == '운동' &&
+                              widget.exerciseDailyRoutines.isNotEmpty ||
+                          widget.text == '수면' &&
+                              widget.sleepDailyRoutines.isNotEmpty ||
+                          widget.text == '마음 채우기' &&
+                              widget.spiritDailyRoutines.isNotEmpty
+                      ? const Border(
+                          top: BorderSide(color: Colors.black, width: 1.0))
                       : const Border(),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(20),
@@ -549,5 +733,3 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     );
   }
 }
-
-
