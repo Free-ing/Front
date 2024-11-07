@@ -376,9 +376,11 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    // 선택한 날짜 보여주기
                     Text(formattedDate,
                         style: const TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 20)),
+                    // today 버튼
                     SizedBox(
                       width: 79.60,
                       height: 30,
@@ -422,196 +424,204 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                Container(
-                  width: screenWidth * 0.9,
-                  height: screenHeight * 0.106,
-                  margin: EdgeInsets.symmetric(
-                    vertical: screenHeight * 0.02,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF6F6F6),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          offset: const Offset(2, 4),
-                          blurRadius: 4,
-                          spreadRadius: 0)
-                    ],
-                  ),
-                  child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              currentWeekStartDate = currentWeekStartDate
-                                  .subtract(Duration(days: 7));
-                              _generateDates();
-                              selectedIndex = today.weekday - 1;
-                              if (selectedIndex < 0 || selectedIndex > 6) {
-                                selectedIndex = 0;
-                              }
-                              selectedDate = currentWeekStartDate
-                                  .add(Duration(days: selectedIndex));
-                              formattedDate = DateFormat('yyyy년 MM월 dd일')
-                                  .format(selectedDate);
-                              todayDayName =
-                                  DateFormat('EEE', 'ko').format(selectedDate);
-                            });
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.only(left: 8.0, top: 25.0),
-                            child: Icon(Icons.arrow_back_ios, size: 15),
-                          ),
-                        ),
-                        ...List<Widget>.generate(7, (index) {
-                          return GestureDetector(
-                            onTap: () async {
-                              setState(() {
-                                selectedIndex = index;
-                                selectedDate = dates[index];
-                                formattedDate = DateFormat('yyyy년 MM월 dd일')
-                                    .format(selectedDate);
-                                formattedDateForServer =
-                                    DateFormat('yyyy-MM-dd')
-                                        .format(selectedDate);
-                                todayDayName = DateFormat('EEE', 'ko')
-                                    .format(selectedDate);
-                                dayOfWeek = selectedDate.weekday;
-                                loadInitialData();
-                              });
-                            },
-                            child: CircleWidget(
-                              dayName: dayNames[index],
-                              date: dates[index],
-                              isSelected: selectedIndex == index,
-                            ),
-                          );
-                        }),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              currentWeekStartDate =
-                                  currentWeekStartDate.add(Duration(days: 7));
-                              _generateDates();
-                              selectedIndex = today.weekday - 1;
-                              if (selectedIndex < 0 || selectedIndex > 6) {
-                                selectedIndex = 0;
-                              }
-                              selectedDate = currentWeekStartDate
-                                  .add(Duration(days: selectedIndex));
-                              formattedDate = DateFormat('yyyy년 MM월 dd일')
-                                  .format(selectedDate);
-                              todayDayName =
-                                  DateFormat('EEE', 'ko').format(selectedDate);
-                            });
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.only(right: 8.0, top: 25.0),
-                            child: Icon(
-                              Icons.arrow_forward_ios,
-                              size: 15,
-                            ),
-                          ),
-                        ),
-                      ]),
-                ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //   children: [
-                //     SizedBox(
-                //       height: screenHeight * 0.03,
-                //     ),
-                //     PlayButton(
-                //         onPressed: () {
-                //           showDynamicStretchingBottomSheet(context, '동적 스트레칭');
-                //         },
-                //         iconColor: PINK_PLAY_BUTTON),
-                //     PlayButton(
-                //         onPressed: () {
-                //           showMeditationBottomSheet(context, '명상하기');
-                //         },
-                //         iconColor: GREEN_PLAY_BUTTON),
-                //     LogButton(
-                //       onPressed: () {
-                //         showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
-                //       },
-                //     ),
-                //
-                //   ],
-                // ),
-                SizedBox(height: screenHeight * 0.005),
                 SizedBox(
-                  //height: screenHeight * 0.5,
-                  height: screenHeight * 0.539,
+                  // TODO: height 사이즈 수정하기!!!
+                  height: screenHeight * 0.69,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        HomeExpansionTileBox(
-                          text: '운동',
-                          exerciseDailyRoutines:
-                              getAllFilteredExerciseRoutines(dayOfWeek),
-                          completeDay: formattedDateForServer,
-                        ),
-                        verticalSpace,
-                        HomeExpansionTileBox(
-                          text: '수면',
-                          sleepDailyRoutines: getFilteredSleepRoutines(),
-                          completeDay: formattedDateForServer,
-                        ),
-                        verticalSpace,
-                        HomeExpansionTileBox(
-                          text: '마음 채우기',
-                          spiritDailyRoutines:
-                              getAllFilteredSpiritRoutines(dayOfWeek),
-                          completeDay: formattedDateForServer,
-                        ),
-                        verticalSpace,
                         Container(
                           width: screenWidth * 0.9,
-                          height: screenHeight * 0.05,
+                          height: screenHeight * 0.106,
+                          margin: EdgeInsets.symmetric(
+                            vertical: screenHeight * 0.02,
+                          ),
                           decoration: BoxDecoration(
-                              color: LIGHT_IVORY,
-                              border: Border.all(width: 1),
-                              borderRadius: BorderRadius.circular(15)),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.only(left: 20.0, right: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                RichText(
-                                  text: TextSpan(
-                                      text: '오늘은 어떤 ',
-                                      style: textTheme.bodyMedium,
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                            text: '취미',
-                                            style: textTheme.bodyMedium
-                                                ?.copyWith(
-                                                    color: HOME_YELLOW_TEXT,
-                                                    fontWeight:
-                                                        FontWeight.w600)),
-                                        const TextSpan(text: '를 했나요?')
-                                      ]),
-                                ),
-                                LogButton(
-                                  onPressed: () {
-                                    showHobbyBottomSheet(context,
-                                        '오늘 했던 취미는 어땠나요?', selectedDate);
-                                  },
-                                )
-                              ],
+                            color: const Color(0xFFF6F6F6),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1,
                             ),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey.withOpacity(0.1),
+                                  offset: const Offset(2, 4),
+                                  blurRadius: 4,
+                                  spreadRadius: 0)
+                            ],
+                          ),
+                          child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      currentWeekStartDate = currentWeekStartDate
+                                          .subtract(Duration(days: 7));
+                                      _generateDates();
+                                      selectedIndex = today.weekday - 1;
+                                      if (selectedIndex < 0 || selectedIndex > 6) {
+                                        selectedIndex = 0;
+                                      }
+                                      selectedDate = currentWeekStartDate
+                                          .add(Duration(days: selectedIndex));
+                                      formattedDate = DateFormat('yyyy년 MM월 dd일')
+                                          .format(selectedDate);
+                                      todayDayName =
+                                          DateFormat('EEE', 'ko').format(selectedDate);
+                                    });
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.only(left: 8.0, top: 25.0),
+                                    child: Icon(Icons.arrow_back_ios, size: 15),
+                                  ),
+                                ),
+                                ...List<Widget>.generate(7, (index) {
+                                  return GestureDetector(
+                                    onTap: () async {
+                                      setState(() {
+                                        selectedIndex = index;
+                                        selectedDate = dates[index];
+                                        formattedDate = DateFormat('yyyy년 MM월 dd일')
+                                            .format(selectedDate);
+                                        formattedDateForServer =
+                                            DateFormat('yyyy-MM-dd')
+                                                .format(selectedDate);
+                                        todayDayName = DateFormat('EEE', 'ko')
+                                            .format(selectedDate);
+                                        dayOfWeek = selectedDate.weekday;
+                                        loadInitialData();
+                                      });
+                                    },
+                                    child: CircleWidget(
+                                      dayName: dayNames[index],
+                                      date: dates[index],
+                                      isSelected: selectedIndex == index,
+                                    ),
+                                  );
+                                }),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      currentWeekStartDate =
+                                          currentWeekStartDate.add(Duration(days: 7));
+                                      _generateDates();
+                                      selectedIndex = today.weekday - 1;
+                                      if (selectedIndex < 0 || selectedIndex > 6) {
+                                        selectedIndex = 0;
+                                      }
+                                      selectedDate = currentWeekStartDate
+                                          .add(Duration(days: selectedIndex));
+                                      formattedDate = DateFormat('yyyy년 MM월 dd일')
+                                          .format(selectedDate);
+                                      todayDayName =
+                                          DateFormat('EEE', 'ko').format(selectedDate);
+                                    });
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.only(right: 8.0, top: 25.0),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 15,
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        //   children: [
+                        //     SizedBox(
+                        //       height: screenHeight * 0.03,
+                        //     ),
+                        //     PlayButton(
+                        //         onPressed: () {
+                        //           showDynamicStretchingBottomSheet(context, '동적 스트레칭');
+                        //         },
+                        //         iconColor: PINK_PLAY_BUTTON),
+                        //     PlayButton(
+                        //         onPressed: () {
+                        //           showMeditationBottomSheet(context, '명상하기');
+                        //         },
+                        //         iconColor: GREEN_PLAY_BUTTON),
+                        //     LogButton(
+                        //       onPressed: () {
+                        //         showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
+                        //       },
+                        //     ),
+                        //
+                        //   ],
+                        // ),
+                        SizedBox(height: screenHeight * 0.005),
+                        SizedBox(
+                          //height: screenHeight * 0.5,
+                          //height: screenHeight * 0.539,
+                          child: Column(
+                            children: [
+                              HomeExpansionTileBox(
+                                text: '운동',
+                                exerciseDailyRoutines:
+                                getAllFilteredExerciseRoutines(dayOfWeek),
+                                completeDay: formattedDateForServer,
+                              ),
+                              verticalSpace,
+                              HomeExpansionTileBox(
+                                text: '수면',
+                                sleepDailyRoutines: getFilteredSleepRoutines(),
+                                completeDay: formattedDateForServer,
+                              ),
+                              verticalSpace,
+                              HomeExpansionTileBox(
+                                text: '마음 채우기',
+                                spiritDailyRoutines:
+                                getAllFilteredSpiritRoutines(dayOfWeek),
+                                completeDay: formattedDateForServer,
+                              ),
+                              verticalSpace,
+                              Container(
+                                width: screenWidth * 0.9,
+                                height: screenHeight * 0.05,
+                                decoration: BoxDecoration(
+                                    color: LIGHT_IVORY,
+                                    border: Border.all(width: 1),
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: Padding(
+                                  padding:
+                                  const EdgeInsets.only(left: 20.0, right: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      RichText(
+                                        text: TextSpan(
+                                            text: '오늘은 어떤 ',
+                                            style: textTheme.bodyMedium,
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                  text: '취미',
+                                                  style: textTheme.bodyMedium
+                                                      ?.copyWith(
+                                                      color: HOME_YELLOW_TEXT,
+                                                      fontWeight:
+                                                      FontWeight.w600)),
+                                              const TextSpan(text: '를 했나요?')
+                                            ]),
+                                      ),
+                                      LogButton(
+                                        onPressed: () {
+                                          showHobbyBottomSheet(context,
+                                              '오늘 했던 취미는 어땠나요?', selectedDate);
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              verticalSpace
+                            ],
                           ),
                         ),
-                        verticalSpace
                       ],
                     ),
                   ),
