@@ -365,7 +365,7 @@ class _HomePageState extends State<HomePage> {
                       width: 79.60,
                       height: 30,
                       child: TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           setState(() {
                             selectedDate = today;
                             formattedDate = DateFormat('yyyy년 MM월 dd일')
@@ -381,8 +381,10 @@ class _HomePageState extends State<HomePage> {
                             }
                             todayDayName =
                                 DateFormat('EEE', 'ko').format(selectedDate);
+                            dayOfWeek = selectedDate.weekday;
                             loadInitialData();
                           });
+
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
@@ -451,7 +453,6 @@ class _HomePageState extends State<HomePage> {
                             child: Icon(Icons.arrow_back_ios, size: 15),
                           ),
                         ),
-                        // Week Days
                         ...List<Widget>.generate(7, (index) {
                           return GestureDetector(
                             onTap: () async {
@@ -476,7 +477,6 @@ class _HomePageState extends State<HomePage> {
                             ),
                           );
                         }),
-                        // Next Week Button
                         GestureDetector(
                           onTap: () {
                             setState(() {
