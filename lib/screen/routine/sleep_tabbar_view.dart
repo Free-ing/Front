@@ -116,7 +116,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
           ],
         ),
         Container(
-          height: screenHeight * 0.53,
+          height: screenHeight * 0.535,
           child: GridView.builder(
             gridDelegate:
                 SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
