@@ -342,12 +342,10 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         return PlayButton(
             onPressed: () async {
               bool success = await showMeditationBottomSheet(context, '명상하기');
-              print('명상하기 success $success');
               if (success) {
                 setState(() {
-                  print('명상하기 성공적!!!!!');
-                  _isSleepChecked[index] = true;
-                  _isSleepVisible[index] = false;
+                  _isSpiritChecked[index] = true;
+                  _isSpiritVisible[index] = false;
                 });
               }
             },
@@ -370,12 +368,12 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           onPressed: () async {
             bool success = await showDiaryBottomSheet(
                 context, '오늘 하루 어땠나요?', DateTime.now(), widget.spiritDailyRoutines[index].recordId! );
-            print('sucess값은!!!!!!  $success');
+            print('감정일기 sucess값은!!!!!!  $success');
             if (success) {
               print('감정일기 작성 성공적');
               setState(() {
-                _isSleepChecked[index] = true;
-                _isSleepVisible[index] = false;
+                _isSpiritChecked[index] = true;
+                _isSpiritVisible[index] = false;
               });
             }
           },
@@ -448,9 +446,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             if (success && mounted) {
               setState(() {
                 _isSleepChecked[index] = newStatus;
-                if (newStatus) {
-                  _isSleepVisible[index] = false;
-                }
+                _isSleepVisible[index] = !newStatus;
               });
             }
           }
@@ -463,9 +459,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             if (success && mounted) {
               setState(() {
                 _isExerciseChecked[index] = newStatus;
-                if (newStatus) {
-                  _isExerciseVisible[index] = false;
-                }
+                _isExerciseVisible[index] = !newStatus;
               });
             }
           }
@@ -478,9 +472,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             if (success && mounted) {
               setState(() {
                 _isSpiritChecked[index] = newStatus;
-                if (newStatus) {
-                  _isSpiritVisible[index] = false;
-                }
+                _isSpiritVisible[index] = !newStatus;
               });
             }
           }
@@ -488,7 +480,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         default:
           break;
       }
-
       if (!success) {
         // 서버 요청 실패 시 사용자에게 알림
         const ToastBarWidget(
@@ -502,7 +493,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       ).showToast(context);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

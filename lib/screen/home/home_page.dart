@@ -505,34 +505,34 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ]),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(
-                      height: screenHeight * 0.03,
-                    ),
-                    PlayButton(
-                        onPressed: () {
-                          showDynamicStretchingBottomSheet(context, '동적 스트레칭');
-                        },
-                        iconColor: PINK_PLAY_BUTTON),
-                    PlayButton(
-                        onPressed: () {
-                          showMeditationBottomSheet(context, '명상하기');
-                        },
-                        iconColor: GREEN_PLAY_BUTTON),
-                    LogButton(
-                      onPressed: () {
-                        showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
-                      },
-                    ),
-
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //   children: [
+                //     SizedBox(
+                //       height: screenHeight * 0.03,
+                //     ),
+                //     PlayButton(
+                //         onPressed: () {
+                //           showDynamicStretchingBottomSheet(context, '동적 스트레칭');
+                //         },
+                //         iconColor: PINK_PLAY_BUTTON),
+                //     PlayButton(
+                //         onPressed: () {
+                //           showMeditationBottomSheet(context, '명상하기');
+                //         },
+                //         iconColor: GREEN_PLAY_BUTTON),
+                //     LogButton(
+                //       onPressed: () {
+                //         showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
+                //       },
+                //     ),
+                //
+                //   ],
+                // ),
                 SizedBox(height: screenHeight * 0.005),
                 SizedBox(
-                  height: screenHeight * 0.5,
-                  //height: screenHeight * 0.54,
+                  //height: screenHeight * 0.5,
+                  height: screenHeight * 0.54,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [

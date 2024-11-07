@@ -17,7 +17,7 @@ Future<bool> showDiaryBottomSheet(
 ) async {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
-  bool isSuccess = false;
+  late bool isSuccess;
 
   isSuccess = await showCustomModalBottomSheet(
     context: context,
