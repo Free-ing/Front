@@ -20,6 +20,8 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
 
   List<HobbyAlbum> _hobbyAlbums = [];
 
+  bool _editMode = false;
+
   //Todo: 서버 요청(취미 기록 조회)
   Future<List<HobbyAlbum>> _fetchHobbyAlbum(int year, int month) async {
     print("Fetching hobby albums for $year-$month");
@@ -90,6 +92,44 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     setState(() {
       _hobbyAlbums = hobbyAlbums;
     });
+  }
+
+  //Todo: 취미 기록 수정, 삭제 메뉴
+  void showMenu(context, recordId) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.edit_note_rounded),
+                title: const Text('취미 기록 수정하기'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _editMode = true;
+                  setState(() {});
+                },
+              ),
+              ListTile(
+                  leading: Icon(Icons.delete_forever_outlined),
+                  title: const Text('취미 기록 삭제하기'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    DialogManager.showConfirmDialog(
+                        context: context,
+                        title: '취미 기록 삭제',
+                        content: '삭제된 취미 기록은 복구할 수 없습니다.\n삭제하시겠습니까?',
+                        onConfirm: () {
+                          _deleteHobbyRecord(recordId);
+                        });
+                  })
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -274,26 +314,18 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                         ),
                       ),
                       SizedBox(width: 50),
-                      // /// 취미 기록 수정
-                      // IconButton(
-                      //   onPressed: _isEditing ? (){} : (){},
-                      //   icon: _isEditing ? Icon(Icons.check_rounded): Icon(Icons.edit_note_rounded),
-                      //   iconSize: 25,
-                      // ),
+
                       /// 취미 기록 삭제
                       SizedBox(
                         height: screenHeight * 0.045,
                         width: screenWidth * 0.07,
                         child: IconButton(
                           onPressed: () {
-                            DialogManager.showConfirmDialog(
-                                context: context,
-                                title: '취미 기록 삭제',
-                                content: '삭제된 취미 기록은 복구할 수 없습니다.\n삭제하시겠습니까?',
-                                onConfirm:  (){_deleteHobbyRecord(recordId);});
+                            showMenu(context, recordId);
                           },
                           icon: Icon(
-                            Icons.delete_forever,
+                            Icons.more_vert_rounded,
+                            //Icons.delete_forever,
                             size: 25,
                             color: Colors.white,
                           ),
@@ -319,7 +351,7 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
               child: Image.network(
                 imageUrl,
                 height: screenHeight * 0.22,
-                fit: BoxFit.contain,
+                fit: BoxFit.cover, // 영역을 가득 채우며 비율 유지
               ),
             ),
 

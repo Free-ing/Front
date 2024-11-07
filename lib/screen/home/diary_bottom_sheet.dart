@@ -10,31 +10,29 @@ import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
 
 //Todo: 감정 일기
-Future<bool> showDiaryBottomSheet(
-  BuildContext context,
-  String title,
-  DateTime selectedDate, int recordId
-) async {
+Future<bool> showDiaryBottomSheet(BuildContext context, String title,
+    DateTime selectedDate, int recordId) async {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
   late bool isSuccess;
 
   isSuccess = await showCustomModalBottomSheet(
-    context: context,
-    builder: (BuildContext context, TextTheme textTheme) {
-      return _DiaryBottomSheetContent(
-        title: title,
-        textTheme: textTheme,
-        screenWidth: screenWidth,
-        screenHeight: screenHeight,
-        selectedDate: selectedDate,
-        onSubmissionSuccess: (){
-          isSuccess = true;
+        context: context,
+        builder: (BuildContext context, TextTheme textTheme) {
+          return _DiaryBottomSheetContent(
+            title: title,
+            textTheme: textTheme,
+            screenWidth: screenWidth,
+            screenHeight: screenHeight,
+            selectedDate: selectedDate,
+            onSubmissionSuccess: () {
+              isSuccess = true;
+            },
+            recordId: recordId,
+          );
         },
-        recordId: recordId,
-      );
-    },
-  )?? false;
+      ) ??
+      false;
   return isSuccess;
 }
 
@@ -99,12 +97,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         hardWorkController.text.isNotEmpty &&
         selectedIndex != null) {
       final response = await apiService.postEmotionalDiary(
-        wellDone,
-        hardWork,
-        _getAiLetter,
-        emotion,
-        widget.recordId
-      );
+          wellDone, hardWork, _getAiLetter, emotion, widget.recordId);
       if (response.statusCode == 200) {
         final decodedBody = json.decode(utf8.decode(response.bodyBytes));
         final resultId = decodedBody['result'];
@@ -113,24 +106,23 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
           diaryId = resultId;
         });
         widget.onSubmissionSuccess();
+        Navigator.pop(context, true);
         if(_getAiLetter == false){
-          Navigator.pop(context, true);
+          const ToastBarWidget(
+            title: '감정 일기 작성이 저장되었습니다.',
+          ).showToast(context);
         }
-        const ToastBarWidget(
-          title: '감정 일기 작성이 저장되었습니다.',
-        ).showToast(context);
         return true;
       } else if (response == 400) {
         DialogManager.showAlertDialog(
-            context: context,
-            title: '알림',
-            content: '모두 입력해주세요.');
+            context: context, title: '알림', content: '모두 입력해주세요.');
         return false;
       } else {
         DialogManager.showAlertDialog(
           context: context,
           title: '알림',
-          content: '서버에서 오류가 발생하였습니다.\n다시 시도해주세요. ${response.statusCode}\n${ utf8.decode(response.bodyBytes)}',
+          content:
+              '서버에서 오류가 발생하였습니다.\n다시 시도해주세요. ${response.statusCode}\n${utf8.decode(response.bodyBytes)}',
         );
         return false;
       }
@@ -151,10 +143,12 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
     print('ai 편지 작성 요청하는 diaryId $diaryId');
     if (response == 200) {
       print('편지 요청 성공!');
-      Navigator.pop(context, true);
-      const ToastBarWidget(
-        title: '편지가 도착하면 확인할 수 있어요.',
-      ).showToast(context);
+      if(mounted){
+        const ToastBarWidget(
+          title: '감정일기가 저장되었습니다.\n편지가 도착하면 확인할 수 있어요.',
+        ).showToast(context);
+      }
+
     } else {
       print('편지 요청 실패 $response');
       print('편지 요청한 아이디 $diaryId');
