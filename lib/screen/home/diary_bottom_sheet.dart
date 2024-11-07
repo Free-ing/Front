@@ -126,7 +126,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         DialogManager.showAlertDialog(
           context: context,
           title: '알림',
-          content: '서버에서 오류가 발생하였습니다.\n다시 시도해주세요. ${response.statusCode}',
+          content: '서버에서 오류가 발생하였습니다.\n다시 시도해주세요. ${response.statusCode}\n${ utf8.decode(response.bodyBytes)}',
         );
         return false;
       }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/question_mark.dart';
 import '../../common/component/dialog_manager.dart';
 import '../../common/component/sleep_card.dart';
 import '../../common/const/colors.dart';
@@ -89,7 +90,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
             ),
             const QuestionMark(
                 title: '수면 기록하기 설명',
-                description:
+                content:
                     '잠을 잔 시간, 자고 일어난 후의\n 상태를 기록해요!\n\n주간(월간) 통계와 피드백을 받을 수 있어요!'),
             const Spacer(),
             toggle(isRecordOn: (isRecordOn == true ? true :false ) ),
@@ -110,7 +111,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
             ),
             const QuestionMark(
                 title: '수면 루틴 만들기 설명',
-                description:
+                content:
                     '꿀잠을 위한 루틴을 만들어 보세요!\n\n추천해드리는걸 해도 되고,\n직접 세워봐도 좋아요!'),
           ],
         ),
@@ -144,35 +145,6 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
     );
   }
 }
-
-class QuestionMark extends StatelessWidget {
-  final String title;
-  final String description;
-
-  const QuestionMark({
-    Key? key,
-    required this.title,
-    required this.description,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        DialogManager.showAlertDialog(
-          context: context,
-          title: title,
-          content: description,
-        );
-      },
-      icon: Image.asset(
-        "assets/icons/question_icon.png",
-        width: 30,
-      ),
-    );
-  }
-}
-
 
 class toggle extends StatefulWidget {
   bool isRecordOn;

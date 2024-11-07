@@ -11,14 +11,12 @@ class SleepReportScreen extends StatelessWidget {
 
     return ScreenLayout(
       title: '주간 수면 리포트',
-      body: Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.03),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Image.asset('assets/imgs/etc/report_mascot.png'),
-            ],
-          ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: screenHeight * 0.028),
+            Image.asset('assets/imgs/etc/report_mascot.png'),
+          ],
         ),
       ),
       color: LIGHT_IVORY,

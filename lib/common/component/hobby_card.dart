@@ -64,6 +64,8 @@ class HobbyCard extends StatelessWidget {
         title,
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyMedium,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
       ),
     );
   }
