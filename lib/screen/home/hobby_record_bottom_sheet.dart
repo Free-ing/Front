@@ -10,8 +10,9 @@ import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/screen/home/select_hobby_name.dart';
 import 'package:image_picker/image_picker.dart';
 
-//Todo: 취미 기록 --- 아직 홈화면 구현 전 이어서 selectedDate==오늘 날짜
-void showHobbyBottomSheet(BuildContext context, String title, DateTime selectedDate) {
+//Todo: 취미 기록
+void showHobbyBottomSheet(
+    BuildContext context, String title, DateTime selectedDate) {
   final TextEditingController hobbyMemoController = TextEditingController();
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
@@ -164,16 +165,20 @@ void showHobbyBottomSheet(BuildContext context, String title, DateTime selectedD
                     return Stack(
                       children: [
                         Container(
-                          width: 200,
-                          height: 200,
+                          width: screenWidth * 0.7,
+                          height: screenHeight * 0.22,
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                           child: image == null
                               ? Center(child: Text('사진을 입력해주세요.'))
-                              : Image.file(
-                                  image,
-                                  fit: BoxFit.cover,
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: Image.file(
+                                    image,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                         ),
                         Positioned(
@@ -215,150 +220,3 @@ void showHobbyBottomSheet(BuildContext context, String title, DateTime selectedD
     },
   );
 }
-
-//
-// //Todo: 취미 이름
-// class SelectHobbyButton extends StatelessWidget {
-//   final ValueNotifier<String> selectedHobbyNotifier = ValueNotifier('취미 선택');
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final textTheme = Theme.of(context).textTheme;
-//     final screenWidth = MediaQuery.of(context).size.width;
-//     final screenHeight = MediaQuery.of(context).size.height;
-//
-//     return GestureDetector(
-//       onTap: () async {
-//         final result = await Navigator.of(context).push(
-//           MaterialPageRoute(
-//             builder: (context) => SelectHobbyName(),
-//           ),
-//         );
-//         // setState(() {
-//         //   selectedHobby = result ?? selectedHobby;
-//         // });
-//         selectedHobbyNotifier.value = result ?? selectedHobbyNotifier.value;
-//       },
-//       child: Container(
-//         width: screenWidth * 0.3,
-//         height: screenHeight * 0.045,
-//         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.circular(15),
-//           border: Border.all(width: 1),
-//         ),
-//         child: ValueListenableBuilder<String>(
-//             valueListenable: selectedHobbyNotifier,
-//             builder: (context, selectedHobby, _) {
-//               return Stack(
-//                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                 children: [
-//                   Align(
-//                     alignment: Alignment.centerLeft,
-//                     child: Text(
-//                       selectedHobby,
-//                       style: selectedHobby == '취미 선택'
-//                           ? textTheme.bodyMedium?.copyWith(color: TEXT_GREY)
-//                           : textTheme.bodyMedium,
-//                     ),
-//                   ),
-//                   Align(
-//                       alignment: Alignment.centerRight,
-//                       child: Icon(Icons.arrow_right_rounded))
-//                 ],
-//               );
-//             }),
-//       ),
-//     );
-//   }
-// }
-//
-// //Todo: 사진 입력
-// class InsertPhoto extends StatefulWidget {
-//   InsertPhoto({super.key});
-//
-//   @override
-//   State<InsertPhoto> createState() => _InsertPhotoState();
-// }
-//
-// class _InsertPhotoState extends State<InsertPhoto> {
-//   File? image;
-//   final ImagePicker _picker = ImagePicker();
-//   final ValueNotifier<File?> imageNotifier = ValueNotifier<File?>(null);
-//
-//   //Todo: 사진 선택 함수
-//   Future<void> _pickImage(ImageSource source) async {
-//     final XFile? pickedImage = await _picker.pickImage(source: source);
-//     if (pickedImage != null) {
-//       setState(() {
-//         //image = File(pickedImage.path);
-//         imageNotifier.value = File(pickedImage.path);
-//       });
-//     }
-//     Navigator.of(context).pop();
-//   }
-//
-//   //Todo: 모달 바텀 시트: 사진 선택 옵션
-//   void _showPicker(context) {
-//     showModalBottomSheet(
-//       context: context,
-//       builder: (BuildContext bc) {
-//         return SafeArea(
-//           child: Wrap(
-//             children: <Widget>[
-//               ListTile(
-//                 leading: Icon(Icons.photo_library),
-//                 title: Text('갤러리에서 선택'),
-//                 onTap: () {
-//                   _pickImage(ImageSource.gallery);
-//                 },
-//               ),
-//               ListTile(
-//                 leading: Icon(Icons.camera_alt),
-//                 title: Text('카메라로 촬영'),
-//                 onTap: () {
-//                   _pickImage(ImageSource.camera);
-//                 },
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Stack(
-//       children: [
-//         Container(
-//           width: 200,
-//           height: 200,
-//           decoration: BoxDecoration(
-//             border: Border.all(color: Colors.black),
-//           ),
-//           child: image == null
-//               ? Center(child: Text('사진을 입력해주세요.'))
-//               : Image.file(
-//                   image!,
-//                   fit: BoxFit.cover,
-//                 ),
-//         ),
-//         Positioned(
-//           bottom: 0,
-//           right: 0,
-//           child: IconButton(
-//             icon: Icon(
-//               Icons.camera_alt,
-//               size: 30,
-//             ),
-//             onPressed: () {
-//               _showPicker(context);
-//             },
-//           ),
-//         )
-//       ],
-//     );
-//   }
-// }
