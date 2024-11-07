@@ -177,7 +177,6 @@ class _AddRecommendedRoutineScreenState
               children: [
                 // 제목과 이미지 입력
                 _routineImageTitle(textTheme, screenWidth, screenHeight),
-                SizedBox(height: screenHeight * 0.03),
                 // 카테고리 선택
                 _selectCategory(textTheme, screenWidth, screenHeight),
                 SizedBox(height: screenHeight * 0.02),

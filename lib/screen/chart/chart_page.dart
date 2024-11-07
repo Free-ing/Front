@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/model/exercise/recommended_exercise.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/chart/ai_letter.dart';
 import 'package:freeing/screen/chart/select_exercise_report_screen.dart';
@@ -19,11 +20,11 @@ class ChartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 예시로 추천 리스트를 생성
-    List<RecommendedHobby> recommendedHobbies = [
-      RecommendedHobby(hobbyName: '취미', explanation: '에 대한 설명'),
-      RecommendedHobby(hobbyName: '설명', explanation: '에 대한 취미'),
-      RecommendedHobby(hobbyName: '취미', explanation: '에 대한 설명'),
-      RecommendedHobby(hobbyName: '설명', explanation: '에 대한 취미'),
+    List<RecommendedExercise> recommendedHobbies = [
+      RecommendedExercise(exerciseName: '취미', explanation: '에 대한 설명'),
+      RecommendedExercise(exerciseName: '설명', explanation: '에 대한 취미'),
+      RecommendedExercise(exerciseName: '취미', explanation: '에 대한 설명'),
+      RecommendedExercise(exerciseName: '설명', explanation: '에 대한 취미'),
     ];
 
     final textTheme = Theme.of(context).textTheme;
@@ -62,7 +63,7 @@ class ChartPage extends StatelessWidget {
                   imageUrl: 'assets/imgs/chart/routine_tracker.png',
                   title: "월간\n루틴 트래커",
                   navigatePage: SurveyResponseScreen(
-                      category: '취미',
+                      category: '운동',
                       recommend: recommendedHobbies,
                       answers: [],
                       remain: 0),

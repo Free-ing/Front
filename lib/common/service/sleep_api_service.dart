@@ -199,7 +199,7 @@ class SleepAPIService {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url =
-        Uri.parse('$_baseUrl/sleep-service/routine/$routineId/activate');
+    Uri.parse('$_baseUrl/sleep-service/routine/$routineId/activate');
 
     try {
       var response = await http.patch(
@@ -224,7 +224,7 @@ class SleepAPIService {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url =
-        Uri.parse('$_baseUrl/sleep-service/routine/$routineId/deactivate');
+    Uri.parse('$_baseUrl/sleep-service/routine/$routineId/deactivate');
 
     try {
       var response = await http.patch(
