@@ -18,8 +18,8 @@ class SleepDailyRoutine {
   DateTime? endTime;
 
   SleepDailyRoutine(
-      {required this.sleepRoutineId,
-      required this.userId,
+      {this.sleepRoutineId,
+      this.userId,
       required this.sleepRoutineName,
       required this.monday,
       required this.tuesday,
@@ -29,10 +29,10 @@ class SleepDailyRoutine {
       required this.saturday,
       required this.sunday,
       required this.status,
-      required this.url,
-      required this.completed,
-      required this.startTime,
-      required this.endTime,
+      this.url,
+      this.completed,
+      this.startTime,
+      this.endTime,
       });
 
   factory SleepDailyRoutine.fromJson(Map<String, dynamic> json) {

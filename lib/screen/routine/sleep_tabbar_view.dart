@@ -57,11 +57,14 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
   // 수면 기록 on/off 상태 불러오는 서버 요청
   Future<void> getRecordSleepStatus() async {
     try{
-      setState(() async {
-        isRecordOn = await apiService.getRecordSleepStatus();
+      bool recordStatus = await apiService.getRecordSleepStatus();
+
+      // setState() 안에서 상태를 갱신
+      setState(() {
+        isRecordOn = recordStatus;
       });
     } catch(e){
-      print('Error ${isRecordOn == true ? '켜기': '끄기' } 실패');
+      print('Error ${isRecordOn == true ? '켜기': '끄기' } 실패 $e');
     }
 
   }

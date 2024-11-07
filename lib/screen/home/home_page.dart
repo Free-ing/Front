@@ -13,6 +13,7 @@ import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/component/expansion_tile.dart';
+import '../../common/service/sleep_api_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,6 +24,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final homeApiService = HomeApiService();
+  final sleepApiService = SleepAPIService();
   int selectedIndex = -1;
   DateTime now = DateTime.now();
   late String formattedDate;
@@ -52,6 +54,11 @@ class _HomePageState extends State<HomePage> {
         fetchExerciseDailyRoutine(),
         fetchSpiritDailyRoutine(),
       ]);
+
+      final isSleepRecordOn = await sleepApiService.getRecordSleepStatus();
+      if (isSleepRecordOn) {
+        _addSleepRecordRoutine();
+      }
     } catch (e) {
       print(e);
     } finally {
@@ -59,6 +66,28 @@ class _HomePageState extends State<HomePage> {
         isLoading = false;
       });
     }
+  }
+
+  void _addSleepRecordRoutine() {
+    setState(() {
+      _sleepDailyRoutine.add(SleepDailyRoutine(
+          //sleepRoutineId: sleepRoutineId,
+          //userId: userId,
+          sleepRoutineName: '수면 기록하기',
+          monday:  true,
+          tuesday: true,
+          wednesday: true,
+          thursday: true,
+          friday: true,
+          saturday: true,
+          sunday: true,
+          status: true,
+          //url: url,
+          //completed: completed,
+          //startTime: startTime,
+          //endTime: endTime
+      ));
+    });
   }
 
   // 수면 루틴 불러오기
@@ -97,7 +126,6 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
   bool isSleepRoutineActiveOnDay(SleepDailyRoutine routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
@@ -118,7 +146,6 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
-
   List<SleepDailyRoutine> getFilteredSleepRoutines() {
     return _sleepDailyRoutine
         .where((routine) =>
@@ -171,9 +198,7 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
-  bool isExerciseRoutineActiveOnDay(
-      ExerciseRoutineDetail routine, int dayOfWeek) {
+  bool isExerciseRoutineActiveOnDay(ExerciseRoutineDetail routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
         return routine.monday ?? false;
@@ -193,7 +218,6 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
-
   List<ExerciseRoutineDetail> getAllFilteredExerciseRoutines(int dayOfWeek) {
     List<ExerciseRoutineDetail> allActiveRoutines = [];
 
@@ -244,7 +268,6 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
   bool isSpiritRoutineActiveOnDay(SpiritRoutineDetail routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
@@ -265,7 +288,6 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
-
   List<SpiritRoutineDetail> getAllFilteredSpiritRoutines(int dayOfWeek) {
     List<SpiritRoutineDetail> allActiveRoutines = [];
 
@@ -380,7 +402,6 @@ class _HomePageState extends State<HomePage> {
                             dayOfWeek = selectedDate.weekday;
                             loadInitialData();
                           });
-
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
@@ -528,7 +549,7 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(height: screenHeight * 0.005),
                 SizedBox(
                   //height: screenHeight * 0.5,
-                  height: screenHeight * 0.54,
+                  height: screenHeight * 0.539,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
