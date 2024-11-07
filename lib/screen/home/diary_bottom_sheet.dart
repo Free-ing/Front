@@ -114,7 +114,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         });
         widget.onSubmissionSuccess();
         if(_getAiLetter == false){
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         }
         const ToastBarWidget(
           title: '감정 일기 작성이 저장되었습니다.',
@@ -151,11 +151,10 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
     print('ai 편지 작성 요청하는 diaryId $diaryId');
     if (response == 200) {
       print('편지 요청 성공!');
-      Navigator.pop(context);
-      DialogManager.showAlertDialog(
-          context: context,
-          title: '편지 요청 성공',
-          content: '편지가 도착하면 확인해 볼 수 있어요.');
+      Navigator.pop(context, true);
+      const ToastBarWidget(
+        title: '편지가 도착하면 확인할 수 있어요.',
+      ).showToast(context);
     } else {
       print('편지 요청 실패 $response');
       print('편지 요청한 아이디 $diaryId');
