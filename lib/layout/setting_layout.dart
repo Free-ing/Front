@@ -57,7 +57,7 @@ class _SettingLayoutState extends State<SettingLayout> {
                     child: IconButton(
                       iconSize: 30.0,
                       padding: EdgeInsets.zero,
-                      constraints: BoxConstraints(),
+                      constraints: const BoxConstraints(),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -76,7 +76,7 @@ class _SettingLayoutState extends State<SettingLayout> {
           ),
           body: Padding(
             padding: EdgeInsets.only(
-              top: screenHeight * 0.04,
+              top: screenHeight * 0.07,
               right: widget.isLeftAndRightPadding ? screenWidth * 0.05 : 0,
               left: widget.isLeftAndRightPadding ? screenWidth * 0.05 : 0,
             ),

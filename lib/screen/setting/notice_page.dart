@@ -79,7 +79,7 @@ class _NoticePageState extends State<NoticePage> {
     return SettingLayout(
       title: '공지사항',
       child: _isLoading
-          ? CustomCircularProgressIndicator()
+          ? const CustomCircularProgressIndicator()
           : ListView.builder(
               itemCount: _noticeList.length,
               itemBuilder: (context, index) {
