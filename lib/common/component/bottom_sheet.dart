@@ -87,12 +87,12 @@ class _BaseAnimatedBottomSheetContentState
       builder: (context, child) {
         return SlideTransition(
           position: Tween<Offset>(
-            begin: Offset(0, 1), // 아래에서 위로 이동하는 애니메이션
-            end: Offset(0, 0),
+            begin: const Offset(0, 1), // 아래에서 위로 이동하는 애니메이션
+            end: const Offset(0, 0),
           ).animate(_animation),
           child: Container(
             width: screenWidth,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(
                 top: Radius.circular(50),

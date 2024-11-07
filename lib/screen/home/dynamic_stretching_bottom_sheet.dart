@@ -5,15 +5,16 @@ import 'package:freeing/common/component/stretching_content_reverse.dart';
 import 'package:freeing/layout/stretching_bottom_sheet_layout.dart';
 
 //Todo: 동적 스트레칭
-void showDynamicStretchingBottomSheet(BuildContext context, String title) {
-  showCustomModalBottomSheet(
+Future<bool> showDynamicStretchingBottomSheet(BuildContext context, String title) async{
+  final isSuccess = await  showCustomModalBottomSheet(
     context: context,
     builder: (BuildContext context, TextTheme textTheme) {
       return _DynamicStretchingBottomSheetContent(
         title: title,
       );
     },
-  );
+  )?? false;
+  return isSuccess;
 }
 
 class _DynamicStretchingBottomSheetContent extends StatefulWidget {
@@ -48,7 +49,7 @@ class _DynamicStretchingBottomSheetContentState
         _dynamicStretchingSideLunge(),
       ],
       onButtonPressed: (AnimationController) async {
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       },
     );
   }

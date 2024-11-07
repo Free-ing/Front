@@ -174,7 +174,6 @@ class HomeApiService {
       }
       return true;
     } else {
-
       return false;
     }
   }

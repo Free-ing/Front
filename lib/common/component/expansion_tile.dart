@@ -327,14 +327,20 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     switch (routineName) {
       case '정적 스트레칭':
         return PlayButton(
-            onPressed: () {
-              showStaticStretchingBottomSheet(context, '정적 스트레칭');
+            onPressed: () async {
+              bool success = await showStaticStretchingBottomSheet(context, '정적 스트레칭');
+              if(success){
+                _handleCheckboxTap(index);
+              }
             },
             iconColor: PINK_PLAY_BUTTON);
       case '동적 스트레칭':
         return PlayButton(
-            onPressed: () {
-              showDynamicStretchingBottomSheet(context, '동적 스트레칭');
+            onPressed: () async {
+              bool success = await showDynamicStretchingBottomSheet(context, '동적 스트레칭');
+              if(success){
+                _handleCheckboxTap(index);
+              }
             },
             iconColor: PINK_PLAY_BUTTON);
       case '명상하기':
@@ -342,10 +348,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             onPressed: () async {
               bool success = await showMeditationBottomSheet(context, '명상하기');
               if (success) {
-                setState(() {
-                  _isSpiritChecked[index] = true;
-                  _isSpiritVisible[index] = false;
-                });
+                _handleCheckboxTap(index);
               }
             },
             iconColor: GREEN_PLAY_BUTTON);
@@ -354,11 +357,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           onPressed: () async {
             bool success = await showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
             if (success) {
-              setState(() {
-                print('sleep bottom sheet 성공적!!!!!');
-                _isSleepChecked[index] = true;
-                _isSleepVisible[index] = false;
-              });
+              _handleCheckboxTap(index);
             }
           },
         );
@@ -370,10 +369,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             print('감정일기 sucess값은!!!!!!  $success');
             if (success) {
               print('감정일기 작성 성공적');
-              setState(() {
-                _isSpiritChecked[index] = true;
-                _isSpiritVisible[index] = false;
-              });
+              _handleCheckboxTap(index);
             }
           },
         );
@@ -452,11 +448,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           break;
         case '운동':
           if (index < _isExerciseChecked.length && index < widget.exerciseDailyRoutines.length) {
+            print('운동 루틴 체크 안!!!!!');
             ExerciseRoutineDetail exerciseRoutine = widget.exerciseDailyRoutines[index];
             newStatus = !_isExerciseChecked[index];
             success = await homeApiService.checkExerciseRoutine(newStatus, exerciseRoutine.recordId);
             if (success && mounted) {
               setState(() {
+                print('운동 루틴 체크 성공적');
                 _isExerciseChecked[index] = newStatus;
                 _isExerciseVisible[index] = !newStatus;
               });
@@ -465,11 +463,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           break;
         case '마음 채우기':
           if (index < _isSpiritChecked.length && index < widget.spiritDailyRoutines.length) {
+            //print('마음 채우기 루틴 체크 안!!!!!');
             SpiritRoutineDetail spiritRoutine = widget.spiritDailyRoutines[index];
             newStatus = !_isSpiritChecked[index];
             success = await homeApiService.checkSpiritRoutine(newStatus, spiritRoutine.recordId);
             if (success && mounted) {
               setState(() {
+                //print('마음 채우기 루틴 체크 성공적');
                 _isSpiritChecked[index] = newStatus;
                 _isSpiritVisible[index] = !newStatus;
               });

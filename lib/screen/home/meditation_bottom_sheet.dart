@@ -16,15 +16,10 @@ class PositionData {
 
 //Todo: 명상
 Future<bool> showMeditationBottomSheet(
-  BuildContext context,
-  String title,
-) async {
+    BuildContext context, String title) async {
   final isSuccess = await showCustomModalBottomSheet(
         context: context,
-        builder: (
-          BuildContext context,
-          TextTheme textTheme,
-        ) {
+        builder: (BuildContext context, TextTheme textTheme) {
           return _MeditationBottomSheetContent(
             title: title,
             textTheme: textTheme,
@@ -53,7 +48,8 @@ class _MeditationBottomSheetContent extends StatefulWidget {
 class _MeditationBottomSheetContentState
     extends State<_MeditationBottomSheetContent> {
   String imgUrl = 'assets/imgs/etc/meditaiton_mascot.png';
-  String audioUrl = 'https://freeingimage.s3.ap-northeast-2.amazonaws.com/meditation_audio.mp3';
+  String audioUrl =
+      'https://freeingimage.s3.ap-northeast-2.amazonaws.com/meditation_audio.mp3';
 
   late AudioPlayer player;
   bool isPlaying = false;
