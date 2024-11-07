@@ -10,13 +10,9 @@ import 'package:freeing/model/home/sleep_daily_routine.dart';
 import 'package:freeing/model/home/spirit_daily_routine.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
-import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/component/expansion_tile.dart';
-import 'diary_bottom_sheet.dart';
-import 'dynamic_stretching_bottom_sheet.dart';
-import 'meditation_bottom_sheet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
