@@ -10,9 +10,13 @@ import 'package:freeing/model/home/sleep_daily_routine.dart';
 import 'package:freeing/model/home/spirit_daily_routine.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
+import 'package:freeing/screen/home/sleep_record_bottom_sheet.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/component/expansion_tile.dart';
+import 'diary_bottom_sheet.dart';
+import 'dynamic_stretching_bottom_sheet.dart';
+import 'meditation_bottom_sheet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -97,6 +101,7 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+
   bool isSleepRoutineActiveOnDay(SleepDailyRoutine routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
@@ -117,6 +122,7 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
+
   List<SleepDailyRoutine> getFilteredSleepRoutines() {
     return _sleepDailyRoutine
         .where((routine) =>
@@ -139,7 +145,7 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
-        print('jsonData: $jsonData');
+        //print('jsonData: $jsonData');
         if (jsonData is Map<String, dynamic> && jsonData['result'] is List) {
           setState(() {
             _exerciseDailyRoutine = (jsonData['result'] as List)
@@ -169,7 +175,9 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-  bool isExerciseRoutineActiveOnDay(ExerciseRoutineDetail routine, int dayOfWeek) {
+
+  bool isExerciseRoutineActiveOnDay(
+      ExerciseRoutineDetail routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
         return routine.monday ?? false;
@@ -189,6 +197,7 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
+
   List<ExerciseRoutineDetail> getAllFilteredExerciseRoutines(int dayOfWeek) {
     List<ExerciseRoutineDetail> allActiveRoutines = [];
 
@@ -239,6 +248,7 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+
   bool isSpiritRoutineActiveOnDay(SpiritRoutineDetail routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
@@ -259,6 +269,7 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
+
   List<SpiritRoutineDetail> getAllFilteredSpiritRoutines(int dayOfWeek) {
     List<SpiritRoutineDetail> allActiveRoutines = [];
 
@@ -359,7 +370,8 @@ class _HomePageState extends State<HomePage> {
                             selectedDate = today;
                             formattedDate = DateFormat('yyyy년 MM월 dd일')
                                 .format(selectedDate);
-                            formattedDateForServer = DateFormat('yyyy-MM-dd').format(selectedDate);
+                            formattedDateForServer =
+                                DateFormat('yyyy-MM-dd').format(selectedDate);
                             currentWeekStartDate = getStartOfWeek(today);
                             _generateDates();
 
@@ -370,7 +382,6 @@ class _HomePageState extends State<HomePage> {
                             todayDayName =
                                 DateFormat('EEE', 'ko').format(selectedDate);
                             loadInitialData();
-
                           });
                         },
                         style: TextButton.styleFrom(
@@ -494,43 +505,34 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ]),
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //   children: [
-                //     SizedBox(
-                //       height: screenHeight * 0.03,
-                //     ),
-                //     PlayButton(
-                //         onPressed: () {
-                //           showDynamicStretchingBottomSheet(context, '동적 스트레칭');
-                //         },
-                //         iconColor: PINK_PLAY_BUTTON),
-                //     PlayButton(
-                //         onPressed: () {
-                //           showMeditationBottomSheet(context, '명상하기');
-                //         },
-                //         iconColor: GREEN_PLAY_BUTTON),
-                //     LogButton(
-                //       onPressed: () {
-                //         showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
-                //       },
-                //     ),
-                //     LogButton(
-                //       onPressed: () {
-                //         showDiaryBottomSheet(
-                //             context, '오늘 하루 어땠나요?', DateTime.now());
-                //       },
-                //     ),
-                //     LogButton(
-                //       onPressed: () {
-                //         showHobbyBottomSheet(context, '오늘 했던 취미는 어땠나요? ');
-                //       },
-                //     )
-                //   ],
-                // ),
-                SizedBox(height: screenHeight * 0.01),
-                Container(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SizedBox(
+                      height: screenHeight * 0.03,
+                    ),
+                    PlayButton(
+                        onPressed: () {
+                          showDynamicStretchingBottomSheet(context, '동적 스트레칭');
+                        },
+                        iconColor: PINK_PLAY_BUTTON),
+                    PlayButton(
+                        onPressed: () {
+                          showMeditationBottomSheet(context, '명상하기');
+                        },
+                        iconColor: GREEN_PLAY_BUTTON),
+                    LogButton(
+                      onPressed: () {
+                        showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
+                      },
+                    ),
+
+                  ],
+                ),
+                SizedBox(height: screenHeight * 0.005),
+                SizedBox(
                   height: screenHeight * 0.5,
+                  //height: screenHeight * 0.54,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
@@ -584,8 +586,8 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 LogButton(
                                   onPressed: () {
-                                    showHobbyBottomSheet(
-                                        context, '오늘 했던 취미는 어땠나요?', selectedDate);
+                                    showHobbyBottomSheet(context,
+                                        '오늘 했던 취미는 어땠나요?', selectedDate);
                                   },
                                 )
                               ],

@@ -494,8 +494,9 @@ class _MoodCalendarState extends State<MoodCalendar> {
                     height: screenHeight * 0.035,
                     child: OutlinedButton(
                       onPressed: () {
-                        showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
-                            DateTime(selectYear, selectMonth, selectedDate));
+                        // TODO: 감정일기 작성하기 bottom sheet
+                        // showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
+                        //     DateTime(selectYear, selectMonth, selectedDate,), );
                         // Navigator.of(context).pushReplacement(
                         //   MaterialPageRoute(
                         //       builder: (context) =>

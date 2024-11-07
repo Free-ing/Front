@@ -108,8 +108,8 @@ class HomeApiService {
     if(exerciseRoutineId != null){
       final accessToken = await tokenStorage.getAccessToken();
       final String checkExerciseEndpoint = isOn
-          ? '$_baseUrl/spirit-service/$exerciseRoutineId/complete'
-          : '$_baseUrl/spirit-service/$exerciseRoutineId/cancel';
+          ? '$_baseUrl/exercise-service/$exerciseRoutineId/complete'
+          : '$_baseUrl/exercise-service/$exerciseRoutineId/cancel';
       final url = Uri.parse(checkExerciseEndpoint);
 
       final response = await http.patch(

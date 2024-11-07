@@ -13,7 +13,7 @@ import 'package:freeing/common/service/spirit_api_service.dart';
 Future<bool> showDiaryBottomSheet(
   BuildContext context,
   String title,
-  DateTime selectedDate,
+  DateTime selectedDate, int recordId
 ) async {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
@@ -30,7 +30,8 @@ Future<bool> showDiaryBottomSheet(
         selectedDate: selectedDate,
         onSubmissionSuccess: (){
           isSuccess = true;
-        }
+        },
+        recordId: recordId,
       );
     },
   )?? false;
@@ -44,6 +45,7 @@ class _DiaryBottomSheetContent extends StatefulWidget {
   final double screenHeight;
   final DateTime selectedDate;
   final VoidCallback onSubmissionSuccess;
+  final int recordId;
 
   const _DiaryBottomSheetContent({
     super.key,
@@ -52,7 +54,8 @@ class _DiaryBottomSheetContent extends StatefulWidget {
     required this.screenWidth,
     required this.screenHeight,
     required this.selectedDate,
-    required this.onSubmissionSuccess
+    required this.onSubmissionSuccess,
+    required this.recordId,
   });
 
   @override
@@ -100,6 +103,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         hardWork,
         _getAiLetter,
         emotion,
+        widget.recordId
       );
       if (response.statusCode == 200) {
         final decodedBody = json.decode(utf8.decode(response.bodyBytes));

@@ -342,6 +342,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         return PlayButton(
             onPressed: () async {
               bool success = await showMeditationBottomSheet(context, '명상하기');
+              print('명상하기 success $success');
               if (success) {
                 setState(() {
                   print('명상하기 성공적!!!!!');
@@ -368,12 +369,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         return LogButton(
           onPressed: () async {
             bool success = await showDiaryBottomSheet(
-                context, '오늘 하루 어땠나요?', DateTime.now());
+                context, '오늘 하루 어땠나요?', DateTime.now(), widget.spiritDailyRoutines[index].recordId! );
             print('sucess값은!!!!!!  $success');
             if (success) {
               print('감정일기 작성 성공적');
-              _isSleepChecked[index] = true;
-              _isSleepVisible[index] = false;
+              setState(() {
+                _isSleepChecked[index] = true;
+                _isSleepVisible[index] = false;
+              });
             }
           },
         );
@@ -442,7 +445,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             SleepDailyRoutine sleepRoutine = widget.sleepDailyRoutines[index];
             newStatus = !_isSleepChecked[index];
             success = await homeApiService.checkSleepRoutine(newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
-            if (success) {
+            if (success && mounted) {
               setState(() {
                 _isSleepChecked[index] = newStatus;
                 if (newStatus) {
@@ -457,7 +460,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             ExerciseRoutineDetail exerciseRoutine = widget.exerciseDailyRoutines[index];
             newStatus = !_isExerciseChecked[index];
             success = await homeApiService.checkExerciseRoutine(newStatus, exerciseRoutine.recordId);
-            if (success) {
+            if (success && mounted) {
               setState(() {
                 _isExerciseChecked[index] = newStatus;
                 if (newStatus) {
@@ -472,7 +475,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             SpiritRoutineDetail spiritRoutine = widget.spiritDailyRoutines[index];
             newStatus = !_isSpiritChecked[index];
             success = await homeApiService.checkSpiritRoutine(newStatus, spiritRoutine.recordId);
-            if (success) {
+            if (success && mounted) {
               setState(() {
                 _isSpiritChecked[index] = newStatus;
                 if (newStatus) {
