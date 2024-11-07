@@ -17,6 +17,7 @@ class HomeApiService {
     }
   }
 
+  // 수면 루틴 & 체크 박스 상태 받아오기
   Future<http.Response> getSleepRoutine(int dayOfWeek, String queryDate) async {
     final Map<int, String> dayOfWeekMap = {
       1: 'MONDAY',
@@ -46,8 +47,7 @@ class HomeApiService {
       return Future.error("Invalid dayOfWeek value!!!!");
     }
   }
-  Future<bool> checkSleepRoutine(
-      bool isOn, String completeDay, int? sleepRoutineId) async {
+  Future<bool> checkSleepRoutine(bool isOn, String completeDay, int? sleepRoutineId) async {
     if (isValidDateFormat(completeDay) && sleepRoutineId != null) {
       final accessToken = await tokenStorage.getAccessToken();
       final String _checkSleepEndpoint =
@@ -88,12 +88,13 @@ class HomeApiService {
     }
   }
 
+  // 운동 루틴 & 체크 박스 상태 받아오기
   Future<http.Response> getExerciseRoutine(String queryDate) async {
     //print('Exercise queryDate!!! $queryDate');
     final accessToken = await tokenStorage.getAccessToken();
-    final String _getExerciseRoutineEndpoint =
+    final String getExerciseRoutineEndpoint =
         '$_baseUrl/exercise-service/home?date=$queryDate';
-    final url = Uri.parse(_getExerciseRoutineEndpoint);
+    final url = Uri.parse(getExerciseRoutineEndpoint);
 
     return http.get(
       url,
@@ -106,10 +107,10 @@ class HomeApiService {
   Future<bool> checkExerciseRoutine(bool isOn, int? exerciseRoutineId) async {
     if(exerciseRoutineId != null){
       final accessToken = await tokenStorage.getAccessToken();
-      final String _checkExerciseEndpoint = isOn
+      final String checkExerciseEndpoint = isOn
           ? '$_baseUrl/spirit-service/$exerciseRoutineId/complete'
           : '$_baseUrl/spirit-service/$exerciseRoutineId/cancel';
-      final url = Uri.parse(_checkExerciseEndpoint);
+      final url = Uri.parse(checkExerciseEndpoint);
 
       final response = await http.patch(
         url,
@@ -130,11 +131,12 @@ class HomeApiService {
     }
   }
 
+  // 마음 채우기 루틴 & 체크 박스 상태 받아오기
   Future<http.Response> getSpiritRoutine(String queryDate) async {
     final accessToken = await tokenStorage.getAccessToken();
-    final String _getSpiritRoutineEndpoint =
+    final String getSpiritRoutineEndpoint =
         '$_baseUrl/spirit-service/home?date=$queryDate';
-    final url = Uri.parse(_getSpiritRoutineEndpoint);
+    final url = Uri.parse(getSpiritRoutineEndpoint);
 
     return http.get(
       url,
@@ -176,4 +178,34 @@ class HomeApiService {
       return false;
     }
   }
+
+  // 운동 일주일 루틴 현황 받아오기 (핑크)
+
+  // 수면 일주일 루틴 현황 받아오기 (파랑)
+  Future<http.Response> getSleepRecord(String startDate, String endDate) async {
+    if(isValidDateFormat(startDate) && isValidDateFormat(endDate)){
+      final accessToken = await tokenStorage.getAccessToken();
+      final String getSleepRecordEndpoint =
+          '$_baseUrl/sleep-service/routine/home/record-week';
+      final url = Uri.parse(getSleepRecordEndpoint);
+
+      return http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+    } else {
+      print("startDate와 endDate 형식이 올바르지 않음");
+      return Future.error("startDate와 endDate 형식이 올바르지 않음");
+    }
+
+
+  }
+
+  // 마음 채우기 일주일 루틴 현황 받아오기 (초록)
+
+  // 취미 일주일 루틴 현황 받아오기 (노랑)
+
 }

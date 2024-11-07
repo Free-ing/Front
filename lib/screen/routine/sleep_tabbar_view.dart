@@ -20,8 +20,9 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
   final tokenStorage = TokenStorage();
   List<SleepList> _sleepList = [];
   bool isSwitched = false;
+  bool? isRecordOn ;
 
-  // TODO: 서버 요청
+  // TODO: 수면 루틴 리스트 받아오는 서버 요청
   Future<List<SleepList>> fetchSleepList() async {
     print("Fetching sleep list");
 
@@ -52,12 +53,24 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
     }
   }
 
+  // 수면 기록 on/off 상태 불러오는 서버 요청
+  Future<void> getRecordSleepStatus() async {
+    try{
+      setState(() async {
+        isRecordOn = await apiService.getRecordSleepStatus();
+      });
+    } catch(e){
+      print('Error ${isRecordOn == true ? '켜기': '끄기' } 실패');
+    }
+
+  }
 
   @override
   void initState() {
     super.initState();
     print('fetch sleep list');
     fetchSleepList();
+    getRecordSleepStatus();
   }
 
   @override
@@ -74,23 +87,17 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
               '수면 기록하기',
               style: textTheme.titleLarge,
             ),
-            QuestionMark(
+            const QuestionMark(
                 title: '수면 기록하기 설명',
                 description:
                     '잠을 잔 시간, 자고 일어난 후의\n 상태를 기록해요!\n\n주간(월간) 통계와 피드백을 받을 수 있어요!'),
-            Spacer(),
-            toggle(),
-            // GestureDetector(
-            //   onTap: (){
-            //     setState(() {
-            //       isSwitched = !isSwitched;
-            //     });
-            //   },),
+            const Spacer(),
+            toggle(isRecordOn: (isRecordOn == true ? true :false ) ),
           ],
         ),
         Container(
           width: screenWidth,
-          child: Divider(
+          child: const Divider(
             color: Colors.black,
             thickness: 1.0,
           ),
@@ -101,7 +108,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
               '수면 루틴 만들기',
               style: textTheme.titleLarge,
             ),
-            QuestionMark(
+            const QuestionMark(
                 title: '수면 루틴 만들기 설명',
                 description:
                     '꿀잠을 위한 루틴을 만들어 보세요!\n\n추천해드리는걸 해도 되고,\n직접 세워봐도 좋아요!'),
@@ -168,21 +175,33 @@ class QuestionMark extends StatelessWidget {
 
 
 class toggle extends StatefulWidget {
-  const toggle({super.key});
+  bool isRecordOn;
+
+  toggle({super.key, required this.isRecordOn});
 
   @override
   State<toggle> createState() => _toggleState();
 }
 
 class _toggleState extends State<toggle> {
-  bool isSwitched = false;
+  final sleepApiService = SleepAPIService();
+
+  // 수면 기록 on/off 서버 요청
+  Future<void> recordSleepOnOff(bool isRecordOn) async {
+    try{
+      await sleepApiService.sleepRecord(isRecordOn);
+    } catch(e){
+      print('Error ${isRecordOn ? '켜기': '끄기' } 실패');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          isSwitched = !isSwitched;
+          widget.isRecordOn = !widget.isRecordOn;
+          recordSleepOnOff(widget.isRecordOn);
         });
       },
       child: Padding(
@@ -193,9 +212,9 @@ class _toggleState extends State<toggle> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSwitched ? Colors.black : DARK_GREY,
+              color: widget.isRecordOn ? Colors.black : DARK_GREY,
             ),
-            color: isSwitched ? PRIMARY_COLOR : MEDIUM_GREY,
+            color: widget.isRecordOn ? PRIMARY_COLOR : MEDIUM_GREY,
           ),
           child: Stack(
             alignment: Alignment.center,
@@ -204,7 +223,7 @@ class _toggleState extends State<toggle> {
               AnimatedPositioned(
                 duration: Duration(milliseconds: 200),
                 curve: Curves.easeIn,
-                left: isSwitched ? 16.0 : 2.0,
+                left: widget.isRecordOn ? 16.0 : 2.0,
                 child: Container(
                   width: 20,
                   height: 20,
@@ -212,9 +231,9 @@ class _toggleState extends State<toggle> {
                       color: Colors.white,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isSwitched ? Colors.black : DARK_GREY,
+                        color: widget.isRecordOn ? Colors.black : DARK_GREY,
                       ),
-                      boxShadow: <BoxShadow>[
+                      boxShadow: const <BoxShadow>[
                         BoxShadow(
                           color: Colors.black54,
                           blurRadius: 2.0,

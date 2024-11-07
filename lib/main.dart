@@ -157,7 +157,7 @@ class MyApp extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('오류가 발생했습니다.')); // 오류 메시지
           } else {
-            return ExerciseReportScreen(); // 초기화 후 로그인 화면으로 이동
+            return Login(); // 초기화 후 로그인 화면으로 이동
           }
         },
       ),
@@ -167,6 +167,6 @@ class MyApp extends StatelessWidget {
   // 비동기 초기화 함수 예시
   Future<void> _initializeApp() async {
     // 여기에서 필요한 초기화 작업 수행
-    await Future.delayed(Duration(seconds: 2)); // 예시로 지연 시간을 추가
+    //await Future.delayed(Duration(seconds: 2)); // 예시로 지연 시간을 추가
   }
 }
