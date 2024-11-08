@@ -8,6 +8,7 @@ import 'package:freeing/model/home/sleep_daily_routine.dart';
 import 'package:freeing/model/home/spirit_daily_routine.dart';
 import 'package:freeing/screen/home/dynamic_stretching_bottom_sheet.dart';
 import 'package:freeing/screen/home/static_stretching_bottom_sheet.dart';
+import 'package:freeing/screen/routine/edit_routine_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../../screen/home/diary_bottom_sheet.dart';
@@ -44,7 +45,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   late List<bool> _isSpiritVisible;
   final homeApiService = HomeApiService();
   Offset? _tapPosition;
-
 
   @override
   void initState() {
@@ -117,11 +117,12 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               children: [
                 GestureDetector(
                   onTapDown: (TapDownDetails details) {
-                    _tapPosition = details.globalPosition; 
+                    _tapPosition = details.globalPosition;
                   },
                   onLongPress: () {
-                    if(_tapPosition != null){
-                      showExercisePopUpMenu(context, _tapPosition!, exerciseRoutine);
+                    if (_tapPosition != null) {
+                      showExercisePopUpMenu(
+                          context, _tapPosition!, exerciseRoutine);
                     }
                   },
                   child: Text(
@@ -184,7 +185,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                     _tapPosition = details.globalPosition;
                   },
                   onLongPress: () {
-                    if(_tapPosition != null){
+                    if (_tapPosition != null) {
                       showSleepPopUpMenu(context, _tapPosition!, sleepRoutine);
                     }
                   },
@@ -247,8 +248,9 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                     _tapPosition = details.globalPosition;
                   },
                   onLongPress: () {
-                    if(_tapPosition != null){
-                      showSpiritPopUpMenu(context, _tapPosition!,spiritRoutine );
+                    if (_tapPosition != null) {
+                      showSpiritPopUpMenu(
+                          context, _tapPosition!, spiritRoutine);
                     }
                   },
                   child: Text(
@@ -290,7 +292,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     return Column(children: tiles);
   }
 
-  void showExercisePopUpMenu(BuildContext context, Offset position , ExerciseRoutineDetail exerciseRoutine){
+  void showExercisePopUpMenu(BuildContext context, Offset position, ExerciseRoutineDetail exerciseRoutine) {
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -310,8 +312,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset('assets/icons/home_rest.png'),
-                const SizedBox(width: 10,),
-                const Text('오늘은 쉬어가기', style: TextStyle(fontSize: 12),),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '오늘은 쉬어가기',
+                  style: TextStyle(fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -323,7 +330,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           height: 0.5,
           child: Container(
             margin: EdgeInsets.zero,
-            child: Divider(
+            child: const Divider(
               color: Colors.black,
               thickness: 1,
             ),
@@ -338,8 +345,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset('assets/icons/home_explain.png'),
-                const SizedBox(width: 10,),
-                const Text('설명 보기', style: TextStyle(fontSize: 12),),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '설명 보기',
+                  style: TextStyle(fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -351,7 +363,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           height: 0.5,
           child: Container(
             margin: EdgeInsets.zero,
-            child: Divider(
+            child: const Divider(
               color: Colors.black,
               thickness: 1,
             ),
@@ -366,8 +378,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset('assets/icons/home_edit.png'),
-                const SizedBox(width: 10,),
-                const Text('수정하기', style: TextStyle(fontSize: 12),),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '수정하기',
+                  style: TextStyle(fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -387,16 +404,38 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             break;
           case 'explain':
             print('${exerciseRoutine.name} 설명 보기');
-            DialogManager.showAlertDialog(context: context, title: exerciseRoutine.name!, content: exerciseRoutine.explanation!);
+            DialogManager.showAlertDialog(
+                context: context,
+                title: exerciseRoutine.name!,
+                content: exerciseRoutine.explanation!);
             break;
           case 'edit':
             print('${exerciseRoutine.name} 수정 하기');
+            // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정할지 말지
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditRoutineScreen(
+                    routineId: exerciseRoutine.routineId!,
+                    title: exerciseRoutine.name!,
+                    selectImage: exerciseRoutine.imageUrl!,
+                    monday: exerciseRoutine.monday,
+                    tuesday: exerciseRoutine.tuesday,
+                    wednesday: exerciseRoutine.wednesday,
+                    thursday: exerciseRoutine.thursday,
+                    friday: exerciseRoutine.friday,
+                    saturday: exerciseRoutine.saturday,
+                    sunday: exerciseRoutine.sunday,
+                    startTime: exerciseRoutine.startTime,
+                    endTime: exerciseRoutine.endTime,
+                    explanation: exerciseRoutine.explanation,
+                    status: exerciseRoutine.status,
+                    category: '운동')));
             break;
         }
       }
     });
   }
-  void showSleepPopUpMenu(BuildContext context, Offset position , SleepDailyRoutine sleepRoutine){
+
+  void showSleepPopUpMenu(BuildContext context, Offset position, SleepDailyRoutine sleepRoutine) {
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -416,8 +455,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset('assets/icons/home_rest.png'),
-                const SizedBox(width: 10,),
-                const Text('오늘은 쉬어가기', style: TextStyle(fontSize: 12),),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '오늘은 쉬어가기',
+                  style: TextStyle(fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -429,7 +473,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           height: 0.5,
           child: Container(
             margin: EdgeInsets.zero,
-            child: Divider(
+            child: const Divider(
               color: Colors.black,
               thickness: 1,
             ),
@@ -444,8 +488,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset('assets/icons/home_edit.png'),
-                const SizedBox(width: 10,),
-                const Text('수정하기', style: TextStyle(fontSize: 12),),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '수정하기',
+                  style: TextStyle(fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -463,17 +512,31 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           case 'rest':
             print('${sleepRoutine.sleepRoutineName} 루틴은 오늘 쉬어가기');
             break;
-          case 'explain':
-            print('${sleepRoutine.sleepRoutineName} 설명 보기');
-            break;
           case 'edit':
             print('${sleepRoutine.sleepRoutineName} 수정 하기');
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditRoutineScreen(
+                    routineId: sleepRoutine.sleepRoutineId!,
+                    title: sleepRoutine.sleepRoutineName!,
+                    selectImage: sleepRoutine.url!,
+                    monday: sleepRoutine.monday,
+                    tuesday: sleepRoutine.tuesday,
+                    wednesday: sleepRoutine.wednesday,
+                    thursday: sleepRoutine.thursday,
+                    friday: sleepRoutine.friday,
+                    saturday: sleepRoutine.saturday,
+                    sunday: sleepRoutine.sunday,
+                    startTime: sleepRoutine.startTime,
+                    endTime: sleepRoutine.endTime,
+                    status: sleepRoutine.status,
+                    category: '수면')));
             break;
         }
       }
     });
   }
-  void showSpiritPopUpMenu(BuildContext context, Offset position , SpiritRoutineDetail spiritRoutine){
+
+  void showSpiritPopUpMenu(BuildContext context, Offset position, SpiritRoutineDetail spiritRoutine) {
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -493,8 +556,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset('assets/icons/home_rest.png'),
-                const SizedBox(width: 10,),
-                const Text('오늘은 쉬어가기', style: TextStyle(fontSize: 12),),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '오늘은 쉬어가기',
+                  style: TextStyle(fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -506,7 +574,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           height: 0.5,
           child: Container(
             margin: EdgeInsets.zero,
-            child: Divider(
+            child: const Divider(
               color: Colors.black,
               thickness: 1,
             ),
@@ -521,8 +589,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset('assets/icons/home_explain.png'),
-                const SizedBox(width: 10,),
-                const Text('설명 보기', style: TextStyle(fontSize: 12),),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '설명 보기',
+                  style: TextStyle(fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -534,7 +607,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           height: 0.5,
           child: Container(
             margin: EdgeInsets.zero,
-            child: Divider(
+            child: const Divider(
               color: Colors.black,
               thickness: 1,
             ),
@@ -549,8 +622,13 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset('assets/icons/home_edit.png'),
-                const SizedBox(width: 10,),
-                const Text('수정하기', style: TextStyle(fontSize: 12),),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '수정하기',
+                  style: TextStyle(fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -570,16 +648,34 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             break;
           case 'explain':
             print('${spiritRoutine.name} 설명 보기');
-            DialogManager.showAlertDialog(context: context, title: spiritRoutine.name!, content: spiritRoutine.explanation!);
+            DialogManager.showAlertDialog(
+                context: context,
+                title: spiritRoutine.name!,
+                content: spiritRoutine.explanation!);
             break;
           case 'edit':
-            print('${spiritRoutine.name} 수정하기');
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditRoutineScreen(
+                    routineId: spiritRoutine.routineId!,
+                    title: spiritRoutine.name!,
+                    selectImage: spiritRoutine.imageUrl!,
+                    monday: spiritRoutine.monday,
+                    tuesday: spiritRoutine.tuesday,
+                    wednesday: spiritRoutine.wednesday,
+                    thursday: spiritRoutine.thursday,
+                    friday: spiritRoutine.friday,
+                    saturday: spiritRoutine.saturday,
+                    sunday: spiritRoutine.sunday,
+                    startTime: spiritRoutine.startTime,
+                    endTime: spiritRoutine.endTime,
+                    explanation: spiritRoutine.explanation,
+                    status: spiritRoutine.status,
+                    category: '마음 채우기')));
             break;
         }
       }
     });
   }
-
 
   Color getTextColor() {
     switch (widget.text) {
