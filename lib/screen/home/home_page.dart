@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
   final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
   int dayOfWeek = 0;
 
-  // TODO: 운동, 수면, 마음 채우기 루틴 각각 불러오는 서버 요청 하기
+  // 운동, 수면, 마음 채우기 루틴 각각 불러오기 & 상단 상태바 불러오는 서버 요청 하기
   // TODO: 상단 상태바도 각각 다 불러오기
   Future<void> loadInitialData() async {
     setState(() {
@@ -126,7 +126,6 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
   bool isSleepRoutineActiveOnDay(SleepDailyRoutine routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
@@ -147,7 +146,6 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
-
   List<SleepDailyRoutine> getFilteredSleepRoutines() {
     return _sleepDailyRoutine
         .where((routine) =>
@@ -200,9 +198,7 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
-  bool isExerciseRoutineActiveOnDay(
-      ExerciseRoutineDetail routine, int dayOfWeek) {
+  bool isExerciseRoutineActiveOnDay(ExerciseRoutineDetail routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
         return routine.monday ?? false;
@@ -222,7 +218,6 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
-
   List<ExerciseRoutineDetail> getAllFilteredExerciseRoutines(int dayOfWeek) {
     List<ExerciseRoutineDetail> allActiveRoutines = [];
 
@@ -273,7 +268,6 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
   bool isSpiritRoutineActiveOnDay(SpiritRoutineDetail routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
@@ -294,7 +288,6 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
-
   List<SpiritRoutineDetail> getAllFilteredSpiritRoutines(int dayOfWeek) {
     List<SpiritRoutineDetail> allActiveRoutines = [];
 
@@ -308,6 +301,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   // TODO: 상단 상태바도 각각 다 불러오기
+  Future<void> fetchExerciseWeekRecord() async {
+    try {
+      final response = await homeApiService.getExerciseRecord(startDate, endDate, userId)
+      
+    } catch (e) {
+      print('Error fetching 일주일치 운동 기록: $e');
+    }
+  }
 
   @override
   void initState() {

@@ -411,7 +411,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             break;
           case 'edit':
             print('${exerciseRoutine.name} 수정 하기');
-            // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정할지 말지
+            // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => EditRoutineScreen(
                     routineId: exerciseRoutine.routineId!,
@@ -512,6 +512,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           case 'rest':
             print('${sleepRoutine.sleepRoutineName} 루틴은 오늘 쉬어가기');
             break;
+          // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정
           case 'edit':
             print('${sleepRoutine.sleepRoutineName} 수정 하기');
             Navigator.of(context).push(MaterialPageRoute(
@@ -653,6 +654,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 title: spiritRoutine.name!,
                 content: spiritRoutine.explanation!);
             break;
+        // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정
           case 'edit':
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => EditRoutineScreen(
