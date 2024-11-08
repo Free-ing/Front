@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/home_api_service.dart';
@@ -386,6 +387,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             break;
           case 'explain':
             print('${exerciseRoutine.name} 설명 보기');
+            DialogManager.showAlertDialog(context: context, title: exerciseRoutine.name!, content: exerciseRoutine.explanation!);
             break;
           case 'edit':
             print('${exerciseRoutine.name} 수정 하기');
@@ -416,34 +418,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 Image.asset('assets/icons/home_rest.png'),
                 const SizedBox(width: 10,),
                 const Text('오늘은 쉬어가기', style: TextStyle(fontSize: 12),),
-              ],
-            ),
-          ),
-        ),
-        //const PopupMenuDivider(),
-        PopupMenuItem<String>(
-          enabled: false,
-          padding: EdgeInsets.zero,
-          height: 0.5,
-          child: Container(
-            margin: EdgeInsets.zero,
-            child: Divider(
-              color: Colors.black,
-              thickness: 1,
-            ),
-          ),
-        ),
-        PopupMenuItem<String>(
-          value: 'explain',
-          height: 2.5,
-          child: Container(
-            width: 110,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset('assets/icons/home_explain.png'),
-                const SizedBox(width: 10,),
-                const Text('설명 보기', style: TextStyle(fontSize: 12),),
               ],
             ),
           ),
@@ -596,6 +570,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             break;
           case 'explain':
             print('${spiritRoutine.name} 설명 보기');
+            DialogManager.showAlertDialog(context: context, title: spiritRoutine.name!, content: spiritRoutine.explanation!);
             break;
           case 'edit':
             print('${spiritRoutine.name} 수정하기');
