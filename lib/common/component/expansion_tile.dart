@@ -116,11 +116,11 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               children: [
                 GestureDetector(
                   onTapDown: (TapDownDetails details) {
-                    _tapPosition = details.globalPosition; // 위치를 저장
+                    _tapPosition = details.globalPosition; 
                   },
                   onLongPress: () {
                     if(_tapPosition != null){
-                      _showCustomMenu(context, _tapPosition!, exerciseRoutine);
+                      showExercisePopUpMenu(context, _tapPosition!, exerciseRoutine);
                     }
                   },
                   child: Text(
@@ -178,9 +178,19 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(sleepRoutine.sleepRoutineName!,
-                    style:
-                        const TextStyle(fontSize: 14, fontFamily: 'scdream')),
+                GestureDetector(
+                  onTapDown: (TapDownDetails details) {
+                    _tapPosition = details.globalPosition;
+                  },
+                  onLongPress: () {
+                    if(_tapPosition != null){
+                      showSleepPopUpMenu(context, _tapPosition!, sleepRoutine);
+                    }
+                  },
+                  child: Text(sleepRoutine.sleepRoutineName!,
+                      style:
+                          const TextStyle(fontSize: 14, fontFamily: 'scdream')),
+                ),
                 const SizedBox(width: 5.0),
                 Text(getTime('수면', index),
                     style: const TextStyle(
@@ -231,9 +241,19 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  spiritRoutine.name!,
-                  style: const TextStyle(fontSize: 14, fontFamily: 'scdream'),
+                GestureDetector(
+                  onTapDown: (TapDownDetails details) {
+                    _tapPosition = details.globalPosition;
+                  },
+                  onLongPress: () {
+                    if(_tapPosition != null){
+                      showSpiritPopUpMenu(context, _tapPosition!,spiritRoutine );
+                    }
+                  },
+                  child: Text(
+                    spiritRoutine.name!,
+                    style: const TextStyle(fontSize: 14, fontFamily: 'scdream'),
+                  ),
                 ),
                 const SizedBox(width: 5.0),
                 Text(getTime('마음 채우기', index),
@@ -269,156 +289,322 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     return Column(children: tiles);
   }
 
-
-  void _showCustomMenu(BuildContext context, Offset position, ExerciseRoutineDetail exerciseRoutine) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    showGeneralDialog(
+  void showExercisePopUpMenu(BuildContext context, Offset position , ExerciseRoutineDetail exerciseRoutine){
+    showMenu(
       context: context,
-      barrierColor: Colors.transparent,
-      barrierDismissible: true,
-      barrierLabel: 'close menu',
-      pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-        return Stack(
-          children: [
-            Positioned(
-              left: position.dx - 30, // x 위치 설정
-              top: position.dy - 10,  // y 위치 설정
-              //right: position.dx + 50,
-              //bottom: position.dx + 20,
-              child: Material(
-                color: Colors.transparent,
-                child: Dialog(
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
-                  ),
-                  child: SizedBox(
-                    width:  120,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: 120
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        //mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5), // 세로 간격 설정
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                                _restRoutine(exerciseRoutine);
-                              },
-                              child: const Text('오늘은 쉬어가기', style: TextStyle(fontSize: 12)),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                                _viewRoutineExplanation(exerciseRoutine);
-                              },
-                              child: const Text('설명 보기', style: TextStyle(fontSize: 12)),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                                _editRoutine(exerciseRoutine);
-                              },
-                              child: const Text('수정하기', style: TextStyle(fontSize: 12)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        MediaQuery.of(context).size.width - position.dx,
+        MediaQuery.of(context).size.height - position.dy,
+      ),
+      items: <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          value: 'rest',
+          height: 2.5,
+          child: Container(
+            width: 115,
+            padding: EdgeInsets.zero,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_rest.png'),
+                const SizedBox(width: 10,),
+                const Text('오늘은 쉬어가기', style: TextStyle(fontSize: 12),),
+              ],
             ),
-          ],
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
-      },
-
-      // builder: (context) {
-      //   return Dialog(
-      //     backgroundColor: Colors.white,
-      //     shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.circular(20),
-      //       side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
-      //     ),
-      //     child: Container(
-      //       width: screenWidth * 0.3,
-      //       child: Column(
-      //         mainAxisSize: MainAxisSize.min,
-      //         children: [
-      //           ListTile(
-      //             title: const Text('오늘은 쉬어가기', style: TextStyle(fontSize: 12)),
-      //             onTap: () {
-      //               Navigator.pop(context);
-      //               _restRoutine(exerciseRoutine);
-      //             },
-      //           ),
-      //           ListTile(
-      //             title: const Text('설명 보기', style: TextStyle(fontSize: 12)),
-      //             onTap: () {
-      //               Navigator.pop(context);
-      //               _viewRoutineExplanation(exerciseRoutine);
-      //             },
-      //           ),
-      //           ListTile(
-      //             title: const Text('수정하기', style: TextStyle(fontSize: 12)),
-      //             onTap: () {
-      //               Navigator.pop(context);
-      //               _editRoutine(exerciseRoutine);
-      //             },
-      //           ),
-      //         ],
-      //       ),
-      //     ),
-      //   );
-      // },
-    );
+          ),
+        ),
+        //const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          height: 0.5,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'explain',
+          height: 2.5,
+          child: Container(
+            width: 110,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_explain.png'),
+                const SizedBox(width: 10,),
+                const Text('설명 보기', style: TextStyle(fontSize: 12),),
+              ],
+            ),
+          ),
+        ),
+        //const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          height: 0.5,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'edit',
+          height: 2.5,
+          child: Container(
+            width: 110,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_edit.png'),
+                const SizedBox(width: 10,),
+                const Text('수정하기', style: TextStyle(fontSize: 12),),
+              ],
+            ),
+          ),
+        ),
+      ],
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
+      ),
+    ).then((value) {
+      // Handle the selection of the popup menu item
+      if (value != null) {
+        switch (value) {
+          case 'rest':
+            print('${exerciseRoutine.name} 루틴은 오늘 쉬어가기');
+            break;
+          case 'explain':
+            print('${exerciseRoutine.name} 설명 보기');
+            break;
+          case 'edit':
+            print('${exerciseRoutine.name} 수정 하기');
+            break;
+        }
+      }
+    });
+  }
+  void showSleepPopUpMenu(BuildContext context, Offset position , SleepDailyRoutine sleepRoutine){
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        MediaQuery.of(context).size.width - position.dx,
+        MediaQuery.of(context).size.height - position.dy,
+      ),
+      items: <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          value: 'rest',
+          height: 2.5,
+          child: Container(
+            width: 115,
+            padding: EdgeInsets.zero,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_rest.png'),
+                const SizedBox(width: 10,),
+                const Text('오늘은 쉬어가기', style: TextStyle(fontSize: 12),),
+              ],
+            ),
+          ),
+        ),
+        //const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          height: 0.5,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'explain',
+          height: 2.5,
+          child: Container(
+            width: 110,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_explain.png'),
+                const SizedBox(width: 10,),
+                const Text('설명 보기', style: TextStyle(fontSize: 12),),
+              ],
+            ),
+          ),
+        ),
+        //const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          height: 0.5,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'edit',
+          height: 2.5,
+          child: Container(
+            width: 110,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_edit.png'),
+                const SizedBox(width: 10,),
+                const Text('수정하기', style: TextStyle(fontSize: 12),),
+              ],
+            ),
+          ),
+        ),
+      ],
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
+      ),
+    ).then((value) {
+      // Handle the selection of the popup menu item
+      if (value != null) {
+        switch (value) {
+          case 'rest':
+            print('${sleepRoutine.sleepRoutineName} 루틴은 오늘 쉬어가기');
+            break;
+          case 'explain':
+            print('${sleepRoutine.sleepRoutineName} 설명 보기');
+            break;
+          case 'edit':
+            print('${sleepRoutine.sleepRoutineName} 수정 하기');
+            break;
+        }
+      }
+    });
+  }
+  void showSpiritPopUpMenu(BuildContext context, Offset position , SpiritRoutineDetail spiritRoutine){
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        MediaQuery.of(context).size.width - position.dx,
+        MediaQuery.of(context).size.height - position.dy,
+      ),
+      items: <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          value: 'rest',
+          height: 2.5,
+          child: Container(
+            width: 115,
+            padding: EdgeInsets.zero,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_rest.png'),
+                const SizedBox(width: 10,),
+                const Text('오늘은 쉬어가기', style: TextStyle(fontSize: 12),),
+              ],
+            ),
+          ),
+        ),
+        //const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          height: 0.5,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'explain',
+          height: 2.5,
+          child: Container(
+            width: 110,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_explain.png'),
+                const SizedBox(width: 10,),
+                const Text('설명 보기', style: TextStyle(fontSize: 12),),
+              ],
+            ),
+          ),
+        ),
+        //const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          height: 0.5,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'edit',
+          height: 2.5,
+          child: Container(
+            width: 110,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_edit.png'),
+                const SizedBox(width: 10,),
+                const Text('수정하기', style: TextStyle(fontSize: 12),),
+              ],
+            ),
+          ),
+        ),
+      ],
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
+      ),
+    ).then((value) {
+      // Handle the selection of the popup menu item
+      if (value != null) {
+        switch (value) {
+          case 'rest':
+            print('${spiritRoutine.name} 루틴은 오늘 쉬어가기');
+            break;
+          case 'explain':
+            print('${spiritRoutine.name} 설명 보기');
+            break;
+          case 'edit':
+            print('${spiritRoutine.name} 수정하기');
+            break;
+        }
+      }
+    });
   }
 
-  // TODO : '오늘 쉬어가기' 구현 - Excercise말고 전체에 되도록 수정
-  void _restRoutine(ExerciseRoutineDetail routine) {
-    // Handle "오늘은 쉬어가기" logic, such as marking the routine as skipped or showing a message
-    print('${routine.name} 루틴은 오늘 쉬어가기');
-  }
-
-  // TODO: '설명 보기' 구현 -  Excercise말고 전체에 되도록 수정
-  void _viewRoutineExplanation(ExerciseRoutineDetail routine) {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => ExplanationScreen(routine: routine),
-    //   ),
-    // );
-  }
-
-  // TODO: '루틴 수정하기' 구현 - Excercise말고 전체에 되도록 수정
-  void _editRoutine(ExerciseRoutineDetail routine) {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => EditRoutineScreen(routine: routine),
-    //   ),
-    // );
-  }
 
   Color getTextColor() {
     switch (widget.text) {
