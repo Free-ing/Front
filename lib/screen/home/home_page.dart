@@ -303,7 +303,7 @@ class _HomePageState extends State<HomePage> {
   // TODO: 상단 상태바도 각각 다 불러오기
   Future<void> fetchExerciseWeekRecord() async {
     try {
-      final response = await homeApiService.getExerciseRecord(startDate, endDate, userId)
+      //final response = await homeApiService.getExerciseRecord(startDate, endDate, userId)
       
     } catch (e) {
       print('Error fetching 일주일치 운동 기록: $e');
