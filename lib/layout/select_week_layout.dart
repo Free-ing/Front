@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 
 class SelectWeekLayout extends StatefulWidget {
   final String title;
-  final Widget routePage;
+  final Widget Function(DateTime startDate, DateTime endDate) routePage;
   const SelectWeekLayout(
       {super.key, required this.title, required this.routePage});
 
@@ -70,13 +70,13 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
   }
 
   //Todo: 보상형 전면 광고 보여줌
-  Future<void> _showRewardedAd() async {
+  Future<void> _showRewardedAd(startDate, endDate) async {
     if (_rewardedAd != null) {
       _rewardedAd!.show(
           onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
         print('보상형 광고 보상 획득: ${reward.amount} ${reward.type}');
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => widget.routePage));
+            .push(MaterialPageRoute(builder: (context) => widget.routePage(startDate, endDate)));
       });
       _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
         onAdDismissedFullScreenContent: (ad) async {
@@ -91,7 +91,7 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
     } else {
       print('보상형 광고가 로드되지 않음');
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => widget.routePage));
+          .push(MaterialPageRoute(builder: (context) => widget.routePage(startDate, endDate)));
     }
   }
 
@@ -206,15 +206,17 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
                                 topic: '${widget.title} 리포트',
                                 image: 'assets/imgs/etc/report_mascot.png',
                                 onConfirm: () async {
+                                  DateTime startDate = week.first;
+                                  DateTime endDate = week.last;
                                   if (_isRewardedAdReady) {
                                     Navigator.pop(context);
-                                    await _showRewardedAd();
+                                    await _showRewardedAd(startDate, endDate);
                                   } else {
                                     debugPrint('광고가 아직 로드되지 않았습니다');
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                widget.routePage));
+                                                widget.routePage(startDate, endDate)));
                                   }
                                 },
                               );

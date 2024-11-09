@@ -1,15 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/show_chart_date.dart';
-import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/hobby_api_service.dart';
 import 'package:freeing/layout/chart_layout.dart';
 import 'package:freeing/model/hobby/hobby_album.dart';
+import 'package:freeing/screen/chart/chart_page.dart';
+import 'package:freeing/screen/chart/view_detail_hobby_record.dart';
 import 'dart:convert';
 
 class HobbyGalleryScreen extends StatefulWidget {
-  const HobbyGalleryScreen({super.key});
+  final DateTime? selectTime;
+  const HobbyGalleryScreen({super.key, this.selectTime});
 
   @override
   State<HobbyGalleryScreen> createState() => _HobbyGalleryScreenState();
@@ -19,8 +22,6 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
   DateTime selectedDate = DateTime.now();
 
   List<HobbyAlbum> _hobbyAlbums = [];
-
-  bool _editMode = false;
 
   //Todo: 서버 요청(취미 기록 조회)
   Future<List<HobbyAlbum>> _fetchHobbyAlbum(int year, int month) async {
@@ -59,27 +60,6 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     }
   }
 
-  //Todo: 서버 요청(취미 기록 삭제)
-  Future<void> _deleteHobbyRecord(int recordId) async {
-    final responseCode = await HobbyAPIService().deleteHobbyRecord(recordId);
-    if (responseCode == 200) {
-      ToastBarWidget(
-        title: '취미 기록이 삭제되었습니다.',
-        leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
-      ).showToast(context);
-      Navigator.pop(context);
-      setState(() {
-        _hobbyAlbums.removeWhere((album) => album.recordId == recordId);
-      });
-      Navigator.of(context).pop();
-    } else {
-      ToastBarWidget(
-        title: '취미 기록이 삭제되지 않았습니다. ${responseCode}',
-      ).showToast(context);
-      print(responseCode);
-    }
-  }
-
   //Todo: 날짜 update
   Future<void> updateSelectedDate(DateTime date) async {
     setState(() {
@@ -94,47 +74,10 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
     });
   }
 
-  //Todo: 취미 기록 수정, 삭제 메뉴
-  void showMenu(context, recordId) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      builder: (BuildContext bc) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: Icon(Icons.edit_note_rounded),
-                title: const Text('취미 기록 수정하기'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _editMode = true;
-                  setState(() {});
-                },
-              ),
-              ListTile(
-                  leading: Icon(Icons.delete_forever_outlined),
-                  title: const Text('취미 기록 삭제하기'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    DialogManager.showConfirmDialog(
-                        context: context,
-                        title: '취미 기록 삭제',
-                        content: '삭제된 취미 기록은 복구할 수 없습니다.\n삭제하시겠습니까?',
-                        onConfirm: () {
-                          _deleteHobbyRecord(recordId);
-                        });
-                  })
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   @override
   void initState() {
     super.initState();
+    selectedDate = widget.selectTime ?? DateTime.now();
     _fetchHobbyAlbum(selectedDate.year, selectedDate.month).then((albums) {
       setState(() {
         _hobbyAlbums = albums;
@@ -149,6 +92,12 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
 
     return ChartLayout(
       title: "취미 사진첩",
+      backToPage: () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+              builder: (context) => ChartPage()),
+        );
+      },
       chartWidget: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -201,13 +150,12 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return _customPopup(
-              context: context,
+            return ViewDetailHobbyRecord(
               title: title,
-              date: date,
               imageUrl: imageUrl,
               description: description,
               recordId: recordId,
+              date: date,
             );
           },
         );
@@ -257,138 +205,6 @@ class _HobbyGalleryScreenState extends State<HobbyGalleryScreen> {
                             color: Colors.white, fontWeight: FontWeight.w300)),
                   ),
                 ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  //Todo: 취미기록 상세 보기
-  Widget _customPopup({
-    required BuildContext context,
-    required String title,
-    required DateTime date,
-    required String imageUrl,
-    required String description,
-    required int recordId,
-  }) {
-    final textTheme = Theme.of(context).textTheme;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      child: Container(
-        decoration: BoxDecoration(
-          color: IVORY,
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        padding: EdgeInsets.all(screenHeight * 0.02),
-        width: screenWidth * 0.9,
-        height: screenHeight * 0.6,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            // 상단 타이틀
-            Align(
-                alignment: Alignment.center,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                  decoration: BoxDecoration(
-                    color: BLUE_PURPLE,
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  width: 300.0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Center(
-                        child: Text(
-                          title,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SizedBox(width: 50),
-
-                      /// 취미 기록 삭제
-                      SizedBox(
-                        height: screenHeight * 0.045,
-                        width: screenWidth * 0.07,
-                        child: IconButton(
-                          onPressed: () {
-                            showMenu(context, recordId);
-                          },
-                          icon: Icon(
-                            Icons.more_vert_rounded,
-                            //Icons.delete_forever,
-                            size: 25,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-            SizedBox(height: screenHeight * 0.015),
-            // 날짜
-            Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '${date.year}년 ${date.month}월 ${date.day}일',
-                style: textTheme.bodyMedium,
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.015),
-            // 이미지 영역
-
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.network(
-                imageUrl,
-                height: screenHeight * 0.22,
-                fit: BoxFit.cover, // 영역을 가득 채우며 비율 유지
-              ),
-            ),
-
-            SizedBox(height: screenHeight * 0.015),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: SingleChildScrollView(
-                  child: Text(
-                    description,
-                    style: const TextStyle(fontSize: 14.0),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.015),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 100.0),
-                backgroundColor: PRIMARY_COLOR,
-                side: const BorderSide(color: Colors.black),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                iconColor: Colors.white,
-              ),
-              child: Text(
-                "닫기",
-                style: textTheme.bodyMedium,
               ),
             ),
           ],

@@ -1,12 +1,15 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/layout/screen_layout.dart';
 
-import '../../common/component/buttons.dart';
-
 class SleepReportScreen extends StatefulWidget {
-  const SleepReportScreen({super.key});
+  final DateTime startDate;
+  final DateTime endDate;
+
+  const SleepReportScreen(
+      {super.key, required this.startDate, required this.endDate});
 
   @override
   State<SleepReportScreen> createState() => _SleepReportScreenState();

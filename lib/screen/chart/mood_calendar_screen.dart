@@ -38,6 +38,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
   Map<int, String> emotionDataByDay = {};
   Map<int, int> diaryIdByDay = {};
+  Map<int, int> recordIdByDay = {};
   EmotionDiary? selectedDiary;
   bool _isScrap = false;
 
@@ -53,14 +54,9 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
       if (jsonData is Map<String, dynamic>) {
         List<dynamic> moodList = jsonData['result'];
-        print('이건 jsonData 이고 $jsonData');
-        print('json Data result야 !!!!!${jsonData['result']}');
         List<MoodMonthly> moodMonthlyList = moodList.map((data) {
           return MoodMonthly.fromJson(data);
         }).toList();
-
-        print('이게 바로 moodMonthlyList야 ~~~$moodMonthlyList');
-
         return moodMonthlyList;
       } else {
         throw Exception('데이터 형식 오류');
@@ -97,27 +93,25 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
     Map<int, String> emotions = {};
     Map<int, int> diaryIds = {};
+    Map<int, int> recordIds = {};
 
     for (var mood in moodMonthlyList) {
       int day = mood.date.day;
       emotions[day] = mood.emotion;
       diaryIds[day] = mood.diaryId;
+      recordIds[day] = mood.recordId;
     }
 
     print('최종 emotions 맵: $emotions');
     print('최종 diaryIds 맵: $diaryIds');
+    print('최종 recordIds 맵: $recordIds');
 
-    return {'emotions': emotions, 'diaryIds': diaryIds};
+    return {'emotions': emotions, 'diaryIds': diaryIds, 'recordIds': recordIds};
   }
 
   //Todo: 서버 요청 (일일 감정 일기 기록 조회)
   Future<void> _fetchEmotionDiary(int diaryId) async {
-    print('일일 감정 일기 조회');
-    print(diaryId);
     final response = await apiService.getEmotionDiary(diaryId);
-
-    print(diaryId);
-    print(response.statusCode);
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
@@ -227,7 +221,8 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
     setState(() {
       emotionDataByDay = Map<int, String>.from(emotionList['emotions']!);
-      diaryIdByDay = Map<int, int>.from(emotionList['diaryIds']!); // 추가된 코드
+      diaryIdByDay = Map<int, int>.from(emotionList['diaryIds']!);
+      recordIdByDay = Map<int, int>.from(emotionList['recordIds']!);
 
       // 데이터를 모두 업데이트한 후 selectedDate에 대한 일기 데이터 확인
       if (diaryIdByDay[selectedDate] != null) {
@@ -286,7 +281,9 @@ class _MoodCalendarState extends State<MoodCalendar> {
               // 선택된 날짜 상세 보기
               diaryIdByDay[selectedDate] != null
                   ? _viewEmotionalDiary()
-                  : _noneEmotionDiary(textTheme, screenWidth, screenHeight),
+                  : recordIdByDay[selectedDate] != null
+                      ? _noneEmotionDiary(textTheme, screenWidth, screenHeight)
+                      : _goToRoutineOn(textTheme, screenWidth, screenHeight),
               SizedBox(height: screenHeight * 0.08),
             ],
           ),
@@ -450,7 +447,6 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
   // Todo: 상세 보기 (선택된 날짜에 감정 일기 없을 때)
   /// 감정 일기 켜져 있을 때 - 일기 작성하기 버튼 -> 바텀 시트 올라옴
-  /// 감정 일기 꺼져 있을 때 - 루틴 키러 가기 버튼 -> 루틴(3) 페이지로 넘어감
   Widget _noneEmotionDiary(
     TextTheme textTheme,
     double screenWidth,
@@ -494,16 +490,90 @@ class _MoodCalendarState extends State<MoodCalendar> {
                     height: screenHeight * 0.035,
                     child: OutlinedButton(
                       onPressed: () {
+
                         // TODO: 감정일기 작성하기 bottom sheet
-                        // showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
-                        //     DateTime(selectYear, selectMonth, selectedDate,), );
-                        // Navigator.of(context).pushReplacement(
-                        //   MaterialPageRoute(
-                        //       builder: (context) =>
-                        //           const RoutinePage(index: 3)),
-                        // );
+                        showDiaryBottomSheet(
+                          context,
+                          '오늘 하루 어땠나요?',
+                          DateTime(selectYear, selectMonth, selectedDate),
+                          1,
+                        );
                       },
                       child: Text('일기 작성하기', style: textTheme.bodySmall),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: PRIMARY_COLOR,
+                        foregroundColor: LIGHT_GREY,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: screenHeight * 0.2),
+      ],
+    );
+  }
+
+  //Todo: 루틴 키러 가기
+  Widget _goToRoutineOn(textTheme, screenWidth, screenHeight) {
+    return Column(
+      children: [
+        SizedBox(
+          height: screenHeight * 0.035,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '$selectYear년 $selectMonth월 $selectedDate일',
+              style: textTheme.titleSmall,
+            ),
+          ),
+        ),
+        SizedBox(height: screenHeight * 0.008),
+        DottedBorder(
+          borderType: BorderType.RRect,
+          radius: const Radius.circular(15),
+          padding: EdgeInsets.zero,
+          dashPattern: [6, 4],
+          color: SEMI_GREY,
+          strokeWidth: 1.5,
+          child: Container(
+            height: screenHeight * 0.22,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '작성한 일기가 없어요\n'
+                    '일기를 작성하고 편지를 받아보세요.',
+                    style: textTheme.bodySmall,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  Text(
+                    '루틴이 꺼져 있다면?',
+                    style: textTheme.bodySmall,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: screenHeight * 0.004),
+                  SizedBox(
+                    //width: screenWidth * 0.33,
+                    height: screenHeight * 0.035,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const RoutinePage(index: 3)),
+                        );
+                      },
+                      child: Text('루틴 키러 가기', style: textTheme.bodySmall),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: PRIMARY_COLOR,
                         foregroundColor: LIGHT_GREY,

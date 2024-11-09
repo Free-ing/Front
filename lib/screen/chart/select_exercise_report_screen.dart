@@ -9,7 +9,7 @@ class SelectExerciseReportScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SelectWeekLayout(
       title: '운동',
-      routePage: ExerciseReportScreen(),
+      routePage: (startDate, endDate) => ExerciseReportScreen(startDate: startDate, endDate: endDate,),
     );
   }
 }

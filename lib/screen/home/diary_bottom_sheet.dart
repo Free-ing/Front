@@ -10,8 +10,12 @@ import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
 
 //Todo: 감정 일기
-Future<bool> showDiaryBottomSheet(BuildContext context, String title,
-    DateTime selectedDate, int recordId) async {
+Future<bool> showDiaryBottomSheet(
+  BuildContext context,
+  String title,
+  DateTime selectedDate,
+  int recordId,
+) async {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
   late bool isSuccess;
@@ -107,7 +111,7 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
         });
         widget.onSubmissionSuccess();
         Navigator.pop(context, true);
-        if(_getAiLetter == false){
+        if (_getAiLetter == false) {
           const ToastBarWidget(
             title: '감정 일기 작성이 저장되었습니다.',
           ).showToast(context);
@@ -143,12 +147,11 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
     print('ai 편지 작성 요청하는 diaryId $diaryId');
     if (response == 200) {
       print('편지 요청 성공!');
-      if(mounted){
+      if (mounted) {
         const ToastBarWidget(
           title: '감정일기가 저장되었습니다.\n편지가 도착하면 확인할 수 있어요.',
         ).showToast(context);
       }
-
     } else {
       print('편지 요청 실패 $response');
       print('편지 요청한 아이디 $diaryId');
