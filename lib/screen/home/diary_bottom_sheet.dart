@@ -49,6 +49,7 @@ class _DiaryBottomSheetContent extends StatefulWidget {
   final VoidCallback onSubmissionSuccess;
   final int recordId;
 
+
   const _DiaryBottomSheetContent({
     super.key,
     required this.title,

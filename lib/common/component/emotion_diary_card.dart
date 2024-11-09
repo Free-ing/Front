@@ -65,9 +65,11 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
     if (response.statusCode == 200) {
       final decodedBody = utf8.decode(response.bodyBytes);
       final userData = User.fromJson(json.decode(decodedBody));
-      setState(() {
-        _name = userData.name;
-      });
+      if(mounted){
+        setState(() {
+          _name = userData.name;
+        });
+      }
     } else {
       throw Exception('사용자 정보 가져오기 실패 ${response.statusCode}');
     }
@@ -86,16 +88,16 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
                 leading: Icon(Icons.edit_note_rounded),
                 title: const Text('일기 수정하기'),
                 onTap: () {
-                  // showDiaryBottomSheet(
-                  //   context,
-                  //   '그 때 하루 어땠나요?',
-                  //   DateTime(
-                  //     widget.date.year,
-                  //     widget.date.month,
-                  //     widget.date.day,
-                  //   ),
-                  //   widget.diaryId,
-                  // );
+                  showDiaryBottomSheet(
+                    context,
+                    '그 날 하루 어땠나요?',
+                    DateTime(
+                      widget.date.year,
+                      widget.date.month,
+                      widget.date.day,
+                    ),
+                    widget.diaryId,
+                  );
                   setState(() {
                     _editMode = true;
                   });

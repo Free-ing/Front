@@ -213,6 +213,7 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
                                     await _showRewardedAd(startDate, endDate);
                                   } else {
                                     debugPrint('광고가 아직 로드되지 않았습니다');
+                                    Navigator.pop(context);
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
