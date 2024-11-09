@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:freeing/common/service/token_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/find_locale.dart';
+import 'package:intl/intl.dart';
 import 'base_url.dart';
 
 class SleepAPIService {
@@ -12,7 +13,7 @@ class SleepAPIService {
 
   get tokenStorage => null;
 
-  //Todo: 수면 루틴 추가
+  // 수면 루틴 추가
   Future<http.Response> postSleepRoutine(
       String sleepRoutineName,
       startTime,
@@ -28,7 +29,6 @@ class SleepAPIService {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/sleep-service/routine/add');
-
     final response = await http.post(
       url,
       headers: {
@@ -54,7 +54,7 @@ class SleepAPIService {
     return response;
   }
 
-  //Todo: 수면 루틴 수정
+  // 수면 루틴 수정
   Future<http.Response> patchSleepRoutine(
       String sleepRoutineName,
       startTime,
@@ -98,7 +98,7 @@ class SleepAPIService {
     return response;
   }
 
-  //Todo: 수면 루틴 삭제
+  // 수면 루틴 삭제
   Future<int> deleteSleepRoutine(int routineId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
@@ -115,7 +115,7 @@ class SleepAPIService {
     return response.statusCode;
   }
 
-  //Todo: 수면 리스트 조회
+  // 수면 리스트 조회
   Future<http.Response> getSleepList() async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
@@ -130,7 +130,7 @@ class SleepAPIService {
     );
   }
 
-  //  TODO: 수면 기록 toggle 상태 불러오기
+  // 수면 기록 toggle 상태 불러오기
   Future<bool> getRecordSleepStatus() async{
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
@@ -161,7 +161,7 @@ class SleepAPIService {
     }
   }
 
-  // TODO: 수면 기록 toggle on / off
+  // 수면 기록 toggle on / off
   Future<bool> sleepRecord(bool isRecordOn) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
@@ -194,7 +194,7 @@ class SleepAPIService {
     }
   }
 
-// TODO: 수면 루틴 toggle on (활성화)
+  // 수면 루틴 toggle on (활성화)
   Future<int> activateSleepRoutine(int routineId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
@@ -219,7 +219,7 @@ class SleepAPIService {
     }
   }
 
-// TODO: 수면 루틴 toggle off (비활성화)
+  // 수면 루틴 toggle off (비활성화)
   Future<int> deactivateSleepRoutine(int routineId) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
@@ -242,5 +242,27 @@ class SleepAPIService {
       print('Error occured while sending data: $e');
       return -1;
     }
+  }
+
+  //Todo: 주간 수면 리포트 조회
+  Future<http.Response> getSleepReport(
+      DateTime startDate, DateTime endDate) async {
+    final String formattedStartDate = DateFormat('yyyy-MM-dd').format(startDate);
+    final String formattedEndDate = DateFormat('yyyy-MM-dd').format(endDate);
+
+    print('formattedEndDate $formattedEndDate');
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse(
+        '$_baseUrl/sleep-service/weekly-report?startDate=$formattedStartDate&endDate=$formattedEndDate');
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
   }
 }

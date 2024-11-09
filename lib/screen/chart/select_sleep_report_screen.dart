@@ -9,13 +9,9 @@ class SelectSleepReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SelectWeekLayout(
+    return SelectWeekLayout(
       title: '수면',
-      routePage: (startDate, endDate) => SleepReportScreen(
-        startDate: startDate,
-        endDate: endDate,
-      ),
-      routePage: SleepReportScreen(),
+      routePage: (startDate, endDate) => SleepReportScreen(startDate: startDate, endDate: endDate),
     );
   }
 }

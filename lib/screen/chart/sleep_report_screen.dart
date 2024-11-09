@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/sleep_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
+import 'package:freeing/model/sleep/sleep_report.dart';
+
+import '../../common/component/custom_circular_progress_indicator.dart';
 
 class SleepReportScreen extends StatefulWidget {
   final DateTime startDate;
@@ -34,6 +40,36 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
     'satTime': 190,
     'sunTime': 70,
   };
+  ResponseData? responseData;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSleepReport().then((data) {
+      setState(() {
+        responseData = data;
+        isLoading = false;
+      });
+    });
+  }
+
+  Future<ResponseData> _fetchSleepReport() async {
+    final sleepApiService = SleepAPIService();
+    final response =
+        await sleepApiService.getSleepReport(widget.startDate, widget.endDate);
+    print(' 상태 코드!! ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(utf8.decode(response.bodyBytes));
+      print(jsonData);
+      return ResponseData.fromJson(jsonData);
+    } else {
+      final jsonData = json.decode(utf8.decode(response.bodyBytes));
+      print(jsonData['error']);
+      throw Exception('주간 수면 리포트 조회 실패 ${response.statusCode}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,53 +77,67 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return ScreenLayout(
-      title: '주간 수면 리포트',
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: screenHeight * 0.028),
-            _showSleepTime(
-                textTheme: textTheme,
-                screenWidth: screenWidth,
-                screenHeight: screenHeight),
-            SizedBox(height: screenHeight * 0.028),
-            SizedBox(height: screenHeight * 0.028),
-            _showSleepTimeGraph(
-                textTheme: textTheme,
-                screenWidth: screenWidth,
-                screenHeight: screenHeight),
-            SizedBox(height: screenHeight * 0.028),
-            SizedBox(height: screenHeight * 0.028),
-            _showSleepStatusChange(
-                textTheme: textTheme,
-                screenWidth: screenWidth,
-                screenHeight: screenHeight),
-            SizedBox(height: screenHeight * 0.028),
-            SizedBox(height: screenHeight * 0.028),
-            _showSleepRecord(
-                textTheme: textTheme,
-                screenWidth: screenWidth,
-                screenHeight: screenHeight),
-            SizedBox(height: screenHeight * 0.028),
-            // AI 피드백
-            SizedBox(height: screenHeight * 0.028),
-            Center(
-                child: GreenButton(width: screenWidth * 0.6, onPressed: () {})),
-            SizedBox(height: screenHeight * 0.028),
-          ],
-        ),
-      ),
-      color: LIGHT_IVORY,
-    );
+    return
+      isLoading ? const CustomCircularProgressIndicator() :
+      ScreenLayout(
+            title: '주간 수면 리포트',
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: screenHeight * 0.028),
+                  _showSleepTime(
+                    textTheme: textTheme,
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
+                    formattedAvgSleepTime: responseData!.weeklyReport.formattedAvgSleepTime,
+                    formattedAvgWakeUpTime: responseData!.weeklyReport.formattedAvgWakeUpTime,
+                    avgSleepDurationInMinutes: responseData!.weeklyReport.avgSleepDurationInMinutes,
+                  ),
+                  SizedBox(height: screenHeight * 0.028),
+                  SizedBox(height: screenHeight * 0.028),
+                  _showSleepTimeGraph(
+                      textTheme: textTheme,
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight),
+                  SizedBox(height: screenHeight * 0.028),
+                  SizedBox(height: screenHeight * 0.028),
+                  _showSleepStatusChange(
+                      textTheme: textTheme,
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight),
+                  SizedBox(height: screenHeight * 0.028),
+                  SizedBox(height: screenHeight * 0.028),
+                  _showSleepRecord(
+                      textTheme: textTheme,
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight),
+                  SizedBox(height: screenHeight * 0.028),
+                  // TODO: AI 피드백
+                  SizedBox(height: screenHeight * 0.028),
+                  Center(
+                      child: GreenButton(
+                          width: screenWidth * 0.6, onPressed: () {})),
+                  SizedBox(height: screenHeight * 0.028),
+                ],
+              ),
+            ),
+            color: LIGHT_IVORY,
+          );
   }
 
   // 평균 잠드는 시간, 기상 시간, 수면 시간 보여주기
   Widget _showSleepTime(
       {required TextTheme textTheme,
       required double screenWidth,
-      required double screenHeight}) {
+      required double screenHeight,
+      required String formattedAvgSleepTime,
+      required String formattedAvgWakeUpTime,
+      required int avgSleepDurationInMinutes,
+      }) {
+    final int totalHours = avgSleepDurationInMinutes ~/60;
+    final int totalMinutes = avgSleepDurationInMinutes % 60;
+    final String totalAvgSleepTime = '$totalHours시간 $totalMinutes분';
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
       child: Column(
@@ -101,16 +151,15 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                   screenHeight: screenHeight,
                   textTheme: textTheme,
                   title: "평균 잠드는 시간",
-                  hour: '11',
-                  minute: '11'),
+                  formattedAvgTime: formattedAvgSleepTime
+                  ),
               //SizedBox(width: screenWidth * 0.05,),
               _titleAndTime(
                   screenWidth: screenWidth,
                   screenHeight: screenHeight,
                   textTheme: textTheme,
                   title: "평균 기상 시간",
-                  hour: '11',
-                  minute: '11'),
+                  formattedAvgTime: formattedAvgWakeUpTime),
             ],
           ),
           SizedBox(height: screenHeight * 0.02),
@@ -119,8 +168,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
               screenHeight: screenHeight,
               textTheme: textTheme,
               title: "평균 수면 시간",
-              hour: '11',
-              minute: '11'),
+              formattedAvgTime: totalAvgSleepTime),
         ],
       ),
     );
@@ -216,17 +264,25 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                               getTitlesWidget: (double value, TitleMeta meta) {
                                 if (value == 0) {
                                   return Padding(
-                                    padding: EdgeInsets.only(bottom: screenHeight * 0.025),
+                                    padding: EdgeInsets.only(
+                                        bottom: screenHeight * 0.025),
                                     child: FittedBox(
-                                      child: Text('전날 밤',
-                                          style: textTheme.labelMedium, textAlign: TextAlign.center,),
+                                      child: Text(
+                                        '전날 밤',
+                                        style: textTheme.labelMedium,
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
                                   );
                                 } else if (value == 4) {
                                   return Padding(
-                                    padding: EdgeInsets.only(top: screenHeight * 0.025),
-                                    child: Text('아침',
-                                        style: textTheme.labelMedium, textAlign: TextAlign.center,),
+                                    padding: EdgeInsets.only(
+                                        top: screenHeight * 0.025),
+                                    child: Text(
+                                      '아침',
+                                      style: textTheme.labelMedium,
+                                      textAlign: TextAlign.center,
+                                    ),
                                   );
                                 }
                                 return const Text('');
@@ -327,15 +383,16 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
           height: screenWidth * 0.3,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: 5, // 위젯의 개수 (예시로 5개 설정)
+            itemCount: responseData!.sleepRecords.length, // 위젯의 개수 (예시로 5개 설정)
             itemBuilder: (context, index) {
+              final sleepRecord = responseData!.sleepRecords[index];
               return Row(
                 children: [
                   _imgAndContent(
                       screenWidth: screenWidth,
                       screenHeight: screenHeight,
                       textTheme: textTheme,
-                      sleepStatus: '개운해요'),
+                      sleepStatus: sleepRecord.sleepStatus),
                   const SizedBox(width: 12)
                 ],
               );
@@ -360,14 +417,18 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
           height: screenWidth * 0.3,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: 5, // 위젯의 개수 (예시로 5개 설정)
+            itemCount: responseData!.sleepRecords.length,
             itemBuilder: (context, index) {
+              final sleepRecord = responseData!.sleepRecords[index];
               return Row(
                 children: [
                   _dateAndRecord(
                       screenWidth: screenWidth,
                       screenHeight: screenHeight,
-                      textTheme: textTheme),
+                      textTheme: textTheme,
+                      memo: sleepRecord.memo,
+                      formattedDate: sleepRecord.formattedDate,
+                      ),
                   const SizedBox(width: 12)
                 ],
               );
@@ -380,14 +441,14 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
 
   // TODO: AI 피드백 내용
 
+
   // 제목 & 시간
   Widget _titleAndTime(
       {required double screenWidth,
       required double screenHeight,
       required TextTheme textTheme,
       required String title,
-      required String hour,
-      required String minute}) {
+      required String formattedAvgTime}) {
     return Card(
       margin: EdgeInsets.zero,
       elevation: 4,
@@ -416,9 +477,8 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text(title, style: textTheme.bodyMedium),
-              // TODO: 오전 오후 어떻게 할건지!!!
               Text(
-                '오전 $hour시 $minute분',
+                formattedAvgTime,
                 style: textTheme.bodyMedium?.copyWith(color: TEXT_PURPLE),
               )
             ],
@@ -437,17 +497,28 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
   }) {
     String? getImageAddress(sleepStatus) {
       switch (sleepStatus) {
-        case '개운해요':
+        case 'REFRESHED':
           return 'assets/imgs/home/after_refreshed.png';
-        case '뻐근해요':
+        case 'STIFF':
           return 'assets/imgs/home/after_stiff.png';
-        case '잔 것 같지 않아요':
+        case 'UNRESTED':
           return 'assets/imgs/home/after_unrested.png';
         default:
           return null;
       }
     }
-
+    String? getStatus(sleepStatus){
+      switch (sleepStatus) {
+        case 'REFRESHED':
+          return '개운해요';
+        case 'STIFF':
+          return '뻐근해요';
+        case 'UNRESTED':
+          return '잔 것 같지 않아요';
+        default:
+          return null;
+      }
+    }
     return Card(
       margin: EdgeInsets.zero,
       elevation: 4,
@@ -463,8 +534,8 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
           border: Border.all(color: Colors.black, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Color(0xFFFFD477).withOpacity(0.2),
-              offset: Offset(2, 4),
+              color: const Color(0xFFFFD477).withOpacity(0.2),
+              offset: const Offset(2, 4),
               blurRadius: 4,
             ),
           ],
@@ -479,8 +550,8 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFFFFD477).withOpacity(0.4),
-                      offset: Offset(1, 2),
+                      color: const Color(0xFFFFD477).withOpacity(0.4),
+                      offset: const Offset(1, 2),
                       blurRadius: 4,
                     ),
                   ],
@@ -489,7 +560,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
               ),
             ),
             //Image.asset(getImageAddress(sleepStatus)!),
-            Text(sleepStatus, style: textTheme.labelMedium),
+            Text(getStatus(sleepStatus)!, style: textTheme.labelMedium),
           ],
         ),
       ),
@@ -501,11 +572,13 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
     required double screenWidth,
     required double screenHeight,
     required TextTheme textTheme,
+    required String memo,
+    required String formattedDate,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(' 8월 27일의 기록'),
+        Text('$formattedDate의 기록'),
         const SizedBox(height: 5),
         Card(
           margin: EdgeInsets.zero,
@@ -525,15 +598,17 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0xFFFFD477).withOpacity(0.2),
-                    offset: Offset(2, 4),
+                    color: const Color(0xFFFFD477).withOpacity(0.2),
+                    offset: const Offset(2, 4),
                     blurRadius: 4,
                   ),
                 ],
               ),
-              child: Text('기로오오옥')),
+              child: Text(memo)),
         ),
       ],
     );
   }
+
+
 }
