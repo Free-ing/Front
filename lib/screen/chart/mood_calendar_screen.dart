@@ -196,6 +196,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
       setState(() {
         emotionDataByDay = Map<int, String>.from(data['emotions']!);
         diaryIdByDay = Map<int, int>.from(data['diaryIds']!);
+        recordIdByDay = Map<int, int>.from(data['recordIds']!);
       });
 
       if (diaryIdByDay.containsKey(selectedDate)) {
@@ -490,13 +491,13 @@ class _MoodCalendarState extends State<MoodCalendar> {
                     height: screenHeight * 0.035,
                     child: OutlinedButton(
                       onPressed: () {
-
+                        print('감정일기 작생해보세요잉의 recordId 입니다! ${recordIdByDay[selectedDate]!}');
                         // TODO: 감정일기 작성하기 bottom sheet
                         showDiaryBottomSheet(
                           context,
                           '오늘 하루 어땠나요?',
                           DateTime(selectYear, selectMonth, selectedDate),
-                          1,
+                          recordIdByDay[selectedDate]!,
                         );
                       },
                       child: Text('일기 작성하기', style: textTheme.bodySmall),
