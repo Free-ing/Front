@@ -51,6 +51,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
+      print(jsonData);
 
       if (jsonData is Map<String, dynamic>) {
         List<dynamic> moodList = jsonData['result'];
@@ -96,7 +97,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
     Map<int, int> recordIds = {};
 
     for (var mood in moodMonthlyList) {
-      int day = mood.date.day;
+      int day = mood.routineDate.day;
       emotions[day] = mood.emotion;
       diaryIds[day] = mood.diaryId;
       recordIds[day] = mood.recordId;
@@ -127,7 +128,8 @@ class _MoodCalendarState extends State<MoodCalendar> {
       }
     } else {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
-      print(jsonData['error']);
+      print('이게 도대체 왜이럴까 선택된 다이어리 아이디는?? $diaryId');
+      print('jsonData error ${jsonData['error']}');
       throw Exception('일일 감정 일기 기록 조회 실패 ${response.statusCode}');
     }
   }
@@ -199,15 +201,18 @@ class _MoodCalendarState extends State<MoodCalendar> {
         recordIdByDay = Map<int, int>.from(data['recordIds']!);
       });
 
-      if (diaryIdByDay.containsKey(selectedDate)) {
+      if (diaryIdByDay.containsKey(selectedDate) &&
+          diaryIdByDay[selectedDate] != -1) {
         print('선택 날짜 다이어리 아이디: ${diaryIdByDay[selectedDate]}');
         _fetchEmotionDiary(diaryIdByDay[selectedDate]!);
+        print(recordIdByDay[selectedDate]);
       } else {
         print('선택한 날짜에 해당하는 일기 데이터가 없습니다.');
       }
-    }).catchError((error) {
-      print('에러 발생: $error');
     });
+    // }).catchError((error) {
+    //   print('에러 발생: $error');
+    // });
   }
 
   //Todo: 날짜 update
@@ -226,7 +231,8 @@ class _MoodCalendarState extends State<MoodCalendar> {
       recordIdByDay = Map<int, int>.from(emotionList['recordIds']!);
 
       // 데이터를 모두 업데이트한 후 selectedDate에 대한 일기 데이터 확인
-      if (diaryIdByDay[selectedDate] != null) {
+      if (diaryIdByDay.containsKey(selectedDate) &&
+          diaryIdByDay[selectedDate] != -1) {
         _fetchEmotionDiary(diaryIdByDay[selectedDate]!);
       } else {
         print('선택한 날짜에 해당하는 일기 데이터가 없습니다.');
@@ -279,12 +285,12 @@ class _MoodCalendarState extends State<MoodCalendar> {
               _monthlyCalendar(textTheme, screenWidth, screenHeight,
                   daysInMonth, firstDayOfMonth),
               SizedBox(height: screenHeight * 0.017),
-              // 선택된 날짜 상세 보기
-              diaryIdByDay[selectedDate] != null
-                  ? _viewEmotionalDiary()
-                  : recordIdByDay[selectedDate] != null
-                      ? _noneEmotionDiary(textTheme, screenWidth, screenHeight)
-                      : _goToRoutineOn(textTheme, screenWidth, screenHeight),
+              (recordIdByDay[selectedDate] == null &&
+                      recordIdByDay[selectedDate] == null)
+                  ? _goToRoutineOn(textTheme, screenWidth, screenHeight)
+                  : diaryIdByDay[selectedDate] != -1
+                      ? _viewEmotionalDiary()
+                      : _noneEmotionDiary(textTheme, screenWidth, screenHeight),
               SizedBox(height: screenHeight * 0.08),
             ],
           ),
@@ -393,7 +399,8 @@ class _MoodCalendarState extends State<MoodCalendar> {
                     selectedDate = dayNumber; // 날짜 업데이트
                   });
 
-                  if (diaryIdByDay.containsKey(dayNumber)) {
+                  if (diaryIdByDay.containsKey(dayNumber) &&
+                      diaryIdByDay[selectedDate] != -1) {
                     await _fetchEmotionDiary(diaryIdByDay[dayNumber]!);
                     _isScrap = selectedDiary?.scrap ?? false;
                     print('불러온 일기 스크랩 여부 $_isScrap');
@@ -425,6 +432,8 @@ class _MoodCalendarState extends State<MoodCalendar> {
     print('넘어가는 scrap값 : ${selectedDiary?.scrap ?? ''}');
     final diaryId = selectedDiary?.diaryId ?? -1;
     print('letterId: ${selectedDiary?.letterId ?? -1}');
+    print('레코드 아이디 ${recordIdByDay[selectedDate]}');
+    print('다이어리 아이디 ${diaryIdByDay[selectedDate]}');
 
     return EmotionDiaryCard(
       diaryId: diaryId,
@@ -491,7 +500,8 @@ class _MoodCalendarState extends State<MoodCalendar> {
                     height: screenHeight * 0.035,
                     child: OutlinedButton(
                       onPressed: () {
-                        print('감정일기 작생해보세요잉의 recordId 입니다! ${recordIdByDay[selectedDate]!}');
+                        print(
+                            '감정일기 작생해보세요잉의 recordId 입니다! ${recordIdByDay[selectedDate]!}');
                         // TODO: 감정일기 작성하기 bottom sheet
                         showDiaryBottomSheet(
                           context,
@@ -523,7 +533,9 @@ class _MoodCalendarState extends State<MoodCalendar> {
   }
 
   //Todo: 루틴 키러 가기
+  /// 감정 일기 꺼져 있을 때 - 루틴 키러 가기 버튼
   Widget _goToRoutineOn(textTheme, screenWidth, screenHeight) {
+    print('레코드 아이디 바이 데이 $recordIdByDay');
     return Column(
       children: [
         SizedBox(
