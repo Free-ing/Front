@@ -42,6 +42,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
     'satTime': 190,
     'sunTime': 70,
   };
+
   ResponseData? responseData;
   bool isLoading = true;
   String name = '';
@@ -396,6 +397,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
       {required TextTheme textTheme,
       required double screenWidth,
       required double screenHeight}) {
+    responseData!.sleepRecords.sort((a, b) => a.recordDay.compareTo(b.recordDay));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -430,6 +432,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
       {required TextTheme textTheme,
       required double screenWidth,
       required double screenHeight}) {
+    responseData!.sleepRecords.sort((a, b) => a.recordDay.compareTo(b.recordDay));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
