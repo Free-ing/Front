@@ -3,7 +3,11 @@ import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/layout/screen_layout.dart';
 
 class SleepReportScreen extends StatelessWidget {
-  const SleepReportScreen({super.key});
+  final DateTime startDate;
+  final DateTime endDate;
+
+  const SleepReportScreen(
+      {super.key, required this.startDate, required this.endDate});
 
   @override
   Widget build(BuildContext context) {

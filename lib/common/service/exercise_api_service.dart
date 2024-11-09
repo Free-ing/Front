@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 class ExerciseAPIService {
   final String _baseUrl = BaseUrl.baseUrl;
-  //final String _baseUrl = 'http://172.30.1.44:1234';
+  //final String _baseUrl = 'http://192.168.0.22:1234';
 
   //Todo: 운동 루틴 추가
   Future<http.Response> postExerciseRoutine(
@@ -59,10 +59,13 @@ class ExerciseAPIService {
     final accessToken = await tokenStorage.getAccessToken();
     final url = Uri.parse('$_baseUrl/exercise-service/routine-list');
 
-    return http.get(url, headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $accessToken',
-    });
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
   }
 
   //Todo: 운동 루틴 수정
@@ -204,5 +207,28 @@ class ExerciseAPIService {
         },
       ),
     );
+  }
+
+  //Todo: 주간 운동 리포트 조회
+  Future<http.Response> getExerciseReport(
+      DateTime startDate, DateTime endDate) async {
+    final String formattedStartDate =
+        DateFormat('yyyy-MM-dd').format(startDate);
+    final String formattedEndDate = DateFormat('yyyy-MM-dd').format(endDate);
+
+    print('formattedEndDate $formattedEndDate');
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse(
+        '$_baseUrl/exercise-service/report?startDate=$formattedStartDate&endDate=$formattedEndDate');
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
   }
 }

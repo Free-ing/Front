@@ -541,7 +541,7 @@ class _AddRecommendedRoutineScreenState
               controller: _explanationController,
               style: textTheme.bodyMedium,
               keyboardType: TextInputType.text,
-              maxLength: 100,
+              maxLength: 150,
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: "루틴에 대한 설명",

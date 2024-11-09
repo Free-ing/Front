@@ -7,6 +7,7 @@ import 'package:freeing/common/service/ad_mob_service.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
 import 'package:freeing/screen/chart/ai_letter.dart';
+import 'package:freeing/screen/home/diary_bottom_sheet.dart';
 import 'package:freeing/screen/setting/setting_page.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -80,11 +81,19 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
         return SafeArea(
           child: Wrap(
             children: <Widget>[
-              // ListTile(
-              //   leading: Icon(Icons.edit_note_rounded),
-              //   title: const Text('일기 수정하기'),
-              //   onTap: () {},
-              // ),
+              ListTile(
+                leading: Icon(Icons.edit_note_rounded),
+                title: const Text('일기 수정하기'),
+                onTap: () {
+                  showDiaryBottomSheet(
+                    context,
+                    '그 때 하루 어땠나요?',
+                    DateTime(
+                        widget.date.year, widget.date.month, widget.date.day),
+                    widget.diaryId,
+                  );
+                },
+              ),
               ListTile(
                   leading: Icon(Icons.delete_forever_outlined),
                   title: const Text('일기 삭제하기'),

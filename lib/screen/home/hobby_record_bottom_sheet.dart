@@ -164,34 +164,39 @@ void showHobbyBottomSheet(
                   builder: (context, image, _) {
                     return Stack(
                       children: [
-                        Container(
-                          width: screenWidth * 0.7,
-                          height: screenHeight * 0.22,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: image == null
-                              ? Center(child: Text('사진을 입력해주세요.'))
-                              : ClipRRect(
+                        image == null
+                            ? Container(
+                                height: screenHeight * 0.22,
+                                child: Center(child: Text('사진을 입력해주세요.')))
+                            : SizedBox(
+                                height: screenHeight * 0.22,
+                                child: ClipRRect(
                                   borderRadius: BorderRadius.circular(15),
                                   child: Image.file(
                                     image,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                        ),
+                              ),
                         Positioned(
                           bottom: 0,
                           right: 0,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.camera_alt,
-                              size: 30,
+                          child: SizedBox(
+                            width: screenWidth * 0.1,
+                            child: OutlinedButton(
+                              onPressed: () {
+                                showPicker(context);
+                              },
+                              child: Icon(
+                                Icons.camera_alt,
+                                color: Colors.black,
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                padding: EdgeInsets.zero,
+                                //side: BorderSide(width: 1),
+                              ), // child: IconButton(
                             ),
-                            onPressed: () {
-                              showPicker(context);
-                            },
                           ),
                         )
                       ],

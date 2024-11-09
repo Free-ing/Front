@@ -3,13 +3,20 @@ import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
+import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/exercise_api_service.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
+import 'package:freeing/model/exercise/exercise_report.dart';
 import 'package:freeing/screen/setting/setting_page.dart';
 
 class ExerciseReportScreen extends StatefulWidget {
-  ExerciseReportScreen({super.key});
+  final DateTime startDate;
+  final DateTime endDate;
+
+  ExerciseReportScreen(
+      {super.key, required this.startDate, required this.endDate});
 
   @override
   State<ExerciseReportScreen> createState() => _ExerciseReportScreenState();
@@ -17,29 +24,75 @@ class ExerciseReportScreen extends StatefulWidget {
 
 class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
   String name = '';
+  ExerciseReport? exerciseReport;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchExerciseReport().then((data) {
+      setState(() {
+        exerciseReport = data;
+        isLoading = false;
+      });
+    });
+    _viewUserInfo();
+  }
+
   // Todo: 서버 요청 (사용자 이름 받아오기)
   Future<void> _viewUserInfo() async {
+    print(widget.startDate);
+    print(widget.endDate);
     final response = await SettingAPIService().getUserInfo();
 
     if (response.statusCode == 200) {
       final decodedBody = utf8.decode(response.bodyBytes);
       final userData = User.fromJson(json.decode(decodedBody));
-       name = userData.name;
+      name = userData.name;
     } else {
       throw Exception('사용자 정보 가져오기 실패 ${response.statusCode}');
     }
   }
 
-  //Todo: 주간 운동 시간 예시 데이터(분 단위)
-  final Map<String, int> exerciseTimes = {
-    'monTime': 50,
-    'tueTime': 30,
-    'wenTime': 0,
-    'thuTime': 80,
-    'friTime': 60,
-    'satTime': 180,
-    'sunTime': 20,
-  };
+  //Todo: 서버 요청 (주간 운동 리포트 받아오기)
+  Future<ExerciseReport> _fetchExerciseReport() async {
+    final apiService = ExerciseAPIService();
+    final response =
+        await apiService.getExerciseReport(widget.startDate, widget.endDate);
+    print('아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(utf8.decode(response.bodyBytes));
+
+      print(jsonData);
+      if (jsonData != null && jsonData['result'] != null) {
+        // setState(() {
+        //   exerciseReport =  ExerciseReport.fromJson(jsonData['result']);
+        // });
+        return ExerciseReport.fromJson(jsonData['result']);
+      } else {
+        print('Error: Response data is null or does not contain expected key.');
+        throw Exception('Invalid data structure from server');
+      }
+    } else {
+      final jsonData = json.decode(utf8.decode(response.bodyBytes));
+      print(jsonData['error']);
+      throw Exception('주간 운동 리포트 조회 실패 ${response.statusCode}');
+    }
+  }
+
+  //Todo: 주간 운동 시간 데이터(분 단위)
+  Map<String, int> getExerciseTimes(ExerciseReport data) {
+    return {
+      'monTime': data.monTime,
+      'tueTime': data.tueTime,
+      'wenTime': data.wenTime,
+      'thuTime': data.thuTime,
+      'friTime': data.friTime,
+      'satTime': data.satTime,
+      'sunTime': data.sunTime,
+    };
+  }
 
   //Todo: 시간 변환(00h 00m)
   String formatTime(int minutes) {
@@ -55,86 +108,92 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return ScreenLayout(
-      title: '주간 운동 리포트',
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: screenHeight * 0.028),
-            /// 총 운동 시간, 평균 운동 시간
-            _showStartAverageExerciseTime(
-              textTheme: textTheme,
-              screenWidth: screenWidth,
-              screenHeight: screenHeight,
-            ),
-            SizedBox(height: screenHeight * 0.028),
+    return isLoading
+        ? CustomCircularProgressIndicator()
+        : ScreenLayout(
+            title: '주간 운동 리포트',
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: screenHeight * 0.028),
 
-            /// 주간 운동 시간 그래프
-            _showWeeklyExerciseTime(
-              textTheme: textTheme,
-              screenWidth: screenWidth,
-              screenHeight: screenHeight,
-            ),
-            SizedBox(height: screenHeight * 0.028),
+                  /// 총 운동 시간, 평균 운동 시간
+                  _showStartAverageExerciseTime(
+                    textTheme: textTheme,
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
+                    totalExerciseTime: exerciseReport!.totalExerciseTime,
+                    avgExerciseTime: exerciseReport!.avgExerciseTime,
+                  ),
+                  SizedBox(height: screenHeight * 0.028),
 
-            /// 루틴별 운동 시간
-            _showRoutineExerciseTime(
-                textTheme: textTheme,
-                screenWidth: screenWidth,
-                screenHeight: screenHeight),
-            SizedBox(height: screenHeight * 0.028),
+                  /// 주간 운동 시간 그래프
+                  _showWeeklyExerciseTime(
+                      textTheme: textTheme,
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight,
+                      exerciseTimes: getExerciseTimes(exerciseReport!)),
+                  SizedBox(height: screenHeight * 0.028),
 
-            /// 피드백
-            Container(
-              width: screenWidth,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(color: Colors.black, width: 1),
+                  /// 루틴별 운동 시간
+                  _showRoutineExerciseTime(
+                    textTheme: textTheme,
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
+                    routineData: exerciseReport!.exerciseRoutineDtoList,
+                  ),
+                  SizedBox(height: screenHeight * 0.028),
+
+                  /// 피드백
+                  Container(
+                    width: screenWidth,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(color: Colors.black, width: 1),
+                    ),
+                    padding: EdgeInsets.all(screenWidth * 0.02),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                RichText(
+                                    text: TextSpan(
+                                        text: '\n$name',
+                                        style: textTheme.bodyMedium?.copyWith(
+                                            fontWeight: FontWeight.w600),
+                                        children: <TextSpan>[
+                                      TextSpan(
+                                        text: '님을 위한\n분석 결과와 피드백 입니다.',
+                                        style: textTheme.bodyMedium,
+                                      )
+                                    ])),
+                                Image.asset(
+                                  'assets/imgs/etc/report_mascot.png',
+                                  width: screenWidth * 0.2,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: screenHeight * 0.028),
+                            Text(exerciseReport!.feedBack)
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+
+                  SizedBox(height: screenHeight * 0.028),
+                  GreenButton(width: screenWidth * 0.6, onPressed: () {}),
+                  SizedBox(height: screenHeight * 0.028),
+                ],
               ),
-              padding: EdgeInsets.all(screenWidth * 0.02),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              text: '\n$name',
-                              style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: '님을 위한\n분석 결과와 피드백 입니다.',
-                                  style: textTheme.bodyMedium,
-                                )
-                              ]
-                            )
-                          ),
-                          Image.asset(
-                            'assets/imgs/etc/report_mascot.png',
-                            width: screenWidth * 0.2,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: screenHeight * 0.028),
-                      Text('피드백 내용')
-                    ],
-                  );
-                },
-              ),
             ),
-
-            SizedBox(height: screenHeight * 0.028),
-            GreenButton(width: screenWidth * 0.6, onPressed: () {}),
-            SizedBox(height: screenHeight * 0.028),
-          ],
-        ),
-      ),
-      color: LIGHT_IVORY,
-    );
+            color: LIGHT_IVORY,
+          );
   }
 
   //Todo: 총 운동 시간, 평균 운동 시간
@@ -142,7 +201,13 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
     required TextTheme textTheme,
     required double screenWidth,
     required double screenHeight,
+    required int totalExerciseTime,
+    required int avgExerciseTime,
   }) {
+    final totalHours = (totalExerciseTime ~/ 60).toString().padLeft(2, '0');
+    final totalMinutes = (totalExerciseTime % 60).toString().padLeft(2, '0');
+    final avgHours = (avgExerciseTime ~/ 60).toString().padLeft(2, '0');
+    final avgMinutes = (avgExerciseTime % 60).toString().padLeft(2, '0');
     return Column(
       children: [
         _titleAndTimeCard(
@@ -150,8 +215,8 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
           screenWidth: screenWidth,
           screenHeight: screenHeight,
           title: '총 운동 시간',
-          hour: '00',
-          minute: '56',
+          hour: totalHours,
+          minute: totalMinutes,
         ),
         SizedBox(height: screenHeight * 0.028),
         _titleAndTimeCard(
@@ -159,8 +224,8 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
           screenWidth: screenWidth,
           screenHeight: screenHeight,
           title: '일 평균 운동 시간',
-          hour: '00',
-          minute: '56',
+          hour: avgHours,
+          minute: avgMinutes,
         ),
         SizedBox(height: screenHeight * 0.008),
         Text(
@@ -176,6 +241,7 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
     required TextTheme textTheme,
     required double screenWidth,
     required double screenHeight,
+    required exerciseTimes,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,7 +361,7 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                                   ),
                                 ],
                               );
-                            }).toList(),
+                            }).toList<ExerciseRoutine>(),
                           ),
                         ),
                       ),
@@ -347,6 +413,7 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
     required TextTheme textTheme,
     required double screenWidth,
     required double screenHeight,
+    required List<ExerciseRoutine> routineData,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,16 +423,22 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
         SizedBox(
           height: screenWidth * 0.32,
           child: ListView.builder(
-            scrollDirection: Axis.horizontal, // 수평 스크롤
-            itemCount: 5, // 위젯의 개수 (예시로 5개 설정)
+            scrollDirection: Axis.horizontal,
+            itemCount: routineData.length,
             itemBuilder: (context, index) {
+              final routine = routineData[index];
+              final hours =
+                  (routine.routineTime ~/ 60).toString().padLeft(2, '0');
+              final minutes =
+                  (routine.routineTime % 60).toString().padLeft(2, '0');
+              final exerciseTime = '${hours}h ${minutes}m';
+
               return _buildRoutineTimeCard(
                 textTheme: textTheme,
                 screenWidth: screenWidth,
-                exerciseTime: '00H 56M', // 실제 값으로 변경
-                imageUrl:
-                    'https://freeingimage.s3.ap-northeast-2.amazonaws.com/static_stretching.png', // 실제 URL로 변경
-                routineName: '정적 스트레칭', // 실제 루틴 이름으로 변경
+                exerciseTime: exerciseTime,
+                imageUrl: routine.imageUrl,
+                routineName: routine.name, // 실제 루틴 이름으로 변경
               );
             },
           ),
