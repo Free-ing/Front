@@ -7,6 +7,7 @@ import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/sleep_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/model/sleep/sleep_report.dart';
+import 'package:intl/intl.dart';
 
 import '../../common/component/custom_circular_progress_indicator.dart';
 import '../../common/service/setting_api_service.dart';
@@ -25,24 +26,23 @@ class SleepReportScreen extends StatefulWidget {
 
 class _SleepReportScreenState extends State<SleepReportScreen> {
   final Map<String, int> wakeTimes = {
-    'monTime': 50,
-    'tueTime': 30,
+    'monTime': 0,
+    'tueTime': 0,
     'wenTime': 0,
-    'thuTime': 80,
-    'friTime': 60,
-    'satTime': 150,
-    'sunTime': 20,
+    'thuTime': 0,
+    'friTime': 0,
+    'satTime': 0,
+    'sunTime': 0,
   };
   final Map<String, int> sleepTimes = {
-    'monTime': 80,
-    'tueTime': 90,
-    'wenTime': 20,
-    'thuTime': 90,
-    'friTime': 200,
-    'satTime': 190,
-    'sunTime': 70,
+    'monTime': 0,
+    'tueTime': 0,
+    'wenTime': 0,
+    'thuTime': 0,
+    'friTime': 0,
+    'satTime': 0,
+    'sunTime': 0,
   };
-
   ResponseData? responseData;
   bool isLoading = true;
   String name = '';
@@ -51,9 +51,12 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
   void initState() {
     super.initState();
     _fetchSleepReport().then((data) {
+      print('fetch sleep report 성고오옹오오오옹');
       setState(() {
+        print('setState안!!!!!!!!!!!!!!!!!!!!!!!!');
         responseData = data;
         isLoading = false;
+        updateGraphData(responseData!.sleepRecords);
       });
     });
     _viewUserInfo();
@@ -70,6 +73,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
       print(jsonData);
       return ResponseData.fromJson(jsonData);
+
     } else {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
       print(jsonData['error']);
@@ -90,6 +94,83 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
     } else {
       throw Exception('사용자 정보 가져오기 실패 ${response.statusCode}');
     }
+  }
+
+  // 시간 -> 분으로 바꾸기
+  int _timeToMinutes(String time) {
+    final parts = time.split(':');
+    final hours = int.parse(parts[0]);
+    final minutes = int.parse(parts[1]);
+    return hours * 60 + minutes;
+  }
+
+  // 표에 넣을 값
+  void populateTimes(List<SleepRecord> sleepRecord){
+    for(var record in sleepRecord){
+      DateTime recordDate = DateTime.parse(record.recordDay);
+      String dayOfWeek = DateFormat('E', 'en_US').format(recordDate).toLowerCase();
+
+      int wakeUpTime = _timeToMinutes(record.wakeUpTime);
+      print('일어나는 시간!!!!!  $wakeUpTime');
+      int sleepTime = _timeToMinutes(record.sleepTime);
+      print('자는 시간!!!!!!!   $sleepTime');
+
+      if (wakeUpTime < sleepTime && wakeUpTime != 0 && sleepTime != 0) {
+        // 만약 일어난 시간이 잔 시간보다 빠르면, 하루를 넘어갔다는 의미로 wakeUpTime에 1440을 더하지 않고
+        // 두 시간을 직접 빼서 수면 시간을 계산
+        wakeUpTime += 1440;  // 다음 날로 넘어간 것으로 간주
+      }
+
+      int sleepDuration = wakeUpTime - sleepTime;  // 총 수면 시간 (분 단위)
+
+      if(sleepTime < 720 && wakeUpTime != 0 && sleepTime != 0){
+        sleepTime += 1440;
+      }
+
+      if(sleepTime == 0 && wakeUpTime == 0){
+        wakeTimes[dayOfWeek] = 900;
+        sleepTimes[dayOfWeek] = 900;
+      }
+
+      switch (dayOfWeek) {
+        case 'mon':
+          wakeTimes['monTime'] = sleepTime + sleepDuration;
+          sleepTimes['monTime'] = sleepTime;
+          break;
+        case 'tue':
+          wakeTimes['tueTime'] = sleepTime + sleepDuration;
+          sleepTimes['tueTime'] = sleepTime;
+          break;
+        case 'wed':
+          wakeTimes['wenTime'] = sleepTime + sleepDuration;
+          sleepTimes['wenTime'] = sleepTime;
+          break;
+        case 'thu':
+          wakeTimes['thuTime'] = sleepTime + sleepDuration;;
+          sleepTimes['thuTime'] = sleepTime;
+          break;
+        case 'fri':
+          wakeTimes['friTime'] = sleepTime + sleepDuration;;
+          sleepTimes['friTime'] = sleepTime;
+          break;
+        case 'sat':
+          wakeTimes['satTime'] = sleepTime + sleepDuration;;
+          sleepTimes['satTime'] = sleepTime;
+          break;
+        case 'sun':
+          wakeTimes['sunTime'] = sleepTime + sleepDuration;;
+          sleepTimes['sunTime'] = sleepTime;
+          break;
+      }
+
+    }
+  }
+  void updateGraphData(List<SleepRecord> sleepRecords){
+    for(var key in wakeTimes.keys){
+      wakeTimes[key] = 0;
+      sleepTimes[key] = 0;
+    }
+    populateTimes(sleepRecords);
   }
 
   @override
@@ -197,11 +278,15 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
     );
   }
 
-  // TODO: 수면 시간 변동 그래프
+  // 수면 시간 변동 그래프
   Widget _showSleepTimeGraph(
       {required TextTheme textTheme,
       required double screenWidth,
       required double screenHeight}) {
+    double maxYValue = (sleepTimes.values.map((e) => e).toList() + wakeTimes.values.map((e) => e).toList())
+        .map((e) => e / 60)
+        .reduce((a, b) => a > b ? a : b) + 1;
+    double minYValue = 15.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -227,7 +312,8 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                     padding: EdgeInsets.only(top: screenHeight * 0.02),
                     child: LineChart(
                       LineChartData(
-                        maxY: 4,
+                        maxY: maxYValue + 5,
+                        minY: minYValue,
                         backgroundColor: Colors.white,
                         lineBarsData: [
                           LineChartBarData(
@@ -238,10 +324,10 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                                 .map((entry) {
                               int index = entry.key;
                               int minutes = entry.value.value;
-                              return FlSpot(index.toDouble(), minutes / 60);
+                              return FlSpot(index.toDouble(), minutes < minYValue * 60 ? minYValue : minutes / 60);
                             }).toList(),
                             isCurved: false,
-                            color: const Color(0xFF61D0B0), // 초록색 선 (잠드는 시간)
+                            color: const Color(0xFFBAB8F3), // 보라색 선
                             barWidth: 2,
                             dotData: const FlDotData(show: false),
                           ),
@@ -253,10 +339,10 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                                 .map((entry) {
                               int index = entry.key;
                               int minutes = entry.value.value;
-                              return FlSpot(index.toDouble(), minutes / 60);
+                              return FlSpot(index.toDouble(), minutes < minYValue * 60 ? minYValue : minutes / 60);
                             }).toList(),
                             isCurved: false,
-                            color: const Color(0xFFBAB8F3), // 보라색 선 (기상 시간)
+                            color: const Color(0xFF61D0B0), // 초록색 선
                             barWidth: 2,
                             dotData: const FlDotData(show: false),
                           ),
@@ -285,7 +371,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                             sideTitles: SideTitles(
                               showTitles: true,
                               getTitlesWidget: (double value, TitleMeta meta) {
-                                if (value == 0) {
+                                if (value == 15) {
                                   return Padding(
                                     padding: EdgeInsets.only(
                                         bottom: screenHeight * 0.025),
@@ -297,7 +383,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                                       ),
                                     ),
                                   );
-                                } else if (value == 4) {
+                                } else if (value == maxYValue + 5) {
                                   return Padding(
                                     padding: EdgeInsets.only(
                                         top: screenHeight * 0.025),
@@ -308,7 +394,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                                     ),
                                   );
                                 }
-                                return const Text('');
+                                return const SizedBox.shrink();
                               },
                               reservedSize: screenHeight * 0.04,
                             ),
@@ -370,8 +456,8 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                                 margin: const EdgeInsets.only(right: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: const Color(0xFF61D0B0))))),
-                        Text('잠드는 시간', style: textTheme.labelMedium),
+                                        color: const Color(0xFF61D0B0))))), // 0xFFBAB8F3
+                        Text('기상 시간', style: textTheme.labelMedium),
                         const SizedBox(width: 30.0),
                         SizedBox(
                             width: screenWidth * 0.15,
@@ -380,13 +466,18 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                                 margin: const EdgeInsets.only(right: 5.0),
                                 decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: const Color(0xFFBAB8F3))))),
-                        Text('기상 시간', style: textTheme.labelMedium),
+                                        color: const Color(0xFFBAB8F3))))), //0xFF61D0B0
+                        Text('잠드는 시간', style: textTheme.labelMedium),
                       ],
                     ),
                   ),
                 ],
               )),
+        ),
+        SizedBox(height: screenHeight * 0.005),
+        Text(
+          '* 수면을 기록하지 않은 날은 0으로 표시됩니다.',
+          style: textTheme.bodySmall?.copyWith(color: DARK_GREY),
         ),
       ],
     );
