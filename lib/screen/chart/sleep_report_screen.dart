@@ -142,124 +142,169 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
           ),
           color: LIGHT_GREY,
           child: Container(
-            height: screenHeight * 0.32,
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: screenHeight * 0.26,
-                  padding: EdgeInsets.only(top: screenHeight * 0.02),
-                  child: LineChart(
-                    LineChartData(
-                      maxY: 4,
-                      backgroundColor: Colors.white,
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: sleepTimes.entries
-                              .toList()
-                              .asMap()
-                              .entries
-                              .map((entry) {
-                            int index = entry.key;
-                            int minutes = entry.value.value;
-                            return FlSpot(index.toDouble(), minutes / 60);
-                          }).toList(),
-                          isCurved: false,
-                          color: const Color(0xFF61D0B0), // 초록색 선 (잠드는 시간)
-                          barWidth: 2,
-                          dotData: FlDotData(show: false),
+              height: screenHeight * 0.32,
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    height: screenHeight * 0.26,
+                    width: screenWidth * 0.8,
+                    padding: EdgeInsets.only(top: screenHeight * 0.02),
+                    child: LineChart(
+                      LineChartData(
+                        maxY: 4,
+                        backgroundColor: Colors.white,
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: sleepTimes.entries
+                                .toList()
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              int index = entry.key;
+                              int minutes = entry.value.value;
+                              return FlSpot(index.toDouble(), minutes / 60);
+                            }).toList(),
+                            isCurved: false,
+                            color: const Color(0xFF61D0B0), // 초록색 선 (잠드는 시간)
+                            barWidth: 2,
+                            dotData: const FlDotData(show: false),
+                          ),
+                          LineChartBarData(
+                            spots: wakeTimes.entries
+                                .toList()
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              int index = entry.key;
+                              int minutes = entry.value.value;
+                              return FlSpot(index.toDouble(), minutes / 60);
+                            }).toList(),
+                            isCurved: false,
+                            color: const Color(0xFFBAB8F3), // 보라색 선 (기상 시간)
+                            barWidth: 2,
+                            dotData: const FlDotData(show: false),
+                          ),
+                        ],
+                        betweenBarsData: [
+                          BetweenBarsData(
+                            fromIndex: 0,
+                            toIndex: 1,
+                            color: const Color(0xFF61D0B0).withOpacity(0.15),
+                          ),
+                        ],
+                        gridData: const FlGridData(
+                          drawHorizontalLine: false,
+                          drawVerticalLine: false,
+                          // verticalInterval: 1 / 7,
+                          // getDrawingVerticalLine: (value) {
+                          //   return const FlLine(
+                          //     color: BASIC_GREY,
+                          //     strokeWidth: 1,
+                          //     dashArray: [5, 5],
+                          //   );
+                          // },
                         ),
-                        LineChartBarData(
-                          spots: wakeTimes.entries
-                              .toList()
-                              .asMap()
-                              .entries
-                              .map((entry) {
-                            int index = entry.key;
-                            int minutes = entry.value.value;
-                            return FlSpot(index.toDouble(), minutes / 60);
-                          }).toList(),
-                          isCurved: false,
-                          color: const Color(0xFFBAB8F3), // 보라색 선 (기상 시간)
-                          barWidth: 2,
-                          dotData: FlDotData(show: false),
-                        ),
-                      ],
-                      betweenBarsData: [
-                        BetweenBarsData(
-                          fromIndex: 0,
-                          toIndex: 1,
-                          color: const Color(0xFF61D0B0).withOpacity(0.15),
-                        ),
-                      ],
-                      gridData: FlGridData(
-                        drawHorizontalLine: false,
-                        drawVerticalLine: true,
-                        verticalInterval: 1 / 7,
-                        getDrawingVerticalLine: (value) {
-                          return const FlLine(
-                            color: BASIC_GREY,
-                            strokeWidth: 1,
-                            dashArray: [5, 5],
-                          );
-                        },
-                      ),
-                      titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (double value, TitleMeta meta) {
-                              if (value == 0) {
-                                return Text('전날밤',);
-                              } else if (value == 4) {
-                                return Text('아침',);
-                              }
-                              return const Text('');
-                            },
-                            reservedSize: screenHeight * 0.04,
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (double value, TitleMeta meta) {
+                                if (value == 0) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(bottom: screenHeight * 0.025),
+                                    child: FittedBox(
+                                      child: Text('전날 밤',
+                                          style: textTheme.labelMedium, textAlign: TextAlign.center,),
+                                    ),
+                                  );
+                                } else if (value == 4) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(top: screenHeight * 0.025),
+                                    child: Text('아침',
+                                        style: textTheme.labelMedium, textAlign: TextAlign.center,),
+                                  );
+                                }
+                                return const Text('');
+                              },
+                              reservedSize: screenHeight * 0.04,
+                            ),
+                          ),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              reservedSize: screenHeight * 0.036,
+                              showTitles: true,
+                              getTitlesWidget: (double value, TitleMeta meta) {
+                                const days = [
+                                  '월',
+                                  '화',
+                                  '수',
+                                  '목',
+                                  '금',
+                                  '토',
+                                  '일'
+                                ];
+                                if (value >= 0 && value < days.length) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 15.0),
+                                    child: Text(days[value.toInt()],
+                                        style: textTheme.labelMedium),
+                                  );
+                                }
+                                return const Text('');
+                              },
+                            ),
                           ),
                         ),
-                        topTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        rightTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            reservedSize: screenHeight * 0.036,
-                            showTitles: true,
-                            getTitlesWidget: (double value, TitleMeta meta) {
-                              const days = ['월', '화', '수', '목', '금', '토', '일'];
-                              if (value >= 0 && value < days.length) {
-                                return Text(days[value.toInt()]);
-                              }
-                              return const Text('');
-                            },
+                        borderData: FlBorderData(
+                          show: true,
+                          border: const Border(
+                            top: BorderSide.none,
+                            left: BorderSide.none,
+                            right: BorderSide.none,
+                            bottom: BorderSide(width: 1),
                           ),
-                        ),
-                      ),
-                      borderData: FlBorderData(
-                        show: true,
-                        border: const Border(
-                          top: BorderSide.none,
-                          left: BorderSide.none,
-                          right: BorderSide.none,
-                          bottom: BorderSide(width: 1),
                         ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: screenHeight * 0.005),
-                Text(
-                  '* 초록색 선: 잠드는 시간, 보라색 선: 기상 시간',
-                  style: textTheme.bodySmall?.copyWith(color: DARK_GREY),
-                ),
-              ],
-            ),
-          ),
+                  SizedBox(height: screenHeight * 0.021),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(
+                            width: screenWidth * 0.15,
+                            height: 2.0,
+                            child: Container(
+                                margin: const EdgeInsets.only(right: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: const Color(0xFF61D0B0))))),
+                        Text('잠드는 시간', style: textTheme.labelMedium),
+                        const SizedBox(width: 16.0),
+                        SizedBox(
+                            width: screenWidth * 0.15,
+                            height: 2.0,
+                            child: Container(
+                                margin: const EdgeInsets.only(right: 5.0),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: const Color(0xFFBAB8F3))))),
+                        Text('기상 시간', style: textTheme.labelMedium),
+                      ],
+                    ),
+                  ),
+                ],
+              )),
         ),
       ],
     );
