@@ -174,19 +174,36 @@ class HomeApiService {
       }
       return true;
     } else {
-
       return false;
     }
   }
 
   // 운동 일주일 루틴 현황 받아오기 (핑크)
+  Future<http.Response> getExerciseRecord(String startDate, String endDate) async {
+    if(isValidDateFormat(startDate) && isValidDateFormat(endDate)){
+      final accessToken = await tokenStorage.getAccessToken();
+      final String getExerciseRecordEndpoint =
+          '$_baseUrl/exercise-service/home/record-week/?startDate=$startDate&endDate=$endDate';
+      final url = Uri.parse(getExerciseRecordEndpoint);
 
+      return http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+    } else {
+      print("startDate와 endDate 형식이 올바르지 않음");
+      return Future.error("startDate와 endDate 형식이 올바르지 않음");
+    }
+  }
   // 수면 일주일 루틴 현황 받아오기 (파랑)
   Future<http.Response> getSleepRecord(String startDate, String endDate) async {
     if(isValidDateFormat(startDate) && isValidDateFormat(endDate)){
       final accessToken = await tokenStorage.getAccessToken();
       final String getSleepRecordEndpoint =
-          '$_baseUrl/sleep-service/routine/home/record-week';
+          '$_baseUrl/sleep-service/routine/home/record-week?startDate=$startDate&endDate=$endDate';
       final url = Uri.parse(getSleepRecordEndpoint);
 
       return http.get(
@@ -200,12 +217,45 @@ class HomeApiService {
       print("startDate와 endDate 형식이 올바르지 않음");
       return Future.error("startDate와 endDate 형식이 올바르지 않음");
     }
-
-
   }
-
   // 마음 채우기 일주일 루틴 현황 받아오기 (초록)
+  Future<http.Response> getSpiritRecord(String startDate, String endDate) async {
+    if(isValidDateFormat(startDate) && isValidDateFormat(endDate)){
+      final accessToken = await tokenStorage.getAccessToken();
+      final String getSpiritRecordEndpoint =
+          '$_baseUrl/spirit-service/home/record-week?startDate=$startDate&endDate=$endDate';
+      final url = Uri.parse(getSpiritRecordEndpoint);
 
+      return http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+    } else {
+      print("startDate와 endDate 형식이 올바르지 않음");
+      return Future.error("startDate와 endDate 형식이 올바르지 않음");
+    }
+  }
   // 취미 일주일 루틴 현황 받아오기 (노랑)
+  Future<http.Response> getHobbyRecord(String startDate, String endDate) async {
+    if(isValidDateFormat(startDate) && isValidDateFormat(endDate)){
+      final accessToken = await tokenStorage.getAccessToken();
+      final String getHobbyRecordEndpoint =
+          '$_baseUrl/hobby-service/home/record-week?startDate=$startDate&endDate=$endDate';
+      final url = Uri.parse(getHobbyRecordEndpoint);
 
+      return http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+    } else {
+      print("startDate와 endDate 형식이 올바르지 않음");
+      return Future.error("startDate와 endDate 형식이 올바르지 않음");
+    }
+  }
 }

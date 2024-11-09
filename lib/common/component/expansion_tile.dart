@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/home_api_service.dart';
@@ -7,12 +8,12 @@ import 'package:freeing/model/home/sleep_daily_routine.dart';
 import 'package:freeing/model/home/spirit_daily_routine.dart';
 import 'package:freeing/screen/home/dynamic_stretching_bottom_sheet.dart';
 import 'package:freeing/screen/home/static_stretching_bottom_sheet.dart';
+import 'package:freeing/screen/routine/edit_routine_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../../screen/home/diary_bottom_sheet.dart';
 import '../../screen/home/meditation_bottom_sheet.dart';
 import '../../screen/home/sleep_record_bottom_sheet.dart';
-import 'bottom_sheet.dart';
 import 'buttons.dart';
 
 class HomeExpansionTileBox extends StatefulWidget {
@@ -43,6 +44,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   late List<bool> _isSpiritChecked;
   late List<bool> _isSpiritVisible;
   final homeApiService = HomeApiService();
+  Offset? _tapPosition;
 
   @override
   void initState() {
@@ -70,7 +72,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         ? _isSleepChecked.map((checked) => !checked).toList()
         : [];
 
-
     _isExerciseChecked = widget.exerciseDailyRoutines.isNotEmpty
         ? widget.exerciseDailyRoutines
             .map((routine) => routine.complete ?? false)
@@ -80,7 +81,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         ? _isExerciseChecked.map((checked) => !checked).toList()
         : [];
 
-
     _isSpiritChecked = widget.spiritDailyRoutines.isNotEmpty
         ? widget.spiritDailyRoutines
             .map((routine) => routine.complete ?? false)
@@ -89,9 +89,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     _isSpiritVisible = _isSpiritChecked.isNotEmpty
         ? _isSpiritChecked.map((checked) => !checked).toList()
         : [];
-
-
-
   }
 
   Widget listsWidget() {
@@ -112,14 +109,26 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             leading: Container(
               width: 4,
               height: 4,
-              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: Colors.black),
             ),
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  exerciseRoutine.name!,
-                  style: const TextStyle(fontSize: 14, fontFamily: 'scdream'),
+                GestureDetector(
+                  onTapDown: (TapDownDetails details) {
+                    _tapPosition = details.globalPosition;
+                  },
+                  onLongPress: () {
+                    if (_tapPosition != null) {
+                      showExercisePopUpMenu(
+                          context, _tapPosition!, exerciseRoutine);
+                    }
+                  },
+                  child: Text(
+                    exerciseRoutine.name!,
+                    style: const TextStyle(fontSize: 14, fontFamily: 'scdream'),
+                  ),
                 ),
                 const SizedBox(width: 5.0),
                 Text(getTime('운동', index),
@@ -136,13 +145,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 const SizedBox(width: 15.0),
                 GestureDetector(
                     onTap: () {
-                      if(index < _isExerciseChecked.length){
+                      if (index < _isExerciseChecked.length) {
                         setState(() {
                           _handleCheckboxTap(index);
                         });
                       }
                     },
-                    child: Image.asset(index < _isExerciseChecked.length && _isExerciseChecked[index]
+                    child: Image.asset(index < _isExerciseChecked.length &&
+                            _isExerciseChecked[index]
                         ? 'assets/icons/after_checkbox.png'
                         : 'assets/icons/before_checkbox.png')),
               ],
@@ -164,14 +174,25 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             leading: Container(
               width: 4,
               height: 4,
-              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: Colors.black),
             ),
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  sleepRoutine.sleepRoutineName!,
-                  style: const TextStyle(fontSize: 14, fontFamily: 'scdream')),
+                GestureDetector(
+                  onTapDown: (TapDownDetails details) {
+                    _tapPosition = details.globalPosition;
+                  },
+                  onLongPress: () {
+                    if (_tapPosition != null) {
+                      showSleepPopUpMenu(context, _tapPosition!, sleepRoutine);
+                    }
+                  },
+                  child: Text(sleepRoutine.sleepRoutineName!,
+                      style:
+                          const TextStyle(fontSize: 14, fontFamily: 'scdream')),
+                ),
                 const SizedBox(width: 5.0),
                 Text(getTime('수면', index),
                     style: const TextStyle(
@@ -187,15 +208,16 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 const SizedBox(width: 15.0),
                 GestureDetector(
                     onTap: () {
-                      if(index < _isSleepChecked.length){
+                      if (index < _isSleepChecked.length) {
                         setState(() {
                           _handleCheckboxTap(index);
                         });
                       }
                     },
-                    child: Image.asset(index < _isSleepChecked.length && _isSleepChecked[index]
-                        ? 'assets/icons/after_checkbox.png'
-                        : 'assets/icons/before_checkbox.png')),
+                    child: Image.asset(
+                        index < _isSleepChecked.length && _isSleepChecked[index]
+                            ? 'assets/icons/after_checkbox.png'
+                            : 'assets/icons/before_checkbox.png')),
               ],
             ),
           );
@@ -215,14 +237,26 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             leading: Container(
               width: 4,
               height: 4,
-              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: Colors.black),
             ),
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  spiritRoutine.name!,
-                  style: const TextStyle(fontSize: 14, fontFamily: 'scdream'),
+                GestureDetector(
+                  onTapDown: (TapDownDetails details) {
+                    _tapPosition = details.globalPosition;
+                  },
+                  onLongPress: () {
+                    if (_tapPosition != null) {
+                      showSpiritPopUpMenu(
+                          context, _tapPosition!, spiritRoutine);
+                    }
+                  },
+                  child: Text(
+                    spiritRoutine.name!,
+                    style: const TextStyle(fontSize: 14, fontFamily: 'scdream'),
+                  ),
                 ),
                 const SizedBox(width: 5.0),
                 Text(getTime('마음 채우기', index),
@@ -239,13 +273,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 const SizedBox(width: 15.0),
                 GestureDetector(
                     onTap: () {
-                      if(index < _isSpiritChecked.length){
+                      if (index < _isSpiritChecked.length) {
                         setState(() {
                           _handleCheckboxTap(index);
                         });
                       }
                     },
-                    child: Image.asset(index < _isSpiritChecked.length && _isSpiritChecked[index]
+                    child: Image.asset(index < _isSpiritChecked.length &&
+                            _isSpiritChecked[index]
                         ? 'assets/icons/after_checkbox.png'
                         : 'assets/icons/before_checkbox.png')),
               ],
@@ -255,6 +290,393 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         break;
     }
     return Column(children: tiles);
+  }
+
+  void showExercisePopUpMenu(BuildContext context, Offset position, ExerciseRoutineDetail exerciseRoutine) {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        MediaQuery.of(context).size.width - position.dx,
+        MediaQuery.of(context).size.height - position.dy,
+      ),
+      items: <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          value: 'rest',
+          height: 2.5,
+          child: Container(
+            width: 115,
+            padding: EdgeInsets.zero,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_rest.png'),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '오늘은 쉬어가기',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+        //const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          height: 0.5,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: const Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'explain',
+          height: 2.5,
+          child: Container(
+            width: 110,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_explain.png'),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '설명 보기',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+        //const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          height: 0.5,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: const Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'edit',
+          height: 2.5,
+          child: Container(
+            width: 110,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_edit.png'),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '수정하기',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
+      ),
+    ).then((value) {
+      // Handle the selection of the popup menu item
+      if (value != null) {
+        switch (value) {
+          case 'rest':
+            print('${exerciseRoutine.name} 루틴은 오늘 쉬어가기');
+            break;
+          case 'explain':
+            print('${exerciseRoutine.name} 설명 보기');
+            DialogManager.showAlertDialog(
+                context: context,
+                title: exerciseRoutine.name!,
+                content: exerciseRoutine.explanation!);
+            break;
+          case 'edit':
+            print('${exerciseRoutine.name} 수정 하기');
+            // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditRoutineScreen(
+                    routineId: exerciseRoutine.routineId!,
+                    title: exerciseRoutine.name!,
+                    selectImage: exerciseRoutine.imageUrl!,
+                    monday: exerciseRoutine.monday,
+                    tuesday: exerciseRoutine.tuesday,
+                    wednesday: exerciseRoutine.wednesday,
+                    thursday: exerciseRoutine.thursday,
+                    friday: exerciseRoutine.friday,
+                    saturday: exerciseRoutine.saturday,
+                    sunday: exerciseRoutine.sunday,
+                    startTime: exerciseRoutine.startTime,
+                    endTime: exerciseRoutine.endTime,
+                    explanation: exerciseRoutine.explanation,
+                    status: exerciseRoutine.status,
+                    category: '운동')));
+            break;
+        }
+      }
+    });
+  }
+
+  void showSleepPopUpMenu(BuildContext context, Offset position, SleepDailyRoutine sleepRoutine) {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        MediaQuery.of(context).size.width - position.dx,
+        MediaQuery.of(context).size.height - position.dy,
+      ),
+      items: <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          value: 'rest',
+          height: 2.5,
+          child: Container(
+            width: 115,
+            padding: EdgeInsets.zero,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_rest.png'),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '오늘은 쉬어가기',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+        //const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          height: 0.5,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: const Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'edit',
+          height: 2.5,
+          child: Container(
+            width: 110,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_edit.png'),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '수정하기',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
+      ),
+    ).then((value) {
+      // Handle the selection of the popup menu item
+      if (value != null) {
+        switch (value) {
+          case 'rest':
+            print('${sleepRoutine.sleepRoutineName} 루틴은 오늘 쉬어가기');
+            break;
+          // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정
+          case 'edit':
+            print('${sleepRoutine.sleepRoutineName} 수정 하기');
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditRoutineScreen(
+                    routineId: sleepRoutine.sleepRoutineId!,
+                    title: sleepRoutine.sleepRoutineName!,
+                    selectImage: sleepRoutine.url!,
+                    monday: sleepRoutine.monday,
+                    tuesday: sleepRoutine.tuesday,
+                    wednesday: sleepRoutine.wednesday,
+                    thursday: sleepRoutine.thursday,
+                    friday: sleepRoutine.friday,
+                    saturday: sleepRoutine.saturday,
+                    sunday: sleepRoutine.sunday,
+                    startTime: sleepRoutine.startTime,
+                    endTime: sleepRoutine.endTime,
+                    status: sleepRoutine.status,
+                    category: '수면')));
+            break;
+        }
+      }
+    });
+  }
+
+  void showSpiritPopUpMenu(BuildContext context, Offset position, SpiritRoutineDetail spiritRoutine) {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        MediaQuery.of(context).size.width - position.dx,
+        MediaQuery.of(context).size.height - position.dy,
+      ),
+      items: <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          value: 'rest',
+          height: 2.5,
+          child: Container(
+            width: 115,
+            padding: EdgeInsets.zero,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_rest.png'),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '오늘은 쉬어가기',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+        //const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          height: 0.5,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: const Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'explain',
+          height: 2.5,
+          child: Container(
+            width: 110,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_explain.png'),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '설명 보기',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+        //const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          height: 0.5,
+          child: Container(
+            margin: EdgeInsets.zero,
+            child: const Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'edit',
+          height: 2.5,
+          child: Container(
+            width: 110,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/icons/home_edit.png'),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  '수정하기',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
+      ),
+    ).then((value) {
+      // Handle the selection of the popup menu item
+      if (value != null) {
+        switch (value) {
+          case 'rest':
+            print('${spiritRoutine.name} 루틴은 오늘 쉬어가기');
+            break;
+          case 'explain':
+            print('${spiritRoutine.name} 설명 보기');
+            DialogManager.showAlertDialog(
+                context: context,
+                title: spiritRoutine.name!,
+                content: spiritRoutine.explanation!);
+            break;
+        // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정
+          case 'edit':
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditRoutineScreen(
+                    routineId: spiritRoutine.routineId!,
+                    title: spiritRoutine.name!,
+                    selectImage: spiritRoutine.imageUrl!,
+                    monday: spiritRoutine.monday,
+                    tuesday: spiritRoutine.tuesday,
+                    wednesday: spiritRoutine.wednesday,
+                    thursday: spiritRoutine.thursday,
+                    friday: spiritRoutine.friday,
+                    saturday: spiritRoutine.saturday,
+                    sunday: spiritRoutine.sunday,
+                    startTime: spiritRoutine.startTime,
+                    endTime: spiritRoutine.endTime,
+                    explanation: spiritRoutine.explanation,
+                    status: spiritRoutine.status,
+                    category: '마음 채우기')));
+            break;
+        }
+      }
+    });
   }
 
   Color getTextColor() {
@@ -273,11 +695,17 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   dynamic getRoutine(String text, int index) {
     switch (text) {
       case '운동':
-      return widget.exerciseDailyRoutines.isNotEmpty ? widget.exerciseDailyRoutines[index] : null;
+        return widget.exerciseDailyRoutines.isNotEmpty
+            ? widget.exerciseDailyRoutines[index]
+            : null;
       case '수면':
-        return widget.sleepDailyRoutines.isNotEmpty ? widget.sleepDailyRoutines[index] : null;
+        return widget.sleepDailyRoutines.isNotEmpty
+            ? widget.sleepDailyRoutines[index]
+            : null;
       case '마음 채우기':
-        return widget.spiritDailyRoutines.isNotEmpty ? widget.spiritDailyRoutines[index] : null;
+        return widget.spiritDailyRoutines.isNotEmpty
+            ? widget.spiritDailyRoutines[index]
+            : null;
       default:
         return null;
     }
@@ -303,7 +731,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     final routine = getRoutine(text, index);
     if (routine == null) return const SizedBox.shrink();
 
-    switch(widget.text){
+    switch (widget.text) {
       case '운동':
         return Visibility(
           visible: _isExerciseVisible[index],
@@ -328,14 +756,22 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     switch (routineName) {
       case '정적 스트레칭':
         return PlayButton(
-            onPressed: () {
-              showStaticStretchingBottomSheet(context, '정적 스트레칭');
+            onPressed: () async {
+              bool success =
+                  await showStaticStretchingBottomSheet(context, '정적 스트레칭');
+              if (success) {
+                _handleCheckboxTap(index);
+              }
             },
             iconColor: PINK_PLAY_BUTTON);
       case '동적 스트레칭':
         return PlayButton(
-            onPressed: () {
-              showDynamicStretchingBottomSheet(context, '동적 스트레칭');
+            onPressed: () async {
+              bool success =
+                  await showDynamicStretchingBottomSheet(context, '동적 스트레칭');
+              if (success) {
+                _handleCheckboxTap(index);
+              }
             },
             iconColor: PINK_PLAY_BUTTON);
       case '명상하기':
@@ -343,10 +779,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             onPressed: () async {
               bool success = await showMeditationBottomSheet(context, '명상하기');
               if (success) {
-                setState(() {
-                  _isSpiritChecked[index] = true;
-                  _isSpiritVisible[index] = false;
-                });
+                _handleCheckboxTap(index);
               }
             },
             iconColor: GREEN_PLAY_BUTTON);
@@ -355,26 +788,19 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           onPressed: () async {
             bool success = await showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
             if (success) {
-              setState(() {
-                print('sleep bottom sheet 성공적!!!!!');
-                _isSleepChecked[index] = true;
-                _isSleepVisible[index] = false;
-              });
+              _handleCheckboxTap(index);
             }
           },
         );
       case '감정일기 작성':
         return LogButton(
           onPressed: () async {
-            bool success = await showDiaryBottomSheet(
-                context, '오늘 하루 어땠나요?', DateTime.now(), widget.spiritDailyRoutines[index].recordId! );
+            bool success = await showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
+                DateTime.now(), widget.spiritDailyRoutines[index].recordId!);
             print('감정일기 sucess값은!!!!!!  $success');
             if (success) {
               print('감정일기 작성 성공적');
-              setState(() {
-                _isSpiritChecked[index] = true;
-                _isSpiritVisible[index] = false;
-              });
+              _handleCheckboxTap(index);
             }
           },
         );
@@ -395,15 +821,15 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   //   try {
   //     switch (widget.text) {
   //       case '수면':
-  //         // TODO: 수면 루틴 완료 상태 업데이트 요청
+  //         //  수면 루틴 완료 상태 업데이트 요청
   //         success = await homeApiService.checkSleepRoutine(newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
   //         break;
   //       case '운동':
-  //         // TODO: 운동 루틴 완료 상태 업데이트 요청
+  //         //  운동 루틴 완료 상태 업데이트 요청
   //         //success = await apiService.markExerciseRoutineCompleted(routine.sleepRoutineId, newStatus);
   //         break;
   //       case '마음 채우기':
-  //         // TODO: 마음 채우기 루틴 완료 상태 업데이트 요청
+  //         //  마음 채우기 루틴 완료 상태 업데이트 요청
   //         //success = await apiService.markSpiritRoutineCompleted(routine.sleepRoutineId, newStatus);
   //         break;
   //       default:
@@ -439,10 +865,12 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     try {
       switch (widget.text) {
         case '수면':
-          if (index < _isSleepChecked.length && index < widget.sleepDailyRoutines.length) {
+          if (index < _isSleepChecked.length &&
+              index < widget.sleepDailyRoutines.length) {
             SleepDailyRoutine sleepRoutine = widget.sleepDailyRoutines[index];
             newStatus = !_isSleepChecked[index];
-            success = await homeApiService.checkSleepRoutine(newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
+            success = await homeApiService.checkSleepRoutine(
+                newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
             if (success && mounted) {
               setState(() {
                 _isSleepChecked[index] = newStatus;
@@ -452,12 +880,17 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           }
           break;
         case '운동':
-          if (index < _isExerciseChecked.length && index < widget.exerciseDailyRoutines.length) {
-            ExerciseRoutineDetail exerciseRoutine = widget.exerciseDailyRoutines[index];
+          if (index < _isExerciseChecked.length &&
+              index < widget.exerciseDailyRoutines.length) {
+            print('운동 루틴 체크 안!!!!!');
+            ExerciseRoutineDetail exerciseRoutine =
+                widget.exerciseDailyRoutines[index];
             newStatus = !_isExerciseChecked[index];
-            success = await homeApiService.checkExerciseRoutine(newStatus, exerciseRoutine.recordId);
+            success = await homeApiService.checkExerciseRoutine(
+                newStatus, exerciseRoutine.recordId);
             if (success && mounted) {
               setState(() {
+                print('운동 루틴 체크 성공적');
                 _isExerciseChecked[index] = newStatus;
                 _isExerciseVisible[index] = !newStatus;
               });
@@ -465,12 +898,17 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
           }
           break;
         case '마음 채우기':
-          if (index < _isSpiritChecked.length && index < widget.spiritDailyRoutines.length) {
-            SpiritRoutineDetail spiritRoutine = widget.spiritDailyRoutines[index];
+          if (index < _isSpiritChecked.length &&
+              index < widget.spiritDailyRoutines.length) {
+            //print('마음 채우기 루틴 체크 안!!!!!');
+            SpiritRoutineDetail spiritRoutine =
+                widget.spiritDailyRoutines[index];
             newStatus = !_isSpiritChecked[index];
-            success = await homeApiService.checkSpiritRoutine(newStatus, spiritRoutine.recordId);
+            success = await homeApiService.checkSpiritRoutine(
+                newStatus, spiritRoutine.recordId);
             if (success && mounted) {
               setState(() {
+                //print('마음 채우기 루틴 체크 성공적');
                 _isSpiritChecked[index] = newStatus;
                 _isSpiritVisible[index] = !newStatus;
               });
@@ -533,10 +971,14 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               width: screenWidth * 0.9,
               decoration: BoxDecoration(
                   color: Colors.white,
-                  border: widget.text == '운동' && widget.exerciseDailyRoutines.isNotEmpty ||
-                      widget.text == '수면' && widget.sleepDailyRoutines.isNotEmpty ||
-                      widget.text == '마음 채우기' && widget.spiritDailyRoutines.isNotEmpty
-                      ? const Border(top: BorderSide(color: Colors.black, width: 1.0))
+                  border: widget.text == '운동' &&
+                              widget.exerciseDailyRoutines.isNotEmpty ||
+                          widget.text == '수면' &&
+                              widget.sleepDailyRoutines.isNotEmpty ||
+                          widget.text == '마음 채우기' &&
+                              widget.spiritDailyRoutines.isNotEmpty
+                      ? const Border(
+                          top: BorderSide(color: Colors.black, width: 1.0))
                       : const Border(),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(20),
@@ -550,5 +992,3 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     );
   }
 }
-
-
