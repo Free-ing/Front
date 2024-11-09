@@ -45,6 +45,7 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
   late bool _isScrap;
   final apiService = SpiritAPIService();
   String _name = '';
+  bool _editMode = false;
 
   RewardedInterstitialAd? _rewardedAd;
   bool _isRewardedAdReady = false;
@@ -85,13 +86,19 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
                 leading: Icon(Icons.edit_note_rounded),
                 title: const Text('일기 수정하기'),
                 onTap: () {
-                  showDiaryBottomSheet(
-                    context,
-                    '그 때 하루 어땠나요?',
-                    DateTime(
-                        widget.date.year, widget.date.month, widget.date.day),
-                    widget.diaryId,
-                  );
+                  // showDiaryBottomSheet(
+                  //   context,
+                  //   '그 때 하루 어땠나요?',
+                  //   DateTime(
+                  //     widget.date.year,
+                  //     widget.date.month,
+                  //     widget.date.day,
+                  //   ),
+                  //   widget.diaryId,
+                  // );
+                  setState(() {
+                    _editMode = true;
+                  });
                 },
               ),
               ListTile(
@@ -329,7 +336,7 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
                       children: [
                         Text('칭찬하고 싶은 일'),
 
-                        /// 감정 일기 삭제 버튼
+                        /// 감정 일기 편집 버튼
                         Container(
                           width: screenWidth * 0.07,
                           height: screenHeight * 0.035,
@@ -402,7 +409,7 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
         text,
         style: textTheme.bodySmall,
         maxLines: null,
-        overflow: TextOverflow.clip,
+        overflow: TextOverflow.fade,
       ),
     );
   }

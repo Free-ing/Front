@@ -157,7 +157,7 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                         return Column(
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 RichText(
@@ -178,7 +178,7 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                               ],
                             ),
                             SizedBox(height: screenHeight * 0.028),
-                            Text(exerciseReport!.feedBack)
+                            Text(exerciseReport!.feedBack, style: textTheme.bodyMedium?.copyWith(height:1.6))
                           ],
                         );
                       },
