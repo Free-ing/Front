@@ -59,12 +59,11 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
     final apiService = ExerciseAPIService();
     final response =
         await apiService.getExerciseReport(widget.startDate, widget.endDate);
-    print('아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ${response.statusCode}');
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
-      print(jsonData);
+      print(jsonData['result']);
       if (jsonData != null && jsonData['result'] != null) {
         // setState(() {
         //   exerciseReport =  ExerciseReport.fromJson(jsonData['result']);
@@ -333,13 +332,10 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                             ),
 
                             /// 막대 그래프 표시
-                            barGroups: exerciseTimes.entries
-                                .toList()
-                                .asMap()
-                                .entries
-                                .map((entry) {
-                              int index = entry.key;
-                              int minutes = entry.value.value;
+                            barGroups: exerciseTimes.entries.map<BarChartGroupData>((entry) {
+                              int index =  exerciseTimes.keys.toList().indexOf(entry.key);
+                              int minutes = entry.value;
+
                               return BarChartGroupData(
                                 x: index,
                                 barRods: [
@@ -361,21 +357,17 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                                   ),
                                 ],
                               );
-                            }).toList<ExerciseRoutine>(),
+                            }).toList(),
                           ),
                         ),
                       ),
 
                       /// 시간 나타내는 Text
                       ...exerciseTimes.entries
-                          .toList()
-                          .asMap()
-                          .entries
-                          .where((entry) =>
-                              entry.value.value > 0) // 시간이 0인 경우 텍스트 X
+                          .where((MapEntry<String, int> entry) => entry.value > 0)// 시간이 0인 경우 텍스트 X
                           .map((entry) {
-                        int index = entry.key;
-                        int minutes = entry.value.value;
+                        int index = exerciseTimes.keys.toList().indexOf(entry.key);
+                        int minutes = entry.value;
                         double posX = index *
                             (screenWidth * 0.112); // 각 막대 위치에 맞춘 x 좌표 계산
                         double barHeightRatio =
@@ -476,7 +468,7 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(title, style: textTheme.titleMedium),
-            Text('$hour H $minute M',
+            Text('$hour h $minute m',
                 style: textTheme.titleMedium?.copyWith(color: TEXT_PURPLE)),
           ],
         ),

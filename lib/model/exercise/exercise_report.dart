@@ -67,9 +67,9 @@ class ExerciseReport {
       satTime: json['satTime'],
       sunTime: json['sunTime'],
       feedBack: json['feedBack'],
-      exerciseRoutineDtoList: (json['exerciseRoutineDtoList'] as List)
-          .map((item) => ExerciseRoutine.fromJson(item))
-          .toList(),
+      exerciseRoutineDtoList: (json['exerciseRoutineDtoList'] as List?)
+          ?.map((item) => ExerciseRoutine.fromJson(item))
+          .toList() ?? [],
     );
   }
 }
