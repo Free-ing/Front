@@ -9,6 +9,8 @@ import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/model/sleep/sleep_report.dart';
 
 import '../../common/component/custom_circular_progress_indicator.dart';
+import '../../common/service/setting_api_service.dart';
+import '../setting/account_management_page.dart';
 
 class SleepReportScreen extends StatefulWidget {
   final DateTime startDate;
@@ -42,6 +44,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
   };
   ResponseData? responseData;
   bool isLoading = true;
+  String name = '';
 
   @override
   void initState() {
@@ -52,6 +55,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
         isLoading = false;
       });
     });
+    _viewUserInfo();
   }
 
   Future<ResponseData> _fetchSleepReport() async {
@@ -68,6 +72,20 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
       print(jsonData['error']);
       throw Exception('주간 수면 리포트 조회 실패 ${response.statusCode}');
+    }
+  }
+
+  Future<void> _viewUserInfo() async {
+    print(widget.startDate);
+    print(widget.endDate);
+    final response = await SettingAPIService().getUserInfo();
+
+    if (response.statusCode == 200) {
+      final decodedBody = utf8.decode(response.bodyBytes);
+      final userData = User.fromJson(json.decode(decodedBody));
+      name = userData.name;
+    } else {
+      throw Exception('사용자 정보 가져오기 실패 ${response.statusCode}');
     }
   }
 
@@ -114,6 +132,46 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                       screenHeight: screenHeight),
                   SizedBox(height: screenHeight * 0.028),
                   // TODO: AI 피드백
+                  Container(
+                    width: screenWidth,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(color: Colors.black, width: 1),
+                    ),
+                    padding: EdgeInsets.all(screenWidth * 0.02),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                RichText(
+                                    text: TextSpan(
+                                        text: '\n$name',
+                                        style: textTheme.bodyMedium?.copyWith(
+                                            fontWeight: FontWeight.w600),
+                                        children: <TextSpan>[
+                                          TextSpan(
+                                            text: '님을 위한\n분석 결과와 피드백 입니다.',
+                                            style: textTheme.bodyMedium,
+                                          )
+                                        ])),
+                                Image.asset(
+                                  'assets/imgs/etc/report_mascot.png',
+                                  width: screenWidth * 0.2,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: screenHeight * 0.028),
+                            Text(responseData!.weeklyReport.aiFeedback)
+                          ],
+                        );
+                      },
+                    ),
+                  ),
                   SizedBox(height: screenHeight * 0.028),
                   Center(
                       child: GreenButton(

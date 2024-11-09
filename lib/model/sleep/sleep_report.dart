@@ -113,7 +113,6 @@ class SleepRecord {
 
   String get formattedDate => _formatToKoreanTime(recordDay);
 
-
 }
 
 class ResponseData {
