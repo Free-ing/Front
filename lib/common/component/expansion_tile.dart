@@ -292,7 +292,8 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     return Column(children: tiles);
   }
 
-  void showExercisePopUpMenu(BuildContext context, Offset position, ExerciseRoutineDetail exerciseRoutine) {
+  void showExercisePopUpMenu(BuildContext context, Offset position,
+      ExerciseRoutineDetail exerciseRoutine) {
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -435,7 +436,8 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     });
   }
 
-  void showSleepPopUpMenu(BuildContext context, Offset position, SleepDailyRoutine sleepRoutine) {
+  void showSleepPopUpMenu(
+      BuildContext context, Offset position, SleepDailyRoutine sleepRoutine) {
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -537,7 +539,8 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     });
   }
 
-  void showSpiritPopUpMenu(BuildContext context, Offset position, SpiritRoutineDetail spiritRoutine) {
+  void showSpiritPopUpMenu(BuildContext context, Offset position,
+      SpiritRoutineDetail spiritRoutine) {
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -654,7 +657,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 title: spiritRoutine.name!,
                 content: spiritRoutine.explanation!);
             break;
-        // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정
+          // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정
           case 'edit':
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => EditRoutineScreen(
@@ -795,8 +798,12 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       case '감정일기 작성':
         return LogButton(
           onPressed: () async {
-            bool success = await showDiaryBottomSheet(context, '오늘 하루 어땠나요?',
-                DateTime.now(), widget.spiritDailyRoutines[index].recordId!);
+            bool success = await showDiaryBottomSheet(
+              context: context,
+              title: '오늘 하루 어땠나요?',
+              selectedDate: DateTime.now(),
+              recordId: widget.spiritDailyRoutines[index].recordId!,
+            );
             print('감정일기 sucess값은!!!!!!  $success');
             if (success) {
               print('감정일기 작성 성공적');

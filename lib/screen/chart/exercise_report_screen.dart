@@ -186,7 +186,7 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                   ),
 
                   SizedBox(height: screenHeight * 0.028),
-                  GreenButton(width: screenWidth * 0.6, onPressed: () {}),
+                  GreenButton(width: screenWidth * 0.6, onPressed: () {Navigator.pop(context);}),
                   SizedBox(height: screenHeight * 0.028),
                 ],
               ),

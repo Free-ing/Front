@@ -334,6 +334,28 @@ class SpiritAPIService {
     return response.statusCode;
   }
 
+  //Todo: 감정 일기 수정
+  Future<int> editEmotionDiary(int diaryId, String wellDone, String hardWork, String emotion) async {
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+    final url = Uri.parse('$_baseUrl/spirit-service/emotional-record/$diaryId');
+
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: json.encode({
+        'wellDone': wellDone,
+        'hardWork': hardWork,
+        'emotion': emotion,
+      }),
+    );
+
+    return response.statusCode;
+  }
+
   //Todo: 감정 일기 삭제
   Future<int> deleteEmotionDiary(int diaryId) async {
     final tokenStorage = TokenManager();

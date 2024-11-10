@@ -8,14 +8,21 @@ import 'package:freeing/common/component/text_form_fields.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
+import 'package:freeing/screen/chart/mood_calendar_screen.dart';
+import 'package:freeing/screen/chart/mood_scrap_screen.dart';
 
 //Todo: 감정 일기
-Future<bool> showDiaryBottomSheet(
-  BuildContext context,
-  String title,
-  DateTime selectedDate,
-  int recordId,
-) async {
+Future<bool> showDiaryBottomSheet({
+  required BuildContext context,
+  required String title,
+  required DateTime selectedDate,
+  required int recordId,
+  String? initialEmotion,
+  String? initialWellDone,
+  String? initialHardWork,
+  bool? isEditMode,
+  String? from,
+}) async {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
   late bool isSuccess;
@@ -33,6 +40,11 @@ Future<bool> showDiaryBottomSheet(
               isSuccess = true;
             },
             recordId: recordId,
+            initialEmotion: initialEmotion,
+            initialWellDone: initialWellDone,
+            initialHardWork: initialHardWork,
+            isEditMode: isEditMode,
+            from: from,
           );
         },
       ) ??
@@ -48,10 +60,13 @@ class _DiaryBottomSheetContent extends StatefulWidget {
   final DateTime selectedDate;
   final VoidCallback onSubmissionSuccess;
   final int recordId;
-
+  final String? initialEmotion;
+  final String? initialWellDone;
+  final String? initialHardWork;
+  final bool? isEditMode;
+  final String? from;
 
   const _DiaryBottomSheetContent({
-    super.key,
     required this.title,
     required this.textTheme,
     required this.screenWidth,
@@ -59,6 +74,11 @@ class _DiaryBottomSheetContent extends StatefulWidget {
     required this.selectedDate,
     required this.onSubmissionSuccess,
     required this.recordId,
+    this.initialEmotion,
+    this.initialWellDone,
+    this.initialHardWork,
+    this.isEditMode,
+    this.from,
   });
 
   @override
@@ -69,6 +89,7 @@ class _DiaryBottomSheetContent extends StatefulWidget {
 class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
   int? selectedIndex;
   bool _getAiLetter = true;
+  bool _isEditMode = false;
   int? diaryId;
   final apiService = SpiritAPIService();
 
@@ -82,6 +103,20 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
       selectedIndex = index;
       print(selectedIndex);
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _isEditMode = widget.isEditMode ?? false;
+    wellDoneController.text = widget.initialWellDone ?? '';
+    hardWorkController.text = widget.initialHardWork ?? '';
+
+    print('받아온 이즈에딧모드 ${widget.isEditMode}');
+    print('초기 이즈에딧모드 $_isEditMode');
+    if (widget.initialEmotion != null) {
+      selectedIndex = emotionList.indexOf(widget.initialEmotion!);
+    }
   }
 
   //Todo: 서버 요청 (감정 일기 작성)
@@ -160,16 +195,68 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
     }
   }
 
+  //Todo: 서버 요청 (감정 일기 수정 요청)
+  Future<void> _editEmotionalDiary() async {
+    final String wellDone = wellDoneController.text;
+    final String hardWork = hardWorkController.text;
+    String emotion = 'default';
+
+    if (selectedIndex != null && selectedIndex! >= 0) {
+      emotion = emotionList[selectedIndex!];
+    } else {
+      print('Invalid index: $selectedIndex');
+    }
+
+    print('수정할 다이어리 아이디 ${widget.recordId}');
+    print('수정할 weooll Done ${wellDone}');
+    print('수정할 hardWork ${hardWork}');
+    print('수정할 emotion ${emotion}');
+
+    if (wellDoneController.text.isNotEmpty &&
+        hardWorkController.text.isNotEmpty &&
+        selectedIndex != null) {
+      final responseCode = await apiService.editEmotionDiary(
+          widget.recordId, wellDone, hardWork, emotion);
+
+      if (responseCode == 200) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => widget.from == 'scrap'
+                ? const MoodScrap()
+                : MoodCalendar(
+                    selectTime: widget.selectedDate,
+                  ),
+          ),
+        );
+        const ToastBarWidget(
+          title: '감정 일기가 수정되었습니다.',
+          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+        ).showToast(context);
+      } else {
+        ToastBarWidget(
+          title: '감정 일기 수정 실패',
+        ).showToast(context);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BaseAnimatedBottomSheetContent(
       title: widget.title,
-      onButtonPressed: (AnimationController) async {
-        await _submitEmotionalDiary();
-        if (_getAiLetter == true && diaryId != null) {
-          await _postAiLetter(diaryId!);
-        }
-      },
+      onButtonPressed: _isEditMode == true
+          ? (AnimationController) async {
+              print('수정하기 실행~~~~~~~~~~~~~');
+              await _editEmotionalDiary();
+            }
+          : (AnimationController) async {
+              print('저장하기 실행~~~~~~~~~~~~~');
+              print(_isEditMode);
+              await _submitEmotionalDiary();
+              if (_getAiLetter == true && diaryId != null) {
+                await _postAiLetter(diaryId!);
+              }
+            },
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: widget.screenWidth * 0.1),
         child: Column(
@@ -186,7 +273,10 @@ class _DiaryBottomSheetContentState extends State<_DiaryBottomSheetContent> {
             SizedBox(height: widget.screenHeight * 0.03),
             _hardWorkRecord(),
             SizedBox(height: widget.screenHeight * 0.02),
-            _checkAILetter(),
+            Visibility(
+              visible: !_isEditMode,
+              child: _checkAILetter(),
+            ),
           ],
         ),
       ),
