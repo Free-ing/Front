@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
@@ -17,6 +18,7 @@ import '../../screen/home/sleep_record_bottom_sheet.dart';
 import 'buttons.dart';
 
 class HomeExpansionTileBox extends StatefulWidget {
+  final bool sleepRecordCompleted;
   String text;
   final List<SleepDailyRoutine> sleepDailyRoutines;
   final List<SpiritRoutineDetail> spiritDailyRoutines;
@@ -25,6 +27,7 @@ class HomeExpansionTileBox extends StatefulWidget {
 
   HomeExpansionTileBox({
     Key? key,
+    this.sleepRecordCompleted = false,
     required this.text,
     this.sleepDailyRoutines = const [],
     this.spiritDailyRoutines = const [],
@@ -45,6 +48,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   late List<bool> _isSpiritVisible;
   final homeApiService = HomeApiService();
   Offset? _tapPosition;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -62,34 +66,66 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     }
   }
 
-  void _initializeCheckLists() {
-    _isSleepChecked = widget.sleepDailyRoutines.isNotEmpty
-        ? widget.sleepDailyRoutines
-            .map((routine) => routine.completed ?? false)
-            .toList()
-        : [];
-    _isSleepVisible = _isSleepChecked.isNotEmpty
-        ? _isSleepChecked.map((checked) => !checked).toList()
-        : [];
+  Future<void> _initializeCheckLists() async {
+    setState(() => _isLoading = true);
 
-    _isExerciseChecked = widget.exerciseDailyRoutines.isNotEmpty
-        ? widget.exerciseDailyRoutines
-            .map((routine) => routine.complete ?? false)
-            .toList()
-        : [];
-    _isExerciseVisible = _isExerciseChecked.isNotEmpty
-        ? _isExerciseChecked.map((checked) => !checked).toList()
-        : [];
+    _isSleepChecked = [];
+    _isSleepVisible = [];
 
-    _isSpiritChecked = widget.spiritDailyRoutines.isNotEmpty
-        ? widget.spiritDailyRoutines
-            .map((routine) => routine.complete ?? false)
-            .toList()
-        : [];
-    _isSpiritVisible = _isSpiritChecked.isNotEmpty
-        ? _isSpiritChecked.map((checked) => !checked).toList()
-        : [];
+    for (var routine in widget.sleepDailyRoutines) {
+      if (routine.sleepRoutineName == '수면 기록하기') {
+        // Fetch the sleep record if it's "수면 기록하기"
+        final sleepRecord = await homeApiService.getSleepTimeRecord(widget.completeDay);
+        bool completed = sleepRecord['completed'] ?? false;
+        _isSleepChecked.add(completed);
+        _isSleepVisible.add(!completed);
+      } else {
+        _isSleepChecked.add(routine.completed ?? false);
+        _isSleepVisible.add(!(routine.completed ?? false));
+      }
+    }
+
+    _isExerciseChecked = widget.exerciseDailyRoutines
+        .map((routine) => routine.complete ?? false)
+        .toList();
+    _isExerciseVisible = _isExerciseChecked.map((checked) => !checked).toList();
+
+    _isSpiritChecked = widget.spiritDailyRoutines
+        .map((routine) => routine.complete ?? false)
+        .toList();
+    _isSpiritVisible = _isSpiritChecked.map((checked) => !checked).toList();
+
+    setState(() => _isLoading = false); // Update the state once initialization is complete
   }
+
+  // void _initializeCheckLists() {
+  //   _isSleepChecked = widget.sleepDailyRoutines.isNotEmpty
+  //       ? widget.sleepDailyRoutines
+  //           .map((routine) => routine.completed ?? false)
+  //           .toList()
+  //       : [];
+  //   _isSleepVisible = _isSleepChecked.isNotEmpty
+  //       ? _isSleepChecked.map((checked) => !checked).toList()
+  //       : [];
+  //
+  //   _isExerciseChecked = widget.exerciseDailyRoutines.isNotEmpty
+  //       ? widget.exerciseDailyRoutines
+  //           .map((routine) => routine.complete ?? false)
+  //           .toList()
+  //       : [];
+  //   _isExerciseVisible = _isExerciseChecked.isNotEmpty
+  //       ? _isExerciseChecked.map((checked) => !checked).toList()
+  //       : [];
+  //
+  //   _isSpiritChecked = widget.spiritDailyRoutines.isNotEmpty
+  //       ? widget.spiritDailyRoutines
+  //           .map((routine) => routine.complete ?? false)
+  //           .toList()
+  //       : [];
+  //   _isSpiritVisible = _isSpiritChecked.isNotEmpty
+  //       ? _isSpiritChecked.map((checked) => !checked).toList()
+  //       : [];
+  // }
 
   Widget listsWidget() {
     List<Widget> tiles = [];
@@ -941,6 +977,9 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
 
   @override
   Widget build(BuildContext context) {
+    if(_isLoading){
+      return const Center(child: CustomCircularProgressIndicator());
+    }
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;

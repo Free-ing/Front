@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/circle_widget.dart';
+import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/home_api_service.dart';
 import 'package:freeing/model/home/exercise_daily_routine.dart';
@@ -38,6 +39,7 @@ class _HomePageState extends State<HomePage> {
   List<ExerciseRoutineDetail> _exerciseDailyRoutine = [];
   List<SpiritRoutineDetail> _spiritDailyRoutine = [];
   bool isLoading = true;
+  bool? sleepRecordCompleted;
 
   final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
   int dayOfWeek = 0;
@@ -55,8 +57,9 @@ class _HomePageState extends State<HomePage> {
         fetchSpiritDailyRoutine(),
       ]);
 
-      final isSleepRecordOn = await sleepApiService.getRecordSleepStatus();
-      if (isSleepRecordOn) {
+      final sleepRecord = await homeApiService.getSleepTimeRecord(formattedDateForServer);
+      sleepRecordCompleted = sleepRecord['completed'];
+      if (sleepRecord['status'] == true) {
         _addSleepRecordRoutine();
       }
     } catch (e) {
@@ -354,6 +357,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if(sleepRecordCompleted == null){
+      return const Center(child: CustomCircularProgressIndicator());
+    }
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -591,6 +597,7 @@ class _HomePageState extends State<HomePage> {
                                   sleepDailyRoutines:
                                       getFilteredSleepRoutines(),
                                   completeDay: formattedDateForServer,
+                                  sleepRecordCompleted: sleepRecordCompleted!,
                                 ),
                                 verticalSpace,
                                 HomeExpansionTileBox(
