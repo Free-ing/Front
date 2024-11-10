@@ -440,6 +440,7 @@ class _MoodCalendarState extends State<MoodCalendar> {
       date: DateTime(selectYear, selectMonth, selectedDate),
       letterId: selectedDiary?.letterId ?? -1,
       scrap: _isScrap,
+      emotion: selectedDiary?.emotion ?? '',
       emotionImage: getEmotionImagePath(selectedDiary?.emotion ?? ''),
       wellDone: selectedDiary?.wellDone ?? '',
       hardWork: selectedDiary?.hardWork ?? '',
@@ -499,16 +500,36 @@ class _MoodCalendarState extends State<MoodCalendar> {
                     //width: screenWidth * 0.33,
                     height: screenHeight * 0.035,
                     child: OutlinedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         print(
                             '감정일기 작생해보세요잉의 recordId 입니다! ${recordIdByDay[selectedDate]!}');
                         // TODO: 감정일기 작성하기 bottom sheet
-                        showDiaryBottomSheet(
-                          context,
-                          '오늘 하루 어땠나요?',
-                          DateTime(selectYear, selectMonth, selectedDate),
-                          recordIdByDay[selectedDate]!,
+                        bool result = await showDiaryBottomSheet(
+                          context: context,
+                          title: '오늘 하루 어땠나요?',
+                          selectedDate: DateTime(selectYear, selectMonth, selectedDate),
+                          recordId: recordIdByDay[selectedDate]!,
                         );
+                        if (result){
+                          setState((){
+                            getEmotionDataByDay(selectYear, selectMonth).then((data) {
+                              setState(() {
+                                emotionDataByDay = Map<int, String>.from(data['emotions']!);
+                                diaryIdByDay = Map<int, int>.from(data['diaryIds']!);
+                                recordIdByDay = Map<int, int>.from(data['recordIds']!);
+                              });
+
+                              if (diaryIdByDay.containsKey(selectedDate) &&
+                                  diaryIdByDay[selectedDate] != -1) {
+                                print('선택 날짜 다이어리 아이디: ${diaryIdByDay[selectedDate]}');
+                                _fetchEmotionDiary(diaryIdByDay[selectedDate]!);
+                                print(recordIdByDay[selectedDate]);
+                              } else {
+                                print('선택한 날짜에 해당하는 일기 데이터가 없습니다.');
+                              }
+                            });
+                          });
+                        }
                       },
                       child: Text('일기 작성하기', style: textTheme.bodySmall),
                       style: OutlinedButton.styleFrom(

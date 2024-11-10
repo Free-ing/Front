@@ -128,6 +128,7 @@ class _MoodScrapState extends State<MoodScrap> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final String from = 'scrap';
 
     return ChartLayout(
       title: '스크랩',
@@ -150,13 +151,14 @@ class _MoodScrapState extends State<MoodScrap> {
               date: scrapDiaryList.date,
               letterId: scrapDiaryList.letterId,
               scrap: _isScrap,
+              emotion: scrapDiaryList.emotion,
               emotionImage: getEmotionImagePath(scrapDiaryList.emotion),
               wellDone: scrapDiaryList.wellDone,
               hardWork: scrapDiaryList.hardWork,
               deleteDiary: () {
                 _deleteEmotionDiary(diaryId);
               },
-              from: 'scrap',
+              from: from,
               onScrapToggle: () async {
                 !_scrapDiaryList[index].scrap
                     ? await _scrapEmotionDiary(diaryId, index)

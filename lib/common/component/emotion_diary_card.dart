@@ -16,6 +16,7 @@ class EmotionDiaryCard extends StatefulWidget {
   final DateTime date;
   final int letterId;
   final bool scrap;
+  final String emotion;
   final String emotionImage;
   final String wellDone;
   final String hardWork;
@@ -35,6 +36,7 @@ class EmotionDiaryCard extends StatefulWidget {
     required this.deleteDiary,
     required this.from,
     required this.onScrapToggle,
+    required this.emotion,
   });
 
   @override
@@ -45,7 +47,9 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
   late bool _isScrap;
   final apiService = SpiritAPIService();
   String _name = '';
-  bool _editMode = false;
+  String emotion = '';
+  String wellDone = '';
+  String hardWork = '';
 
   RewardedInterstitialAd? _rewardedAd;
   bool _isRewardedAdReady = false;
@@ -56,6 +60,10 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
     super.initState();
     _viewUserInfo();
     _loadRewardedInterstitialAd();
+
+    emotion = widget.emotion;
+    wellDone = widget.wellDone;
+    hardWork = widget.hardWork;
   }
 
   // Todo: 서버 요청 (사용자 이름 받아오기)
@@ -65,7 +73,7 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
     if (response.statusCode == 200) {
       final decodedBody = utf8.decode(response.bodyBytes);
       final userData = User.fromJson(json.decode(decodedBody));
-      if(mounted){
+      if (mounted) {
         setState(() {
           _name = userData.name;
         });
@@ -89,18 +97,20 @@ class _EmotionDiaryCardState extends State<EmotionDiaryCard> {
                 title: const Text('일기 수정하기'),
                 onTap: () {
                   showDiaryBottomSheet(
-                    context,
-                    '그 날 하루 어땠나요?',
-                    DateTime(
+                    context: context,
+                    title: '그 날 하루 어땠나요?',
+                    selectedDate: DateTime(
                       widget.date.year,
                       widget.date.month,
                       widget.date.day,
                     ),
-                    widget.diaryId,
+                    recordId: widget.diaryId,
+                    initialEmotion: widget.emotion,
+                    initialWellDone: widget.wellDone,
+                    initialHardWork: widget.hardWork,
+                    isEditMode: true,
+                    from: widget.from,
                   );
-                  setState(() {
-                    _editMode = true;
-                  });
                 },
               ),
               ListTile(
