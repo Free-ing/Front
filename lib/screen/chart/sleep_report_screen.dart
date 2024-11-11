@@ -222,7 +222,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                   SizedBox(height: screenHeight * 0.028),
                   Center(
                       child: GreenButton(
-                          width: screenWidth * 0.6, onPressed: () {})),
+                          width: screenWidth * 0.6, onPressed: (){Navigator.of(context).pop;})),
                   SizedBox(height: screenHeight * 0.028),
                 ],
               ),

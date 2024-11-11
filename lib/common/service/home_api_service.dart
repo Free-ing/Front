@@ -198,7 +198,7 @@ class HomeApiService {
     if(isValidDateFormat(startDate) && isValidDateFormat(endDate)){
       final accessToken = await tokenStorage.getAccessToken();
       final String getExerciseRecordEndpoint =
-          '$_baseUrl/exercise-service/home/record-week/?startDate=$startDate&endDate=$endDate';
+          '$_baseUrl/exercise-service/home/record-week?startDate=$startDate&endDate=$endDate';
       final url = Uri.parse(getExerciseRecordEndpoint);
 
       return http.get(

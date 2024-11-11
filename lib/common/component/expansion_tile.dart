@@ -840,7 +840,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       case '수면 기록하기':
         return LogButton(
           onPressed: () async {
-            bool success = await showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
+            bool success = await showSleepBottomSheet(context, '어젯밤, 잘 잤나요?', widget.completeDay);
             if (success) {
               _handleCheckboxTap(index);
             }
@@ -927,13 +927,20 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               index < widget.sleepDailyRoutines.length) {
             SleepDailyRoutine sleepRoutine = widget.sleepDailyRoutines[index];
             newStatus = !_isSleepChecked[index];
-            success = await homeApiService.checkSleepRoutine(
-                newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
-            if (success && mounted) {
+            if(widget.sleepDailyRoutines[index].sleepRoutineName == '수면 기록하기'){
               setState(() {
                 _isSleepChecked[index] = newStatus;
                 _isSleepVisible[index] = !newStatus;
               });
+            } else {
+              success = await homeApiService.checkSleepRoutine(
+                  newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
+              if (success && mounted) {
+                setState(() {
+                  _isSleepChecked[index] = newStatus;
+                  _isSleepVisible[index] = !newStatus;
+                });
+              }
             }
           }
           break;
@@ -978,15 +985,16 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       }
       if (!success) {
         // 서버 요청 실패 시 사용자에게 알림
-        const ToastBarWidget(
-          title: '루틴 상태 업데이트에 실패했습니다.',
-        ).showToast(context);
+        print('루틴 상태 업데이트에 실패!!!!!!!!!!!');
+        // const ToastBarWidget(
+        //   title: '루틴 상태 업데이트에 실패했습니다.',
+        // ).showToast(context);
       }
     } catch (e) {
       print('Error updating routine status: $e');
-      const ToastBarWidget(
-        title: '루틴 상태 업데이트 중 오류가 발생했습니다.',
-      ).showToast(context);
+      // const ToastBarWidget(
+      //   title: '루틴 상태 업데이트 중 오류가 발생했습니다.',
+      // ).showToast(context);
     }
   }
 
