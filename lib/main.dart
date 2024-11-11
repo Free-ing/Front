@@ -83,6 +83,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:freeing/screen/chart/exercise_report_screen.dart';
+import 'package:freeing/screen/chart/monthly_routine_tracker_screen.dart';
 import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/member/splash_screen.dart';

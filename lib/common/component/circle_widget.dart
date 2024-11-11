@@ -121,6 +121,7 @@ class ColorfulCirclePainter extends CustomPainter {
     final paint = Paint()..style = PaintingStyle.fill;
     final today = DateTime.now();
 
+    print('date $date');
     // Center and radius for the circle
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;

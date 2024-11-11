@@ -1,31 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/model/exercise/recommended_exercise.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
-import 'package:freeing/screen/chart/ai_letter.dart';
+import 'package:freeing/screen/chart/monthly_routine_tracker_screen.dart';
 import 'package:freeing/screen/chart/select_exercise_report_screen.dart';
 
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
 import 'package:freeing/screen/chart/mood_calendar_screen.dart';
-import 'package:freeing/layout/select_week_layout.dart';
 import 'package:freeing/screen/chart/select_sleep_report_screen.dart';
-import 'package:freeing/screen/chart/select_exercise_report_screen.dart';
-import 'package:freeing/screen/chart/select_sleep_report_screen.dart';
-import 'package:freeing/screen/routine/survey_response_screen.dart';
 
-import '../../model/hobby/recommend_hobby.dart';
 
 class ChartPage extends StatelessWidget {
   const ChartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 예시로 추천 리스트를 생성
-    List<RecommendedExercise> recommendedHobbies = [
-      RecommendedExercise(exerciseName: '취미', explanation: '에 대한 설명'),
-      RecommendedExercise(exerciseName: '설명', explanation: '에 대한 취미'),
-      RecommendedExercise(exerciseName: '취미', explanation: '에 대한 설명'),
-      RecommendedExercise(exerciseName: '설명', explanation: '에 대한 취미'),
-    ];
 
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -62,41 +50,37 @@ class ChartPage extends StatelessWidget {
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/routine_tracker.png',
                   title: "월간\n루틴 트래커",
-                  navigatePage: SurveyResponseScreen(
-                      category: '운동',
-                      recommend: recommendedHobbies,
-                      answers: [],
-                      remain: 0),
+                  navigatePage: const MonthlyRoutineTrackerScreen(),
                   context: context,
                 ),
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/sleep_report.png',
                   title: "수면 리포트\n몰아보기",
-                  navigatePage: SelectSleepReportScreen(),
+                  navigatePage: const SelectSleepReportScreen(),
                   context: context,
                 ),
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/hobby_gallery.png',
                   title: "취미 사진첩",
-                  navigatePage: HobbyGalleryScreen(),
+                  navigatePage: const HobbyGalleryScreen(),
                   context: context,
                 ),
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/emotional_diary_and_letter.png',
                   title: "무드 캘린더",
-                  navigatePage: MoodCalendar(),
+                  navigatePage: const MoodCalendar(),
                   context: context,
                 ),
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/exercise_report.png',
                   title: "운동 리포트\n몰아보기",
-                  navigatePage: SelectExerciseReportScreen(),
+                  navigatePage: const SelectExerciseReportScreen(),
                   context: context,
                 ),
               ],
             ),
           ),
-          bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 2),
+          bottomNavigationBar: const CustomBottomNavigationBar(selectedIndex: 2),
         ),
       ],
     );
@@ -119,7 +103,7 @@ class ChartPage extends StatelessWidget {
         ),
         margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
         child: Container(
-          padding: EdgeInsets.all(2),
+          padding: const EdgeInsets.all(2),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15.0),

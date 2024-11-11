@@ -209,10 +209,9 @@ class _MoodCalendarState extends State<MoodCalendar> {
       } else {
         print('선택한 날짜에 해당하는 일기 데이터가 없습니다.');
       }
+    }).catchError((error) {
+      print('에러 발생: $error');
     });
-    // }).catchError((error) {
-    //   print('에러 발생: $error');
-    // });
   }
 
   //Todo: 날짜 update
@@ -501,8 +500,6 @@ class _MoodCalendarState extends State<MoodCalendar> {
                     height: screenHeight * 0.035,
                     child: OutlinedButton(
                       onPressed: () async {
-                        print(
-                            '감정일기 작생해보세요잉의 recordId 입니다! ${recordIdByDay[selectedDate]!}');
                         // TODO: 감정일기 작성하기 bottom sheet
                         bool result = await showDiaryBottomSheet(
                           context: context,
