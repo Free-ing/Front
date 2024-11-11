@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
@@ -75,10 +77,23 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     for (var routine in widget.sleepDailyRoutines) {
       if (routine.sleepRoutineName == '수면 기록하기') {
         // Fetch the sleep record if it's "수면 기록하기"
-        final sleepRecord = await homeApiService.getSleepTimeRecord(widget.completeDay);
-        bool completed = sleepRecord['completed'] ?? false;
-        _isSleepChecked.add(completed);
-        _isSleepVisible.add(!completed);
+        final response = await homeApiService.getSleepTimeRecord(widget.completeDay);
+        //bool completed = sleepRecord['completed'] ?? false;
+
+
+        if (response.statusCode == 200) {
+          final sleepRecord = json.decode(response.body); // JSON 형식으로 변환
+          //print('수면 기록 출력!!!! $sleepRecord');
+
+          // completed 값을 할당
+          bool completed = sleepRecord['completed'];
+          _isSleepChecked.add(completed);
+          _isSleepVisible.add(!completed);
+
+        } else {
+          print("Error: Failed to load sleep record. Status code: ${response.statusCode}");
+        }
+
       } else {
         _isSleepChecked.add(routine.completed ?? false);
         _isSleepVisible.add(!(routine.completed ?? false));

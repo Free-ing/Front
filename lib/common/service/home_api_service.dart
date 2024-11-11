@@ -87,25 +87,19 @@ class HomeApiService {
       return false;
     }
   }
-  Future<Map<String, dynamic>> getSleepTimeRecord(String queryDate) async {
+  Future<http.Response> getSleepTimeRecord(String queryDate) async {
     final accessToken = await tokenStorage.getAccessToken();
     final String _getSleepTimeRecordEndpoint =
         '$_baseUrl/sleep-service/time-record/day?queryDate=$queryDate';
     final url = Uri.parse(_getSleepTimeRecordEndpoint);
 
-    final response = await http.get(
+    return http.get(
       url,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',
       },
     );
-    if (response.statusCode == 200) {
-      // JSON을 Map 형식으로 디코딩하여 반환
-      return json.decode(response.body) as Map<String, dynamic>;
-    } else {
-      throw Exception('Failed to load sleep record');
-    }
   }
 
   // 운동 루틴 & 체크 박스 상태 받아오기
@@ -198,6 +192,7 @@ class HomeApiService {
     }
   }
 
+  
   // 운동 일주일 루틴 현황 받아오기 (핑크)
   Future<http.Response> getExerciseRecord(String startDate, String endDate) async {
     if(isValidDateFormat(startDate) && isValidDateFormat(endDate)){
