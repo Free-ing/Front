@@ -234,7 +234,7 @@ class _MonthlyRoutineTrackerScreenState
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 7,
-                  crossAxisSpacing: screenWidth * 0.03,
+                  crossAxisSpacing: screenWidth * 0.032,
                   mainAxisSpacing: screenHeight * 0.012,
                 ),
                 physics: const NeverScrollableScrollPhysics(),
@@ -245,13 +245,19 @@ class _MonthlyRoutineTrackerScreenState
                   if (dayNumber < 1 || dayNumber > daysInMonth) {
                     return const SizedBox.shrink();
                   }
+                  DateTime currentDate = DateTime(
+                      selectedDate.year, selectedDate.month, dayNumber);
 
                   return CustomPaint(
                     size: Size(screenWidth * 0.08, screenWidth * 0.08),
                     painter: ColorfulCirclePainter(
-                        date: DateTime.now(),
+                        date: currentDate,
                         isSelected: false,
-                        isAfterToday: false),
+                        isAfterToday: false,
+                        exerciseDates: [],
+                        sleepDates: [],
+                        spiritDates: [],
+                        hobbyDates: []),
                   );
                 },
               ),
