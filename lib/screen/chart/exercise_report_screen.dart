@@ -9,6 +9,7 @@ import 'package:freeing/common/service/exercise_api_service.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/model/exercise/exercise_report.dart';
+import 'package:freeing/screen/chart/select_exercise_report_screen.dart';
 import 'package:freeing/screen/setting/setting_page.dart';
 
 class ExerciseReportScreen extends StatefulWidget {
@@ -186,7 +187,12 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                   ),
 
                   SizedBox(height: screenHeight * 0.028),
-                  GreenButton(width: screenWidth * 0.6, onPressed: () {Navigator.pop(context);}),
+                  GreenButton(width: screenWidth * 0.6, onPressed: () {Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            SelectExerciseReportScreen()),
+                  );}),
                   SizedBox(height: screenHeight * 0.028),
                 ],
               ),
