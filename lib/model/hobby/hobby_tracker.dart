@@ -19,14 +19,14 @@ class HobbyTracker {
 
 class Record {
   final int id;
-  final DateTime routineDate;
+  final String routineDate;
 
   Record({required this.id, required this.routineDate});
 
   factory Record.fromJson(Map<String, dynamic> json) {
     return Record(
       id: json['id'],
-      routineDate: DateTime.parse(json['routineDate']),
+      routineDate: json['routineDate'],
     );
   }
 }

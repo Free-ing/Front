@@ -7,6 +7,9 @@ import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/tracker_api_service.dart';
 import 'package:freeing/layout/chart_layout.dart';
 import 'package:freeing/model/exercise/exercise_tracker.dart';
+import 'package:freeing/model/hobby/hobby_tracker.dart';
+import 'package:freeing/model/sleep/sleep_tracker.dart';
+import 'package:freeing/model/spirit/spirit_tracker.dart';
 
 class MonthlyRoutineTrackerScreen extends StatefulWidget {
   const MonthlyRoutineTrackerScreen({super.key});
@@ -25,6 +28,9 @@ class _MonthlyRoutineTrackerScreenState
   final apiService = TrackerApiService();
 
   List<ExerciseTracker>? exerciseTracker;
+  SleepTracker? sleepTracker;
+  List<SpiritTracker>? spiritTracker;
+  List<HobbyTracker>? hobbyTracker;
 
   int getFirstDayOfMonth() =>
       DateTime(selectedDate.year, selectedDate.month, 1).weekday;
@@ -39,10 +45,25 @@ class _MonthlyRoutineTrackerScreenState
     //Todo: 서버 요청 보내서 저장하기
     /// 운동
     _fetchExerciseTracker(selectedDate).then((data) {
-      setState(() {
-        exerciseTracker = data;
-      });
+      exerciseTracker = data;
     });
+
+    /// 수면
+    _fetchSleepTracker(startDate, endDate).then((data) {
+      sleepTracker = data;
+    });
+
+    /// 마음 채우기
+    _fetchSpiritTracker(selectedDate).then((data) {
+      spiritTracker = data;
+    });
+
+    /// 취미
+    _fetchHobbyTracker(selectedDate).then((data) {
+      hobbyTracker = data;
+    });
+
+    setState(() {});
   }
 
   //Todo: 서버 요청 (운동 트래커 조회)
@@ -52,7 +73,7 @@ class _MonthlyRoutineTrackerScreenState
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
-      print('이거는 운동 데이터~.~.~.~ ${jsonData['result']}');
+      print('이거는 운동 트래커~.~.~.~ ${jsonData['result']}');
       if (jsonData != null && jsonData['result'] != null) {
         return (jsonData['result'] as List)
             .map((item) => ExerciseTracker.fromJson(item))
@@ -62,14 +83,79 @@ class _MonthlyRoutineTrackerScreenState
         throw Exception('Invalid data structure from server');
       }
     } else {
-      final jsonData = json.decode(utf8.decode(response.bodyBytes));
-      print(jsonData['error']);
       throw Exception('운동 루틴 트래커 조회 실패 ${response.statusCode}');
     }
   }
+
   //Todo: 서버 요청 (수면 트래커 조회)
+  Future<SleepTracker> _fetchSleepTracker(startDate, endDate) async {
+    final response = await apiService.getSleepTracker(startDate, endDate);
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(utf8.decode(response.bodyBytes));
+      print('이거는 수면 트래커@.@.@.@ ${jsonData['result']}');
+
+      if (jsonData != null && jsonData['result'] != null) {
+        // return (jsonData['result'] as List)
+        //     .map((item) => SleepTracker.fromJson(item))
+        //     .toList();
+        return SleepTracker.fromJson(jsonData['result']);
+      } else if (jsonData == null || jsonData['result'] == null) {
+        print('이거는 수면 트래커@.@.@.@ ${jsonData['result']} 없지롱!');
+        return SleepTracker(routineRecords: [], timeRecords: []);
+      } else {
+        print('Error: Response data is null or does not contain expected key.');
+        throw Exception('Invalid data structure from server');
+      }
+    } else if (response.statusCode == 204) {
+      print ('없어!! 수면에 대한 기록이');
+      return SleepTracker(routineRecords: [], timeRecords: []);
+    } else {
+      throw Exception('수면 루틴 트래커 조회 실패 ${response.statusCode}');
+    }
+  }
+
   //Todo: 서버 요청 (마음 채우기 트래커 조회)
+  Future<List<SpiritTracker>> _fetchSpiritTracker(selectedDate) async {
+    final response = await apiService.getSpiritTracker(selectedDate);
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(utf8.decode(response.bodyBytes));
+
+      print('이거는 마음 채우기 트래커 &.&.&.& ${jsonData['result']}');
+      if (jsonData != null && jsonData['result'] != null) {
+        return (jsonData['result'] as List)
+            .map((item) => SpiritTracker.fromJson(item))
+            .toList();
+      } else {
+        print('Error: Response data is null or does not contain expected key.');
+        throw Exception('Invalid data structure from server');
+      }
+    } else {
+      throw Exception('마음 채우기 루틴 트래커 조회 실패 ${response.statusCode}');
+    }
+  }
+
   //Todo: 서버 요청 (취미 트래커 조회)
+  Future<List<HobbyTracker>> _fetchHobbyTracker(selectedDate) async {
+    final response = await apiService.getHobbyTracker(selectedDate);
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(utf8.decode(response.bodyBytes));
+
+      print('이거는 취미 기록 트래커 ^.^.^.^ ${jsonData['result']}');
+      if (jsonData != null && jsonData['result'] != null) {
+        return (jsonData['result'] as List)
+            .map((item) => HobbyTracker.fromJson(item))
+            .toList();
+      } else {
+        print('Error: Response data is null or does not contain expected key.');
+        throw Exception('Invalid data structure from server');
+      }
+    } else {
+      throw Exception('취미 기록 트래커 조회 실패 ${response.statusCode}');
+    }
+  }
 
   //Todo: 월 시작 날짜 구하기
   DateTime getMonthStartDate(DateTime selectedDate) {
@@ -95,10 +181,16 @@ class _MonthlyRoutineTrackerScreenState
 
     //Todo: 날짜 변경될 때마다 서버 요청 보내기
     final exercise = await _fetchExerciseTracker(selectedDate);
+    final sleep = await _fetchSleepTracker(startDate, endDate);
+    final spirit = await _fetchSpiritTracker(selectedDate);
+    final hobby = await _fetchHobbyTracker(selectedDate);
 
     setState(() {
       //Todo: 받아온 정보 저장하기
       exerciseTracker = exercise;
+      sleepTracker = sleep;
+      spiritTracker = spirit;
+      hobbyTracker = hobby;
     });
   }
 
@@ -245,9 +337,10 @@ class _MonthlyRoutineTrackerScreenState
                   if (dayNumber < 1 || dayNumber > daysInMonth) {
                     return const SizedBox.shrink();
                   }
-                  DateTime currentDate = DateTime(
-                      selectedDate.year, selectedDate.month, dayNumber);
-
+                  int day = index - firstDayOfMonth + 2;
+                  DateTime currentDate =
+                      DateTime(selectedDate.year, selectedDate.month, day);
+                  //print(currentDate);
                   return CustomPaint(
                     size: Size(screenWidth * 0.08, screenWidth * 0.08),
                     painter: ColorfulCirclePainter(

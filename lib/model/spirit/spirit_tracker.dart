@@ -1,18 +1,18 @@
-class ExerciseTracker {
-  final String exerciseName;
+class SpiritTracker {
+  final String mentalName;
   final List<Record> records;
 
-  ExerciseTracker({
-    required this.exerciseName,
+  SpiritTracker({
+    required this.mentalName,
     required this.records,
   });
 
-  factory ExerciseTracker.fromJson(Map<String, dynamic> json) {
-    return ExerciseTracker(
-      exerciseName: json['exerciseName'],
+  factory SpiritTracker.fromJson(Map<String, dynamic> json) {
+    return SpiritTracker(
+      mentalName: json['mentalName'],
       records:
-          (json['record'] as List?)?.map((e) => Record.fromJson(e)).toList() ??
-              [],
+      (json['record'] as List?)?.map((e) => Record.fromJson(e)).toList() ??
+          [],
     );
   }
 }
