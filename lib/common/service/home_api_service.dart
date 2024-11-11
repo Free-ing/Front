@@ -273,4 +273,71 @@ class HomeApiService {
       return Future.error("startDate와 endDate 형식이 올바르지 않음");
     }
   }
+
+  // 수면 오늘 쉬어가기
+  Future<http.Response> restSleepRoutine(String exceptionDate, int sleepRoutineId) async {
+    if(isValidDateFormat(exceptionDate)){
+      final accessToken = await tokenStorage.getAccessToken();
+      final String restSleepRoutineEndpoint =
+          '$_baseUrl/sleep-service/routine/exception-date';
+      final url = Uri.parse(restSleepRoutineEndpoint);
+
+      return http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: json.encode({
+          'exceptionDate' : exceptionDate,
+          'sleepRoutineId' : sleepRoutineId,
+        }),
+      );
+    } else {
+      print("exceptionDateformat 형식이 옳지 않음");
+      return Future.error("exceptionDateformat 형식이 옳지 않음");
+    }
+  }
+  // TODO: 마음 채우기 오늘 쉬어가기
+  Future<http.Response> restSpiritRoutine(int? recordId) async{
+    if(recordId != null){
+      print(recordId);
+      final accessToken = await tokenStorage.getAccessToken();
+      final String restSpiritRoutineEndpoint = '$_baseUrl/spirit-service/record-off/$recordId';
+      final url = Uri.parse(restSpiritRoutineEndpoint);
+
+      return http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+    } else{
+      print("routineId가 null");
+      return Future.error("routineId가 null");
+    }
+  }
+  // TODO: 운동 오늘 쉬어가기
+  Future<http.Response> restExerciseRoutine(int? recordId) async {
+    if(recordId != null){
+      final accessToken = await tokenStorage.getAccessToken();
+      final String restExerciseRoutineEndpoint = '$_baseUrl/exercise-service/record-off/$recordId';
+      final url = Uri.parse(restExerciseRoutineEndpoint);
+
+      return http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+    } else{
+      print("routineId가 null");
+      return Future.error("routineId가 null");
+    }
+  }
+
 }

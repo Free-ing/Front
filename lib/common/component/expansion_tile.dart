@@ -447,12 +447,26 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         borderRadius: BorderRadius.circular(20),
         side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
       ),
-    ).then((value) {
+    ).then((value) async {
       // Handle the selection of the popup menu item
       if (value != null) {
         switch (value) {
           case 'rest':
-            print('${exerciseRoutine.name} 루틴은 오늘 쉬어가기');
+            //print('${exerciseRoutine.name} 루틴은 오늘 쉬어가기');
+            // TODO: 운동 오늘 쉬어가기 서버 요청
+            final response = await homeApiService.restExerciseRoutine(exerciseRoutine.recordId!);
+            if(response.statusCode == 200){
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                const ToastBarWidget(
+                  title: '다음에는 꼭 지켜보세요.',
+                ).showToast(context);
+              });
+              setState(() {
+                widget.exerciseDailyRoutines.remove(exerciseRoutine);
+              });
+            } else{
+              print(response.statusCode);
+            }
             break;
           case 'explain':
             print('${exerciseRoutine.name} 설명 보기');
@@ -463,7 +477,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             break;
           case 'edit':
             print('${exerciseRoutine.name} 수정 하기');
-            // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정
+
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => EditRoutineScreen(
                     routineId: exerciseRoutine.routineId!,
@@ -558,14 +572,25 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         borderRadius: BorderRadius.circular(20),
         side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
       ),
-    ).then((value) {
+    ).then((value) async{
       // Handle the selection of the popup menu item
       if (value != null) {
         switch (value) {
           case 'rest':
-            print('${sleepRoutine.sleepRoutineName} 루틴은 오늘 쉬어가기');
+            //print('${sleepRoutine.sleepRoutineName} 루틴은 오늘 쉬어가기');
+            // TODO: 수면 오늘 쉬어가기 서버 요청
+            final response = await homeApiService.restSleepRoutine(widget.completeDay, sleepRoutine.sleepRoutineId!);
+            if(response.statusCode == 201){
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                const ToastBarWidget(
+                  title: '다음에는 꼭 지켜보세요.',
+                ).showToast(context);
+              });
+              setState(() {
+                widget.sleepDailyRoutines.remove(sleepRoutine);
+              });
+            }
             break;
-          // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정
           case 'edit':
             print('${sleepRoutine.sleepRoutineName} 수정 하기');
             Navigator.of(context).push(MaterialPageRoute(
@@ -694,12 +719,26 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         borderRadius: BorderRadius.circular(20),
         side: const BorderSide(color: Colors.black, width: 1), // 검정 테두리
       ),
-    ).then((value) {
+    ).then((value) async{
       // Handle the selection of the popup menu item
       if (value != null) {
         switch (value) {
           case 'rest':
-            print('${spiritRoutine.name} 루틴은 오늘 쉬어가기');
+            //print('${spiritRoutine.name} 루틴은 오늘 쉬어가기');
+            // TODO: 마음 채우기 오늘 쉬어가기 서버 요청
+            final response = await homeApiService.restSpiritRoutine(spiritRoutine.recordId!);
+            if(response.statusCode == 200){
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                const ToastBarWidget(
+                  title: '다음에는 꼭 지켜보세요.',
+                ).showToast(context);
+              });
+              setState(() {
+                widget.spiritDailyRoutines.remove(spiritRoutine);
+              });
+            } else{
+              print(response.statusCode);
+            }
             break;
           case 'explain':
             print('${spiritRoutine.name} 설명 보기');
@@ -708,7 +747,6 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                 title: spiritRoutine.name!,
                 content: spiritRoutine.explanation!);
             break;
-          // TODO: 지금은 수정하기하면 루틴 페이지로 이동함! 수정
           case 'edit':
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => EditRoutineScreen(
@@ -1003,10 +1041,10 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     if(_isLoading){
       return const Center(child: CustomCircularProgressIndicator());
     }
-    final textTheme = Theme.of(context).textTheme;
+    //final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    var size = MediaQuery.of(context).size;
+    //var size = MediaQuery.of(context).size;
 
     return Container(
       decoration: BoxDecoration(

@@ -34,14 +34,14 @@ class _LoginState extends State<Login> {
     // 이메일 형식 검증을 위한 정규식
     final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegExp.hasMatch(email)) {
-      ToastBarWidget(
+      const ToastBarWidget(
         title: '이메일 형식이 잘못되었습니다.',
       ).showToast(context);
       return;
     }
     // 비밀번호 8자리 이상인지 검사
     if (password.length < 8) {
-      ToastBarWidget(
+      const ToastBarWidget(
         title: '비밀번호는 8자 이상이어야 합니다.',
       ).showToast(context);
       return;
@@ -69,15 +69,15 @@ class _LoginState extends State<Login> {
         MaterialPageRoute(builder: (_) => HomePage()),
       );
     } else if (response.statusCode == 400) {
-      ToastBarWidget(
+      const ToastBarWidget(
         title: '이메일 형식이 틀리거나 비밀번호를 입력하지 않았습니다.',
       ).showToast(context);
     } else if (response.statusCode == 401) {
-      ToastBarWidget(
+      const ToastBarWidget(
         title: '틀린 비밀번호입니다.',
       ).showToast(context);
     } else {
-      ToastBarWidget(
+      const ToastBarWidget(
         title: '해당 이메일이 존재하지 않습니다.',
       ).showToast(context);
     }
