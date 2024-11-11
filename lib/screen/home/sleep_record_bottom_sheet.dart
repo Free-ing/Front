@@ -10,7 +10,7 @@ import '../../common/service/token_storage.dart';
 import '../member/login.dart';
 
 //Todo: 수면 기록
-Future<bool> showSleepBottomSheet(BuildContext context, String title) async{
+Future<bool> showSleepBottomSheet(BuildContext context, String title, String completeDay) async{
   final TextEditingController _sleepTimeController = TextEditingController();
   final TextEditingController _wakeUpTimeController = TextEditingController();
   final TextEditingController _sleepMemoController = TextEditingController();
@@ -42,11 +42,13 @@ Future<bool> showSleepBottomSheet(BuildContext context, String title) async{
     if (_sleepTimeController.text.isNotEmpty &&
         _wakeUpTimeController.text.isNotEmpty &&
         sleepStatus != 'default' &&
-        recordDay.isNotEmpty) {
+        completeDay.isNotEmpty) {
+      print('과연 completeDay는!!!!!! $completeDay');
       final response = await _homeButtonSheetApiService.sleepTimeRecord(
           wakeUpTime: wakeUpTime,
           sleepTime: sleepTime,
-          recordDay: recordDay,
+          // TODO: recordDay가 오늘 날짜로 되어있음 사용자가 선택한 날짜로 되야됨
+          recordDay: completeDay,
           memo: memo,
           sleepStatus: sleepStatus);
 
@@ -56,7 +58,7 @@ Future<bool> showSleepBottomSheet(BuildContext context, String title) async{
         isSuccess = true;
         await controller.reverse();
         Navigator.pop(context, isSuccess);
-        Future.microtask(()=> ToastBarWidget(
+        Future.microtask(()=> const ToastBarWidget(
           title: '수면 기록이 저장되었습니다.',
           leadingImagePath: "assets/imgs/home/sleep_record_success.png",
         ).showToast(context));

@@ -17,7 +17,7 @@ class HomeApiService {
     }
   }
 
-  // 수면 루틴 & 체크 박스 상태 받아오기
+  // 수면 루틴 & 체크 박스 상태 받아오기 + 수면 시간 기록 상태 조회
   Future<http.Response> getSleepRoutine(int dayOfWeek, String queryDate) async {
     final Map<int, String> dayOfWeekMap = {
       1: 'MONDAY',
@@ -86,6 +86,20 @@ class HomeApiService {
     } else {
       return false;
     }
+  }
+  Future<http.Response> getSleepTimeRecord(String queryDate) async {
+    final accessToken = await tokenStorage.getAccessToken();
+    final String _getSleepTimeRecordEndpoint =
+        '$_baseUrl/sleep-service/time-record/day?queryDate=$queryDate';
+    final url = Uri.parse(_getSleepTimeRecordEndpoint);
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
   }
 
   // 운동 루틴 & 체크 박스 상태 받아오기
@@ -178,12 +192,13 @@ class HomeApiService {
     }
   }
 
+  
   // 운동 일주일 루틴 현황 받아오기 (핑크)
   Future<http.Response> getExerciseRecord(String startDate, String endDate) async {
     if(isValidDateFormat(startDate) && isValidDateFormat(endDate)){
       final accessToken = await tokenStorage.getAccessToken();
       final String getExerciseRecordEndpoint =
-          '$_baseUrl/exercise-service/home/record-week/?startDate=$startDate&endDate=$endDate';
+          '$_baseUrl/exercise-service/home/record-week?startDate=$startDate&endDate=$endDate';
       final url = Uri.parse(getExerciseRecordEndpoint);
 
       return http.get(

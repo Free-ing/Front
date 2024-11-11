@@ -144,17 +144,49 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                   SizedBox(height: screenHeight * 0.028),
 
                   /// 피드백
-                  _feedBack(
-                    textTheme: textTheme,
-                    screenWidth: screenWidth,
-                    screenHeight: screenHeight,
+                  Container(
+                    width: screenWidth,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25),
+                      border: Border.all(color: Colors.black, width: 1),
+                    ),
+                    padding: EdgeInsets.all(screenWidth * 0.02),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                RichText(
+                                    text: TextSpan(
+                                        text: '\n$name',
+                                        style: textTheme.bodyMedium?.copyWith(
+                                            fontWeight: FontWeight.w600),
+                                        children: <TextSpan>[
+                                      TextSpan(
+                                        text: '님을 위한\n분석 결과와 피드백 입니다.',
+                                        style: textTheme.bodyMedium,
+                                      )
+                                    ])),
+                                Image.asset(
+                                  'assets/imgs/etc/report_mascot.png',
+                                  width: screenWidth * 0.2,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: screenHeight * 0.028),
+                            Text(exerciseReport!.feedBack, style: textTheme.bodyMedium?.copyWith(height:1.6))
+                          ],
+                        );
+                      },
+                    ),
                   ),
+
                   SizedBox(height: screenHeight * 0.028),
-                  GreenButton(
-                      width: screenWidth * 0.6,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      }),
+                  GreenButton(width: screenWidth * 0.6, onPressed: () {Navigator.pop(context);}),
                   SizedBox(height: screenHeight * 0.028),
                 ],
               ),
@@ -300,11 +332,8 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                             ),
 
                             /// 막대 그래프 표시
-                            barGroups: exerciseTimes.entries
-                                .map<BarChartGroupData>((entry) {
-                              int index = exerciseTimes.keys
-                                  .toList()
-                                  .indexOf(entry.key);
+                            barGroups: exerciseTimes.entries.map<BarChartGroupData>((entry) {
+                              int index =  exerciseTimes.keys.toList().indexOf(entry.key);
                               int minutes = entry.value;
 
                               return BarChartGroupData(
@@ -335,11 +364,9 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
 
                       /// 시간 나타내는 Text
                       ...exerciseTimes.entries
-                          .where((MapEntry<String, int> entry) =>
-                              entry.value > 0) // 시간이 0인 경우 텍스트 X
+                          .where((MapEntry<String, int> entry) => entry.value > 0)// 시간이 0인 경우 텍스트 X
                           .map((entry) {
-                        int index =
-                            exerciseTimes.keys.toList().indexOf(entry.key);
+                        int index = exerciseTimes.keys.toList().indexOf(entry.key);
                         int minutes = entry.value;
                         double posX = index *
                             (screenWidth * 0.112); // 각 막대 위치에 맞춘 x 좌표 계산
@@ -409,55 +436,6 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  //Todo: 피드백
-  Widget _feedBack({
-    required TextTheme textTheme,
-    required double screenWidth,
-    required double screenHeight,
-  }) {
-    return Container(
-      width: screenWidth,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.black, width: 1),
-      ),
-      padding: EdgeInsets.all(screenWidth * 0.02),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  RichText(
-                      text: TextSpan(
-                          text: '\n$name',
-                          style: textTheme.bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.w600),
-                          children: <TextSpan>[
-                        TextSpan(
-                          text: '님을 위한\n분석 결과와 피드백 입니다.',
-                          style: textTheme.bodyMedium,
-                        )
-                      ])),
-                  Image.asset(
-                    'assets/imgs/etc/report_mascot.png',
-                    width: screenWidth * 0.2,
-                  ),
-                ],
-              ),
-              SizedBox(height: screenHeight * 0.028),
-              Text(exerciseReport!.feedBack,
-                  style: textTheme.bodyMedium?.copyWith(height: 1.6))
-            ],
-          );
-        },
-      ),
     );
   }
 

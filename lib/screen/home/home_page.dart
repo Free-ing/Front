@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/circle_widget.dart';
+import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/home_api_service.dart';
 import 'package:freeing/model/home/exercise_daily_routine.dart';
@@ -37,7 +38,13 @@ class _HomePageState extends State<HomePage> {
   List<SleepDailyRoutine> _sleepDailyRoutine = [];
   List<ExerciseRoutineDetail> _exerciseDailyRoutine = [];
   List<SpiritRoutineDetail> _spiritDailyRoutine = [];
+  List<String> exerciseDates = [];
+  List<String> sleepDates = [];
+  List<String> spiritDates = [];
+  List<String> hobbyDates = [];
+
   bool isLoading = true;
+  bool? sleepRecordCompleted;
 
   final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
   int dayOfWeek = 0;
@@ -48,19 +55,37 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       isLoading = true;
     });
+    DateTime startDate = getStartOfWeek(selectedDate);
+    DateTime endDate = getEndOfWeek(selectedDate);
+
     try {
       await Future.wait([
         fetchSleepDailyRoutine(),
         fetchExerciseDailyRoutine(),
         fetchSpiritDailyRoutine(),
+        fetchRoutineRecords(DateFormat('yyyy-MM-dd').format(startDate), DateFormat('yyyy-MM-dd').format(endDate),)
       ]);
 
-      final isSleepRecordOn = await sleepApiService.getRecordSleepStatus();
-      if (isSleepRecordOn) {
-        _addSleepRecordRoutine();
+      final response = await homeApiService.getSleepTimeRecord(formattedDateForServer);
+      //print('수면 기록 출려겨어어어ㅓㄱ $response');
+      if (response.statusCode == 200) {
+        final sleepRecord = json.decode(response.body); // JSON 형식으로 변환
+        //print('수면 기록 출력!!!! $sleepRecord');
+
+        // completed 값을 할당
+        sleepRecordCompleted = sleepRecord['completed'];
+
+        if (sleepRecord['status'] == true) {
+          _addSleepRecordRoutine();
+        } else {
+          print("Error: 'status' key is missing or false in the response");
+        }
+      } else {
+        print("Error: Failed to load sleep record. Status code: ${response.statusCode}");
       }
     } catch (e) {
       print(e);
+      sleepRecordCompleted = false;
     } finally {
       setState(() {
         isLoading = false;
@@ -165,16 +190,16 @@ class _HomePageState extends State<HomePage> {
     try {
       final response =
           await homeApiService.getExerciseRoutine(formattedDateForServer);
-
+      //print('운동 루틴 불러오기ㅣ이이 서버어ㅓ어ㅓ $response');
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
-        //print('jsonData: $jsonData');
+        //print('운도오오옹 jsonData: $jsonData');
         if (jsonData is Map<String, dynamic> && jsonData['result'] is List) {
           setState(() {
             _exerciseDailyRoutine = (jsonData['result'] as List)
                 .map((data) => ExerciseRoutineDetail.fromJson(data))
                 .toList();
-            print('exercise 루틴 $_exerciseDailyRoutine');
+            //print('exercise 루틴 $_exerciseDailyRoutine');
             //print('setState까지 성공함');
           });
         } else {
@@ -300,13 +325,47 @@ class _HomePageState extends State<HomePage> {
     return allActiveRoutines;
   }
 
-  // TODO: 상단 상태바도 각각 다 불러오기
-  Future<void> fetchExerciseWeekRecord() async {
-    try {
-      //final response = await homeApiService.getExerciseRecord(startDate, endDate, userId)
-      
-    } catch (e) {
-      print('Error fetching 일주일치 운동 기록: $e');
+  // TODO: 상단 상태바 불러오기
+  Future<void> fetchRoutineRecords(String startDate, String endDate) async {
+    // 운동 상태바 가져오기
+    final exerciseResponse = await homeApiService.getExerciseRecord(startDate, endDate);
+    if (exerciseResponse.statusCode == 200) {
+      final result = json.decode(exerciseResponse.body);
+      print('운동 상태바 출려어ㅓ어억 $result');
+      exerciseDates = result['result'].map<String>((e) => e['completeDate'].toString()).toList();
+    }else {
+      print('운동 상태바 출력 상태코드 뭘까 ${exerciseResponse.statusCode}');
+    }
+
+    // 수면 상태바 가져오기
+    final sleepResponse = await homeApiService.getSleepRecord(startDate, endDate);
+    if (sleepResponse.statusCode == 200) {
+      final result = json.decode(sleepResponse.body);
+      print('수면 상태바 출려어ㅓ어억 $result');
+      sleepDates = result.map<String>((e) => e['date'].toString()).toList();
+    } else {
+      print('수면 상태바 출력 상태코드 뭘까 ${sleepResponse.statusCode}');
+    }
+
+    // 마음 채우기 상태바 가져오기
+    final spiritResponse = await homeApiService.getSpiritRecord(startDate, endDate);
+    if (spiritResponse.statusCode == 200) {
+      final result = json.decode(spiritResponse.body);
+      print('마음 채우기 상태바 출려어ㅓ어억 $result');
+      print('마음 채우기 시작날: $startDate / 마지막 날: $endDate');
+      spiritDates = result['result'].map<String>((e) => e['completeDate'].toString()).toList();
+    } else {
+      print('마음 채우기 상태바 출력 상태코드 뭘까 ${spiritResponse.statusCode}');
+    }
+
+    // 취미 상태바 가져오기
+    final hobbyResponse = await homeApiService.getHobbyRecord(startDate, endDate);
+    if (hobbyResponse.statusCode == 200) {
+      final result = json.decode(hobbyResponse.body);
+      print('취미 출려어ㅓ어억 $result');
+      hobbyDates = result['result'].map<String>((e) => e['completeDate'].toString()).toList();
+    } else {
+      print('취미 상태바 출력 상태코드 뭘까 ${hobbyResponse.statusCode}');
     }
   }
 
@@ -351,9 +410,15 @@ class _HomePageState extends State<HomePage> {
   DateTime getStartOfWeek(DateTime date) {
     return date.subtract(Duration(days: date.weekday - 1));
   }
+  DateTime getEndOfWeek(DateTime date) {
+    return date.add(Duration(days: 7 - date.weekday));
+  }
 
   @override
   Widget build(BuildContext context) {
+    if(sleepRecordCompleted == null || isLoading){
+      return const Center(child: CustomCircularProgressIndicator());
+    }
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -483,6 +548,7 @@ class _HomePageState extends State<HomePage> {
                                                 .format(selectedDate);
                                         todayDayName = DateFormat('EEE', 'ko')
                                             .format(selectedDate);
+                                        loadInitialData();
                                       });
                                     },
                                     child: const Padding(
@@ -507,6 +573,7 @@ class _HomePageState extends State<HomePage> {
                                           todayDayName = DateFormat('EEE', 'ko')
                                               .format(selectedDate);
                                           dayOfWeek = selectedDate.weekday;
+
                                           loadInitialData();
                                         });
                                       },
@@ -514,6 +581,10 @@ class _HomePageState extends State<HomePage> {
                                         dayName: dayNames[index],
                                         date: dates[index],
                                         isSelected: selectedIndex == index,
+                                        exerciseDates: exerciseDates,
+                                        sleepDates: sleepDates,
+                                        spiritDates: spiritDates,
+                                        hobbyDates: hobbyDates,
                                       ),
                                     );
                                   }),
@@ -536,6 +607,7 @@ class _HomePageState extends State<HomePage> {
                                                 .format(selectedDate);
                                         todayDayName = DateFormat('EEE', 'ko')
                                             .format(selectedDate);
+                                        loadInitialData();
                                       });
                                     },
                                     child: const Padding(
@@ -591,6 +663,7 @@ class _HomePageState extends State<HomePage> {
                                   sleepDailyRoutines:
                                       getFilteredSleepRoutines(),
                                   completeDay: formattedDateForServer,
+                                  sleepRecordCompleted: sleepRecordCompleted!,
                                 ),
                                 verticalSpace,
                                 HomeExpansionTileBox(

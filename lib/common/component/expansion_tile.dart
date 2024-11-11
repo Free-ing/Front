@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
@@ -17,6 +20,7 @@ import '../../screen/home/sleep_record_bottom_sheet.dart';
 import 'buttons.dart';
 
 class HomeExpansionTileBox extends StatefulWidget {
+  final bool sleepRecordCompleted;
   String text;
   final List<SleepDailyRoutine> sleepDailyRoutines;
   final List<SpiritRoutineDetail> spiritDailyRoutines;
@@ -25,6 +29,7 @@ class HomeExpansionTileBox extends StatefulWidget {
 
   HomeExpansionTileBox({
     Key? key,
+    this.sleepRecordCompleted = false,
     required this.text,
     this.sleepDailyRoutines = const [],
     this.spiritDailyRoutines = const [],
@@ -45,6 +50,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
   late List<bool> _isSpiritVisible;
   final homeApiService = HomeApiService();
   Offset? _tapPosition;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -62,34 +68,79 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
     }
   }
 
-  void _initializeCheckLists() {
-    _isSleepChecked = widget.sleepDailyRoutines.isNotEmpty
-        ? widget.sleepDailyRoutines
-            .map((routine) => routine.completed ?? false)
-            .toList()
-        : [];
-    _isSleepVisible = _isSleepChecked.isNotEmpty
-        ? _isSleepChecked.map((checked) => !checked).toList()
-        : [];
+  Future<void> _initializeCheckLists() async {
+    setState(() => _isLoading = true);
 
-    _isExerciseChecked = widget.exerciseDailyRoutines.isNotEmpty
-        ? widget.exerciseDailyRoutines
-            .map((routine) => routine.complete ?? false)
-            .toList()
-        : [];
-    _isExerciseVisible = _isExerciseChecked.isNotEmpty
-        ? _isExerciseChecked.map((checked) => !checked).toList()
-        : [];
+    _isSleepChecked = [];
+    _isSleepVisible = [];
 
-    _isSpiritChecked = widget.spiritDailyRoutines.isNotEmpty
-        ? widget.spiritDailyRoutines
-            .map((routine) => routine.complete ?? false)
-            .toList()
-        : [];
-    _isSpiritVisible = _isSpiritChecked.isNotEmpty
-        ? _isSpiritChecked.map((checked) => !checked).toList()
-        : [];
+    for (var routine in widget.sleepDailyRoutines) {
+      if (routine.sleepRoutineName == '수면 기록하기') {
+        // Fetch the sleep record if it's "수면 기록하기"
+        final response = await homeApiService.getSleepTimeRecord(widget.completeDay);
+        //bool completed = sleepRecord['completed'] ?? false;
+
+
+        if (response.statusCode == 200) {
+          final sleepRecord = json.decode(response.body); // JSON 형식으로 변환
+          //print('수면 기록 출력!!!! $sleepRecord');
+
+          // completed 값을 할당
+          bool completed = sleepRecord['completed'];
+          _isSleepChecked.add(completed);
+          _isSleepVisible.add(!completed);
+
+        } else {
+          print("Error: Failed to load sleep record. Status code: ${response.statusCode}");
+        }
+
+      } else {
+        _isSleepChecked.add(routine.completed ?? false);
+        _isSleepVisible.add(!(routine.completed ?? false));
+      }
+    }
+
+    _isExerciseChecked = widget.exerciseDailyRoutines
+        .map((routine) => routine.complete ?? false)
+        .toList();
+    _isExerciseVisible = _isExerciseChecked.map((checked) => !checked).toList();
+
+    _isSpiritChecked = widget.spiritDailyRoutines
+        .map((routine) => routine.complete ?? false)
+        .toList();
+    _isSpiritVisible = _isSpiritChecked.map((checked) => !checked).toList();
+
+    setState(() => _isLoading = false); // Update the state once initialization is complete
   }
+
+  // void _initializeCheckLists() {
+  //   _isSleepChecked = widget.sleepDailyRoutines.isNotEmpty
+  //       ? widget.sleepDailyRoutines
+  //           .map((routine) => routine.completed ?? false)
+  //           .toList()
+  //       : [];
+  //   _isSleepVisible = _isSleepChecked.isNotEmpty
+  //       ? _isSleepChecked.map((checked) => !checked).toList()
+  //       : [];
+  //
+  //   _isExerciseChecked = widget.exerciseDailyRoutines.isNotEmpty
+  //       ? widget.exerciseDailyRoutines
+  //           .map((routine) => routine.complete ?? false)
+  //           .toList()
+  //       : [];
+  //   _isExerciseVisible = _isExerciseChecked.isNotEmpty
+  //       ? _isExerciseChecked.map((checked) => !checked).toList()
+  //       : [];
+  //
+  //   _isSpiritChecked = widget.spiritDailyRoutines.isNotEmpty
+  //       ? widget.spiritDailyRoutines
+  //           .map((routine) => routine.complete ?? false)
+  //           .toList()
+  //       : [];
+  //   _isSpiritVisible = _isSpiritChecked.isNotEmpty
+  //       ? _isSpiritChecked.map((checked) => !checked).toList()
+  //       : [];
+  // }
 
   Widget listsWidget() {
     List<Widget> tiles = [];
@@ -789,7 +840,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       case '수면 기록하기':
         return LogButton(
           onPressed: () async {
-            bool success = await showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
+            bool success = await showSleepBottomSheet(context, '어젯밤, 잘 잤나요?', widget.completeDay);
             if (success) {
               _handleCheckboxTap(index);
             }
@@ -876,13 +927,20 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
               index < widget.sleepDailyRoutines.length) {
             SleepDailyRoutine sleepRoutine = widget.sleepDailyRoutines[index];
             newStatus = !_isSleepChecked[index];
-            success = await homeApiService.checkSleepRoutine(
-                newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
-            if (success && mounted) {
+            if(widget.sleepDailyRoutines[index].sleepRoutineName == '수면 기록하기'){
               setState(() {
                 _isSleepChecked[index] = newStatus;
                 _isSleepVisible[index] = !newStatus;
               });
+            } else {
+              success = await homeApiService.checkSleepRoutine(
+                  newStatus, widget.completeDay, sleepRoutine.sleepRoutineId);
+              if (success && mounted) {
+                setState(() {
+                  _isSleepChecked[index] = newStatus;
+                  _isSleepVisible[index] = !newStatus;
+                });
+              }
             }
           }
           break;
@@ -927,20 +985,24 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
       }
       if (!success) {
         // 서버 요청 실패 시 사용자에게 알림
-        const ToastBarWidget(
-          title: '루틴 상태 업데이트에 실패했습니다.',
-        ).showToast(context);
+        print('루틴 상태 업데이트에 실패!!!!!!!!!!!');
+        // const ToastBarWidget(
+        //   title: '루틴 상태 업데이트에 실패했습니다.',
+        // ).showToast(context);
       }
     } catch (e) {
       print('Error updating routine status: $e');
-      const ToastBarWidget(
-        title: '루틴 상태 업데이트 중 오류가 발생했습니다.',
-      ).showToast(context);
+      // const ToastBarWidget(
+      //   title: '루틴 상태 업데이트 중 오류가 발생했습니다.',
+      // ).showToast(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if(_isLoading){
+      return const Center(child: CustomCircularProgressIndicator());
+    }
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;

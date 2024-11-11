@@ -9,18 +9,18 @@ class CustomCircularProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: SizedBox(
-          height: 30.0,
-          width: 30.0,
-          child: CircularProgressIndicator(
-            color: PRIMARY_COLOR,
-            strokeWidth: 4.0,
+    return Container(
+      color: Colors.white,
+      child: const Center(
+          child: SizedBox(
+            height: 30.0,
+            width: 30.0,
+            child: CircularProgressIndicator(
+              color: PRIMARY_COLOR,
+              strokeWidth: 4.0,
+            ),
           ),
         ),
-      ),
     );
   }
 }

@@ -150,10 +150,10 @@ class SleepAPIService {
       final data = jsonDecode(response.body); // JSON 파싱
       return data['status']; // 응답의 "isRecordOn" 값 반환
     } else if (response.statusCode == 401) {
-      print('수면 기록 상태 불러오기 실패');
+      print('상태코드 401 : 수면 기록 상태 불러오기 실패');
       return false;
     } else if (response.statusCode == 500) {
-      print('수면 기록 상태 불러오기 실패');
+      print('상태 코드 500 : 수면 기록 상태 불러오기 실패');
       return false;
     } else {
       print('수면 기록 상태 코드: ${response.statusCode}');
@@ -244,7 +244,7 @@ class SleepAPIService {
     }
   }
 
-  //Todo: 주간 수면 리포트 조회
+  // 주간 수면 리포트 조회
   Future<http.Response> getSleepReport(
       DateTime startDate, DateTime endDate) async {
     final String formattedStartDate = DateFormat('yyyy-MM-dd').format(startDate);

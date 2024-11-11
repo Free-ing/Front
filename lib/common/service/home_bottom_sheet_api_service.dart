@@ -17,6 +17,13 @@ class HomeBottomSheetApiService {
     required String sleepStatus,
   }) async {
     try{
+      print('보내는 데이터:');
+      print('wakeUpTime: $wakeUpTime');
+      print('sleepTime: $sleepTime');
+      print('recordDay: $recordDay');
+      print('memo: $memo');
+      print('sleepStatus: $sleepStatus');
+
       final tokenStorage = TokenManager();
       final accessToken = await tokenStorage.getAccessToken();
       final url = Uri.parse(_sleepTimeRecordEndpoint);
