@@ -50,7 +50,6 @@ class _HomePageState extends State<HomePage> {
   int dayOfWeek = 0;
 
   // 운동, 수면, 마음 채우기 루틴 각각 불러오기 & 상단 상태바 불러오는 서버 요청 하기
-  // TODO: 상단 상태바도 각각 다 불러오기
   Future<void> loadInitialData() async {
     setState(() {
       isLoading = true;
@@ -325,7 +324,7 @@ class _HomePageState extends State<HomePage> {
     return allActiveRoutines;
   }
 
-  // TODO: 상단 상태바 불러오기
+  // 상단 상태바 불러오기
   Future<void> fetchRoutineRecords(String startDate, String endDate) async {
     // 운동 상태바 가져오기
     final exerciseResponse = await homeApiService.getExerciseRecord(startDate, endDate);
