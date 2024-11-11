@@ -157,6 +157,9 @@ class _MonthlyRoutineTrackerScreenState
     }
   }
 
+  //Todo: 날짜 추출
+
+
   //Todo: 월 시작 날짜 구하기
   DateTime getMonthStartDate(DateTime selectedDate) {
     return DateTime(selectedDate.year, selectedDate.month, 1);
@@ -324,6 +327,7 @@ class _MonthlyRoutineTrackerScreenState
             Padding(
               padding: EdgeInsets.symmetric(vertical: screenHeight * 0.04),
               child: GridView.builder(
+                key: ValueKey(selectedDate),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 7,
                   crossAxisSpacing: screenWidth * 0.032,
