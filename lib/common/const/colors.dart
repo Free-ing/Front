@@ -60,3 +60,15 @@ const HOME_GREEN_TEXT = Color(0xFF539481);
 
 // 홈 노랑 글자 색상
 const HOME_YELLOW_TEXT = Color(0xFFFAB457);
+
+// 운동 색상
+const EXERCISE_COLOR = Color(0xFFF69BF6);
+
+// 수면 색상
+const SLEEP_COLOR = Color(0xFF609BDE);
+
+// 마음채우기 색상
+const SPIRIT_COLOR = Color(0xFF61D0B0);
+
+// 취미 색상
+const HOBBY_COLOR = Color(0xFFFFCE8D);
