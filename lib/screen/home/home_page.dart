@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/circle_widget.dart';
 import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
+import 'package:freeing/common/component/question_mark.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/home_api_service.dart';
 import 'package:freeing/model/home/exercise_daily_routine.dart';
@@ -62,10 +63,14 @@ class _HomePageState extends State<HomePage> {
         fetchSleepDailyRoutine(),
         fetchExerciseDailyRoutine(),
         fetchSpiritDailyRoutine(),
-        fetchRoutineRecords(DateFormat('yyyy-MM-dd').format(startDate), DateFormat('yyyy-MM-dd').format(endDate),)
+        fetchRoutineRecords(
+          DateFormat('yyyy-MM-dd').format(startDate),
+          DateFormat('yyyy-MM-dd').format(endDate),
+        )
       ]);
 
-      final response = await homeApiService.getSleepTimeRecord(formattedDateForServer);
+      final response =
+          await homeApiService.getSleepTimeRecord(formattedDateForServer);
       //print('수면 기록 출려겨어어어ㅓㄱ $response');
       if (response.statusCode == 200) {
         final sleepRecord = json.decode(response.body); // JSON 형식으로 변환
@@ -80,7 +85,8 @@ class _HomePageState extends State<HomePage> {
           print("Error: 'status' key is missing or false in the response");
         }
       } else {
-        print("Error: Failed to load sleep record. Status code: ${response.statusCode}");
+        print(
+            "Error: Failed to load sleep record. Status code: ${response.statusCode}");
       }
     } catch (e) {
       print(e);
@@ -150,6 +156,7 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+
   bool isSleepRoutineActiveOnDay(SleepDailyRoutine routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
@@ -170,6 +177,7 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
+
   List<SleepDailyRoutine> getFilteredSleepRoutines() {
     return _sleepDailyRoutine
         .where((routine) =>
@@ -222,7 +230,9 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-  bool isExerciseRoutineActiveOnDay(ExerciseRoutineDetail routine, int dayOfWeek) {
+
+  bool isExerciseRoutineActiveOnDay(
+      ExerciseRoutineDetail routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
         return routine.monday ?? false;
@@ -242,6 +252,7 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
+
   List<ExerciseRoutineDetail> getAllFilteredExerciseRoutines(int dayOfWeek) {
     List<ExerciseRoutineDetail> allActiveRoutines = [];
 
@@ -292,6 +303,7 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+
   bool isSpiritRoutineActiveOnDay(SpiritRoutineDetail routine, int dayOfWeek) {
     switch (dayOfWeek) {
       case 1:
@@ -312,6 +324,7 @@ class _HomePageState extends State<HomePage> {
         return false;
     }
   }
+
   List<SpiritRoutineDetail> getAllFilteredSpiritRoutines(int dayOfWeek) {
     List<SpiritRoutineDetail> allActiveRoutines = [];
 
@@ -327,17 +340,21 @@ class _HomePageState extends State<HomePage> {
   // 상단 상태바 불러오기
   Future<void> fetchRoutineRecords(String startDate, String endDate) async {
     // 운동 상태바 가져오기
-    final exerciseResponse = await homeApiService.getExerciseRecord(startDate, endDate);
+    final exerciseResponse =
+        await homeApiService.getExerciseRecord(startDate, endDate);
     if (exerciseResponse.statusCode == 200) {
       final result = json.decode(exerciseResponse.body);
       print('운동 상태바 출려어ㅓ어억 $result');
-      exerciseDates = result['result'].map<String>((e) => e['completeDate'].toString()).toList();
-    }else {
+      exerciseDates = result['result']
+          .map<String>((e) => e['completeDate'].toString())
+          .toList();
+    } else {
       print('운동 상태바 출력 상태코드 뭘까 ${exerciseResponse.statusCode}');
     }
 
     // 수면 상태바 가져오기
-    final sleepResponse = await homeApiService.getSleepRecord(startDate, endDate);
+    final sleepResponse =
+        await homeApiService.getSleepRecord(startDate, endDate);
     if (sleepResponse.statusCode == 200) {
       final result = json.decode(sleepResponse.body);
       print('수면 상태바 출려어ㅓ어억 $result');
@@ -347,22 +364,28 @@ class _HomePageState extends State<HomePage> {
     }
 
     // 마음 채우기 상태바 가져오기
-    final spiritResponse = await homeApiService.getSpiritRecord(startDate, endDate);
+    final spiritResponse =
+        await homeApiService.getSpiritRecord(startDate, endDate);
     if (spiritResponse.statusCode == 200) {
       final result = json.decode(spiritResponse.body);
       print('마음 채우기 상태바 출려어ㅓ어억 $result');
       print('마음 채우기 시작날: $startDate / 마지막 날: $endDate');
-      spiritDates = result['result'].map<String>((e) => e['completeDate'].toString()).toList();
+      spiritDates = result['result']
+          .map<String>((e) => e['completeDate'].toString())
+          .toList();
     } else {
       print('마음 채우기 상태바 출력 상태코드 뭘까 ${spiritResponse.statusCode}');
     }
 
     // 취미 상태바 가져오기
-    final hobbyResponse = await homeApiService.getHobbyRecord(startDate, endDate);
+    final hobbyResponse =
+        await homeApiService.getHobbyRecord(startDate, endDate);
     if (hobbyResponse.statusCode == 200) {
       final result = json.decode(hobbyResponse.body);
       print('취미 출려어ㅓ어억 $result');
-      hobbyDates = result['result'].map<String>((e) => e['completeDate'].toString()).toList();
+      hobbyDates = result['result']
+          .map<String>((e) => e['completeDate'].toString())
+          .toList();
     } else {
       print('취미 상태바 출력 상태코드 뭘까 ${hobbyResponse.statusCode}');
     }
@@ -409,13 +432,14 @@ class _HomePageState extends State<HomePage> {
   DateTime getStartOfWeek(DateTime date) {
     return date.subtract(Duration(days: date.weekday - 1));
   }
+
   DateTime getEndOfWeek(DateTime date) {
     return date.add(Duration(days: 7 - date.weekday));
   }
 
   @override
   Widget build(BuildContext context) {
-    if(sleepRecordCompleted == null || isLoading){
+    if (sleepRecordCompleted == null || isLoading) {
       return const Center(child: CustomCircularProgressIndicator());
     }
     final textTheme = Theme.of(context).textTheme;
@@ -506,7 +530,110 @@ class _HomePageState extends State<HomePage> {
                             width: screenWidth * 0.9,
                             height: screenHeight * 0.106,
                             margin: EdgeInsets.symmetric(
-                              vertical: screenHeight * 0.02,
+                              vertical: screenHeight * 0.01,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.grey.withOpacity(0.1),
+                                    offset: const Offset(2, 4),
+                                    blurRadius: 4,
+                                    spreadRadius: 0)
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 15.0, top: 2),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            '이번주 스트레스 지수',
+                                            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 17)
+                                          ),
+                                          const QuestionMark(title: '스트레스 검사', content:'만점은 33점입니다.\n\n0~n: 낮음\nn~n: 보통\nn~n: 높음' )
+                                        ],
+                                      ),
+                                      Container(
+                                        width: screenWidth * 0.3,
+                                        height: screenHeight * 0.02889,
+                                        margin: const EdgeInsets.only(left: 10.0, top: 0),
+                                        child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                elevation: 4,
+                                                backgroundColor: PRIMARY_COLOR,
+                                                foregroundColor: Colors.black,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(50),
+                                                  side: const BorderSide(
+                                                    width: 1,
+                                                  ),
+                                                )),
+                                            onPressed: () {},
+                                            child: Text('측정 하기', style: textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500))),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                        'assets/imgs/home/stress_low.png'),
+                                    const SizedBox(height: 3),
+                                    RichText(
+                                      text: const TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: '30',
+                                            style: TextStyle(color: Colors.black, fontSize: 20),
+                                          ),
+                                          TextSpan(
+                                            text: '점',
+                                            style: TextStyle(color: Colors.black, fontSize: 12),
+                                          ),
+                                          WidgetSpan(
+                                            child: SizedBox(width: 4), // 텍스트와 아이콘 사이의 간격
+                                          ),
+                                          WidgetSpan(
+                                            child: Icon(
+                                              Icons.arrow_drop_down_sharp,
+                                              color: Color(0xFF529CEF),
+                                              size: 20,
+                                            ),
+                                            alignment: PlaceholderAlignment.middle,
+                                            baseline: TextBaseline.alphabetic,
+                                          ),
+                                          TextSpan(
+                                            text: '12',
+                                            style: TextStyle(color: Color(0xFF529CEF), fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: screenWidth * 0.9,
+                            height: screenHeight * 0.106,
+                            margin: EdgeInsets.symmetric(
+                              vertical: screenHeight * 0.01,
                             ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF6F6F6),
@@ -532,8 +659,8 @@ class _HomePageState extends State<HomePage> {
                                     onTap: () {
                                       setState(() {
                                         currentWeekStartDate =
-                                            currentWeekStartDate
-                                                .subtract(Duration(days: 7));
+                                            currentWeekStartDate.subtract(
+                                                const Duration(days: 7));
                                         _generateDates();
                                         selectedIndex = today.weekday - 1;
                                         if (selectedIndex < 0 ||
@@ -620,30 +747,6 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ]),
                           ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          //   children: [
-                          //     SizedBox(
-                          //       height: screenHeight * 0.03,
-                          //     ),
-                          //     PlayButton(
-                          //         onPressed: () {
-                          //           showDynamicStretchingBottomSheet(context, '동적 스트레칭');
-                          //         },
-                          //         iconColor: PINK_PLAY_BUTTON),
-                          //     PlayButton(
-                          //         onPressed: () {
-                          //           showMeditationBottomSheet(context, '명상하기');
-                          //         },
-                          //         iconColor: GREEN_PLAY_BUTTON),
-                          //     LogButton(
-                          //       onPressed: () {
-                          //         showSleepBottomSheet(context, '어젯밤, 잘 잤나요?');
-                          //       },
-                          //     ),
-                          //
-                          //   ],
-                          // ),
                           SizedBox(height: screenHeight * 0.005),
                           SizedBox(
                             //height: screenHeight * 0.5,
