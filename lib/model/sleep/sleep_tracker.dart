@@ -1,13 +1,13 @@
 class RoutineRecord {
   final int routineId;
   final String routineName;
-  final List<String> completeDay;
+  final List<String> records;
   final String imageUrl;
 
   RoutineRecord({
     required this.routineId,
     required this.routineName,
-    required this.completeDay,
+    required this.records,
     required this.imageUrl,
   });
 
@@ -15,7 +15,7 @@ class RoutineRecord {
     return RoutineRecord(
       routineId: json['routineId'],
       routineName: json['routineName'],
-      completeDay: List<String>.from(json['completeDay']),
+      records: List<String>.from(json['completeDay'] ?? []),
       imageUrl: json['url'],
     );
   }

@@ -13,7 +13,6 @@ class TrackerApiService {
     final int month = selectedDate.month;
 
     final accessToken = await tokenStorage.getAccessToken();
-
     final url =
         Uri.parse('$_baseUrl/exercise-service/tracker?year=$year&month=$month');
 
@@ -44,7 +43,6 @@ class TrackerApiService {
     final int month = selectedDate.month;
 
     final accessToken = await tokenStorage.getAccessToken();
-
     final url =
         Uri.parse('$_baseUrl/spirit-service/tracker?year=$year&month=$month');
 

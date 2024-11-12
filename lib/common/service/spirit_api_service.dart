@@ -6,8 +6,7 @@ import 'token_manager.dart';
 import 'base_url.dart';
 
 class SpiritAPIService {
-  //final String _baseUrl = BaseUrl.baseUrl;
-  final String _baseUrl = 'http://172.25.11.156:9965';
+  final String _baseUrl = BaseUrl.baseUrl;
 
   //Todo: 마음 채우기 루틴 추가
   Future<http.Response> postSpiritRoutine(

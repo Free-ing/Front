@@ -40,6 +40,8 @@ class _MonthlyRoutineTrackerScreenState
   List<String> spiritDates = [];
   List<String> hobbyDates = [];
 
+  List<dynamic> routineDates = [];
+
   int getFirstDayOfMonth() =>
       DateTime(selectedDate.year, selectedDate.month, 1).weekday;
   int getDaysInMonth() =>
@@ -142,15 +144,15 @@ class _MonthlyRoutineTrackerScreenState
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
-      print('이거는 수면 트래커@.@.@.@ ${jsonData['result']}');
+      print('이거는 수면 트래커@.@.@.@ ${jsonData}');
 
-      if (jsonData != null && jsonData['result'] != null) {
+      if (jsonData != null && jsonData != null) {
         // return (jsonData['result'] as List)
         //     .map((item) => SleepTracker.fromJson(item))
         //     .toList();
-        return SleepTracker.fromJson(jsonData['result']);
-      } else if (jsonData == null || jsonData['result'] == null) {
-        print('이거는 수면 트래커@.@.@.@ ${jsonData['result']} 없지롱!');
+        return SleepTracker.fromJson(jsonData);
+      } else if (jsonData == null || jsonData == null) {
+        print('이거는 수면 트래커@.@.@.@ ${jsonData} 없지롱!');
         return SleepTracker(routineRecords: [], timeRecords: []);
       } else {
         print('Error: Response data is null or does not contain expected key.');
@@ -554,7 +556,7 @@ class _MonthlyRoutineTrackerScreenState
     required int daysInMonth,
     required int length,
   }) {
-    int percent = (length / daysInMonth * 100 ).ceil();
+    int percent = (length / daysInMonth * 100).ceil();
     return Row(
       children: [
         Container(
@@ -636,9 +638,14 @@ class _MonthlyRoutineTrackerScreenState
         itemCount: routineList.length,
         itemBuilder: (context, index) {
           final routine = routineList[index];
-          final routineDates =
-              routine.records.map((record) => record.routineDate).toList();
 
+          print(routine.runtimeType);
+          if (routine.runtimeType == RoutineRecord) {
+            routineDates = routine.records;
+          } else {
+            routineDates =
+                routine.records.map((record) => record.routineDate).toList();
+          }
           return Card(
             margin: EdgeInsets.all(6),
             elevation: 6,
