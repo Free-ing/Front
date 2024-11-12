@@ -62,7 +62,7 @@ class _SelectRoutineImageScreenState extends State<SelectRoutineImageScreen> {
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/bag.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/coffee.png',
     'https://freeingimage.s3.ap-northeast-2.amazonaws.com/phone.png',
-    'https://freeingimage.s3.ap-northeast-2.amazonaws.com/sleep_report.png',
+    'https://freeingimage.s3.ap-northeast-2.amazonaws.com/%EC%88%98%EB%A9%B4.png',
   ];
 
   // 취미 이미지 리스트

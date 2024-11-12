@@ -82,7 +82,6 @@ class _MonthlyRoutineTrackerScreenState
         print(exerciseTracker);
       });
 
-     // _spiritList.sort((a, b) => a.routineId.compareTo(b.routineId));
     } catch (e) {
       print('Error Fetching Exercise Data: $e');
     }
@@ -99,7 +98,7 @@ class _MonthlyRoutineTrackerScreenState
             routineName: '수면 기록하기',
             records: data.timeRecords,
             imageUrl:
-                'https://freeingimage.s3.ap-northeast-2.amazonaws.com/sleep_report.png',
+                'https://freeingimage.s3.ap-northeast-2.amazonaws.com/%EC%88%98%EB%A9%B4.png',
           ));
           sleepDates = _getUniqueRoutineDates(sleepTracker);
           sleepTracker.sort((a,b) => a.routineId.compareTo(b.routineId));
@@ -409,6 +408,7 @@ class _MonthlyRoutineTrackerScreenState
               screenWidth: screenWidth,
               screenHeight: screenHeight,
             ),
+            ///전체 루틴 달력 - 트래커
             _buildRoutineColorCircle(
               textTheme: textTheme,
               screenWidth: screenWidth,
@@ -745,8 +745,8 @@ class _MonthlyRoutineTrackerScreenState
 
                           return Container(
                             margin: EdgeInsets.zero,
-                            width: 17,
-                            height: 17,
+                            width: screenWidth*0.01,
+                            height: screenWidth*0.01,
                             decoration: BoxDecoration(
                               color: containerColor,
                               borderRadius: BorderRadius.circular(5),
