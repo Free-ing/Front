@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
+import 'package:freeing/common/component/loading.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';

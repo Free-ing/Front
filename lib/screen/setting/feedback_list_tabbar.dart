@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
+import 'package:freeing/common/component/loading.dart';
 import 'package:freeing/screen/setting/check_feedback_list.dart';
 import 'package:intl/intl.dart';
 
@@ -82,7 +82,7 @@ class _FeedbackListTabbarState extends State<FeedbackListTabbar> {
     return Scaffold(
         backgroundColor: Colors.white,
         body: _isLoading
-            ? CustomCircularProgressIndicator()
+            ? Loading()
             : Padding(
                 padding: EdgeInsets.only(
                     top: screenHeight * 0.015, bottom: screenHeight * 0.03),

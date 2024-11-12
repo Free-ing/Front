@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
+import 'package:freeing/common/component/loading.dart';
 import 'package:freeing/layout/setting_layout.dart';
 import 'package:freeing/model/setting/notice_list.dart';
 import 'package:freeing/screen/setting/notice_detail_page.dart';
@@ -79,7 +79,7 @@ class _NoticePageState extends State<NoticePage> {
     return SettingLayout(
       title: '공지사항',
       child: _isLoading
-          ? const CustomCircularProgressIndicator()
+          ? const Loading()
           : ListView.builder(
               itemCount: _noticeList.length,
               itemBuilder: (context, index) {

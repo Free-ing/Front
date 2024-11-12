@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
-import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
+import 'package:freeing/common/component/loading.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/exercise_api_service.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
@@ -108,7 +108,7 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return isLoading
-        ? CustomCircularProgressIndicator()
+        ? Loading()
         : ScreenLayout(
             title: '주간 운동 리포트',
             body: SingleChildScrollView(

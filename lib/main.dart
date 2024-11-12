@@ -89,7 +89,7 @@ import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/member/splash_screen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import 'common/component/custom_circular_progress_indicator.dart';
+import 'common/component/loading.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

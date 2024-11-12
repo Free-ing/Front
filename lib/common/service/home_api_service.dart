@@ -340,4 +340,19 @@ class HomeApiService {
     }
   }
 
+  // 스트레스 지수 불러오기
+  Future<http.Response> getStressLevel() async {
+    final accessToken = await tokenStorage.getAccessToken();
+    final String getStressLevelEndpoint = '$_baseUrl/user-service/stress-test/home';
+    final url = Uri.parse(getStressLevelEndpoint);
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+
 }

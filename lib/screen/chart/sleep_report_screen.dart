@@ -10,7 +10,7 @@ import 'package:freeing/model/sleep/sleep_report.dart';
 import 'package:freeing/screen/chart/select_sleep_report_screen.dart';
 import 'package:intl/intl.dart';
 
-import '../../common/component/custom_circular_progress_indicator.dart';
+import '../../common/component/loading.dart';
 import '../../common/service/setting_api_service.dart';
 import '../setting/account_management_page.dart';
 
@@ -185,7 +185,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return isLoading
-        ? const CustomCircularProgressIndicator()
+        ? const Loading()
         : ScreenLayout(
             title: '주간 수면 리포트',
             body: SingleChildScrollView(

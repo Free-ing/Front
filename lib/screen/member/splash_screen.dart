@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
+import 'package:freeing/common/component/loading.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:video_player/video_player.dart';
 
@@ -57,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ],
         )
-            : const CustomCircularProgressIndicator(),
+            : const Loading(),
 
         // child: _controller.value.isInitialized
         //     ? FittedBox(
