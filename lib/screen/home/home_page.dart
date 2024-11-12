@@ -601,7 +601,7 @@ class _HomePageState extends State<HomePage> {
                                           const QuestionMark(
                                               title: '스트레스 검사',
                                               content:
-                                                  '만점은 33점입니다.\n\n0~n: 낮음\nn~n: 보통\nn~n: 높음')
+                                                  '만점은 33점입니다.\n\n0점 - 10점: 낮은 수준의 스트레스\n11점 - 20점: 중등도 이상의 스트레스\n21점 - 33점: 매우 높은 중증 수준의 스트레스')
                                         ],
                                       ),
                                       Container(

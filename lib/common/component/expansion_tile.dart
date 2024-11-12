@@ -454,7 +454,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         switch (value) {
           case 'rest':
             //print('${exerciseRoutine.name} 루틴은 오늘 쉬어가기');
-            // TODO: 운동 오늘 쉬어가기 서버 요청
+            // 운동 오늘 쉬어가기 서버 요청
             final response = await homeApiService.restExerciseRoutine(exerciseRoutine.recordId!);
             if(response.statusCode == 200){
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -579,7 +579,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         switch (value) {
           case 'rest':
             //print('${sleepRoutine.sleepRoutineName} 루틴은 오늘 쉬어가기');
-            // TODO: 수면 오늘 쉬어가기 서버 요청
+            // 수면 오늘 쉬어가기 서버 요청
             final response = await homeApiService.restSleepRoutine(widget.completeDay, sleepRoutine.sleepRoutineId!);
             if(response.statusCode == 201){
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -726,7 +726,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
         switch (value) {
           case 'rest':
             //print('${spiritRoutine.name} 루틴은 오늘 쉬어가기');
-            // TODO: 마음 채우기 오늘 쉬어가기 서버 요청
+            // 마음 채우기 오늘 쉬어가기 서버 요청
             final response = await homeApiService.restSpiritRoutine(spiritRoutine.recordId!);
             if(response.statusCode == 200){
               WidgetsBinding.instance.addPostFrameCallback((_) {
