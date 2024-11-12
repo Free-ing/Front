@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
   List<SleepDailyRoutine> _sleepDailyRoutine = [];
   List<ExerciseRoutineDetail> _exerciseDailyRoutine = [];
   List<SpiritRoutineDetail> _spiritDailyRoutine = [];
-  List<StressLevelResponse> _stressLevelResponse = [];
+  StressLevelResponse? _stressLevelResponse;
   List<String> exerciseDates = [];
   List<String> sleepDates = [];
   List<String> spiritDates = [];
@@ -106,26 +106,20 @@ class _HomePageState extends State<HomePage> {
   Future<void> fetchStressLevel() async {
     try {
       final response = await homeApiService.getStressLevel();
-
+      print(response);
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
-
-        if (jsonData is List) {
-          setState(() {
-            _stressLevelResponse = jsonData
-                .map((data) => StressLevelResponse.fromJson(data))
-                .toList();
-          });
-        } else {
-          print('스트레스 지수 불러오기 - Unexpected JSON format');
-          setState(() {
-            _stressLevelResponse = [];
-          });
-        }
+        print(jsonData);
+        setState(() {
+          // _stressLevelResponse = jsonData
+          //     .map((data) => StressLevelResponse.fromJson(data))
+          //     .toList();
+          _stressLevelResponse = StressLevelResponse.fromJson(jsonData);
+        });
       } else if (response.statusCode == 404) {
         print('스트레스 지수에 아무것도 없음');
         setState(() {
-          _stressLevelResponse = [];
+          _stressLevelResponse = null ;
         });
       } else {
         throw Exception('Failed to fetch 스트레스 list ${response.statusCode}');
@@ -646,13 +640,11 @@ class _HomePageState extends State<HomePage> {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    if (_stressLevelResponse.isNotEmpty)
-                                      Image.asset((_stressLevelResponse
-                                                  .last.recentStressLevel ==
+                                    if (_stressLevelResponse != null)
+                                      Image.asset((_stressLevelResponse!.recentStressLevel ==
                                               '높음'
                                           ? 'assets/imgs/home/stress_high.png'
-                                          : _stressLevelResponse
-                                                      .last.recentStressLevel ==
+                                          : _stressLevelResponse!.recentStressLevel ==
                                                   '중간'
                                               ? 'assets/imgs/home/stress_medium.png'
                                               : 'assets/imgs/home/stress_low.png')),
@@ -662,16 +654,16 @@ class _HomePageState extends State<HomePage> {
                                         children: [
                                           TextSpan(
                                             text:
-                                                _stressLevelResponse.isNotEmpty
-                                                    ? _stressLevelResponse
-                                                        .last.recentTotalScore
+                                                _stressLevelResponse != null
+                                                    ? _stressLevelResponse!
+                                                        .recentTotalScore
                                                         .toString()
                                                     : ' ',
                                             style: const TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 20),
                                           ),
-                                          if(_stressLevelResponse.isNotEmpty)
+                                          if(_stressLevelResponse != null)
                                           const TextSpan(
                                             text: '점',
                                             style: TextStyle(
@@ -681,44 +673,43 @@ class _HomePageState extends State<HomePage> {
                                           const WidgetSpan(
                                             child: SizedBox(width: 4),
                                           ),
-                                          if (_stressLevelResponse.isNotEmpty)
+                                          if (_stressLevelResponse != null && _stressLevelResponse!.scoreDifference != null )
                                             WidgetSpan(
                                               child: Icon(
-                                                _stressLevelResponse.last.scoreDifference! > 0
+                                                _stressLevelResponse!.scoreDifference! > 0
                                                     ? Icons.arrow_drop_up_sharp
-                                                    : _stressLevelResponse.last.scoreDifference! < 0
+                                                    : _stressLevelResponse!.scoreDifference! < 0
                                                         ? Icons.arrow_drop_down_sharp
-                                                        : _stressLevelResponse.last.scoreDifference == null
-                                                        ? Icons.ac_unit
                                                         : Icons.remove,
-                                                color: _stressLevelResponse.last
+                                                color: _stressLevelResponse!
                                                             .scoreDifference! > 0
                                                     ? const Color(0xFFFF6253) // 양수일 때 색상
-                                                    : _stressLevelResponse.last.scoreDifference! < 0
+                                                    : _stressLevelResponse!.scoreDifference! < 0
                                                         ? const Color(0xFF529CEF) // 음수일 때 색상
-                                                        : _stressLevelResponse.last.scoreDifference == null
+                                                        : _stressLevelResponse!.scoreDifference == null
                                                           ? Colors.transparent
                                                           : TEXT_GREY,
-                                                size: 20,
+                                                size: 25,
                                               ),
                                               alignment:
                                                   PlaceholderAlignment.middle,
                                               baseline: TextBaseline.alphabetic,
                                             ),
                                           TextSpan(
-                                            text: _stressLevelResponse.isNotEmpty
-                                                ? (_stressLevelResponse.last.scoreDifference != null
-                                                ? _stressLevelResponse.last.scoreDifference!.abs().toString()
+                                            text: _stressLevelResponse != null &&
+                                                _stressLevelResponse!.scoreDifference != null
+                                                ? (_stressLevelResponse!.scoreDifference != null
+                                                ? _stressLevelResponse!.scoreDifference!.abs().toString()
                                                 : '') // Output '' if scoreDifference is null
                                                 : '',
                                             style: TextStyle(
-                                                color: _stressLevelResponse
-                                                        .isNotEmpty
-                                                    ? (_stressLevelResponse.last.scoreDifference! > 0
+                                                color: _stressLevelResponse != null &&
+                                                    _stressLevelResponse!.scoreDifference != null
+                                                    ? (_stressLevelResponse!.scoreDifference! > 0
                                                         ? const Color(0xFFFF6253) // 0보다 클 때 색상
-                                                        : _stressLevelResponse.last.scoreDifference! < 0
+                                                        : _stressLevelResponse!.scoreDifference! < 0
                                                             ? const Color(0xFF529CEF) // 0보다 작을 때 색상
-                                                              : _stressLevelResponse.last.scoreDifference == null
+                                                              : _stressLevelResponse!.scoreDifference == null
                                                               ? Colors.transparent
                                                                 : TEXT_GREY) // 0일 때 색상
                                                     : Colors.black,

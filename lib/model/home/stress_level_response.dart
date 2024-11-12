@@ -12,9 +12,9 @@ class StressLevelResponse {
   // JSON을 객체로 변환하는 팩토리 생성자
   factory StressLevelResponse.fromJson(Map<String, dynamic> json) {
     return StressLevelResponse(
-      recentTotalScore: json['recentTotalScore'],
-      recentStressLevel: json['recentStressLevel'],
-      scoreDifference: json['scoreDifference'],
+      recentTotalScore: json['recentTotalScore'] as int,
+      recentStressLevel: json['recentStressLevel']as String,
+      scoreDifference: json['scoreDifference'] as int?,
     );
   }
 }
