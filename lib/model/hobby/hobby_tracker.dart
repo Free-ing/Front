@@ -1,17 +1,20 @@
 class HobbyTracker {
-  final String hobbyName;
+  final String routineName;
+  final String imageUrl;
   final List<Record> records;
 
   HobbyTracker({
-    required this.hobbyName,
+    required this.routineName,
+    required this.imageUrl,
     required this.records,
   });
 
   factory HobbyTracker.fromJson(Map<String, dynamic> json) {
     return HobbyTracker(
-      hobbyName: json['hobbyName'],
+      routineName: json['hobbyName'],
+      imageUrl: json['imageUrl'] ?? '',
       records:
-          (json['record'] as List?)?.map((e) => Record.fromJson(e)).toList() ??
+          (json['records'] as List?)?.map((e) => Record.fromJson(e)).toList() ??
               [],
     );
   }

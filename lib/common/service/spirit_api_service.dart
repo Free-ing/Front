@@ -96,7 +96,9 @@ class SpiritAPIService {
   ) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse('$_baseUrl/spirit-service/$routineId');
+    final formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    final url = Uri.parse('$_baseUrl/spirit-service/$routineId?today=$formattedDate');
 
     print(status);
 

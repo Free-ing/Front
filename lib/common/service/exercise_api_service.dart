@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 
 class ExerciseAPIService {
   final String _baseUrl = BaseUrl.baseUrl;
-  //final String _baseUrl = 'http://192.168.0.22:1234';
 
   //Todo: 운동 루틴 추가
   Future<http.Response> postExerciseRoutine(
@@ -87,7 +86,8 @@ class ExerciseAPIService {
   ) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse('$_baseUrl/exercise-service/$routineId');
+    final formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final url = Uri.parse('$_baseUrl/exercise-service/$routineId?today=$formattedDate');
 
     print(status);
 
@@ -100,17 +100,26 @@ class ExerciseAPIService {
       body: json.encode(
         {
           'routineName': routineName,
-          'imageUrl': imageUrl,
-          'monday': monday,
-          'tuesday': tuesday,
-          'wednesday': wednesday,
-          'thursday': thursday,
-          'friday': friday,
-          'saturday': saturday,
+          'explanation': explanation,
           'sunday': sunday,
+          'saturday': saturday,
+
+          'friday': friday,
+          'thursday': thursday,
+
+          'wednesday': wednesday,
+          'tuesday': tuesday,
+
+          'monday': monday,
+          'imageUrl': imageUrl,
+
+
+
+
+
           'startTime': startTime,
           'endTime': endTime,
-          'explanation': explanation,
+
           'status': status,
         },
       ),
@@ -138,11 +147,7 @@ class ExerciseAPIService {
 
   //Todo: 운동 채우기 루틴 켜기
   Future<int> onExerciseRoutine(int routineId) async {
-    DateTime? date = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
+    DateTime? date = DateTime.now();
     final String formattedDate = DateFormat('yyyy-MM-dd').format(date);
     print(formattedDate);
     final tokenStorage = TokenManager();

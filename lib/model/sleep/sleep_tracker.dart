@@ -1,22 +1,22 @@
 class RoutineRecord {
   final int routineId;
   final String routineName;
-  final List<String> completeDay;
-  final String url;
+  final List<String> records;
+  final String imageUrl;
 
   RoutineRecord({
     required this.routineId,
     required this.routineName,
-    required this.completeDay,
-    required this.url,
+    required this.records,
+    required this.imageUrl,
   });
 
   factory RoutineRecord.fromJson(Map<String, dynamic> json) {
     return RoutineRecord(
       routineId: json['routineId'],
       routineName: json['routineName'],
-      completeDay: List<String>.from(json['completeDay']),
-      url: json['url'],
+      records: List<String>.from(json['completeDay'] ?? []),
+      imageUrl: json['url'],
     );
   }
 }

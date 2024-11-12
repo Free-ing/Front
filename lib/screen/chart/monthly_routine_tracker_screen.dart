@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/circle_widget.dart';
+import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
 import 'package:freeing/common/component/show_chart_date.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/tracker_api_service.dart';
@@ -10,6 +11,7 @@ import 'package:freeing/model/exercise/exercise_tracker.dart';
 import 'package:freeing/model/hobby/hobby_tracker.dart';
 import 'package:freeing/model/sleep/sleep_tracker.dart';
 import 'package:freeing/model/spirit/spirit_tracker.dart';
+import 'package:intl/intl.dart';
 
 class MonthlyRoutineTrackerScreen extends StatefulWidget {
   const MonthlyRoutineTrackerScreen({super.key});
@@ -21,16 +23,25 @@ class MonthlyRoutineTrackerScreen extends StatefulWidget {
 
 class _MonthlyRoutineTrackerScreenState
     extends State<MonthlyRoutineTrackerScreen> {
+  bool _isLoading = true;
+
   DateTime selectedDate = DateTime.now();
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
 
   final apiService = TrackerApiService();
 
-  List<ExerciseTracker>? exerciseTracker;
-  SleepTracker? sleepTracker;
-  List<SpiritTracker>? spiritTracker;
-  List<HobbyTracker>? hobbyTracker;
+  List<ExerciseTracker> exerciseTracker = [];
+  List<RoutineRecord> sleepTracker = [];
+  List<SpiritTracker> spiritTracker = [];
+  List<HobbyTracker> hobbyTracker = [];
+
+  List<String> exerciseDates = [];
+  List<String> sleepDates = [];
+  List<String> spiritDates = [];
+  List<String> hobbyDates = [];
+
+  List<dynamic> routineDates = [];
 
   int getFirstDayOfMonth() =>
       DateTime(selectedDate.year, selectedDate.month, 1).weekday;
@@ -43,27 +54,89 @@ class _MonthlyRoutineTrackerScreenState
     startDate = getMonthStartDate(selectedDate);
     endDate = getMonthEndDate(selectedDate);
     //Todo: 서버 요청 보내서 저장하기
-    /// 운동
-    _fetchExerciseTracker(selectedDate).then((data) {
-      exerciseTracker = data;
-    });
+    _initializeTracker();
+  }
 
-    /// 수면
-    _fetchSleepTracker(startDate, endDate).then((data) {
-      sleepTracker = data;
-    });
+  //Todo: 초기화
+  Future<void> _initializeTracker() async {
+    try {
+      await _getExerciseTracker(selectedDate);
+      await _getSleepTracker(selectedDate);
+      await _getSpiritTracker(selectedDate);
+      await _getHobbyTracker(selectedDate);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
-    /// 마음 채우기
-    _fetchSpiritTracker(selectedDate).then((data) {
-      spiritTracker = data;
-    });
+  //Todo: 운동 트래커 조회 하고 수행 날짜 리스트 만들기
+  Future<void> _getExerciseTracker(selectedDate) async {
+    try {
+      await _fetchExerciseTracker(selectedDate).then((data) {
+        setState(() {
+          exerciseTracker = data;
+          exerciseDates = _getUniqueRoutineDates(exerciseTracker);
+        });
+        print(exerciseTracker);
+      });
 
-    /// 취미
-    _fetchHobbyTracker(selectedDate).then((data) {
-      hobbyTracker = data;
-    });
+     // _spiritList.sort((a, b) => a.routineId.compareTo(b.routineId));
+    } catch (e) {
+      print('Error Fetching Exercise Data: $e');
+    }
+  }
 
-    setState(() {});
+  //Todo: 수면 루틴 트래커 조회 하고 수행 날짜 리스트 만들기
+  Future<void> _getSleepTracker(selectedDate) async {
+    try {
+      await _fetchSleepTracker(startDate, endDate).then((data) {
+        setState(() {
+          sleepTracker = data.routineRecords;
+          sleepTracker.add(RoutineRecord(
+            routineId: -1,
+            routineName: '수면 기록하기',
+            records: data.timeRecords,
+            imageUrl:
+                'https://freeingimage.s3.ap-northeast-2.amazonaws.com/sleep_report.png',
+          ));
+          sleepDates = _getUniqueRoutineDates(sleepTracker);
+          sleepTracker.sort((a,b) => a.routineId.compareTo(b.routineId));
+          print('!!!!!!!!!!!!!!!!!!!!!$sleepDates!!!!!!!!!!!!!!!!!!!');
+        });
+      });
+    } catch (e) {
+      print('Error Fetching Sleep Data: $e');
+    }
+  }
+
+  //Todo: 마음 채우기 트래커 조회 하고 수행 날짜 리스트 만들기
+  Future<void> _getSpiritTracker(selectedDate) async {
+    try {
+      await _fetchSpiritTracker(selectedDate).then((data) {
+        setState(() {
+          spiritTracker = data;
+          spiritDates = _getUniqueRoutineDates(spiritTracker);
+        });
+      });
+    } catch (e) {
+      print('Error Fetching Spirit Data: $e');
+    }
+  }
+
+  //Todo: 취미 트래커 조회 하고 수행 날짜 리스트 만들기
+  Future<void> _getHobbyTracker(selectedDate) async {
+    try {
+      await _fetchHobbyTracker(selectedDate).then((data) {
+        setState(() {
+          hobbyTracker = data;
+          hobbyDates = _getUniqueRoutineDates(hobbyTracker);
+        });
+      });
+    } catch (e) {
+      print('Error Fetching Hobby Data: $e');
+    }
   }
 
   //Todo: 서버 요청 (운동 트래커 조회)
@@ -93,22 +166,22 @@ class _MonthlyRoutineTrackerScreenState
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
-      print('이거는 수면 트래커@.@.@.@ ${jsonData['result']}');
+      print('이거는 수면 트래커@.@.@.@ ${jsonData}');
 
-      if (jsonData != null && jsonData['result'] != null) {
+      if (jsonData != null && jsonData != null) {
         // return (jsonData['result'] as List)
         //     .map((item) => SleepTracker.fromJson(item))
         //     .toList();
-        return SleepTracker.fromJson(jsonData['result']);
-      } else if (jsonData == null || jsonData['result'] == null) {
-        print('이거는 수면 트래커@.@.@.@ ${jsonData['result']} 없지롱!');
+        return SleepTracker.fromJson(jsonData);
+      } else if (jsonData == null || jsonData == null) {
+        print('이거는 수면 트래커@.@.@.@ ${jsonData} 없지롱!');
         return SleepTracker(routineRecords: [], timeRecords: []);
       } else {
         print('Error: Response data is null or does not contain expected key.');
         throw Exception('Invalid data structure from server');
       }
     } else if (response.statusCode == 204) {
-      print ('없어!! 수면에 대한 기록이');
+      print('없어!! 수면에 대한 기록이');
       return SleepTracker(routineRecords: [], timeRecords: []);
     } else {
       throw Exception('수면 루틴 트래커 조회 실패 ${response.statusCode}');
@@ -158,7 +231,22 @@ class _MonthlyRoutineTrackerScreenState
   }
 
   //Todo: 날짜 추출
+  List<String> _getUniqueRoutineDates(List<dynamic> trackers) {
+    Set<String> uniqueDates = {};
 
+    for (var tracker in trackers) {
+      for (var record in tracker.records) {
+
+        if (record.runtimeType == String) {
+          uniqueDates.add(record);
+        } else {
+          uniqueDates.add(record.routineDate);
+        }
+      }
+    }
+    print('확인~~~~~~~~~~~~~~~~! $uniqueDates');
+    return uniqueDates.toList();
+  }
 
   //Todo: 월 시작 날짜 구하기
   DateTime getMonthStartDate(DateTime selectedDate) {
@@ -168,7 +256,7 @@ class _MonthlyRoutineTrackerScreenState
   //Todo: 월 마지막 날짜 구하기
   DateTime getMonthEndDate(DateTime selectedDate) {
     return DateTime(selectedDate.year, selectedDate.month + 1, 1)
-        .subtract(Duration(days: 1));
+        .subtract(const Duration(days: 1));
   }
 
   //Todo: 날짜 update
@@ -177,24 +265,14 @@ class _MonthlyRoutineTrackerScreenState
       selectedDate = date;
       startDate = getMonthStartDate(selectedDate);
       endDate = getMonthEndDate(selectedDate);
+      _isLoading = true;
     });
 
     print('바뀐 startDate!!!: $startDate');
     print('바뀐 endDate!!!: $endDate');
 
     //Todo: 날짜 변경될 때마다 서버 요청 보내기
-    final exercise = await _fetchExerciseTracker(selectedDate);
-    final sleep = await _fetchSleepTracker(startDate, endDate);
-    final spirit = await _fetchSpiritTracker(selectedDate);
-    final hobby = await _fetchHobbyTracker(selectedDate);
-
-    setState(() {
-      //Todo: 받아온 정보 저장하기
-      exerciseTracker = exercise;
-      sleepTracker = sleep;
-      spiritTracker = spirit;
-      hobbyTracker = hobby;
-    });
+    _initializeTracker();
   }
 
   @override
@@ -207,6 +285,9 @@ class _MonthlyRoutineTrackerScreenState
     int daysInMonth = getDaysInMonth();
     int rows = ((daysInMonth + firstDayOfMonth - 1) / 7).ceil();
 
+    if (_isLoading) {
+      return const CustomCircularProgressIndicator();
+    }
     return ChartLayout(
       title: '루틴 트래커',
       chartWidget: Column(
@@ -243,7 +324,8 @@ class _MonthlyRoutineTrackerScreenState
                       firstDayOfMonth: firstDayOfMonth,
                       rows: rows,
                       category: '운동',
-                      color: EXERCISE_COLOR),
+                      color: EXERCISE_COLOR,
+                      routineList: exerciseTracker),
                   SizedBox(height: screenHeight * 0.02),
                   _trackerOfCategory(
                     textTheme: textTheme,
@@ -254,6 +336,7 @@ class _MonthlyRoutineTrackerScreenState
                     rows: rows,
                     category: '수면',
                     color: SLEEP_COLOR,
+                    routineList: sleepTracker,
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   _trackerOfCategory(
@@ -265,6 +348,7 @@ class _MonthlyRoutineTrackerScreenState
                     rows: rows,
                     category: '마음 채우기',
                     color: SPIRIT_COLOR,
+                    routineList: spiritTracker,
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   _trackerOfCategory(
@@ -276,6 +360,7 @@ class _MonthlyRoutineTrackerScreenState
                     rows: rows,
                     category: '취미',
                     color: HOBBY_COLOR,
+                    routineList: hobbyTracker,
                   ),
                   SizedBox(height: screenHeight * 0.1),
                 ],
@@ -324,40 +409,13 @@ class _MonthlyRoutineTrackerScreenState
               screenWidth: screenWidth,
               screenHeight: screenHeight,
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: screenHeight * 0.04),
-              child: GridView.builder(
-                key: ValueKey(selectedDate),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  crossAxisSpacing: screenWidth * 0.032,
-                  mainAxisSpacing: screenHeight * 0.012,
-                ),
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: 42,
-                itemBuilder: (context, index) {
-                  int dayNumber = index - firstDayOfMonth + 2;
-
-                  if (dayNumber < 1 || dayNumber > daysInMonth) {
-                    return const SizedBox.shrink();
-                  }
-                  int day = index - firstDayOfMonth + 2;
-                  DateTime currentDate =
-                      DateTime(selectedDate.year, selectedDate.month, day);
-                  //print(currentDate);
-                  return CustomPaint(
-                    size: Size(screenWidth * 0.08, screenWidth * 0.08),
-                    painter: ColorfulCirclePainter(
-                        date: currentDate,
-                        isSelected: false,
-                        isAfterToday: false,
-                        exerciseDates: [],
-                        sleepDates: [],
-                        spiritDates: [],
-                        hobbyDates: []),
-                  );
-                },
-              ),
+            _buildRoutineColorCircle(
+              textTheme: textTheme,
+              screenWidth: screenWidth,
+              screenHeight: screenHeight,
+              daysInMonth: daysInMonth,
+              firstDayOfMonth: firstDayOfMonth,
+              rows: rows,
             ),
 
             /// 전체 루틴 달력 - Percentage
@@ -365,10 +423,7 @@ class _MonthlyRoutineTrackerScreenState
               textTheme: textTheme,
               screenWidth: screenWidth,
               screenHeight: screenHeight,
-              exercisePercentage: 48,
-              sleepPercentage: 85,
-              spiritPercentage: 62,
-              hobbyPercentage: 57,
+              daysInMonth: daysInMonth,
             )
           ],
         ),
@@ -401,15 +456,56 @@ class _MonthlyRoutineTrackerScreenState
     );
   }
 
+  //Todo: 전체 루틴 달력 - 달력 부분
+  Widget _buildRoutineColorCircle({
+    required TextTheme textTheme,
+    required double screenWidth,
+    required double screenHeight,
+    required int daysInMonth,
+    required int firstDayOfMonth,
+    required int rows,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.04),
+      child: GridView.builder(
+        key: ValueKey(selectedDate),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 7,
+          crossAxisSpacing: screenWidth * 0.032,
+          mainAxisSpacing: screenHeight * 0.012,
+        ),
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 42,
+        itemBuilder: (context, index) {
+          int dayNumber = index - firstDayOfMonth + 2;
+          DateTime currentDate =
+              DateTime(selectedDate.year, selectedDate.month, dayNumber);
+          if (dayNumber < 1 || dayNumber > daysInMonth) {
+            return const SizedBox.shrink();
+          }
+
+          return CustomPaint(
+            size: Size(screenWidth * 0.08, screenWidth * 0.08),
+            painter: ColorfulCirclePainter(
+                date: currentDate,
+                isSelected: false,
+                isAfterToday: false,
+                exerciseDates: exerciseDates,
+                sleepDates: sleepDates,
+                spiritDates: spiritDates,
+                hobbyDates: hobbyDates),
+          );
+        },
+      ),
+    );
+  }
+
   //Todo: 전체 루틴 달력 - Percentage
   Widget _buildAllRoutinePercentage({
     required TextTheme textTheme,
     required double screenWidth,
     required double screenHeight,
-    required int exercisePercentage,
-    required int sleepPercentage,
-    required int spiritPercentage,
-    required int hobbyPercentage,
+    required int daysInMonth,
   }) {
     return Positioned(
       bottom: 0,
@@ -423,28 +519,32 @@ class _MonthlyRoutineTrackerScreenState
             screenHeight: screenHeight,
             textTheme: textTheme,
             color: EXERCISE_COLOR,
-            percent: exercisePercentage,
+            daysInMonth: daysInMonth,
+            length: exerciseDates.length,
           ),
           _buildPercentageOfRoutine(
             screenWidth: screenWidth,
             screenHeight: screenHeight,
             textTheme: textTheme,
             color: SLEEP_COLOR,
-            percent: sleepPercentage,
+            daysInMonth: daysInMonth,
+            length: sleepDates.length,
           ),
           _buildPercentageOfRoutine(
             screenWidth: screenWidth,
             screenHeight: screenHeight,
             textTheme: textTheme,
             color: SPIRIT_COLOR,
-            percent: spiritPercentage,
+            daysInMonth: daysInMonth,
+            length: spiritDates.length,
           ),
           _buildPercentageOfRoutine(
             screenWidth: screenWidth,
             screenHeight: screenHeight,
             textTheme: textTheme,
             color: HOBBY_COLOR,
-            percent: hobbyPercentage,
+            daysInMonth: daysInMonth,
+            length: hobbyDates.length,
           ),
         ],
       ),
@@ -457,8 +557,10 @@ class _MonthlyRoutineTrackerScreenState
     required double screenHeight,
     required TextTheme textTheme,
     required Color color,
-    required int percent,
+    required int daysInMonth,
+    required int length,
   }) {
+    int percent = (length / daysInMonth * 100).ceil();
     return Row(
       children: [
         Container(
@@ -470,7 +572,7 @@ class _MonthlyRoutineTrackerScreenState
             border: Border.all(width: 1),
           ),
         ),
-        SizedBox(width: screenWidth * 0.03),
+        SizedBox(width: screenWidth * 0.02),
         Text('$percent %'),
       ],
     );
@@ -486,33 +588,39 @@ class _MonthlyRoutineTrackerScreenState
     required int rows,
     required String category,
     required Color color,
+    required List<dynamic> routineList,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-          child: Text(
-            category,
-            style: textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
+    return Visibility(
+      visible: routineList.isEmpty ? false : true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+            child: Text(
+              category,
+              style: textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
-        SizedBox(height: screenHeight * 0.01),
-        _buildTrackerListView(
-          textTheme: textTheme,
-          screenWidth: screenWidth,
-          screenHeight: screenHeight,
-          daysInMonth: daysInMonth,
-          firstDayOfMonth: firstDayOfMonth,
-          rows: rows,
-          color: color,
-        )
-      ],
+          SizedBox(height: screenHeight * 0.01),
+          _buildTrackerListView(
+            textTheme: textTheme,
+            screenWidth: screenWidth,
+            screenHeight: screenHeight,
+            daysInMonth: daysInMonth,
+            firstDayOfMonth: firstDayOfMonth,
+            rows: rows,
+            color: color,
+            routineList: routineList,
+          )
+        ],
+      ),
     );
   }
 
+  //Todo: 트래커 보여줘
   Widget _buildTrackerListView({
     required TextTheme textTheme,
     required double screenWidth,
@@ -521,6 +629,7 @@ class _MonthlyRoutineTrackerScreenState
     required int firstDayOfMonth,
     required int rows,
     required Color color,
+    required List<dynamic> routineList,
   }) {
     return SizedBox(
       height: (rows > 5)
@@ -530,8 +639,16 @@ class _MonthlyRoutineTrackerScreenState
               : screenHeight * 0.193,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: 3,
+        itemCount: routineList.length,
         itemBuilder: (context, index) {
+          final routine = routineList[index];
+
+          if (routine.runtimeType == RoutineRecord) {
+            routineDates = routine.records;
+          } else {
+            routineDates =
+                routine.records.map((record) => record.routineDate).toList();
+          }
           return Card(
             margin: EdgeInsets.all(6),
             elevation: 6,
@@ -566,20 +683,23 @@ class _MonthlyRoutineTrackerScreenState
                                 color: Colors.white,
                               ),
                             ),
-                            Image.network(
-                              'https://freeingimage.s3.ap-northeast-2.amazonaws.com/static_stretching.png',
-                              width: screenWidth * 0.1,
-                              fit: BoxFit.contain,
-                            ),
+                            routine.imageUrl != ''
+                                ? Image.network(
+                                    routine.imageUrl,
+                                    width: screenWidth * 0.1,
+                                    fit: BoxFit.contain,
+                                  )
+                                : Container(),
                           ],
                         ),
-                        SizedBox(width: screenWidth * 0.01),
+                        SizedBox(width: screenWidth * 0.02),
                         SizedBox(
                           width: screenWidth * 0.26,
                           height: screenWidth * 0.1,
-                          child: Center(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
                             child: Text(
-                              '10분 스트레칭 정적 스트레칭',
+                              routine.routineName,
                               maxLines: 2,
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
@@ -612,13 +732,23 @@ class _MonthlyRoutineTrackerScreenState
                           if (dayNumber < 1 || dayNumber > daysInMonth) {
                             return const SizedBox.shrink();
                           }
+                          // 현재 dayNumber를 DateTime으로 변환해 기록된 날짜들과 비교
+                          final currentDate = DateTime(
+                              selectedDate.year, selectedDate.month, dayNumber);
+                          final formattedDate =
+                              "${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}-${dayNumber.toString().padLeft(2, '0')}";
+                          // formattedDate가 routineDates에 포함되면 색깔 표시
+                          final containerColor =
+                              routineDates.contains(formattedDate)
+                                  ? color
+                                  : Colors.white;
 
                           return Container(
                             margin: EdgeInsets.zero,
                             width: 17,
                             height: 17,
                             decoration: BoxDecoration(
-                              color: color,
+                              color: containerColor,
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(width: 1),
                             ),

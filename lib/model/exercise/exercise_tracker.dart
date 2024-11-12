@@ -1,17 +1,20 @@
 class ExerciseTracker {
-  final String exerciseName;
+  final String routineName;
+  final String imageUrl;
   final List<Record> records;
 
   ExerciseTracker({
-    required this.exerciseName,
+    required this.routineName,
+    required this.imageUrl,
     required this.records,
   });
 
   factory ExerciseTracker.fromJson(Map<String, dynamic> json) {
     return ExerciseTracker(
-      exerciseName: json['exerciseName'],
+      routineName: json['exerciseName'],
+      imageUrl: json['imageUrl'] ?? '',
       records:
-          (json['record'] as List?)?.map((e) => Record.fromJson(e)).toList() ??
+          (json['records'] as List?)?.map((e) => Record.fromJson(e)).toList() ??
               [],
     );
   }

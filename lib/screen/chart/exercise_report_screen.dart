@@ -9,6 +9,7 @@ import 'package:freeing/common/service/exercise_api_service.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/model/exercise/exercise_report.dart';
+import 'package:freeing/screen/chart/select_exercise_report_screen.dart';
 import 'package:freeing/screen/setting/setting_page.dart';
 
 class ExerciseReportScreen extends StatefulWidget {
@@ -178,7 +179,9 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                               ],
                             ),
                             SizedBox(height: screenHeight * 0.028),
-                            Text(exerciseReport!.feedBack, style: textTheme.bodyMedium?.copyWith(height:1.6))
+                            Text(exerciseReport!.feedBack,
+                                style:
+                                    textTheme.bodyMedium?.copyWith(height: 1.6))
                           ],
                         );
                       },
@@ -186,7 +189,17 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                   ),
 
                   SizedBox(height: screenHeight * 0.028),
-                  GreenButton(width: screenWidth * 0.6, onPressed: () {Navigator.pop(context);}),
+                  GreenButton(
+                    width: screenWidth * 0.6,
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                SelectExerciseReportScreen()),
+                      );
+                    },
+                  ),
                   SizedBox(height: screenHeight * 0.028),
                 ],
               ),
@@ -332,8 +345,11 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                             ),
 
                             /// 막대 그래프 표시
-                            barGroups: exerciseTimes.entries.map<BarChartGroupData>((entry) {
-                              int index =  exerciseTimes.keys.toList().indexOf(entry.key);
+                            barGroups: exerciseTimes.entries
+                                .map<BarChartGroupData>((entry) {
+                              int index = exerciseTimes.keys
+                                  .toList()
+                                  .indexOf(entry.key);
                               int minutes = entry.value;
 
                               return BarChartGroupData(
@@ -364,9 +380,11 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
 
                       /// 시간 나타내는 Text
                       ...exerciseTimes.entries
-                          .where((MapEntry<String, int> entry) => entry.value > 0)// 시간이 0인 경우 텍스트 X
+                          .where((MapEntry<String, int> entry) =>
+                              entry.value > 0) // 시간이 0인 경우 텍스트 X
                           .map((entry) {
-                        int index = exerciseTimes.keys.toList().indexOf(entry.key);
+                        int index =
+                            exerciseTimes.keys.toList().indexOf(entry.key);
                         int minutes = entry.value;
                         double posX = index *
                             (screenWidth * 0.112); // 각 막대 위치에 맞춘 x 좌표 계산
