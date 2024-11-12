@@ -417,10 +417,7 @@ class _MonthlyRoutineTrackerScreenState
               textTheme: textTheme,
               screenWidth: screenWidth,
               screenHeight: screenHeight,
-              exercisePercentage: 48,
-              sleepPercentage: 85,
-              spiritPercentage: 62,
-              hobbyPercentage: 57,
+              daysInMonth: daysInMonth,
             )
           ],
         ),
@@ -502,10 +499,7 @@ class _MonthlyRoutineTrackerScreenState
     required TextTheme textTheme,
     required double screenWidth,
     required double screenHeight,
-    required int exercisePercentage,
-    required int sleepPercentage,
-    required int spiritPercentage,
-    required int hobbyPercentage,
+    required int daysInMonth,
   }) {
     return Positioned(
       bottom: 0,
@@ -519,28 +513,32 @@ class _MonthlyRoutineTrackerScreenState
             screenHeight: screenHeight,
             textTheme: textTheme,
             color: EXERCISE_COLOR,
-            percent: exercisePercentage,
+            daysInMonth: daysInMonth,
+            length: exerciseDates.length,
           ),
           _buildPercentageOfRoutine(
             screenWidth: screenWidth,
             screenHeight: screenHeight,
             textTheme: textTheme,
             color: SLEEP_COLOR,
-            percent: sleepPercentage,
+            daysInMonth: daysInMonth,
+            length: sleepTracker.timeRecords.length,
           ),
           _buildPercentageOfRoutine(
             screenWidth: screenWidth,
             screenHeight: screenHeight,
             textTheme: textTheme,
             color: SPIRIT_COLOR,
-            percent: spiritPercentage,
+            daysInMonth: daysInMonth,
+            length: spiritDates.length,
           ),
           _buildPercentageOfRoutine(
             screenWidth: screenWidth,
             screenHeight: screenHeight,
             textTheme: textTheme,
             color: HOBBY_COLOR,
-            percent: hobbyPercentage,
+            daysInMonth: daysInMonth,
+            length: hobbyDates.length,
           ),
         ],
       ),
@@ -553,8 +551,10 @@ class _MonthlyRoutineTrackerScreenState
     required double screenHeight,
     required TextTheme textTheme,
     required Color color,
-    required int percent,
+    required int daysInMonth,
+    required int length,
   }) {
+    int percent = (length / daysInMonth * 100 ).ceil();
     return Row(
       children: [
         Container(
@@ -636,6 +636,9 @@ class _MonthlyRoutineTrackerScreenState
         itemCount: routineList.length,
         itemBuilder: (context, index) {
           final routine = routineList[index];
+          final routineDates =
+              routine.records.map((record) => record.routineDate).toList();
+
           return Card(
             margin: EdgeInsets.all(6),
             elevation: 6,
@@ -724,14 +727,9 @@ class _MonthlyRoutineTrackerScreenState
                               selectedDate.year, selectedDate.month, dayNumber);
                           final formattedDate =
                               "${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}-${dayNumber.toString().padLeft(2, '0')}";
-                          // 모든 records의 routineDate를 리스트로 생성
-                          final allRoutineDates = routineList
-                              .expand((tracker) => tracker.records)
-                              .map((record) => record.routineDate)
-                              .toList();
-                          // formattedDate가 allRoutineDates에 포함되면 색깔 표시
+                          // formattedDate가 routineDates에 포함되면 색깔 표시
                           final containerColor =
-                              allRoutineDates.contains(formattedDate)
+                              routineDates.contains(formattedDate)
                                   ? color
                                   : Colors.white;
 
