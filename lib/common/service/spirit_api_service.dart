@@ -6,7 +6,8 @@ import 'token_manager.dart';
 import 'base_url.dart';
 
 class SpiritAPIService {
-  final String _baseUrl = BaseUrl.baseUrl;
+  //final String _baseUrl = BaseUrl.baseUrl;
+  final String _baseUrl = 'http://172.25.11.156:9965';
 
   //Todo: 마음 채우기 루틴 추가
   Future<http.Response> postSpiritRoutine(
@@ -96,7 +97,9 @@ class SpiritAPIService {
   ) async {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
-    final url = Uri.parse('$_baseUrl/spirit-service/$routineId');
+    final formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    final url = Uri.parse('$_baseUrl/spirit-service/$routineId?today=$formattedDate');
 
     print(status);
 

@@ -11,7 +11,7 @@ class HobbyTracker {
     return HobbyTracker(
       hobbyName: json['hobbyName'],
       records:
-          (json['record'] as List?)?.map((e) => Record.fromJson(e)).toList() ??
+          (json['records'] as List?)?.map((e) => Record.fromJson(e)).toList() ??
               [],
     );
   }

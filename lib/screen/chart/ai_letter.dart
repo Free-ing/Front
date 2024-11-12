@@ -150,7 +150,12 @@ class _AiLetterState extends State<AiLetter> {
         ),
         child: IconButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                  builder: (context) => widget.from == 'scrap'
+                      ? const MoodScrap()
+                      : const MoodCalendar()),
+            );
           },
           icon: Icon(Icons.arrow_back_ios_new_rounded),
           iconSize: 30,

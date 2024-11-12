@@ -11,7 +11,7 @@ class ExerciseTracker {
     return ExerciseTracker(
       exerciseName: json['exerciseName'],
       records:
-          (json['record'] as List?)?.map((e) => Record.fromJson(e)).toList() ??
+          (json['records'] as List?)?.map((e) => Record.fromJson(e)).toList() ??
               [],
     );
   }

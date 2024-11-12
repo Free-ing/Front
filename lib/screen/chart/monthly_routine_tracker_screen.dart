@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/circle_widget.dart';
+import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
 import 'package:freeing/common/component/show_chart_date.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/tracker_api_service.dart';
@@ -21,16 +22,22 @@ class MonthlyRoutineTrackerScreen extends StatefulWidget {
 
 class _MonthlyRoutineTrackerScreenState
     extends State<MonthlyRoutineTrackerScreen> {
+  bool _isLoading = true;
+
   DateTime selectedDate = DateTime.now();
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
 
   final apiService = TrackerApiService();
 
-  List<ExerciseTracker>? exerciseTracker;
-  SleepTracker? sleepTracker;
-  List<SpiritTracker>? spiritTracker;
-  List<HobbyTracker>? hobbyTracker;
+  List<ExerciseTracker> exerciseTracker = [];
+  SleepTracker sleepTracker = SleepTracker(routineRecords: [], timeRecords: []);
+  List<SpiritTracker> spiritTracker = [];
+  List<HobbyTracker> hobbyTracker = [];
+
+  List<String> exerciseDates = [];
+  List<String> spiritDates = [];
+  List<String> hobbyDates = [];
 
   int getFirstDayOfMonth() =>
       DateTime(selectedDate.year, selectedDate.month, 1).weekday;
@@ -43,27 +50,67 @@ class _MonthlyRoutineTrackerScreenState
     startDate = getMonthStartDate(selectedDate);
     endDate = getMonthEndDate(selectedDate);
     //Todo: 서버 요청 보내서 저장하기
-    /// 운동
-    _fetchExerciseTracker(selectedDate).then((data) {
-      exerciseTracker = data;
-    });
+    _initializeTracker();
+  }
 
-    /// 수면
-    _fetchSleepTracker(startDate, endDate).then((data) {
-      sleepTracker = data;
-    });
+  //Todo: 초기화
+  Future<void> _initializeTracker() async {
+    try {
+      await _getExerciseTracker(selectedDate);
+      _fetchSleepTracker(startDate, endDate).then((data) {
+        setState(() {
+          sleepTracker = data;
+        });
+      });
+      await _getSpiritTracker(selectedDate);
+      await _getHobbyTracker(selectedDate);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
-    /// 마음 채우기
-    _fetchSpiritTracker(selectedDate).then((data) {
-      spiritTracker = data;
-    });
+  //Todo: 운동 트래커 조회 하고 수행 날짜 리스트 만들기
+  Future<void> _getExerciseTracker(selectedDate) async {
+    try {
+      await _fetchExerciseTracker(selectedDate).then((data) {
+        setState(() {
+          exerciseTracker = data;
+          exerciseDates = _getUniqueRoutineDates(exerciseTracker);
+        });
+      });
+    } catch (e) {
+      print('Error Fetching Exercise Data: $e');
+    }
+  }
 
-    /// 취미
-    _fetchHobbyTracker(selectedDate).then((data) {
-      hobbyTracker = data;
-    });
+  //Todo: 마음 채우기 트래커 조회 하고 수행 날짜 리스트 만들기
+  Future<void> _getSpiritTracker(selectedDate) async {
+    try {
+      await _fetchSpiritTracker(selectedDate).then((data) {
+        setState(() {
+          spiritTracker = data;
+          spiritDates = _getUniqueRoutineDates(spiritTracker);
+        });
+      });
+    } catch (e) {
+      print('Error Fetching Exercise Data: $e');
+    }
+  }
 
-    setState(() {});
+  //Todo: 취미 트래커 조회 하고 수행 날짜 리스트 만들기
+  Future<void> _getHobbyTracker(selectedDate) async {
+    try {
+      await _fetchHobbyTracker(selectedDate).then((data) {
+        setState(() {
+          hobbyTracker = data;
+          hobbyDates = _getUniqueRoutineDates(hobbyTracker);
+        });
+      });
+    } catch (e) {
+      print('Error Fetching Exercise Data: $e');
+    }
   }
 
   //Todo: 서버 요청 (운동 트래커 조회)
@@ -108,7 +155,7 @@ class _MonthlyRoutineTrackerScreenState
         throw Exception('Invalid data structure from server');
       }
     } else if (response.statusCode == 204) {
-      print ('없어!! 수면에 대한 기록이');
+      print('없어!! 수면에 대한 기록이');
       return SleepTracker(routineRecords: [], timeRecords: []);
     } else {
       throw Exception('수면 루틴 트래커 조회 실패 ${response.statusCode}');
@@ -158,7 +205,17 @@ class _MonthlyRoutineTrackerScreenState
   }
 
   //Todo: 날짜 추출
+  List<String> _getUniqueRoutineDates(List<dynamic> trackers) {
+    Set<String> uniqueDates = {};
 
+    for (var tracker in trackers) {
+      for (var record in tracker.records) {
+        uniqueDates.add(record.routineDate);
+      }
+    }
+    print('확인~~~~~~~~~~~~~~~~! $uniqueDates');
+    return uniqueDates.toList();
+  }
 
   //Todo: 월 시작 날짜 구하기
   DateTime getMonthStartDate(DateTime selectedDate) {
@@ -177,24 +234,37 @@ class _MonthlyRoutineTrackerScreenState
       selectedDate = date;
       startDate = getMonthStartDate(selectedDate);
       endDate = getMonthEndDate(selectedDate);
+      _isLoading = true;
     });
 
     print('바뀐 startDate!!!: $startDate');
     print('바뀐 endDate!!!: $endDate');
 
     //Todo: 날짜 변경될 때마다 서버 요청 보내기
-    final exercise = await _fetchExerciseTracker(selectedDate);
-    final sleep = await _fetchSleepTracker(startDate, endDate);
-    final spirit = await _fetchSpiritTracker(selectedDate);
-    final hobby = await _fetchHobbyTracker(selectedDate);
+    try {
+      final exercise = await _fetchExerciseTracker(selectedDate);
+      final sleep = await _fetchSleepTracker(startDate, endDate);
+      final spirit = await _fetchSpiritTracker(selectedDate);
+      final hobby = await _fetchHobbyTracker(selectedDate);
 
-    setState(() {
-      //Todo: 받아온 정보 저장하기
-      exerciseTracker = exercise;
-      sleepTracker = sleep;
-      spiritTracker = spirit;
-      hobbyTracker = hobby;
-    });
+      setState(() {
+        //Todo: 받아온 정보 저장하기
+        exerciseTracker = exercise;
+        sleepTracker = sleep;
+        spiritTracker = spirit;
+        hobbyTracker = hobby;
+
+        exerciseDates = _getUniqueRoutineDates(exercise);
+        spiritDates = _getUniqueRoutineDates(spirit);
+        hobbyDates = _getUniqueRoutineDates(hobby);
+      });
+    } catch (e) {
+      print('Error Fetching tracker data: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -207,6 +277,9 @@ class _MonthlyRoutineTrackerScreenState
     int daysInMonth = getDaysInMonth();
     int rows = ((daysInMonth + firstDayOfMonth - 1) / 7).ceil();
 
+    if (_isLoading) {
+      return const CustomCircularProgressIndicator();
+    }
     return ChartLayout(
       title: '루틴 트래커',
       chartWidget: Column(
@@ -297,6 +370,7 @@ class _MonthlyRoutineTrackerScreenState
     required int firstDayOfMonth,
     required int rows,
   }) {
+
     return Card(
       margin: EdgeInsets.zero,
       elevation: 6,
@@ -324,40 +398,13 @@ class _MonthlyRoutineTrackerScreenState
               screenWidth: screenWidth,
               screenHeight: screenHeight,
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: screenHeight * 0.04),
-              child: GridView.builder(
-                key: ValueKey(selectedDate),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  crossAxisSpacing: screenWidth * 0.032,
-                  mainAxisSpacing: screenHeight * 0.012,
-                ),
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: 42,
-                itemBuilder: (context, index) {
-                  int dayNumber = index - firstDayOfMonth + 2;
-
-                  if (dayNumber < 1 || dayNumber > daysInMonth) {
-                    return const SizedBox.shrink();
-                  }
-                  int day = index - firstDayOfMonth + 2;
-                  DateTime currentDate =
-                      DateTime(selectedDate.year, selectedDate.month, day);
-                  //print(currentDate);
-                  return CustomPaint(
-                    size: Size(screenWidth * 0.08, screenWidth * 0.08),
-                    painter: ColorfulCirclePainter(
-                        date: currentDate,
-                        isSelected: false,
-                        isAfterToday: false,
-                        exerciseDates: [],
-                        sleepDates: [],
-                        spiritDates: [],
-                        hobbyDates: []),
-                  );
-                },
-              ),
+            _buildRoutineColorCircle(
+              textTheme: textTheme,
+              screenWidth: screenWidth,
+              screenHeight: screenHeight,
+              daysInMonth: daysInMonth,
+              firstDayOfMonth: firstDayOfMonth,
+              rows: rows,
             ),
 
             /// 전체 루틴 달력 - Percentage
@@ -397,6 +444,50 @@ class _MonthlyRoutineTrackerScreenState
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  //Todo: 전체 루티 달력 - 달력 부분
+  Widget _buildRoutineColorCircle({
+    required TextTheme textTheme,
+    required double screenWidth,
+    required double screenHeight,
+    required int daysInMonth,
+    required int firstDayOfMonth,
+    required int rows,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.04),
+      child: GridView.builder(
+        key: ValueKey(selectedDate),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 7,
+          crossAxisSpacing: screenWidth * 0.032,
+          mainAxisSpacing: screenHeight * 0.012,
+        ),
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 42,
+        itemBuilder: (context, index) {
+          int dayNumber = index - firstDayOfMonth + 2;
+          DateTime currentDate =
+              DateTime(selectedDate.year, selectedDate.month, dayNumber);
+          if (dayNumber < 1 || dayNumber > daysInMonth) {
+            return const SizedBox.shrink();
+          }
+
+          return CustomPaint(
+            size: Size(screenWidth * 0.08, screenWidth * 0.08),
+            painter: ColorfulCirclePainter(
+                date: currentDate,
+                isSelected: false,
+                isAfterToday: false,
+                exerciseDates: exerciseDates,
+                sleepDates: sleepTracker.timeRecords,
+                spiritDates: spiritDates,
+                hobbyDates: hobbyDates),
+          );
+        },
       ),
     );
   }

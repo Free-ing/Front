@@ -166,19 +166,21 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       );
 
       if (response.statusCode == 200) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const RoutinePage(index: 0)),
-        );
-        const ToastBarWidget(
-          title: '운동 루틴이 수정되었습니다.',
-          leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
-        ).showToast(context);
+        if(mounted){
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const RoutinePage(index: 0)),
+          );
+          const ToastBarWidget(
+            title: '운동 루틴이 수정되었습니다.',
+            leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
+          ).showToast(context);
+        }
       } else {
         final errorData = json.decode(utf8.decode(response.bodyBytes));
         DialogManager.showAlertDialog(
           context: context,
           title: '운동 루틴 수정 실패',
-          content: '${errorData['message']}\n(오류 코드: ${response.statusCode})',
+          content: '${errorData}\n(오류 코드: ${response.statusCode})',
         );
       }
     }
