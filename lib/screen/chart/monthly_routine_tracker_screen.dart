@@ -32,11 +32,12 @@ class _MonthlyRoutineTrackerScreenState
   final apiService = TrackerApiService();
 
   List<ExerciseTracker> exerciseTracker = [];
-  SleepTracker sleepTracker = SleepTracker(routineRecords: [], timeRecords: []);
+  List<RoutineRecord> sleepTracker = [];
   List<SpiritTracker> spiritTracker = [];
   List<HobbyTracker> hobbyTracker = [];
 
   List<String> exerciseDates = [];
+  List<String> sleepDates = [];
   List<String> spiritDates = [];
   List<String> hobbyDates = [];
 
@@ -60,11 +61,7 @@ class _MonthlyRoutineTrackerScreenState
   Future<void> _initializeTracker() async {
     try {
       await _getExerciseTracker(selectedDate);
-      _fetchSleepTracker(startDate, endDate).then((data) {
-        setState(() {
-          sleepTracker = data;
-        });
-      });
+      await _getSleepTracker(selectedDate);
       await _getSpiritTracker(selectedDate);
       await _getHobbyTracker(selectedDate);
     } finally {
@@ -84,8 +81,33 @@ class _MonthlyRoutineTrackerScreenState
         });
         print(exerciseTracker);
       });
+
+     // _spiritList.sort((a, b) => a.routineId.compareTo(b.routineId));
     } catch (e) {
       print('Error Fetching Exercise Data: $e');
+    }
+  }
+
+  //Todo: 수면 루틴 트래커 조회 하고 수행 날짜 리스트 만들기
+  Future<void> _getSleepTracker(selectedDate) async {
+    try {
+      await _fetchSleepTracker(startDate, endDate).then((data) {
+        setState(() {
+          sleepTracker = data.routineRecords;
+          sleepTracker.add(RoutineRecord(
+            routineId: -1,
+            routineName: '수면 기록하기',
+            records: data.timeRecords,
+            imageUrl:
+                'https://freeingimage.s3.ap-northeast-2.amazonaws.com/sleep_report.png',
+          ));
+          sleepDates = _getUniqueRoutineDates(sleepTracker);
+          sleepTracker.sort((a,b) => a.routineId.compareTo(b.routineId));
+          print('!!!!!!!!!!!!!!!!!!!!!$sleepDates!!!!!!!!!!!!!!!!!!!');
+        });
+      });
+    } catch (e) {
+      print('Error Fetching Sleep Data: $e');
     }
   }
 
@@ -99,7 +121,7 @@ class _MonthlyRoutineTrackerScreenState
         });
       });
     } catch (e) {
-      print('Error Fetching Exercise Data: $e');
+      print('Error Fetching Spirit Data: $e');
     }
   }
 
@@ -113,7 +135,7 @@ class _MonthlyRoutineTrackerScreenState
         });
       });
     } catch (e) {
-      print('Error Fetching Exercise Data: $e');
+      print('Error Fetching Hobby Data: $e');
     }
   }
 
@@ -214,7 +236,12 @@ class _MonthlyRoutineTrackerScreenState
 
     for (var tracker in trackers) {
       for (var record in tracker.records) {
-        uniqueDates.add(record.routineDate);
+
+        if (record.runtimeType == String) {
+          uniqueDates.add(record);
+        } else {
+          uniqueDates.add(record.routineDate);
+        }
       }
     }
     print('확인~~~~~~~~~~~~~~~~! $uniqueDates');
@@ -245,30 +272,7 @@ class _MonthlyRoutineTrackerScreenState
     print('바뀐 endDate!!!: $endDate');
 
     //Todo: 날짜 변경될 때마다 서버 요청 보내기
-    try {
-      final exercise = await _fetchExerciseTracker(selectedDate);
-      final sleep = await _fetchSleepTracker(startDate, endDate);
-      final spirit = await _fetchSpiritTracker(selectedDate);
-      final hobby = await _fetchHobbyTracker(selectedDate);
-
-      setState(() {
-        //Todo: 받아온 정보 저장하기
-        exerciseTracker = exercise;
-        sleepTracker = sleep;
-        spiritTracker = spirit;
-        hobbyTracker = hobby;
-
-        exerciseDates = _getUniqueRoutineDates(exercise);
-        spiritDates = _getUniqueRoutineDates(spirit);
-        hobbyDates = _getUniqueRoutineDates(hobby);
-      });
-    } catch (e) {
-      print('Error Fetching tracker data: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    _initializeTracker();
   }
 
   @override
@@ -332,7 +336,7 @@ class _MonthlyRoutineTrackerScreenState
                     rows: rows,
                     category: '수면',
                     color: SLEEP_COLOR,
-                    routineList: sleepTracker.routineRecords,
+                    routineList: sleepTracker,
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   _trackerOfCategory(
@@ -487,7 +491,7 @@ class _MonthlyRoutineTrackerScreenState
                 isSelected: false,
                 isAfterToday: false,
                 exerciseDates: exerciseDates,
-                sleepDates: sleepTracker.timeRecords,
+                sleepDates: sleepDates,
                 spiritDates: spiritDates,
                 hobbyDates: hobbyDates),
           );
@@ -524,7 +528,7 @@ class _MonthlyRoutineTrackerScreenState
             textTheme: textTheme,
             color: SLEEP_COLOR,
             daysInMonth: daysInMonth,
-            length: sleepTracker.timeRecords.length,
+            length: sleepDates.length,
           ),
           _buildPercentageOfRoutine(
             screenWidth: screenWidth,
@@ -568,7 +572,7 @@ class _MonthlyRoutineTrackerScreenState
             border: Border.all(width: 1),
           ),
         ),
-        SizedBox(width: screenWidth * 0.03),
+        SizedBox(width: screenWidth * 0.02),
         Text('$percent %'),
       ],
     );
@@ -587,7 +591,7 @@ class _MonthlyRoutineTrackerScreenState
     required List<dynamic> routineList,
   }) {
     return Visibility(
-      visible: routineList.length == 0 ? false : true,
+      visible: routineList.isEmpty ? false : true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -639,7 +643,6 @@ class _MonthlyRoutineTrackerScreenState
         itemBuilder: (context, index) {
           final routine = routineList[index];
 
-          print(routine.runtimeType);
           if (routine.runtimeType == RoutineRecord) {
             routineDates = routine.records;
           } else {
