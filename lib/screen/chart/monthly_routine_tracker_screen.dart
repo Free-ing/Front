@@ -11,6 +11,7 @@ import 'package:freeing/model/exercise/exercise_tracker.dart';
 import 'package:freeing/model/hobby/hobby_tracker.dart';
 import 'package:freeing/model/sleep/sleep_tracker.dart';
 import 'package:freeing/model/spirit/spirit_tracker.dart';
+import 'package:intl/intl.dart';
 
 class MonthlyRoutineTrackerScreen extends StatefulWidget {
   const MonthlyRoutineTrackerScreen({super.key});
@@ -79,6 +80,7 @@ class _MonthlyRoutineTrackerScreenState
           exerciseTracker = data;
           exerciseDates = _getUniqueRoutineDates(exerciseTracker);
         });
+        print(exerciseTracker);
       });
     } catch (e) {
       print('Error Fetching Exercise Data: $e');
@@ -225,7 +227,7 @@ class _MonthlyRoutineTrackerScreenState
   //Todo: 월 마지막 날짜 구하기
   DateTime getMonthEndDate(DateTime selectedDate) {
     return DateTime(selectedDate.year, selectedDate.month + 1, 1)
-        .subtract(Duration(days: 1));
+        .subtract(const Duration(days: 1));
   }
 
   //Todo: 날짜 update
@@ -316,7 +318,8 @@ class _MonthlyRoutineTrackerScreenState
                       firstDayOfMonth: firstDayOfMonth,
                       rows: rows,
                       category: '운동',
-                      color: EXERCISE_COLOR),
+                      color: EXERCISE_COLOR,
+                      routineList: exerciseTracker),
                   SizedBox(height: screenHeight * 0.02),
                   _trackerOfCategory(
                     textTheme: textTheme,
@@ -327,6 +330,7 @@ class _MonthlyRoutineTrackerScreenState
                     rows: rows,
                     category: '수면',
                     color: SLEEP_COLOR,
+                    routineList: sleepTracker.routineRecords,
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   _trackerOfCategory(
@@ -338,6 +342,7 @@ class _MonthlyRoutineTrackerScreenState
                     rows: rows,
                     category: '마음 채우기',
                     color: SPIRIT_COLOR,
+                    routineList: spiritTracker,
                   ),
                   SizedBox(height: screenHeight * 0.02),
                   _trackerOfCategory(
@@ -349,6 +354,7 @@ class _MonthlyRoutineTrackerScreenState
                     rows: rows,
                     category: '취미',
                     color: HOBBY_COLOR,
+                    routineList: hobbyTracker,
                   ),
                   SizedBox(height: screenHeight * 0.1),
                 ],
@@ -370,7 +376,6 @@ class _MonthlyRoutineTrackerScreenState
     required int firstDayOfMonth,
     required int rows,
   }) {
-
     return Card(
       margin: EdgeInsets.zero,
       elevation: 6,
@@ -448,7 +453,7 @@ class _MonthlyRoutineTrackerScreenState
     );
   }
 
-  //Todo: 전체 루티 달력 - 달력 부분
+  //Todo: 전체 루틴 달력 - 달력 부분
   Widget _buildRoutineColorCircle({
     required TextTheme textTheme,
     required double screenWidth,
@@ -577,33 +582,39 @@ class _MonthlyRoutineTrackerScreenState
     required int rows,
     required String category,
     required Color color,
+    required List<dynamic> routineList,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-          child: Text(
-            category,
-            style: textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
+    return Visibility(
+      visible: routineList.length == 0 ? false : true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+            child: Text(
+              category,
+              style: textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
-        SizedBox(height: screenHeight * 0.01),
-        _buildTrackerListView(
-          textTheme: textTheme,
-          screenWidth: screenWidth,
-          screenHeight: screenHeight,
-          daysInMonth: daysInMonth,
-          firstDayOfMonth: firstDayOfMonth,
-          rows: rows,
-          color: color,
-        )
-      ],
+          SizedBox(height: screenHeight * 0.01),
+          _buildTrackerListView(
+            textTheme: textTheme,
+            screenWidth: screenWidth,
+            screenHeight: screenHeight,
+            daysInMonth: daysInMonth,
+            firstDayOfMonth: firstDayOfMonth,
+            rows: rows,
+            color: color,
+            routineList: routineList,
+          )
+        ],
+      ),
     );
   }
 
+  //Todo: 트래커 보여줘
   Widget _buildTrackerListView({
     required TextTheme textTheme,
     required double screenWidth,
@@ -612,6 +623,7 @@ class _MonthlyRoutineTrackerScreenState
     required int firstDayOfMonth,
     required int rows,
     required Color color,
+    required List<dynamic> routineList,
   }) {
     return SizedBox(
       height: (rows > 5)
@@ -621,8 +633,9 @@ class _MonthlyRoutineTrackerScreenState
               : screenHeight * 0.193,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: 3,
+        itemCount: routineList.length,
         itemBuilder: (context, index) {
+          final routine = routineList[index];
           return Card(
             margin: EdgeInsets.all(6),
             elevation: 6,
@@ -657,20 +670,23 @@ class _MonthlyRoutineTrackerScreenState
                                 color: Colors.white,
                               ),
                             ),
-                            Image.network(
-                              'https://freeingimage.s3.ap-northeast-2.amazonaws.com/static_stretching.png',
-                              width: screenWidth * 0.1,
-                              fit: BoxFit.contain,
-                            ),
+                            routine.imageUrl != ''
+                                ? Image.network(
+                                    routine.imageUrl,
+                                    width: screenWidth * 0.1,
+                                    fit: BoxFit.contain,
+                                  )
+                                : Container(),
                           ],
                         ),
-                        SizedBox(width: screenWidth * 0.01),
+                        SizedBox(width: screenWidth * 0.02),
                         SizedBox(
                           width: screenWidth * 0.26,
                           height: screenWidth * 0.1,
-                          child: Center(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
                             child: Text(
-                              '10분 스트레칭 정적 스트레칭',
+                              routine.routineName,
                               maxLines: 2,
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
@@ -703,13 +719,28 @@ class _MonthlyRoutineTrackerScreenState
                           if (dayNumber < 1 || dayNumber > daysInMonth) {
                             return const SizedBox.shrink();
                           }
+                          // 현재 dayNumber를 DateTime으로 변환해 기록된 날짜들과 비교
+                          final currentDate = DateTime(
+                              selectedDate.year, selectedDate.month, dayNumber);
+                          final formattedDate =
+                              "${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}-${dayNumber.toString().padLeft(2, '0')}";
+                          // 모든 records의 routineDate를 리스트로 생성
+                          final allRoutineDates = routineList
+                              .expand((tracker) => tracker.records)
+                              .map((record) => record.routineDate)
+                              .toList();
+                          // formattedDate가 allRoutineDates에 포함되면 색깔 표시
+                          final containerColor =
+                              allRoutineDates.contains(formattedDate)
+                                  ? color
+                                  : Colors.white;
 
                           return Container(
                             margin: EdgeInsets.zero,
                             width: 17,
                             height: 17,
                             decoration: BoxDecoration(
-                              color: color,
+                              color: containerColor,
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(width: 1),
                             ),

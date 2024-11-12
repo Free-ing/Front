@@ -1,15 +1,18 @@
 class SpiritTracker {
-  final String mentalName;
+  final String routineName;
+  final String imageUrl;
   final List<Record> records;
 
   SpiritTracker({
-    required this.mentalName,
+    required this.routineName,
+    required this.imageUrl,
     required this.records,
   });
 
   factory SpiritTracker.fromJson(Map<String, dynamic> json) {
     return SpiritTracker(
-      mentalName: json['mentalName'],
+      routineName: json['mentalName'],
+      imageUrl: json['imageUrl'] ?? '',
       records:
       (json['records'] as List?)?.map((e) => Record.fromJson(e)).toList() ??
           [],
