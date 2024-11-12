@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freeing/model/exercise/recommended_exercise.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/chart/monthly_routine_tracker_screen.dart';
 import 'package:freeing/screen/chart/select_exercise_report_screen.dart';
@@ -7,6 +6,7 @@ import 'package:freeing/screen/chart/select_exercise_report_screen.dart';
 import 'package:freeing/screen/chart/hobby_gallery_screen.dart';
 import 'package:freeing/screen/chart/mood_calendar_screen.dart';
 import 'package:freeing/screen/chart/select_sleep_report_screen.dart';
+import 'package:freeing/screen/chart/stress_chart_screen.dart';
 
 
 class ChartPage extends StatelessWidget {
@@ -48,17 +48,18 @@ class ChartPage extends StatelessWidget {
               childAspectRatio: screenWidth * 0.38 / 180,
               children: [
                 _chartCard(
+                  imageUrl: 'assets/imgs/chart/sleep_report.png',
+                  title: "스트레스 변화\n몰아 보기",
+                  navigatePage: const StressChartScreen(),
+                  context: context,
+                ),
+                _chartCard(
                   imageUrl: 'assets/imgs/chart/routine_tracker.png',
                   title: "월간\n루틴 트래커",
                   navigatePage: const MonthlyRoutineTrackerScreen(),
                   context: context,
                 ),
-                _chartCard(
-                  imageUrl: 'assets/imgs/chart/sleep_report.png',
-                  title: "수면 리포트\n몰아보기",
-                  navigatePage: const SelectSleepReportScreen(),
-                  context: context,
-                ),
+
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/hobby_gallery.png',
                   title: "취미 사진첩",
@@ -72,8 +73,14 @@ class ChartPage extends StatelessWidget {
                   context: context,
                 ),
                 _chartCard(
+                  imageUrl: 'assets/imgs/chart/sleep_report.png',
+                  title: "수면 리포트\n몰아 보기",
+                  navigatePage: const SelectSleepReportScreen(),
+                  context: context,
+                ),
+                _chartCard(
                   imageUrl: 'assets/imgs/chart/exercise_report.png',
-                  title: "운동 리포트\n몰아보기",
+                  title: "운동 리포트\n몰아 보기",
                   navigatePage: const SelectExerciseReportScreen(),
                   context: context,
                 ),

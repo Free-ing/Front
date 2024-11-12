@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/circle_widget.dart';
-import 'package:freeing/common/component/custom_circular_progress_indicator.dart';
+import 'package:freeing/common/component/loading.dart';
 import 'package:freeing/common/component/show_chart_date.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/tracker_api_service.dart';
@@ -11,7 +11,6 @@ import 'package:freeing/model/exercise/exercise_tracker.dart';
 import 'package:freeing/model/hobby/hobby_tracker.dart';
 import 'package:freeing/model/sleep/sleep_tracker.dart';
 import 'package:freeing/model/spirit/spirit_tracker.dart';
-import 'package:intl/intl.dart';
 
 class MonthlyRoutineTrackerScreen extends StatefulWidget {
   const MonthlyRoutineTrackerScreen({super.key});
@@ -79,11 +78,10 @@ class _MonthlyRoutineTrackerScreenState
           exerciseTracker = data;
           exerciseDates = _getUniqueRoutineDates(exerciseTracker);
         });
-        print(exerciseTracker);
       });
 
     } catch (e) {
-      print('Error Fetching Exercise Data: $e');
+      debugPrint('Error Fetching Exercise Data: $e');
     }
   }
 
@@ -102,11 +100,10 @@ class _MonthlyRoutineTrackerScreenState
           ));
           sleepDates = _getUniqueRoutineDates(sleepTracker);
           sleepTracker.sort((a,b) => a.routineId.compareTo(b.routineId));
-          print('!!!!!!!!!!!!!!!!!!!!!$sleepDates!!!!!!!!!!!!!!!!!!!');
         });
       });
     } catch (e) {
-      print('Error Fetching Sleep Data: $e');
+      debugPrint('Error Fetching Sleep Data: $e');
     }
   }
 
@@ -120,7 +117,7 @@ class _MonthlyRoutineTrackerScreenState
         });
       });
     } catch (e) {
-      print('Error Fetching Spirit Data: $e');
+      debugPrint('Error Fetching Spirit Data: $e');
     }
   }
 
@@ -134,7 +131,7 @@ class _MonthlyRoutineTrackerScreenState
         });
       });
     } catch (e) {
-      print('Error Fetching Hobby Data: $e');
+      debugPrint('Error Fetching Hobby Data: $e');
     }
   }
 
@@ -145,13 +142,13 @@ class _MonthlyRoutineTrackerScreenState
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
-      print('이거는 운동 트래커~.~.~.~ ${jsonData['result']}');
+      debugPrint('이거는 운동 트래커~.~.~.~ ${jsonData['result']}');
       if (jsonData != null && jsonData['result'] != null) {
         return (jsonData['result'] as List)
             .map((item) => ExerciseTracker.fromJson(item))
             .toList();
       } else {
-        print('Error: Response data is null or does not contain expected key.');
+        debugPrint('Error: Response data is null or does not contain expected key.');
         throw Exception('Invalid data structure from server');
       }
     } else {
@@ -165,22 +162,17 @@ class _MonthlyRoutineTrackerScreenState
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
-      print('이거는 수면 트래커@.@.@.@ ${jsonData}');
+      debugPrint('이거는 수면 트래커@.@.@.@ ${jsonData}');
 
       if (jsonData != null && jsonData != null) {
-        // return (jsonData['result'] as List)
-        //     .map((item) => SleepTracker.fromJson(item))
-        //     .toList();
         return SleepTracker.fromJson(jsonData);
       } else if (jsonData == null || jsonData == null) {
-        print('이거는 수면 트래커@.@.@.@ ${jsonData} 없지롱!');
         return SleepTracker(routineRecords: [], timeRecords: []);
       } else {
-        print('Error: Response data is null or does not contain expected key.');
+        debugPrint('Error: Response data is null or does not contain expected key.');
         throw Exception('Invalid data structure from server');
       }
     } else if (response.statusCode == 204) {
-      print('없어!! 수면에 대한 기록이');
       return SleepTracker(routineRecords: [], timeRecords: []);
     } else {
       throw Exception('수면 루틴 트래커 조회 실패 ${response.statusCode}');
@@ -194,13 +186,13 @@ class _MonthlyRoutineTrackerScreenState
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
-      print('이거는 마음 채우기 트래커 &.&.&.& ${jsonData['result']}');
+      debugPrint('이거는 마음 채우기 트래커 &.&.&.& ${jsonData['result']}');
       if (jsonData != null && jsonData['result'] != null) {
         return (jsonData['result'] as List)
             .map((item) => SpiritTracker.fromJson(item))
             .toList();
       } else {
-        print('Error: Response data is null or does not contain expected key.');
+        debugPrint('Error: Response data is null or does not contain expected key.');
         throw Exception('Invalid data structure from server');
       }
     } else {
@@ -215,13 +207,13 @@ class _MonthlyRoutineTrackerScreenState
     if (response.statusCode == 200) {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
 
-      print('이거는 취미 기록 트래커 ^.^.^.^ ${jsonData['result']}');
+      debugPrint('이거는 취미 기록 트래커 ^.^.^.^ ${jsonData['result']}');
       if (jsonData != null && jsonData['result'] != null) {
         return (jsonData['result'] as List)
             .map((item) => HobbyTracker.fromJson(item))
             .toList();
       } else {
-        print('Error: Response data is null or does not contain expected key.');
+        debugPrint('Error: Response data is null or does not contain expected key.');
         throw Exception('Invalid data structure from server');
       }
     } else {
@@ -243,7 +235,6 @@ class _MonthlyRoutineTrackerScreenState
         }
       }
     }
-    print('확인~~~~~~~~~~~~~~~~! $uniqueDates');
     return uniqueDates.toList();
   }
 
@@ -267,9 +258,6 @@ class _MonthlyRoutineTrackerScreenState
       _isLoading = true;
     });
 
-    print('바뀐 startDate!!!: $startDate');
-    print('바뀐 endDate!!!: $endDate');
-
     //Todo: 날짜 변경될 때마다 서버 요청 보내기
     _initializeTracker();
   }
@@ -285,7 +273,7 @@ class _MonthlyRoutineTrackerScreenState
     int rows = ((daysInMonth + firstDayOfMonth - 1) / 7).ceil();
 
     if (_isLoading) {
-      return const CustomCircularProgressIndicator();
+      return const Loading();
     }
     return ChartLayout(
       title: '루틴 트래커',
@@ -650,7 +638,7 @@ class _MonthlyRoutineTrackerScreenState
                 routine.records.map((record) => record.routineDate).toList();
           }
           return Card(
-            margin: EdgeInsets.all(6),
+            margin: const EdgeInsets.all(6),
             elevation: 6,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0)),
@@ -719,7 +707,7 @@ class _MonthlyRoutineTrackerScreenState
                               ? screenHeight * 0.122
                               : screenHeight * 0.1,
                       child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 7,
                           crossAxisSpacing: 3,
                           mainAxisSpacing: 3,
