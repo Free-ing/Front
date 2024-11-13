@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:freeing/layout/screen_layout.dart';
+import 'package:freeing/screen/home/home_page.dart';
 
 import '../../common/component/buttons.dart';
 import '../../common/component/loading.dart';
 import '../../common/component/toast_bar.dart';
 import '../../common/const/colors.dart';
 import '../../common/service/home_api_service.dart';
+import '../chart/stress_result_screen.dart';
 
 class StressSurveyPage extends StatefulWidget {
   const StressSurveyPage({super.key});
@@ -34,6 +38,15 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
 
   final List<int> options = [0, 1, 2, 3];
   bool _isLoading = false;
+  bool _isDisposed = false;
+
+  @override
+  void dispose() {
+    // dispose가 호출될 때 플래그 업데이트
+    _isDisposed = true;
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,28 +55,41 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     if (_isLoading) {
-      return Loading();
+      return const Loading();
     }
 
     return ScreenLayout(
-      color: Colors.white,
+        color: Colors.white,
         title: '스트레스 검사',
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
               _buildSurveyIntroContainer(screenWidth, screenHeight, textTheme),
-              SizedBox(height: screenHeight * 0.02,),
+              SizedBox(
+                height: screenHeight * 0.02,
+              ),
               _buildQuestions(screenWidth, screenHeight, textTheme),
-              SizedBox(height: screenHeight * 0.02,),
-              GreenButton(text: '측정 하기', width: screenWidth * 0.6, onPressed: () { _submitSurvey(); },),
-              SizedBox(height: screenHeight * 0.03,),
+              SizedBox(
+                height: screenHeight * 0.02,
+              ),
+              GreenButton(
+                text: '측정 하기',
+                width: screenWidth * 0.6,
+                onPressed: () {
+                  _submitSurvey();
+                },
+              ),
+              SizedBox(
+                height: screenHeight * 0.03,
+              ),
             ],
           ),
         ));
   }
 
-  Widget _buildSurveyIntroContainer(double screenWidth, double screenHeight, TextTheme textTheme) {
+  Widget _buildSurveyIntroContainer(
+      double screenWidth, double screenHeight, TextTheme textTheme) {
     return Container(
       width: screenWidth,
       //height: screenHeight * 0.45,
@@ -75,13 +101,18 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
       child: Align(
         alignment: Alignment.centerLeft,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.01),
+          padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.05, vertical: screenHeight * 0.01),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Text('Freeing과 함께 스트레스를 점검하세요!스트레스는 우리 삶의 균형에 큰 영향을 미칩니다. Freeing에서는 국립정신건강센터(National Center for Mental Health)와 대한신경정신의학회(Korean Neuropsychiatric Association)가 한국인의 정서와 생활 방식을 반영해 개발한 \'한국인 스트레스 척도(National Stress Scale)\'를 제공합니다. 이 검사는 한국인에게 특화된 과학적 평가 도구로, 기존의 해외 검사와 차별화된 신뢰성을 자랑합니다. 지금, Freeing과 함께 더 건강한 삶을 시작해 보세요!\n\n최근 2주간 각 문항에 해당하는 증상을 얼마나 자주 경험하였는지 확인하고 해당하는 번호에 체크하기 바랍니다.', style: textTheme.bodyMedium,),
-              Text('(0: 없음, 1: 2일 이상, 2: 1주일 이상, 3: 거의 2주)', style: textTheme.bodySmall)
+              Text(
+                'Freeing과 함께 스트레스를 점검하세요!스트레스는 우리 삶의 균형에 큰 영향을 미칩니다. Freeing에서는 국립정신건강센터(National Center for Mental Health)와 대한신경정신의학회(Korean Neuropsychiatric Association)가 한국인의 정서와 생활 방식을 반영해 개발한 \'한국인 스트레스 척도(National Stress Scale)\'를 제공합니다. 이 검사는 한국인에게 특화된 과학적 평가 도구로, 기존의 해외 검사와 차별화된 신뢰성을 자랑합니다. 지금, Freeing과 함께 더 건강한 삶을 시작해 보세요!\n\n최근 2주간 각 문항에 해당하는 증상을 얼마나 자주 경험하였는지 확인하고 해당하는 번호에 체크하기 바랍니다.',
+                style: textTheme.bodyMedium,
+              ),
+              Text('(0: 없음, 1: 2일 이상, 2: 1주일 이상, 3: 거의 2주)',
+                  style: textTheme.bodySmall)
             ],
           ),
         ),
@@ -89,7 +120,8 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
     );
   }
 
-  Widget _buildQuestions(double screenWidth, double screenHeight, TextTheme textTheme) {
+  Widget _buildQuestions(
+      double screenWidth, double screenHeight, TextTheme textTheme) {
     return Column(
       children: questions.map((question) {
         int index = question['questionNumber'] - 1;
@@ -111,8 +143,15 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: Colors.black),
                         ),
-                        child: Center(child: Text(question['questionNumber'].toString(), style: textTheme.titleSmall?.copyWith(color: Colors.white),))),
-                    SizedBox(width: screenWidth * 0.04,),
+                        child: Center(
+                            child: Text(
+                          question['questionNumber'].toString(),
+                          style: textTheme.titleSmall
+                              ?.copyWith(color: Colors.white),
+                        ))),
+                    SizedBox(
+                      width: screenWidth * 0.04,
+                    ),
                     Text(
                       question['questionText'],
                       style: Theme.of(context).textTheme.bodyMedium,
@@ -160,14 +199,16 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
 
   // 설문조사 값 서버에 전송
   Future<void> _submitSurvey() async {
-    setState(() {
-      _isLoading = true;
-    });
     // 모든 질문에 응답했는지 확인
     if (_selectedOptions.contains(null)) {
-      const ToastBarWidget(
-        title: '모든 질문에 답변해 주세요.',
-      ).showToast(context);
+      setState(() {
+        _isLoading = false;
+      });
+      if(!_isDisposed){
+        const ToastBarWidget(
+          title: '모든 질문에 답변해 주세요.',
+        ).showToast(context);
+      }
       return;
     }
 
@@ -181,24 +222,50 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
     }
 
     try {
+      setState(() {
+        _isLoading = true;
+      });
       // 서버에 POST 요청 보내기 (예제에서 testStress 함수를 호출하는 방식으로 가정)
       final response = await homeApiService.testStress(questionResponses);
       print('상태 코드 출려어어어ㅓㄱ ${response.statusCode}');
-      if(response.statusCode == 201){
-        // TODO: 성공하면 ai 피드백 확인할 수 있는 곳으로 이동
-        print(response);
-      } else if(response.statusCode == 400 && response.body.contains("이미 오늘의 피드백이 생성되었습니다. 새로운 피드백은 내일 생성할 수 있습니다.")){
-        const ToastBarWidget(
-          title: '스트레스 검사는 하루에\n한번만 가능합니다.',
-        ).showToast(context);
+      if (response.statusCode == 201) {
+        final responseBody = jsonDecode(response.body); // JSON 디코딩
+        final surveyId = responseBody['surveyId'];
+        if(mounted){
+          Navigator.of(context)
+              .pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => StressResultScreen(
+                surveyId: surveyId,
+                replacementScreen: HomePage(),
+              ),
+            ),
+          )
+              .then((_) {
+                if(mounted){
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => HomePage()));
+                }
+          });
+        }
+      } else if (response.statusCode == 400 &&
+          response.body
+              .contains("이미 오늘의 피드백이 생성되었습니다. 새로운 피드백은 내일 생성할 수 있습니다.")) {
+        if(!_isDisposed){
+          const ToastBarWidget(
+            title: '스트레스 검사는 하루에\n한번만 가능합니다.',
+          ).showToast(context);
+        }
+
       }
     } catch (e) {
-      print('설문조사 전송 실패: $e');
+      if(!_isDisposed){
+        print('설문조사 전송 실패: $e');
+      }
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
   }
-
 }

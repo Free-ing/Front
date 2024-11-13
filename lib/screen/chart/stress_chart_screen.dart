@@ -9,7 +9,7 @@ import 'package:freeing/model/stress/stress_testresult_list.dart';
 import 'package:freeing/screen/chart/stress_result_screen.dart';
 
 class StressChartScreen extends StatefulWidget {
-  const StressChartScreen({super.key});
+  const StressChartScreen({super.key, });
 
   @override
   State<StressChartScreen> createState() => _StressChartScreenState();
@@ -20,7 +20,8 @@ class _StressChartScreenState extends State<StressChartScreen> {
   List<StressTestResultsList> _stressTestResult = [];
 
   //Todo: 서버 요청 (스트레스 측정 결과 리스트 조회)
-  Future<List<StressTestResultsList>> _fetchStressTestResultList(selectedDate) async {
+  Future<List<StressTestResultsList>> _fetchStressTestResultList(
+      selectedDate) async {
     final apiService = StressAPIService();
     final response = await apiService.getStressTestResultList(selectedDate);
 
@@ -133,13 +134,23 @@ class _StressChartScreenState extends State<StressChartScreen> {
                             height: screenWidth * 0.18,
                             child: OutlinedButton(
                               onPressed: () {
-                                Navigator.of(context).push(
+                                Navigator.of(context)
+                                    .pushReplacement(
                                   MaterialPageRoute(
                                     builder: (context) => StressResultScreen(
                                       surveyId: result.surveyId,
+                                      replacementScreen: StressChartScreen(),
                                     ),
                                   ),
-                                );
+                                )
+                                    .then((_) {
+                                      if(mounted){
+                                        Navigator.of(context).pushReplacement(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    StressChartScreen()));
+                                      }
+                                });
                               },
                               style: OutlinedButton.styleFrom(
                                 padding: EdgeInsets.zero,

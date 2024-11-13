@@ -13,8 +13,9 @@ import 'package:freeing/screen/setting/setting_page.dart';
 import 'package:intl/intl.dart';
 
 class StressResultScreen extends StatefulWidget {
+  final Widget? replacementScreen;
   final int surveyId;
-  const StressResultScreen({super.key, required this.surveyId});
+  const StressResultScreen({super.key, required this.surveyId, this.replacementScreen});
 
   @override
   State<StressResultScreen> createState() => _StressResultScreenState();
@@ -200,10 +201,11 @@ class _StressResultScreenState extends State<StressResultScreen> {
                     GreenButton(
                       width: screenWidth * 0.6,
                       onPressed: () {
+                        //Navigator.of(context).pop();
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const StressChartScreen()),
+                              builder: (context) => widget.replacementScreen!),
                         );
                       },
                     ),
