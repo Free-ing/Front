@@ -12,7 +12,6 @@ const BLUE_PURPLE = Color(0xFFBAB8F3);
 // 아이보리
 const IVORY = Color(0xFFF9F5E9);
 
-
 // 아주 밝은 아이보리(네비게이션 바 용)
 const LIGHT_IVORY = Color(0xFFFFFBF0);
 
@@ -72,3 +71,12 @@ const SPIRIT_COLOR = Color(0xFF61D0B0);
 
 // 취미 색상
 const HOBBY_COLOR = Color(0xFFFFCE8D);
+
+// 스트레스 - 높음
+const STRESS_HIGH = Color(0xFFFF5F5F);
+
+// 스트레스 - 중간
+const STRESS_MIDDLE = Color(0xFFFFDB24);
+
+// 스트레스 - 낮음
+const STRESS_LOW = Color(0xFF70E259);

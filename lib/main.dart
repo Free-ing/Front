@@ -85,6 +85,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:freeing/screen/chart/exercise_report_screen.dart';
 import 'package:freeing/screen/chart/monthly_routine_tracker_screen.dart';
 import 'package:freeing/screen/chart/stress_chart_screen.dart';
+import 'package:freeing/screen/chart/stress_result_screen.dart';
 import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/member/splash_screen.dart';
@@ -153,7 +154,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: StressChartScreen(),
+      home: SplashScreen(),
       // FutureBuilder(
       //   future: _initializeApp(), // 초기화 함수 호출
       //   builder: (context, snapshot) {
