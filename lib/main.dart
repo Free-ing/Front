@@ -85,7 +85,6 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:freeing/screen/chart/exercise_report_screen.dart';
 import 'package:freeing/screen/chart/monthly_routine_tracker_screen.dart';
 import 'package:freeing/screen/chart/stress_chart_screen.dart';
-import 'package:freeing/screen/chart/stress_result_screen.dart';
 import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/member/splash_screen.dart';

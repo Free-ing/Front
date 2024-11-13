@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freeing/layout/screen_layout.dart';
 
 import '../../common/component/buttons.dart';
+import '../../common/component/loading.dart';
 import '../../common/component/toast_bar.dart';
 import '../../common/const/colors.dart';
 import '../../common/service/home_api_service.dart';
@@ -18,26 +19,31 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
   final List<int?> _selectedOptions = List<int?>.filled(11, null);
 
   final List<Map<String, dynamic>> questions = [
-    {"questionId": 1, "questionText": '스트레스를 많이 받는다.'},
-    {"questionId": 2, "questionText": '변화에 적응하기 어렵다.'},
-    {"questionId": 3, "questionText": '문제가 생기면 직접 처리할 자신이 없다.'},
-    {"questionId": 4, "questionText": '머리가 아프다.'},
-    {"questionId": 5, "questionText": '어지럽다.'},
-    {"questionId": 6, "questionText": '소화가 안된다.'},
-    {"questionId": 7, "questionText": '가슴이 답답하다.'},
-    {"questionId": 8, "questionText": '불안하고 초조하다.'},
-    {"questionId": 9, "questionText": '쉽게 화가 난다.'},
-    {"questionId": 10, "questionText": '쉽게 짜증이 난다.'},
-    {"questionId": 11, "questionText": '뭘 자꾸 먹게 된다.'},
+    {"questionNumber": 1, "questionText": '스트레스를 많이 받는다.'},
+    {"questionNumber": 2, "questionText": '변화에 적응하기 어렵다.'},
+    {"questionNumber": 3, "questionText": '문제가 생기면 직접 처리할 자신이 없다.'},
+    {"questionNumber": 4, "questionText": '머리가 아프다.'},
+    {"questionNumber": 5, "questionText": '어지럽다.'},
+    {"questionNumber": 6, "questionText": '소화가 안된다.'},
+    {"questionNumber": 7, "questionText": '가슴이 답답하다.'},
+    {"questionNumber": 8, "questionText": '불안하고 초조하다.'},
+    {"questionNumber": 9, "questionText": '쉽게 화가 난다.'},
+    {"questionNumber": 10, "questionText": '쉽게 짜증이 난다.'},
+    {"questionNumber": 11, "questionText": '뭘 자꾸 먹게 된다.'},
   ];
 
   final List<int> options = [0, 1, 2, 3];
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+
+    if (_isLoading) {
+      return Loading();
+    }
 
     return ScreenLayout(
       color: Colors.white,
@@ -85,7 +91,7 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
   Widget _buildQuestions(double screenWidth, double screenHeight, TextTheme textTheme) {
     return Column(
       children: questions.map((question) {
-        int index = question['questionId'] - 1;
+        int index = question['questionNumber'] - 1;
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 8.0),
           child: Container(
@@ -100,12 +106,12 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
                         width: 35,
                         height: 35,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: BLUE_PURPLE,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: Colors.black),
                         ),
-                        child: Center(child: Text(question['questionId'].toString(), style: textTheme.titleSmall,))),
-                    SizedBox(width: screenWidth * 0.02,),
+                        child: Center(child: Text(question['questionNumber'].toString(), style: textTheme.titleSmall?.copyWith(color: Colors.white),))),
+                    SizedBox(width: screenWidth * 0.04,),
                     Text(
                       question['questionText'],
                       style: Theme.of(context).textTheme.bodyMedium,
@@ -153,6 +159,9 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
 
   // 설문조사 값 서버에 전송
   Future<void> _submitSurvey() async {
+    setState(() {
+      _isLoading = true;
+    });
     // 모든 질문에 응답했는지 확인
     if (_selectedOptions.contains(null)) {
       const ToastBarWidget(
@@ -165,8 +174,8 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
     List<Map<String, int>> questionResponses = [];
     for (int i = 0; i < questions.length; i++) {
       questionResponses.add({
-        "questionId": questions[i]['questionId'] as int,
-        "selectedAnswer": _selectedOptions[i]!,
+        "questionNumber": questions[i]['questionNumber'] as int,
+        "answer": _selectedOptions[i]!,
       });
     }
 
@@ -177,9 +186,17 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
       if(response.statusCode == 201){
         // TODO: 성공하면 ai 피드백 확인할 수 있는 곳으로 이동
         print(response);
+      } else if(response.statusCode == 400 && response.body.contains("이미 오늘의 피드백이 생성되었습니다. 새로운 피드백은 내일 생성할 수 있습니다.")){
+        const ToastBarWidget(
+          title: '스트레스 검사는 하루에\n한번만 가능합니다.',
+        ).showToast(context);
       }
     } catch (e) {
       print('설문조사 전송 실패: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
