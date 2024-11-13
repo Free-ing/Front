@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
+import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/sleep_api_service.dart';
 import 'package:freeing/layout/screen_layout.dart';

@@ -11,11 +11,14 @@ class SleepDailyRoutine {
   final bool? friday;
   final bool? saturday;
   final bool? sunday;
-  final bool? status;
+  final bool status;
   final String? url;
   final bool? completed;
   DateTime? startTime;
   DateTime? endTime;
+  DateTime createDate;
+  DateTime? onDate;
+  DateTime? offDate;
 
   SleepDailyRoutine(
       {this.sleepRoutineId,
@@ -33,6 +36,9 @@ class SleepDailyRoutine {
       this.completed,
       this.startTime,
       this.endTime,
+      required this.createDate,
+      this.onDate,
+      this.offDate
       });
 
   factory SleepDailyRoutine.fromJson(Map<String, dynamic> json) {
@@ -45,6 +51,15 @@ class SleepDailyRoutine {
         : null;
     DateTime? parsedEndTime = routine['endTime'] != null
         ? DateFormat('HH:mm').parse(routine['endTime'])
+        : null;
+    if (routine['createDate'] == null) {
+      throw Exception('createDate가 JSON에서 누락되었습니다.');
+    }
+    DateTime? parsedOnDate = routine['onDate'] != null
+        ? DateTime.parse(routine['onDate'])
+        : null;
+    DateTime? parsedOffDate = routine['offDate'] != null
+        ? DateTime.parse(routine['offDate'])
         : null;
 
     return SleepDailyRoutine(
@@ -63,6 +78,9 @@ class SleepDailyRoutine {
         completed: json['completed'],
         startTime: parsedStartTime,
         endTime: parsedEndTime,
+        createDate: DateTime.parse(routine['createDate']),
+        onDate: parsedOnDate,
+        offDate: parsedOffDate
     );
   }
 
@@ -83,6 +101,9 @@ class SleepDailyRoutine {
       'completed': completed,
       'startTime': startTime?.toIso8601String(),
       'endTime': endTime?.toIso8601String(),
+      'createDate': createDate.toIso8601String(),
+      'onDate': onDate?.toIso8601String(),
+      'offDate': offDate?.toIso8601String(),
     };
   }
 

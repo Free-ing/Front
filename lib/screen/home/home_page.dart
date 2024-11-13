@@ -143,6 +143,7 @@ class _HomePageState extends State<HomePage> {
         saturday: true,
         sunday: true,
         status: true,
+        createDate: DateTime(2024, 11, 14, 12, 54)
         //url: url,
         //completed: completed,
         //startTime: startTime,
@@ -209,11 +210,12 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // TODO: completeDate 이런거 적용시켜야함
   List<SleepDailyRoutine> getFilteredSleepRoutines() {
     return _sleepDailyRoutine
         .where((routine) =>
             isSleepRoutineActiveOnDay(routine, dayOfWeek) &&
-            (routine.status ?? false))
+            (routine.status || (routine.status==false && routine.completed == true)))
         .toList();
     // final filteredList =  _sleepDailyRoutine
     //     .where((routine) => isRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false))
