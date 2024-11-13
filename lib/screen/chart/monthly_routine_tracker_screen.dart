@@ -674,7 +674,7 @@ class _MonthlyRoutineTrackerScreenState
                             routine.imageUrl != ''
                                 ? Image.network(
                                     routine.imageUrl,
-                                    width: screenWidth * 0.1,
+                                    width: screenWidth * 0.095,
                                     fit: BoxFit.contain,
                                   )
                                 : Container(),
