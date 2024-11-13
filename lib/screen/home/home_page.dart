@@ -473,6 +473,9 @@ class _HomePageState extends State<HomePage> {
     if (sleepRecordCompleted == null || isLoading) {
       return const Center(child: Loading());
     }
+    if (_stressLevelResponse == null){
+      return StressSurveyPage();
+    }
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -627,7 +630,7 @@ class _HomePageState extends State<HomePage> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          StressSurveyPage()));
+                                                          const StressSurveyPage()));
                                             },
                                             child: Text('측정 하기',
                                                 style: textTheme.bodySmall
