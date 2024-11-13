@@ -160,26 +160,27 @@ class _StressChartScreenState extends State<StressChartScreen> {
                               child: Text(
                                 result.totalScore.toString(),
                                 style: const TextStyle(
-                                    fontSize: 26,
-                                    color: Colors.white,
-                                    shadows: [
-                                      Shadow(
-                                          // bottomLeft
-                                          offset: Offset(-1, -1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // bottomRight
-                                          offset: Offset(1, -1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // topRight
-                                          offset: Offset(1, 1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // topLeft
-                                          offset: Offset(-1, 1),
-                                          color: Colors.black),
-                                    ]),
+                                  fontSize: 26,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                        // bottomLeft
+                                        offset: Offset(-1, -1),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // bottomRight
+                                        offset: Offset(1, -1),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // topRight
+                                        offset: Offset(1, 1),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // topLeft
+                                        offset: Offset(-1, 1),
+                                        color: Colors.black),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

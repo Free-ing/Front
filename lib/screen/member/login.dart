@@ -53,14 +53,15 @@ class _LoginState extends State<Login> {
       print('성공!!!!!!!!!!!!!!!!!!!!!!1');
       final responseData = json.decode(response.body);
 
-      if (responseData.containsKey('accessToken') && responseData.containsKey('refreshToken')){
+      if (responseData.containsKey('accessToken') &&
+          responseData.containsKey('refreshToken')) {
         final accessToken = responseData['accessToken'];
         final refreshToken = responseData['refreshToken'];
         final tokenStorage = TokenStorage();
-        try{
+        try {
           await tokenStorage.saveTokens(accessToken, refreshToken);
           print('토큰 저장 성공!!!');
-        }catch(e){
+        } catch (e) {
           print('토큰 저장 실패: $e');
         }
       }
@@ -85,14 +86,18 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return DefaultLayout(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
-          'assets/imgs/login/login_top.png',
-            width: MediaQuery.of(context).size.width,
+            'assets/imgs/login/login_top.png',
+            width: screenWidth,
             fit: BoxFit.fitWidth,
           ),
           SizedBox(
@@ -103,48 +108,33 @@ class _LoginState extends State<Login> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
-                      const Text(
+                      Text(
                         '스트레스로부터',
-                        style: TextStyle(
-                          fontFamily: 'scdream',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                        ),
+                        style: textTheme.titleSmall,
                       ),
-                      const Row(
+                      Row(
                         children: [
                           Text(
                             'Freeing ',
-                            style: TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.w600),
+                            style: textTheme.headlineLarge,
                           ),
-                          Text(
-                            '할 준비 되셨나요?',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w400),
-                          ),
+                          Text('할 준비 되셨나요?', style: textTheme.titleSmall),
                         ],
                       ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02),
-                      const Text(
+                      SizedBox(height: screenHeight * 0.02),
+                      Text(
                         '나를 위한 힐링을 시작해보세요.',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w400),
+                        style: textTheme.titleSmall,
                       ),
                     ],
                   ),
                   Column(
                     children: [
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.045),
-                      const Text(
+                      SizedBox(height: screenHeight * 0.045),
+                      Text(
                         '로그인',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300,
-                        ),
+                        style: textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w300),
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.023),
@@ -161,15 +151,15 @@ class _LoginState extends State<Login> {
                         hintText: '비밀번호를 입력해주세요.',
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.045),
+                          height: screenHeight * 0.045),
                       GreenButton(
-                        width: MediaQuery.of(context).size.height * 0.33,
+                        width: screenHeight * 0.33,
                         onPressed: _login,
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.001),
+                          height: screenHeight * 0.001),
                       SizedBox(
-                        width: MediaQuery.of(context).size.height * 0.34,
+                        width: screenHeight * 0.34,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -231,10 +221,11 @@ class _LoginState extends State<Login> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.023),
+            padding: EdgeInsets.only(
+                top: screenHeight * 0.023),
             child: Image.asset(
               "assets/imgs/login/login_bottom.png",
-              width: MediaQuery.of(context).size.width,
+              width: screenWidth,
               fit: BoxFit.fitWidth,
             ),
           ),
