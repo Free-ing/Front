@@ -107,12 +107,27 @@ class _SplashScreenState extends State<SplashScreen> {
 
   int currentImageIndex = 0;
   Timer? _timer;
-  final int imageDisplayDuration = 500; // 1 second per image
+  final int imageDisplayDuration = 700; // 1 second per image
 
   @override
   void initState() {
     super.initState();
+    _startTimer();
+  }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // precacheImage를 didChangeDependencies에서 호출
+    for (String imagePath in images) {
+      precacheImage(AssetImage(imagePath), context);
+    }
+    precacheImage(const AssetImage("assets/imgs/login/login_bottom.png"), context);
+    precacheImage(const AssetImage("assets/imgs/login/login_top.png"), context);
+
+  }
+
+  void _startTimer() {
     _timer = Timer.periodic(
       Duration(milliseconds: imageDisplayDuration),
           (timer) {
@@ -125,8 +140,12 @@ class _SplashScreenState extends State<SplashScreen> {
           _timer?.cancel();
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const Login()),
-
+            //MaterialPageRoute(builder: (context) => const Login()),
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => const Login(),
+              transitionDuration: Duration.zero, // 애니메이션 제거
+              reverseTransitionDuration: Duration.zero,
+            ),
           );
         }
       },
@@ -150,21 +169,8 @@ class _SplashScreenState extends State<SplashScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          // Positioned(
-          //   bottom: 20.0,
-          //   right: 20.0,
-          //   child: Text(
-          //     'Time Remaining: ${(images.length - currentImageIndex - 1) * imageDisplayDuration ~/ 1000}s',
-          //     style: const TextStyle(
-          //       fontSize: 16,
-          //       fontWeight: FontWeight.bold,
-          //       color: Colors.white,
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
   }
 }
-

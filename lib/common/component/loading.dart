@@ -32,6 +32,13 @@ class _LoadingState extends State<Loading> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(const AssetImage('assets/imgs/background/background_image_home.png'), context);
+
+  }
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
