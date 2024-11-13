@@ -20,7 +20,8 @@ class _StressChartScreenState extends State<StressChartScreen> {
   List<StressTestResultsList> _stressTestResult = [];
 
   //Todo: 서버 요청 (스트레스 측정 결과 리스트 조회)
-  Future<List<StressTestResultsList>> _fetchStressTestResultList(selectedDate) async {
+  Future<List<StressTestResultsList>> _fetchStressTestResultList(
+      selectedDate) async {
     final apiService = StressAPIService();
     final response = await apiService.getStressTestResultList(selectedDate);
 
@@ -149,26 +150,27 @@ class _StressChartScreenState extends State<StressChartScreen> {
                               child: Text(
                                 result.totalScore.toString(),
                                 style: const TextStyle(
-                                    fontSize: 26,
-                                    color: Colors.white,
-                                    shadows: [
-                                      Shadow(
-                                          // bottomLeft
-                                          offset: Offset(-1, -1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // bottomRight
-                                          offset: Offset(1, -1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // topRight
-                                          offset: Offset(1, 1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // topLeft
-                                          offset: Offset(-1, 1),
-                                          color: Colors.black),
-                                    ]),
+                                  fontSize: 26,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                        // bottomLeft
+                                        offset: Offset(-1, -1),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // bottomRight
+                                        offset: Offset(1, -1),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // topRight
+                                        offset: Offset(1, 1),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // topLeft
+                                        offset: Offset(-1, 1),
+                                        color: Colors.black),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

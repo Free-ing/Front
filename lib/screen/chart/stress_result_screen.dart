@@ -113,100 +113,21 @@ class _StressResultScreenState extends State<StressResultScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            text: '$formattedDate\n',
-                            style: textTheme.titleSmall?.copyWith(
-                                height: 1.8, fontWeight: FontWeight.w600),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: '$name',
-                                style: textTheme.titleSmall?.copyWith(
-                                    height: 1.8, fontWeight: FontWeight.w600),
-                              ),
-                              TextSpan(
-                                text: '님의 스트레스 지수는\n$totalScore점 입니다.',
-                                style:
-                                    textTheme.titleSmall?.copyWith(height: 1.8),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              width: screenWidth * 0.18,
-                              height: screenWidth * 0.18,
-                              decoration: BoxDecoration(
-                                color: resultColor,
-                                border: Border.all(width: 1),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  totalScore.toString(),
-                                  style: const TextStyle(
-                                    fontSize: 26,
-                                    color: Colors.white,
-                                    shadows: [
-                                      Shadow(
-                                          // bottomLeft
-                                          offset: Offset(-1, -1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // bottomRight
-                                          offset: Offset(1, -1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // topRight
-                                          offset: Offset(1, 1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // topLeft
-                                          offset: Offset(-1, 1),
-                                          color: Colors.black),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: screenHeight * 0.01),
-                            Text(
-                              stressLevel,
-                              style: textTheme.titleSmall,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    _showStressResult(
+                        textTheme: textTheme,
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
+                        formattedDate: formattedDate,
+                        totalScore: totalScore,
+                        resultColor: resultColor,
+                        stressLevel: stressLevel),
                     SizedBox(height: screenHeight * 0.028),
-                    Container(
-                      width: screenWidth,
-                      padding: EdgeInsets.all(screenWidth * 0.02),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(width: 1),
-                      ),
-                      child: Text(
-                        aiFeedback,
-                        style: textTheme.bodyMedium?.copyWith(height: 1.6),
-                      ),
-                    ),
+                    _showAiFeedback(
+                        textTheme: textTheme,
+                        screenWidth: screenWidth,
+                        aiFeedback: aiFeedback),
                     SizedBox(height: screenHeight * 0.028),
-                    GreenButton(
-                      width: screenWidth * 0.6,
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const StressChartScreen()),
-                        );
-                      },
-                    ),
+                    _showPopButton(screenWidth: screenWidth),
                     SizedBox(height: screenHeight * 0.028),
                   ],
                 ),
@@ -215,5 +136,120 @@ class _StressResultScreenState extends State<StressResultScreen> {
             onDateSelected: (date) {},
             selectMonth: false,
           );
+  }
+
+  // Todo: 스트레스 결과 안내
+  Widget _showStressResult({
+    required TextTheme textTheme,
+    required double screenWidth,
+    required double screenHeight,
+    required String formattedDate,
+    required int totalScore,
+    required Color resultColor,
+    required String stressLevel,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        RichText(
+          text: TextSpan(
+            text: '$formattedDate\n',
+            style: textTheme.titleSmall
+                ?.copyWith(height: 1.8, fontWeight: FontWeight.w600),
+            children: <TextSpan>[
+              TextSpan(
+                text: '$name',
+                style: textTheme.titleSmall
+                    ?.copyWith(height: 1.8, fontWeight: FontWeight.w600),
+              ),
+              TextSpan(
+                text: '님의 스트레스 지수는\n$totalScore점 입니다.',
+                style: textTheme.titleSmall?.copyWith(height: 1.8),
+              ),
+            ],
+          ),
+        ),
+        Column(
+          children: [
+            Container(
+              width: screenWidth * 0.18,
+              height: screenWidth * 0.18,
+              decoration: BoxDecoration(
+                color: resultColor,
+                border: Border.all(width: 1),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Center(
+                child: Text(
+                  totalScore.toString(),
+                  style: const TextStyle(
+                    fontSize: 26,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                          // bottomLeft
+                          offset: Offset(-1, -1),
+                          color: Colors.black),
+                      Shadow(
+                          // bottomRight
+                          offset: Offset(1, -1),
+                          color: Colors.black),
+                      Shadow(
+                          // topRight
+                          offset: Offset(1, 1),
+                          color: Colors.black),
+                      Shadow(
+                          // topLeft
+                          offset: Offset(-1, 1),
+                          color: Colors.black),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: screenHeight * 0.01),
+            Text(
+              stressLevel,
+              style: textTheme.titleSmall,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Todo: 피드백
+  Widget _showAiFeedback({
+    required TextTheme textTheme,
+    required double screenWidth,
+    required String aiFeedback,
+  }) {
+    return Container(
+      width: screenWidth,
+      padding: EdgeInsets.all(screenWidth * 0.02),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(width: 1),
+      ),
+      child: Text(
+        aiFeedback,
+        style: textTheme.bodyMedium?.copyWith(height: 1.6),
+      ),
+    );
+  }
+
+  Widget _showPopButton({
+    required double screenWidth,
+  }) {
+    return GreenButton(
+      width: screenWidth * 0.6,
+      onPressed: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const StressChartScreen()),
+        );
+      },
+    );
   }
 }

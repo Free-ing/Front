@@ -179,6 +179,9 @@ class DialogManager {
     String cancelButtonText,
     String confirmButtonText,
   ) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -186,7 +189,7 @@ class DialogManager {
         Row(
           children: [
             _buildCustomText(context, userName, topic),
-            SizedBox(width: 77, height: 100, child: Image.asset(image)),
+            SizedBox(width: screenWidth*0.19, height: screenHeight * 0.118, child: Image.asset(image)),
           ],
         ),
         _buildDialogButtons(

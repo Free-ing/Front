@@ -77,8 +77,6 @@
 //   );
 // }
 
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -95,13 +93,16 @@ import 'common/component/loading.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize(); // 광고 초기화~~
-  WidgetsFlutterBinding.ensureInitialized(); // Flutter 엔진 초기화 for SharedPreferences
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Flutter 엔진 초기화 for SharedPreferences
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return MaterialApp(
       locale: Locale('ko', 'KR'),
       debugShowCheckedModeBanner: false,
@@ -118,38 +119,47 @@ class MyApp extends StatelessWidget {
         fontFamily: 'scdream',
         textTheme: TextTheme(
           headlineLarge: TextStyle(
-            fontSize: 22.0,
+            // fontSize: 22.0,
+            fontSize: screenWidth * 0.0535,
             fontWeight: FontWeight.w600,
           ),
           headlineSmall: TextStyle(
             color: Colors.white,
-            fontSize: 22.0,
+            //fontSize: 22.0,
+            fontSize: screenWidth * 0.0535,
             fontWeight: FontWeight.w500,
           ),
           titleLarge: TextStyle(
-            fontSize: 18.0,
+            //fontSize: 18.0,
+            fontSize: screenWidth * 0.0437,
             fontWeight: FontWeight.w500,
           ),
           titleMedium: TextStyle(
-            fontSize: 16.0,
+            //fontSize: 16.0,
+            fontSize: screenWidth * 0.0388,
             fontWeight: FontWeight.w500,
           ),
           titleSmall: TextStyle(
-            fontSize: 18.0,
+            //fontSize: 18.0,
+            fontSize: screenWidth * 0.0437,
           ),
           bodyLarge: TextStyle(
-            fontSize: 22.0,
+            //fontSize: 22.0,
+            fontSize: screenWidth * 0.0535,
             height: 1.5,
           ),
           bodyMedium: TextStyle(
-            fontSize: 16.0,
+            //fontSize: 16.0,
+            fontSize: screenWidth * 0.0388,
           ),
           bodySmall: TextStyle(
-            fontSize: 14.0,
+            //fontSize: 14.0,
+            fontSize: screenWidth * 0.0339,
             height: 1.5,
           ),
           labelMedium: TextStyle(
-            fontSize: 12.0,
+            //fontSize: 12.0,
+            fontSize: screenWidth * 0.029,
           ),
         ),
       ),

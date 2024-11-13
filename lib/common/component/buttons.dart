@@ -246,9 +246,8 @@ class _TimePickerButtonState extends State<TimePickerButton> {
                             Navigator.pop(context); // 팝업 닫기
                           },
                           child: Text('취소',
-                              style: textTheme.bodyMedium?.copyWith(
+                              style: textTheme.titleSmall?.copyWith(
                                 color: CupertinoColors.systemGrey,
-                                fontSize: 18,
                               )),
                         ),
                         // 확인 버튼
@@ -256,9 +255,11 @@ class _TimePickerButtonState extends State<TimePickerButton> {
                           onPressed: () {
                             setState(() {
                               // 24시간 형식을 controller.text에 저장
-                              widget.controller.text = _formatDateTime(selectedDateTime);
+                              widget.controller.text =
+                                  _formatDateTime(selectedDateTime);
                               // AM/PM 형식으로 화면에 표시할 selectedTime 업데이트
-                              selectedTime = _formatTimeToAMPM(selectedDateTime);
+                              selectedTime =
+                                  _formatTimeToAMPM(selectedDateTime);
                               // selectedTime = _formatDateTime(selectedDateTime);
                               // widget.controller.text = selectedTime;
                             });
@@ -268,9 +269,8 @@ class _TimePickerButtonState extends State<TimePickerButton> {
                             Navigator.pop(context); // 팝업 닫기
                           },
                           child: Text('확인',
-                              style: textTheme.bodyMedium?.copyWith(
+                              style: textTheme.titleSmall?.copyWith(
                                 color: CupertinoColors.systemGrey,
-                                fontSize: 18,
                               )),
                         ),
                       ],
@@ -291,7 +291,6 @@ class _TimePickerButtonState extends State<TimePickerButton> {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ],
@@ -317,8 +316,6 @@ class _TimePickerButtonState extends State<TimePickerButton> {
     String minute = dateTime.minute.toString().padLeft(2, '0');
     return "$hour:$minute $period";
   }
-
-
 
   @override
   Widget build(BuildContext context) {
