@@ -204,6 +204,7 @@ class _AiLetterState extends State<AiLetter> {
                     'From. 후링',
                     style: TextStyle(fontSize: 24, fontFamily: 'nadeuri'),
                   ),
+                  SizedBox(height: screenHeight*0.05),
                 ],
               )
             ],

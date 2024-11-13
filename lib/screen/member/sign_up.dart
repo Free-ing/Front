@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/service/sign_up_service.dart';
 import 'package:freeing/layout/default_layout.dart';
+import 'package:freeing/screen/member/guide_screen.dart';
 import '../../common/component/buttons.dart';
 import '../../common/component/dialog_manager.dart';
 import '../../common/component/text_form_fields.dart';
@@ -151,8 +152,8 @@ class _SignUpState extends State<SignUp> {
               content: '축하드립니다! \n\n회원가입에 성공하셨습니다! \n\n로그인해주세요.',
               onConfirm: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => Login(),
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const GuideScreen(),
                 ));
               });
         } else {

@@ -9,6 +9,7 @@ class ChartLayout extends StatefulWidget {
   final Function(DateTime) onDateSelected;
   final bool? selectMonth;
   final VoidCallback? backToPage;
+  final bool? noPadding;
 
   const ChartLayout({
     super.key,
@@ -17,6 +18,7 @@ class ChartLayout extends StatefulWidget {
     required this.onDateSelected,
     this.selectMonth,
     this.backToPage,
+    this.noPadding,
   });
 
   @override
@@ -27,6 +29,7 @@ class _ChartLayoutState extends State<ChartLayout> {
   //DateTime selectedDate = DateTime.now();
   DateTime? selectedDate;
   late final bool _selectMonth = widget.selectMonth ?? true;
+  late final bool _noPadding = widget.noPadding ?? false;
 
   void initState() {
     super.initState();
@@ -138,7 +141,9 @@ class _ChartLayoutState extends State<ChartLayout> {
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+            padding: _noPadding
+                ? EdgeInsets.zero
+                : EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
             child: widget.chartWidget,
           )),
     );
