@@ -53,7 +53,7 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
           child: Column(
             children: [
               _buildSurveyIntroContainer(screenWidth, screenHeight, textTheme),
-              SizedBox(height: screenHeight * 0.03,),
+              SizedBox(height: screenHeight * 0.02,),
               _buildQuestions(screenWidth, screenHeight, textTheme),
               SizedBox(height: screenHeight * 0.02,),
               GreenButton(text: '측정 하기', width: screenWidth * 0.6, onPressed: () { _submitSurvey(); },),
@@ -66,9 +66,9 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
   Widget _buildSurveyIntroContainer(double screenWidth, double screenHeight, TextTheme textTheme) {
     return Container(
       width: screenWidth,
-      height: screenHeight * 0.2,
+      //height: screenHeight * 0.45,
       decoration: BoxDecoration(
-        color: Color(0xFFF6F6F6),
+        color: const Color(0xFFF6F6F6),
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: Colors.black),
       ),
@@ -77,9 +77,10 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.01),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Text('이 검사는 스트레스 정도를 알아보기 위한 것입니다.\n최근 2주간 각 문항에 해당하는 증상을 얼마나 자주 경험하였는지 확인하고 해당하는 번호에 체크하기 바랍니다.', style: textTheme.bodyMedium,),
+              Text('Freeing과 함께 스트레스를 점검하세요!스트레스는 우리 삶의 균형에 큰 영향을 미칩니다. Freeing에서는 국립정신건강센터(National Center for Mental Health)와 대한신경정신의학회(Korean Neuropsychiatric Association)가 한국인의 정서와 생활 방식을 반영해 개발한 \'한국인 스트레스 척도(National Stress Scale)\'를 제공합니다. 이 검사는 한국인에게 특화된 과학적 평가 도구로, 기존의 해외 검사와 차별화된 신뢰성을 자랑합니다. 지금, Freeing과 함께 더 건강한 삶을 시작해 보세요!\n\n최근 2주간 각 문항에 해당하는 증상을 얼마나 자주 경험하였는지 확인하고 해당하는 번호에 체크하기 바랍니다.', style: textTheme.bodyMedium,),
               Text('(0: 없음, 1: 2일 이상, 2: 1주일 이상, 3: 거의 2주)', style: textTheme.bodySmall)
             ],
           ),
