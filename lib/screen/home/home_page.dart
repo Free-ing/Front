@@ -106,10 +106,10 @@ class _HomePageState extends State<HomePage> {
   Future<void> fetchStressLevel() async {
     try {
       final response = await homeApiService.getStressLevel();
-      print(response);
+      //print(response);
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
-        print(jsonData);
+        //print(jsonData);
         setState(() {
           // _stressLevelResponse = jsonData
           //     .map((data) => StressLevelResponse.fromJson(data))
@@ -212,11 +212,188 @@ class _HomePageState extends State<HomePage> {
 
   // TODO: completeDate 이런거 적용시켜야함
   List<SleepDailyRoutine> getFilteredSleepRoutines() {
-    return _sleepDailyRoutine
-        .where((routine) =>
-            isSleepRoutineActiveOnDay(routine, dayOfWeek) &&
-            (routine.status || (routine.status==false && routine.completed == true)))
-        .toList();
+
+    return _sleepDailyRoutine.where((routine) {
+      final now = selectedDate;
+      final today = DateTime(now.year, now.month, now.day);
+
+      if (routine.status) {
+        // status == true
+        if (routine.createDate.isBefore(today) || routine.createDate.isAtSameMomentAs(today)) {
+          // createDate <= 오늘 날짜
+          if (routine.offDate == null) {
+            return true; // offDate가 null인 경우 표시
+          }
+          if (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!)) {
+            // 현재 날짜 <= offDate
+            return true;
+          }
+          if (routine.onDate != null &&
+              (now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!))) {
+            // 현재 날짜 >= onDate
+            return true;
+          }
+        }
+        return false; // 조건에 맞지 않으면 false
+      } else {
+        // status == false
+        if (routine.completed == true) {
+          return true; // completed == true인 경우 표시
+        }
+        if (routine.onDate != null && routine.offDate != null) {
+          if ((now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) &&
+              (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!))) {
+            // 오늘 날짜 >= onDate && 오늘 날짜 <= offDate
+            return true;
+          }
+        }
+        return false; // 조건에 맞지 않으면 false
+      }
+    }).toList();
+
+    // return _sleepDailyRoutine.where((routine) {
+    //   final now = selectedDate;
+    //   final today = DateTime(now.year, now.month, now.day);
+    //
+    //   if (routine.status) {
+    //     // status == true
+    //     if (routine.createDate.isBefore(today) || routine.createDate.isAtSameMomentAs(today)) {
+    //       // createDate <= 오늘 날짜
+    //       if (routine.offDate == null) {
+    //         return true; // offDate가 null인 경우 표시
+    //       }
+    //       if (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!)) {
+    //         // 현재 날짜 <= offDate
+    //         return true;
+    //       }
+    //       if (now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) {
+    //         // 현재 날짜 >= onDate
+    //         return true;
+    //       }
+    //     }
+    //     return false; // 조건에 맞지 않으면 false
+    //   } else {
+    //     // status == false
+    //     if (routine.completed == true) {
+    //       return true; // completed == true인 경우 표시
+    //     }
+    //     if (routine.onDate != null) {
+    //       if ((now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) &&
+    //           now.isBefore(routine.offDate!)) {
+    //         // 오늘 날짜 >= onDate && 오늘 날짜 < offDate
+    //         return true;
+    //       }
+    //     }
+    //     return false; // 조건에 맞지 않으면 false
+    //   }
+    // }).toList();
+
+    // return _sleepDailyRoutine.where((routine) {
+    //   final now = selectedDate;
+    //   final today = DateTime(now.year, now.month, now.day);
+    //
+    //   if (routine.status) {
+    //     // status == true
+    //     if (routine.createDate.isBefore(today) || routine.createDate.isAtSameMomentAs(today)) {
+    //       // createDate <= 오늘 날짜
+    //       if (routine.offDate == null) {
+    //         return true; // offDate가 null인 경우 표시
+    //       }
+    //       if (now.isBefore(routine.offDate!)) {
+    //         // 현재 날짜 < offDate
+    //         return true;
+    //       }
+    //       if (now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) {
+    //         // 현재 날짜 >= onDate
+    //         return true;
+    //       }
+    //     }
+    //     return false; // 조건에 맞지 않으면 false
+    //   } else {
+    //     // status == false
+    //     if (routine.completed == true) {
+    //       return true; // completed == true인 경우 표시
+    //     }
+    //     if (routine.onDate != null) {
+    //       if ((now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) &&
+    //           now.isBefore(routine.offDate!)) {
+    //         // 오늘 날짜 >= onDate && 오늘 날짜 < offDate
+    //         return true;
+    //       }
+    //     }
+    //     return false; // 조건에 맞지 않으면 false
+    //   }
+    // }).toList();
+
+    // return _sleepDailyRoutine.where((routine) {
+    //   final now = selectedDate;
+    //   final today = DateTime(now.year, now.month, now.day);
+    //
+    //   if (routine.status) {
+    //     // status == true
+    //     if (routine.createDate.isBefore(today) || routine.createDate.isAtSameMomentAs(today)) {
+    //       // createDate <= 오늘 날짜
+    //       if (routine.offDate == null) {
+    //         return true; // offDate가 null인 경우 표시
+    //       }
+    //       if (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!) ||
+    //           now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) {
+    //         // 현재 날짜 <= offDate || 현재 날짜 >= onDate
+    //         return true;
+    //       }
+    //     }
+    //     return false; // 조건에 맞지 않으면 false
+    //   } else {
+    //     // status == false
+    //     if (routine.completed == true) {
+    //       return true; // completed == true인 경우 표시
+    //     }
+    //     if (routine.onDate != null) {
+    //       if ((now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) &&
+    //           now.isBefore(routine.offDate!)) {
+    //         // 오늘 날짜 >= onDate && 오늘 날짜 < offDate
+    //         return true;
+    //       }
+    //     }
+    //     return false; // 조건에 맞지 않으면 false
+    //   }
+    // }).toList();
+
+    // return _sleepDailyRoutine.where((routine) {
+    //   final now = selectedDate;
+    //   final today = DateTime(now.year, now.month, now.day);
+    //
+    //   if (routine.status) {
+    //     // status == true
+    //     if (routine.createDate.isBefore(today) || routine.createDate.isAtSameMomentAs(today)) {
+    //       // createDate <= 오늘 날짜
+    //       if (routine.offDate == null) {
+    //         return true; // offDate가 null인 경우 표시
+    //       }
+    //       if (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!) ||
+    //           now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) {
+    //         // 현재 날짜 < offDate || 현재 날짜 >= onDate
+    //         return true;
+    //       }
+    //     }
+    //     return false; // 조건에 맞지 않으면 false
+    //   } else {
+    //     // status == false
+    //     if (routine.completed == true) {
+    //       return true; // completed == true인 경우 표시
+    //     }
+    //     if (routine.onDate != null) {
+    //       if ((now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) &&
+    //           (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!))) {
+    //         // 오늘 날짜 >= onDate && 오늘 날짜 < offDate
+    //         return true;
+    //       }
+    //     }
+    //     return false; // 조건에 맞지 않으면 false
+    //   }
+    // }).toList();
+
+
     // final filteredList =  _sleepDailyRoutine
     //     .where((routine) => isRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false))
     //     .map((routine) => routine.sleepRoutineName ?? "")
@@ -377,12 +554,12 @@ class _HomePageState extends State<HomePage> {
         await homeApiService.getExerciseRecord(startDate, endDate);
     if (exerciseResponse.statusCode == 200) {
       final result = json.decode(exerciseResponse.body);
-      print('운동 상태바 출려어ㅓ어억 $result');
+      //print('운동 상태바 출려어ㅓ어억 $result');
       exerciseDates = result['result']
           .map<String>((e) => e['completeDate'].toString())
           .toList();
     } else {
-      print('운동 상태바 출력 상태코드 뭘까 ${exerciseResponse.statusCode}');
+      //print('운동 상태바 출력 상태코드 뭘까 ${exerciseResponse.statusCode}');
     }
 
     // 수면 상태바 가져오기
@@ -390,10 +567,10 @@ class _HomePageState extends State<HomePage> {
         await homeApiService.getSleepRecord(startDate, endDate);
     if (sleepResponse.statusCode == 200) {
       final result = json.decode(sleepResponse.body);
-      print('수면 상태바 출려어ㅓ어억 $result');
+      //print('수면 상태바 출려어ㅓ어억 $result');
       sleepDates = result.map<String>((e) => e['date'].toString()).toList();
     } else {
-      print('수면 상태바 출력 상태코드 뭘까 ${sleepResponse.statusCode}');
+      //print('수면 상태바 출력 상태코드 뭘까 ${sleepResponse.statusCode}');
     }
 
     // 마음 채우기 상태바 가져오기
@@ -401,13 +578,13 @@ class _HomePageState extends State<HomePage> {
         await homeApiService.getSpiritRecord(startDate, endDate);
     if (spiritResponse.statusCode == 200) {
       final result = json.decode(spiritResponse.body);
-      print('마음 채우기 상태바 출려어ㅓ어억 $result');
-      print('마음 채우기 시작날: $startDate / 마지막 날: $endDate');
+      //print('마음 채우기 상태바 출려어ㅓ어억 $result');
+      //print('마음 채우기 시작날: $startDate / 마지막 날: $endDate');
       spiritDates = result['result']
           .map<String>((e) => e['completeDate'].toString())
           .toList();
     } else {
-      print('마음 채우기 상태바 출력 상태코드 뭘까 ${spiritResponse.statusCode}');
+      //print('마음 채우기 상태바 출력 상태코드 뭘까 ${spiritResponse.statusCode}');
     }
 
     // 취미 상태바 가져오기
@@ -415,12 +592,12 @@ class _HomePageState extends State<HomePage> {
         await homeApiService.getHobbyRecord(startDate, endDate);
     if (hobbyResponse.statusCode == 200) {
       final result = json.decode(hobbyResponse.body);
-      print('취미 출려어ㅓ어억 $result');
+      //print('취미 출려어ㅓ어억 $result');
       hobbyDates = result['result']
           .map<String>((e) => e['completeDate'].toString())
           .toList();
     } else {
-      print('취미 상태바 출력 상태코드 뭘까 ${hobbyResponse.statusCode}');
+      //print('취미 상태바 출력 상태코드 뭘까 ${hobbyResponse.statusCode}');
     }
   }
 
