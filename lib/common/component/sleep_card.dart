@@ -125,13 +125,15 @@ class _SleepCardState extends State<SleepCard> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     isSwitched = widget.status;
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return GestureDetector(
       onLongPress: () async {
         await Navigator.of(context).push(MaterialPageRoute(
@@ -171,7 +173,8 @@ class _SleepCardState extends State<SleepCard> {
           ),
           child: Stack(
             children: [
-              _routineImage(imageUrl: widget.imageUrl),
+              _routineImage(
+                  imageUrl: widget.imageUrl, screenWidth: screenWidth),
               _routineTitle(context: context, title: widget.title),
               _toggleSwitch(),
             ],
@@ -181,7 +184,8 @@ class _SleepCardState extends State<SleepCard> {
     );
   }
 
-  Widget _routineImage({required String imageUrl}) {
+  Widget _routineImage(
+      {required String imageUrl, required double screenWidth}) {
     return Positioned(
       left: 15,
       right: 15,
@@ -189,8 +193,8 @@ class _SleepCardState extends State<SleepCard> {
       child: Image.network(
         imageUrl,
         fit: BoxFit.contain,
-        width: 120,
-        height: 120,
+        width: screenWidth * 0.3,
+        height: screenWidth * 0.3,
       ),
     );
   }
@@ -216,7 +220,7 @@ class _SleepCardState extends State<SleepCard> {
       top: 2,
       right: 2,
       child: GestureDetector(
-        onTap: () async{
+        onTap: () async {
           setState(() {
             isSwitched = !isSwitched;
           });
