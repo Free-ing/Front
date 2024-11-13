@@ -212,188 +212,11 @@ class _HomePageState extends State<HomePage> {
 
   // TODO: completeDate 이런거 적용시켜야함
   List<SleepDailyRoutine> getFilteredSleepRoutines() {
-
-    return _sleepDailyRoutine.where((routine) {
-      final now = selectedDate;
-      final today = DateTime(now.year, now.month, now.day);
-
-      if (routine.status) {
-        // status == true
-        if (routine.createDate.isBefore(today) || routine.createDate.isAtSameMomentAs(today)) {
-          // createDate <= 오늘 날짜
-          if (routine.offDate == null) {
-            return true; // offDate가 null인 경우 표시
-          }
-          if (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!)) {
-            // 현재 날짜 <= offDate
-            return true;
-          }
-          if (routine.onDate != null &&
-              (now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!))) {
-            // 현재 날짜 >= onDate
-            return true;
-          }
-        }
-        return false; // 조건에 맞지 않으면 false
-      } else {
-        // status == false
-        if (routine.completed == true) {
-          return true; // completed == true인 경우 표시
-        }
-        if (routine.onDate != null && routine.offDate != null) {
-          if ((now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) &&
-              (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!))) {
-            // 오늘 날짜 >= onDate && 오늘 날짜 <= offDate
-            return true;
-          }
-        }
-        return false; // 조건에 맞지 않으면 false
-      }
-    }).toList();
-
-    // return _sleepDailyRoutine.where((routine) {
-    //   final now = selectedDate;
-    //   final today = DateTime(now.year, now.month, now.day);
-    //
-    //   if (routine.status) {
-    //     // status == true
-    //     if (routine.createDate.isBefore(today) || routine.createDate.isAtSameMomentAs(today)) {
-    //       // createDate <= 오늘 날짜
-    //       if (routine.offDate == null) {
-    //         return true; // offDate가 null인 경우 표시
-    //       }
-    //       if (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!)) {
-    //         // 현재 날짜 <= offDate
-    //         return true;
-    //       }
-    //       if (now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) {
-    //         // 현재 날짜 >= onDate
-    //         return true;
-    //       }
-    //     }
-    //     return false; // 조건에 맞지 않으면 false
-    //   } else {
-    //     // status == false
-    //     if (routine.completed == true) {
-    //       return true; // completed == true인 경우 표시
-    //     }
-    //     if (routine.onDate != null) {
-    //       if ((now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) &&
-    //           now.isBefore(routine.offDate!)) {
-    //         // 오늘 날짜 >= onDate && 오늘 날짜 < offDate
-    //         return true;
-    //       }
-    //     }
-    //     return false; // 조건에 맞지 않으면 false
-    //   }
-    // }).toList();
-
-    // return _sleepDailyRoutine.where((routine) {
-    //   final now = selectedDate;
-    //   final today = DateTime(now.year, now.month, now.day);
-    //
-    //   if (routine.status) {
-    //     // status == true
-    //     if (routine.createDate.isBefore(today) || routine.createDate.isAtSameMomentAs(today)) {
-    //       // createDate <= 오늘 날짜
-    //       if (routine.offDate == null) {
-    //         return true; // offDate가 null인 경우 표시
-    //       }
-    //       if (now.isBefore(routine.offDate!)) {
-    //         // 현재 날짜 < offDate
-    //         return true;
-    //       }
-    //       if (now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) {
-    //         // 현재 날짜 >= onDate
-    //         return true;
-    //       }
-    //     }
-    //     return false; // 조건에 맞지 않으면 false
-    //   } else {
-    //     // status == false
-    //     if (routine.completed == true) {
-    //       return true; // completed == true인 경우 표시
-    //     }
-    //     if (routine.onDate != null) {
-    //       if ((now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) &&
-    //           now.isBefore(routine.offDate!)) {
-    //         // 오늘 날짜 >= onDate && 오늘 날짜 < offDate
-    //         return true;
-    //       }
-    //     }
-    //     return false; // 조건에 맞지 않으면 false
-    //   }
-    // }).toList();
-
-    // return _sleepDailyRoutine.where((routine) {
-    //   final now = selectedDate;
-    //   final today = DateTime(now.year, now.month, now.day);
-    //
-    //   if (routine.status) {
-    //     // status == true
-    //     if (routine.createDate.isBefore(today) || routine.createDate.isAtSameMomentAs(today)) {
-    //       // createDate <= 오늘 날짜
-    //       if (routine.offDate == null) {
-    //         return true; // offDate가 null인 경우 표시
-    //       }
-    //       if (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!) ||
-    //           now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) {
-    //         // 현재 날짜 <= offDate || 현재 날짜 >= onDate
-    //         return true;
-    //       }
-    //     }
-    //     return false; // 조건에 맞지 않으면 false
-    //   } else {
-    //     // status == false
-    //     if (routine.completed == true) {
-    //       return true; // completed == true인 경우 표시
-    //     }
-    //     if (routine.onDate != null) {
-    //       if ((now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) &&
-    //           now.isBefore(routine.offDate!)) {
-    //         // 오늘 날짜 >= onDate && 오늘 날짜 < offDate
-    //         return true;
-    //       }
-    //     }
-    //     return false; // 조건에 맞지 않으면 false
-    //   }
-    // }).toList();
-
-    // return _sleepDailyRoutine.where((routine) {
-    //   final now = selectedDate;
-    //   final today = DateTime(now.year, now.month, now.day);
-    //
-    //   if (routine.status) {
-    //     // status == true
-    //     if (routine.createDate.isBefore(today) || routine.createDate.isAtSameMomentAs(today)) {
-    //       // createDate <= 오늘 날짜
-    //       if (routine.offDate == null) {
-    //         return true; // offDate가 null인 경우 표시
-    //       }
-    //       if (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!) ||
-    //           now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) {
-    //         // 현재 날짜 < offDate || 현재 날짜 >= onDate
-    //         return true;
-    //       }
-    //     }
-    //     return false; // 조건에 맞지 않으면 false
-    //   } else {
-    //     // status == false
-    //     if (routine.completed == true) {
-    //       return true; // completed == true인 경우 표시
-    //     }
-    //     if (routine.onDate != null) {
-    //       if ((now.isAfter(routine.onDate!) || now.isAtSameMomentAs(routine.onDate!)) &&
-    //           (now.isBefore(routine.offDate!) || now.isAtSameMomentAs(routine.offDate!))) {
-    //         // 오늘 날짜 >= onDate && 오늘 날짜 < offDate
-    //         return true;
-    //       }
-    //     }
-    //     return false; // 조건에 맞지 않으면 false
-    //   }
-    // }).toList();
-
-
+    return _sleepDailyRoutine
+        .where((routine) =>
+    isSleepRoutineActiveOnDay(routine, dayOfWeek) &&
+        (routine.status ?? false))
+        .toList();
     // final filteredList =  _sleepDailyRoutine
     //     .where((routine) => isRoutineActiveOnDay(routine, dayOfWeek) && (routine.status ?? false))
     //     .map((routine) => routine.sleepRoutineName ?? "")
@@ -401,6 +224,63 @@ class _HomePageState extends State<HomePage> {
     //
     // return filteredList.isNotEmpty ? filteredList : [];
   }
+
+  // List<SleepDailyRoutine> getFilteredSleepRoutines() {
+  //   final now = DateTime.now(); // 항상 최신 시간을 사용
+  //   return _sleepDailyRoutine.where((routine) {
+  //     if (routine.sleepRoutineName == "수면 기록하기") {
+  //       // "수면 기록하기"는 status만 확인
+  //       return routine.status;
+  //     }
+  //
+  //     final routineOnDate = routine.onDate ?? routine.createDate; // onDate가 없으면 createDate 사용
+  //     DateTime? routineOffDate = routine.offDate; // offDate
+  //
+  //     // "오늘 이전에 생성된 루틴은 표시하지 않음"
+  //     if (routine.createDate.isAfter(now)) {
+  //       return false;
+  //     }
+  //
+  //     // offDate가 onDate보다 빠르면 offDate 무시
+  //     if (routineOffDate != null && routineOffDate.isBefore(routineOnDate)) {
+  //       routineOffDate = null; // 잘못된 offDate를 null로 설정
+  //     }
+  //
+  //     // 루틴 활성화 상태 처리
+  //     if (routine.status) {
+  //       // onDate <= 현재 <= offDate (또는 offDate가 없음)
+  //       if ((routineOnDate.isBefore(now) || routineOnDate.isAtSameMomentAs(now)) &&
+  //           (routineOffDate == null || routineOffDate.isAfter(now) || routineOffDate.isAtSameMomentAs(now))) {
+  //         return true;
+  //       }
+  //     }
+  //
+  //     // 루틴 비활성화 상태 처리
+  //     if (!routine.status) {
+  //       // 상태가 false인 경우: 오늘 날짜에 비활성화되었는지 확인
+  //       if (routineOffDate != null &&
+  //           (routineOffDate.isAtSameMomentAs(now) || routineOffDate.isAfter(now))) {
+  //         return true; // 오늘 날짜에 비활성화된 루틴 포함
+  //       }
+  //
+  //       if (routine.completed == true) {
+  //         return true; // 완료된 루틴 포함
+  //       }
+  //
+  //       if (routineOnDate != null && routineOffDate != null) {
+  //         // onDate <= 현재 <= offDate
+  //         if ((now.isAtSameMomentAs(routineOnDate) || now.isAfter(routineOnDate)) &&
+  //             (now.isBefore(routineOffDate) || now.isAtSameMomentAs(routineOffDate))) {
+  //           return true;
+  //         }
+  //       }
+  //     }
+  //
+  //     return false; // 조건에 맞지 않으면 제외
+  //   }).toList();
+  // }
+
+
 
   // 운동 루틴 불러오기
   Future<void> fetchExerciseDailyRoutine() async {

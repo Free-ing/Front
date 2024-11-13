@@ -163,7 +163,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: GuideScreen(),
+      home: SplashScreen(),
       // FutureBuilder(
       //   future: _initializeApp(), // 초기화 함수 호출
       //   builder: (context, snapshot) {
