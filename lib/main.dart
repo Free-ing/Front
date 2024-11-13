@@ -153,7 +153,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: StressChartScreen(),
+      home: Login(),
       // FutureBuilder(
       //   future: _initializeApp(), // 초기화 함수 호출
       //   builder: (context, snapshot) {
