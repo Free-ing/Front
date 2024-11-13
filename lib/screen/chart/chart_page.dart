@@ -48,7 +48,7 @@ class ChartPage extends StatelessWidget {
               childAspectRatio: screenWidth * 0.38 / 180,
               children: [
                 _chartCard(
-                  imageUrl: 'assets/imgs/chart/sleep_report.png',
+                  imageUrl: 'assets/imgs/chart/stress_chart.png',
                   title: "스트레스 변화\n몰아 보기",
                   navigatePage: const StressChartScreen(),
                   context: context,

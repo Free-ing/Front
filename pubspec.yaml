@@ -98,6 +98,7 @@ flutter:
     - assets/imgs/home/
     - assets/imgs/setting/
     - assets/imgs/login/
+    - assets/imgs/guide/
     - assets/icons/
     - assets/audio/end_stretching.mp3
     - assets/imgs/etc/launcher_icon.PNG
