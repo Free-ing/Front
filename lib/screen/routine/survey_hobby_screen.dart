@@ -430,22 +430,24 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
         Expanded(
           child: SizedBox(
             width: screenWidth,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              physics: NeverScrollableScrollPhysics(),
-              children: List.generate(
-                3,
-                (index) {
-                  final labels = label;
-                  return Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
-                      child: CircleSurveyButton(
-                        label: labels[index],
-                        onSelected: () => handleButtonSelected(index),
-                        isSelected: selectedIndex == index,
-                      ));
-                },
+            child: Center(
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                physics: NeverScrollableScrollPhysics(),
+                children: List.generate(
+                  3,
+                  (index) {
+                    final labels = label;
+                    return Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
+                        child: CircleSurveyButton(
+                          label: labels[index],
+                          onSelected: () => handleButtonSelected(index),
+                          isSelected: selectedIndex == index,
+                        ));
+                  },
+                ),
               ),
             ),
           ),

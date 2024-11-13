@@ -187,9 +187,10 @@ class DialogManager {
       children: [
         //const SizedBox(height: 12),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildCustomText(context, userName, topic),
-            SizedBox(width: screenWidth*0.19, height: screenHeight * 0.118, child: Image.asset(image)),
+            SizedBox(width: screenWidth*0.18, height: screenHeight * 0.118, child: Image.asset(image)),
           ],
         ),
         _buildDialogButtons(

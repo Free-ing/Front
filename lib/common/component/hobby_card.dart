@@ -16,6 +16,7 @@ class HobbyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Card(
       elevation: 6,
       shadowColor: YELLOW_SHADOW,
@@ -34,7 +35,7 @@ class HobbyCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            _routineImage(imageUrl: imageUrl),
+            _routineImage(imageUrl: imageUrl, screenWidth: screenWidth),
             _routineTitle(context: context, title: title),
           ],
         ),
@@ -42,15 +43,15 @@ class HobbyCard extends StatelessWidget {
     );
   }
 
-  Widget _routineImage({required String imageUrl}) {
+  Widget _routineImage({required String imageUrl, required double screenWidth}) {
     return Positioned(
       left: 15,
       right: 15,
       child: Image.network(
         imageUrl,
         fit: BoxFit.contain,
-        width: 120,
-        height: 120,
+        width: screenWidth * 0.3,
+        height: screenWidth * 0.3,
       ),
     );
   }

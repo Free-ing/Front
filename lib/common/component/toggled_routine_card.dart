@@ -34,9 +34,11 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
     super.initState();
     isSwitched = widget.status;
   }
+
   @override
   Widget build(BuildContext context) {
-   //isSwitched = widget.status;
+    //isSwitched = widget.status;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Card(
       elevation: isSwitched ? 4 : 0,
@@ -57,7 +59,7 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
         child: Stack(
           children: [
             // 이미지 중앙 배치
-            _routineImage(imageUrl: widget.imageUrl),
+            _routineImage(imageUrl: widget.imageUrl, screenWidth: screenWidth),
             // 상단 왼쪽 물음표 버튼
             _questionMark(
               title: widget.title,
@@ -73,13 +75,16 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
     );
   }
 
-  Widget _routineImage({required String imageUrl}) {
+  Widget _routineImage({
+    required String imageUrl,
+    required double screenWidth,
+  }) {
     return Center(
       child: Image.network(
         imageUrl,
         fit: BoxFit.contain,
-        width: 120,
-        height: 120,
+        width: screenWidth * 0.3,
+        height: screenWidth * 0.3,
       ),
     );
   }
@@ -160,7 +165,7 @@ class _ToggledRoutineCardState extends State<ToggledRoutineCard> {
 
   Widget _routineTitle({required String title}) {
     return Positioned(
-      bottom:5,
+      bottom: 5,
       left: 0,
       right: 0,
       child: Text(
