@@ -379,7 +379,7 @@ class _GuideScreenState extends State<GuideScreen> {
           width: screenWidth * 0.6,
           text: '로그인 하기',
           onPressed: () {
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
