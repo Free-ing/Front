@@ -101,8 +101,8 @@ class _StressChartScreenState extends State<StressChartScreen> {
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.08,
-                      vertical: screenHeight * 0.08),
+                      horizontal: screenWidth * 0.06,
+                      vertical: screenHeight * 0.06),
                   child: GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
