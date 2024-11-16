@@ -83,6 +83,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
     final textTheme = Theme.of(context).textTheme;
 
     return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
       child: Column(
         children: [
           Row(
@@ -114,7 +115,8 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
               ),
               const QuestionMark(
                   title: '수면 루틴 만들기 설명',
-                  content: '꿀잠을 위한 루틴을 만들어 보세요!\n\n추천해드리는걸 해도 되고,\n직접 세워봐도 좋아요!'),
+                  content:
+                      '꿀잠을 위한 루틴을 만들어 보세요!\n\n추천해드리는걸 해도 되고,\n직접 세워봐도 좋아요!'),
             ],
           ),
           Container(
