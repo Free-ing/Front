@@ -35,6 +35,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   final _formKey = GlobalKey<FormState>();
   String? nameErrorText;
   String? timeErrorText;
+  String? repeatDayErrorText;
 
   final List<String> options = ['운동', '수면', '취미', '마음 채우기'];
   String selectedValue = '운동';
@@ -49,18 +50,32 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   bool _selectSleep = true;
 
   String imageUrl =
-      'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png';
+      'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_exercise.png';
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _explanationController = TextEditingController();
   TextEditingController _startTimeController = TextEditingController();
   TextEditingController _endTimeController = TextEditingController();
 
+  //Todo: 반복 요일 설정 검사
+  void checkAndSetName(List<WeekDay> weekDays) {
+    bool allFalse = weekDays.every((weekday) => !weekday.isSelected);
+
+    if (allFalse) {
+      repeatDayErrorText = '반복 요일을 설정해주세요.';
+    } else {
+      print('Not all isSelected are false');
+    }
+  }
+
   //Todo: 서버 요청 (운동 루틴 추가)
   Future<void> _submitExerciseRoutine() async {
+    checkAndSetName(weekDays);
+
     if (_formKey.currentState!.validate() &&
         _nameController.text.isNotEmpty &&
-        timeErrorText == null) {
+        timeErrorText == null &&
+        repeatDayErrorText == null) {
       FocusScope.of(context).unfocus();
       final String exerciseName = _nameController.text;
       final String explanation = _explanationController.text;
@@ -110,10 +125,13 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   //Todo: 서버 요청 (수면 루틴 추가)
   Future<void> _submitSleepRoutine() async {
+    checkAndSetName(weekDays);
+
     print('수면 루틴 추가');
     if (_formKey.currentState!.validate() &&
         _nameController.text.isNotEmpty &&
-        timeErrorText == null) {
+        timeErrorText == null &&
+        repeatDayErrorText == null) {
       FocusScope.of(context).unfocus();
       final String sleepName = _nameController.text;
 
@@ -192,9 +210,12 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
 
   //Todo: 서버 요청 (마음 채우기 루틴 추가)
   Future<void> _submitSpiritRoutine() async {
+    checkAndSetName(weekDays);
+
     if (_formKey.currentState!.validate() &&
         _nameController.text.isNotEmpty &&
-        timeErrorText == null) {
+        timeErrorText == null &&
+        repeatDayErrorText == null) {
       FocusScope.of(context).unfocus();
       final String spiritName = _nameController.text;
       final String explanation = _explanationController.text;
@@ -243,7 +264,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
 
     weekDays = [
@@ -318,8 +339,8 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                           height: _timePickerOpen
                               ? screenWidth * 0.06
                               : _selectExercise
-                              ? screenHeight * 0.043
-                              : screenHeight * 0.095),
+                                  ? screenHeight * 0.043
+                                  : screenHeight * 0.095),
                       // 수면 선택 시 추가 공백 높이
                       SizedBox(
                           height: _selectSleep
@@ -331,10 +352,7 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                   ),
                 ),
                 // 추가하기 버튼
-                SizedBox(
-                    height: _selectHobby
-                        ? 0
-                        : screenHeight * 0.477),
+                SizedBox(height: _selectHobby ? 0 : screenHeight * 0.477),
 
                 GreenButton(
                   width: screenWidth * 0.6,
@@ -515,21 +533,34 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                   setState(
                     () {
                       selectedValue = value!;
-                      for (int i = 0; i < weekDays.length; i++){
+                      for (int i = 0; i < weekDays.length; i++) {
                         print(weekDays[i].isSelected);
                       }
 
                       selectedValue == '취미'
-                          ? _selectHobby = false
+                          ? {
+                              _selectHobby = false,
+                              imageUrl =
+                                  'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_hobby.png',
+                            }
                           : _selectHobby = true;
 
                       selectedValue == '수면'
-                          ? _selectSleep = false
+                          ? {
+                              _selectSleep = false,
+                              imageUrl =
+                                  'https://freeingimage.s3.ap-northeast-2.amazonaws.com/%EC%88%98%EB%A9%B4.png',
+                            }
                           : _selectSleep = true;
 
                       selectedValue == '운동'
                           ? _selectExercise = true
                           : _selectExercise = false;
+
+                      selectedValue == '마음 채우기'
+                          ? imageUrl =
+                              'https://freeingimage.s3.ap-northeast-2.amazonaws.com/leaf_and_music.png'
+                          : null;
                     },
                   );
                 },
@@ -553,7 +584,17 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("반복 요일 설정", style: textTheme.bodyMedium),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("반복 요일 설정", style: textTheme.bodyMedium),
+            if (repeatDayErrorText != null)
+              Text(
+                repeatDayErrorText!,
+                style: textTheme.bodyMedium?.copyWith(color: Colors.red),
+              ),
+          ],
+        ),
         SizedBox(height: screenHeight * 0.01),
         Container(
           width: screenWidth,

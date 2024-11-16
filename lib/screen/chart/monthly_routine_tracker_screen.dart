@@ -376,10 +376,10 @@ class _MonthlyRoutineTrackerScreenState
       child: Container(
         width: screenWidth,
         height: (rows > 5)
-            ? screenHeight * 0.41 + screenHeight * 0.027
+            ? screenHeight * 0.41 + screenHeight * 0.028
             : (rows > 4)
-                ? screenHeight * 0.34 + screenHeight * 0.042
-                : screenHeight * 0.29 + screenHeight * 0.042,
+                ? screenHeight * 0.35 + screenHeight * 0.043
+                : screenHeight * 0.29 + screenHeight * 0.043,
         padding: EdgeInsets.symmetric(
             horizontal: screenWidth * 0.04, vertical: screenHeight * 0.02),
         decoration: BoxDecoration(
@@ -396,6 +396,13 @@ class _MonthlyRoutineTrackerScreenState
               screenWidth: screenWidth,
               screenHeight: screenHeight,
             ),
+            /// 전체 루틴 달력 - Percentage
+            _buildAllRoutinePercentage(
+              textTheme: textTheme,
+              screenWidth: screenWidth,
+              screenHeight: screenHeight,
+              daysInMonth: daysInMonth,
+            ),
             ///전체 루틴 달력 - 트래커
             _buildRoutineColorCircle(
               textTheme: textTheme,
@@ -405,14 +412,6 @@ class _MonthlyRoutineTrackerScreenState
               firstDayOfMonth: firstDayOfMonth,
               rows: rows,
             ),
-
-            /// 전체 루틴 달력 - Percentage
-            _buildAllRoutinePercentage(
-              textTheme: textTheme,
-              screenWidth: screenWidth,
-              screenHeight: screenHeight,
-              daysInMonth: daysInMonth,
-            )
           ],
         ),
       ),
@@ -459,8 +458,8 @@ class _MonthlyRoutineTrackerScreenState
         key: ValueKey(selectedDate),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 7,
-          crossAxisSpacing: screenWidth * 0.032,
-          mainAxisSpacing: screenHeight * 0.012,
+          crossAxisSpacing: screenWidth * 0.0318,
+          mainAxisSpacing: screenHeight * 0.0118,
         ),
         physics: const NeverScrollableScrollPhysics(),
         itemCount: 42,
@@ -697,8 +696,8 @@ class _MonthlyRoutineTrackerScreenState
                       ],
                     ),
                   ),
-                  Positioned(
-                    bottom: 0,
+                  Align(
+                   alignment: Alignment.bottomCenter,
                     child: SizedBox(
                       width: screenWidth * 0.37,
                       height: (rows > 5)
@@ -707,10 +706,10 @@ class _MonthlyRoutineTrackerScreenState
                               ? screenHeight * 0.122
                               : screenHeight * 0.1,
                       child: GridView.builder(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 7,
-                          crossAxisSpacing: 3,
-                          mainAxisSpacing: 3,
+                          crossAxisSpacing: screenWidth * 0.0078,
+                          mainAxisSpacing: screenWidth * 0.006,
                         ),
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: 42,

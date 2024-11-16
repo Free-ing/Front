@@ -58,7 +58,7 @@ class _FloatingActionMenuState extends State<FloatingActionMenu>
       children: [
         AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          height: isMenuOpen ? screenHeight * 0.216 : 0, // 충분한 공간을 미리 확보
+          height: isMenuOpen ? screenHeight * 0.226 : 0, // 충분한 공간을 미리 확보
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -89,10 +89,56 @@ class _FloatingActionMenuState extends State<FloatingActionMenu>
                     },
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.01),
               ],
             ),
           ),
         ),
+
+        // AnimatedContainer(
+        //   duration: Duration(milliseconds: 300),
+        //   height: screenHeight * 0.168,
+        //   child: Column(
+        //     mainAxisSize: MainAxisSize.min,
+        //     crossAxisAlignment: CrossAxisAlignment.end,
+        //     children: [
+        //       SlideTransition(
+        //         position: _menu1Animation,
+        //         child: AnimatedOpacity(
+        //           opacity: isMenuOpen ? 1.0 : 0.0,
+        //           duration: Duration(milliseconds: 300),
+        //           child: _buildMenuButton(
+        //             context: context,
+        //             label: "AI에게 추천받기",
+        //             onPressed: () {
+        //               Navigator.of(context).push(MaterialPageRoute(
+        //                 builder: (BuildContext context) =>
+        //                     SelectRecommendCategory(),
+        //               ));
+        //             },
+        //           ),
+        //         ),
+        //       ),
+        //       SizedBox(height: screenHeight * 0.01),
+        //       SlideTransition(
+        //         position: _menu2Animation,
+        //         child: AnimatedOpacity(
+        //           opacity: isMenuOpen ? 1.0 : 0.0,
+        //           duration: Duration(milliseconds: 300),
+        //           child: _buildMenuButton(
+        //             context: context,
+        //             label: "직접 추가하기",
+        //             onPressed: () {
+        //               Navigator.of(context).push(MaterialPageRoute(
+        //                 builder: (BuildContext context) => AddRoutineScreen(),
+        //               ));
+        //             },
+        //           ),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
 
         //Todo: 플로팅 액션 버튼
         Padding(
@@ -143,7 +189,7 @@ class _FloatingActionMenuState extends State<FloatingActionMenu>
           foregroundColor: ORANGE,
           textStyle: textTheme.titleSmall,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
           ),
           side: BorderSide(color: Colors.black),
         ),

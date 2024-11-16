@@ -84,68 +84,78 @@ class _ChartLayoutState extends State<ChartLayout> {
       });
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        scrolledUnderElevation: 0,
-        automaticallyImplyLeading: false,
-        title: Padding(
-          padding: EdgeInsets.only(top: screenHeight * 0.03),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: widget.backToPage ??
-                    () {
-                      Navigator.of(context).pop();
-                    },
-                icon: Icon(Icons.arrow_back_ios_rounded),
-                iconSize: 30.0,
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(),
-              ),
-              Expanded(
-                  child: Text(
-                widget.title,
-                style: textTheme.headlineLarge,
-                textAlign: TextAlign.center,
-              )),
-              Visibility(
-                visible: !_selectMonth,
-                child: SizedBox(width: 45),
-              ),
-              Visibility(
-                visible: _selectMonth,
-                child: SizedBox(
-                  width: 45,
-                  child: IconButton(
-                    onPressed: selectMonth,
-                    icon: Image.asset(
-                      "assets/icons/calendar_icon.png",
-                      width: 25,
+    return Stack(children: [
+      Positioned.fill(
+        child: Image.asset(
+          'assets/imgs/background/background_image_category_chart.png',
+          fit: BoxFit.cover,
+        ),
+      ),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          automaticallyImplyLeading: false,
+          title: Padding(
+            padding: EdgeInsets.only(top: screenHeight * 0.03),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: widget.backToPage ??
+                      () {
+                        Navigator.of(context).pop();
+                      },
+                  icon: Icon(Icons.arrow_back_ios_rounded),
+                  iconSize: 30.0,
+                  padding: EdgeInsets.zero,
+                  constraints: BoxConstraints(),
+                ),
+                Expanded(
+                    child: Text(
+                  widget.title,
+                  style: textTheme.headlineLarge,
+                  textAlign: TextAlign.center,
+                )),
+                Visibility(
+                  visible: !_selectMonth,
+                  child: SizedBox(width: 45),
+                ),
+                Visibility(
+                  visible: _selectMonth,
+                  child: SizedBox(
+                    width: 45,
+                    child: IconButton(
+                      onPressed: selectMonth,
+                      icon: Image.asset(
+                        "assets/icons/calendar_icon.png",
+                        width: 25,
+                      ),
+                      highlightColor: Colors.grey[100],
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                  "assets/imgs/background/background_image_category_chart.png"),
-              fit: BoxFit.cover,
+              ],
             ),
           ),
+        ),
+        body: Container(
+          // decoration: BoxDecoration(
+          //   image: DecorationImage(
+          //     image: AssetImage(
+          //         "assets/imgs/background/background_image_category_chart.png"),
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           child: Padding(
             padding: _noPadding
                 ? EdgeInsets.zero
                 : EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
             child: widget.chartWidget,
-          )),
-    );
+          ),
+        ),
+      ),
+    ]);
   }
 }

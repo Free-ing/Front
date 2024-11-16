@@ -57,6 +57,8 @@ class _AddRecommendedRoutineScreenState
   final _formKey = GlobalKey<FormState>();
   String? nameErrorText;
   String? timeErrorText;
+  String? repeatDayErrorText;
+
   bool _selectExercise = true;
   DateTime? _startTime;
   DateTime? _endTime;
@@ -80,11 +82,25 @@ class _AddRecommendedRoutineScreenState
         : 'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_exercise.png';
   }
 
+  //Todo: 반복 요일 설정 검사
+  void checkAndSetName(List<WeekDay> weekDays) {
+    bool allFalse = weekDays.every((weekday) => !weekday.isSelected);
+
+    if (allFalse) {
+      repeatDayErrorText = '반복 요일을 설정해주세요.';
+    } else {
+      print('Not all isSelected are false');
+    }
+  }
+
   //Todo: 서버 요청 (운동 루틴 추가)
   Future<void> _submitExerciseRoutine() async {
+    checkAndSetName(weekDays);
+
     if (_formKey.currentState!.validate() &&
         _nameController.text.isNotEmpty &&
-        timeErrorText == null) {
+        timeErrorText == null &&
+        repeatDayErrorText == null) {
       FocusScope.of(context).unfocus();
       final String exerciseName = _nameController.text;
 
@@ -133,14 +149,13 @@ class _AddRecommendedRoutineScreenState
 
   //Todo: 취미 루틴 추가 요청
   Future<void> _submitHobbyRoutine() async {
-    if (_formKey.currentState!.validate() && _nameController.text.isNotEmpty){
+    if (_formKey.currentState!.validate() && _nameController.text.isNotEmpty) {
       FocusScope.of(context).unfocus();
       final String hobbyName = _nameController.text;
 
       final apiService = HobbyAPIService();
 
-      final response =
-      await apiService.postHobbyRoutine(hobbyName, imageUrl);
+      final response = await apiService.postHobbyRoutine(hobbyName, imageUrl);
 
       if (response.statusCode == 200) {
         Navigator.pop(context, true);
@@ -153,7 +168,8 @@ class _AddRecommendedRoutineScreenState
         DialogManager.showAlertDialog(
             context: context,
             title: '취미 루틴 추가 실패',
-            content: '${errorData['message']}\n(오류 코드: ${response.statusCode})');
+            content:
+                '${errorData['message']}\n(오류 코드: ${response.statusCode})');
       }
     }
   }
@@ -191,7 +207,8 @@ class _AddRecommendedRoutineScreenState
                       SizedBox(height: screenHeight * 0.02),
                       // 시간 선택
                       _selectTime(textTheme, screenWidth, screenHeight),
-                      SizedBox(height: _timePickerOpen ? screenHeight * 0.01 : 0),
+                      SizedBox(
+                          height: _timePickerOpen ? screenHeight * 0.01 : 0),
                       // 시간 설정
                       _startEndTime(textTheme, screenWidth, screenHeight),
                       // 운동 선택 시 시간 설정 알림 텍스트
@@ -220,10 +237,7 @@ class _AddRecommendedRoutineScreenState
                   ),
                 ),
                 // 추가하기 버튼
-                SizedBox(
-                    height: selectHobby
-                        ? 0
-                        : screenHeight * 0.477),
+                SizedBox(height: selectHobby ? 0 : screenHeight * 0.477),
                 GreenButton(
                     width: screenWidth * 0.6,
                     text: '추가하기',
@@ -469,7 +483,17 @@ class _AddRecommendedRoutineScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("반복 요일 설정", style: textTheme.bodyMedium),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("반복 요일 설정", style: textTheme.bodyMedium),
+            if (repeatDayErrorText != null)
+              Text(
+                repeatDayErrorText!,
+                style: textTheme.bodyMedium?.copyWith(color: Colors.red),
+              ),
+          ],
+        ),
         SizedBox(height: screenHeight * 0.01),
         Container(
           width: screenWidth,

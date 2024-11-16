@@ -4,7 +4,9 @@ import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/screen/member/login.dart';
 
 class GuideScreen extends StatefulWidget {
-  const GuideScreen({super.key});
+  final bool? afterLogin;
+
+  const GuideScreen({super.key, this.afterLogin});
 
   @override
   State<GuideScreen> createState() => _GuideScreenState();
@@ -13,10 +15,7 @@ class GuideScreen extends StatefulWidget {
 class _GuideScreenState extends State<GuideScreen> {
   final int _totalPages = 5; // 총 페이지 수
   double _progress = 1 / (5 - 1); // 초기 진행 상태
-  // PageController _imageController1 = PageController();
-  // PageController _imageController2 = PageController();
-  // PageController _imageController3 = PageController();
-  // PageController _imageController4 = PageController();
+  bool _afterLogin = false;
 
   List<PageController> _imageControllers = [];
   PageController _pageController = PageController();
@@ -24,11 +23,6 @@ class _GuideScreenState extends State<GuideScreen> {
   @override
   void initState() {
     super.initState();
-    // _imageController1 = PageController(viewportFraction: 0.66);
-    // _imageController2 = PageController(viewportFraction: 0.66);
-    // _imageController3 = PageController(viewportFraction: 0.66);
-    // _imageController4 = PageController(viewportFraction: 0.66);
-
     _pageController.addListener(() {
       setState(() {
         _progress = (_pageController.page! + 1) / (_totalPages - 1);
@@ -38,14 +32,12 @@ class _GuideScreenState extends State<GuideScreen> {
     for (int i = 0; i < 4; i++) {
       _imageControllers.add(PageController(viewportFraction: 0.66));
     }
+
+    _afterLogin = widget.afterLogin ?? false;
   }
 
   @override
   void dispose() {
-    // _imageController1.dispose();
-    // _imageController2.dispose();
-    // _imageController3.dispose();
-    // _imageController4.dispose();
     _pageController.dispose();
 
     // 각 imageController도 dispose 해줍니다.
@@ -61,15 +53,20 @@ class _GuideScreenState extends State<GuideScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    List<Widget> guide = [
-      _buildGuide1(screenWidth, screenHeight, textTheme, _imageControllers[0]),
-      _buildGuide2(screenWidth, screenHeight, textTheme, _imageControllers[1]),
-      _buildGuide3(screenWidth, screenHeight, textTheme, _imageControllers[2]),
-      _buildGuide4(screenWidth, screenHeight, textTheme, _imageControllers[3]),
-      _buildGoToLogin(screenWidth, screenHeight, textTheme)
-    ];
-
-
+    List<Widget> guide = _afterLogin
+        ? [
+            _guide1(screenWidth, screenHeight, textTheme, _imageControllers[0]),
+            _guide2(screenWidth, screenHeight, textTheme, _imageControllers[1]),
+            _guide3(screenWidth, screenHeight, textTheme, _imageControllers[2]),
+            _guide4(screenWidth, screenHeight, textTheme, _imageControllers[3]),
+          ]
+        : [
+            _guide1(screenWidth, screenHeight, textTheme, _imageControllers[0]),
+            _guide2(screenWidth, screenHeight, textTheme, _imageControllers[1]),
+            _guide3(screenWidth, screenHeight, textTheme, _imageControllers[2]),
+            _guide4(screenWidth, screenHeight, textTheme, _imageControllers[3]),
+            _goToLogin(screenWidth, screenHeight, textTheme)
+          ];
 
     return Stack(
       children: [
@@ -86,20 +83,9 @@ class _GuideScreenState extends State<GuideScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                PreferredSize(
-                  preferredSize: const Size(double.infinity, 4.0),
-                  child: Container(
-                    width: screenWidth * 0.51,
-                    child: LinearProgressIndicator(
-                      value: _progress,
-                      backgroundColor: BASIC_GREY,
-                      valueColor: const AlwaysStoppedAnimation<Color>(ORANGE),
-                    ),
-                  ),
-                ),
+                _buildTitle(screenWidth),
                 SizedBox(height: screenHeight * 0.028),
-                SizedBox(
-                  height: screenHeight * 0.87,
+                Expanded(
                   child: PageView.builder(
                     controller: _pageController,
                     itemCount: guide.length,
@@ -108,6 +94,7 @@ class _GuideScreenState extends State<GuideScreen> {
                     },
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.028),
               ],
             ),
           ),
@@ -116,68 +103,52 @@ class _GuideScreenState extends State<GuideScreen> {
     );
   }
 
-  // Todo: 이용 가이드 1 - 스트레스 지수 측정
-  Widget _buildGuide1(
-      screenWidth, screenHeight, textTheme, PageController imageController) {
-    return Column(
+  Widget _buildTitle(screenWidth) {
+    return Stack(
+      alignment: Alignment.center,
       children: [
-        Container(
-          height: screenHeight * 0.201,
-          child: Column(
-            children: [
-              Text(
-                '스트레스 지수 측정',
-                style: textTheme.headlineLarge,
+        PreferredSize(
+          preferredSize: const Size(double.infinity, 4.0),
+          child: Container(
+            width: screenWidth * 0.51,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(2),
+              child: LinearProgressIndicator(
+                value: _progress,
+                backgroundColor: BASIC_GREY,
+                valueColor: const AlwaysStoppedAnimation<Color>(ORANGE),
               ),
-              SizedBox(height: screenHeight * 0.028),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Freeing',
-                      style: textTheme.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.w600)),
-                  Text(
-                    '은 스트레스 관리 애플리케이션입니다.',
-                    style: textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-              SizedBox(height: screenHeight * 0.028),
-              Text(
-                '대한민국 보건복지부에서 발표한 설문조사로\n'
-                '꾸준히 스트레스 지수를 측정하여\n'
-                '변화하는 자신을 기록으로 남겨보세요.',
-                style: textTheme.bodyMedium?.copyWith(height: 1.6),
-                textAlign: TextAlign.center,
-              ),
-            ],
+            ),
           ),
         ),
-        SizedBox(height: screenHeight * 0.028),
-        SizedBox(
-          //width: screenWidth * 0.66,
-          height: screenHeight * 0.64,
-          child: PageView.builder(
-            controller: imageController,
-            itemCount: 2, // 이미지 개수
-            itemBuilder: (context, index) {
-              return _buildAnimatedImage(
-                  index,
-                  [
-                    'assets/imgs/guide/guide_image_1.png',
-                    'assets/imgs/guide/guide_image_2.png'
-                  ],
-                  imageController);
-            },
+        Visibility(
+          visible: _afterLogin,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.close_rounded),
+              iconSize: 35.0,
+              highlightColor: Colors.grey[100],
+            ),
           ),
-        ),
+        )
       ],
     );
   }
 
-  // Todo: 이용 가이드 2 - 나만의 스트레스 관리 루틴
-  Widget _buildGuide2(
-      screenWidth, screenHeight, textTheme, PageController imageController) {
+  Widget _buildContent({
+    required TextTheme textTheme,
+    required double screenWidth,
+    required double screenHeight,
+    required PageController imageController,
+    required String title,
+    required String subTitle,
+    required String body,
+    required List<String> images,
+  }) {
     return Column(
       children: [
         Container(
@@ -185,7 +156,7 @@ class _GuideScreenState extends State<GuideScreen> {
           child: Column(
             children: [
               Text(
-                '나만의 스트레스 관리 루틴',
+                title,
                 style: textTheme.headlineLarge,
               ),
               SizedBox(height: screenHeight * 0.028),
@@ -196,16 +167,14 @@ class _GuideScreenState extends State<GuideScreen> {
                       style: textTheme.titleLarge
                           ?.copyWith(fontWeight: FontWeight.w600)),
                   Text(
-                    '은 루틴을 통해 스트레스 관리를 돕습니다.',
+                    subTitle,
                     style: textTheme.bodyMedium,
                   ),
                 ],
               ),
               SizedBox(height: screenHeight * 0.028),
               Text(
-                '운동, 수면, 취미, 마음채우기,\n'
-                '4개의 카테고리로 자신만의 루틴을 세워\n'
-                '스트레스를 관리해보세요.',
+                body,
                 style: textTheme.bodyMedium?.copyWith(height: 1.6),
                 textAlign: TextAlign.center,
               ),
@@ -213,149 +182,106 @@ class _GuideScreenState extends State<GuideScreen> {
           ),
         ),
         SizedBox(height: screenHeight * 0.028),
-        SizedBox(
-          //width: screenWidth * 0.66,
-          height: screenHeight * 0.64,
-          child: PageView.builder(
-            controller: imageController,
-            itemCount: 2, // 이미지 개수
-            itemBuilder: (context, index) {
-              return _buildAnimatedImage(
-                  index,
-                  [
-                    'assets/imgs/guide/guide_image_3.png',
-                    'assets/imgs/guide/guide_image_4.png',
-                  ],
-                  imageController);
-            },
-          ),
-        ),
+        Flexible(
+            child: PageView.builder(
+          controller: imageController,
+          itemCount: images.length,
+          itemBuilder: (context, index) {
+            return _buildAnimatedImage(
+              index,
+              images,
+              imageController,
+            );
+          },
+        ))
+      ],
+    );
+  }
+
+  // Todo: 이용 가이드 1 - 스트레스 지수 측정
+  Widget _guide1(
+      screenWidth, screenHeight, textTheme, PageController imageController) {
+    return _buildContent(
+      textTheme: textTheme,
+      screenWidth: screenWidth,
+      screenHeight: screenHeight,
+      imageController: imageController,
+      title: '스트레스 지수 측정',
+      subTitle: '은 스트레스 관리 애플리케이션입니다.',
+      body: '대한민국 보건복지부에서 발표한 설문조사로\n'
+          '꾸준히 스트레스 지수를 측정하여\n'
+          '변화하는 자신을 기록으로 남겨보세요.',
+      images: [
+        'assets/imgs/guide/guide_image_1.png',
+        'assets/imgs/guide/guide_image_2.png'
+      ],
+    );
+  }
+
+// Todo: 이용 가이드 2 - 나만의 스트레스 관리 루틴
+  Widget _guide2(
+      screenWidth, screenHeight, textTheme, PageController imageController) {
+    return _buildContent(
+      textTheme: textTheme,
+      screenWidth: screenWidth,
+      screenHeight: screenHeight,
+      imageController: imageController,
+      title: '나만의 스트레스 관리 루틴',
+      subTitle: '은 루틴을 통해 스트레스 관리를 돕습니다.',
+      body: '운동, 수면, 취미, 마음채우기,\n'
+          '4개의 카테고리로 자신만의 루틴을 세워\n'
+          '스트레스를 관리해보세요.',
+      images: [
+        'assets/imgs/guide/guide_image_3.png',
+        'assets/imgs/guide/guide_image_4.png',
       ],
     );
   }
 
   // Todo: 이용 가이드 3 - 피드백 제공
-  Widget _buildGuide3(
+  Widget _guide3(
       screenWidth, screenHeight, textTheme, PageController imageController) {
-    return Column(
-      children: [
-        Container(
-          height: screenHeight * 0.201,
-          child: Column(
-            children: [
-              Text(
-                '피드백 제공',
-                style: textTheme.headlineLarge,
-              ),
-              SizedBox(height: screenHeight * 0.028),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Freeing',
-                      style: textTheme.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.w600)),
-                  Text(
-                    '은 스트레스 관리를 위한 피드백을 제공합니다.',
-                    style: textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-              SizedBox(height: screenHeight * 0.028),
-              Text(
-                '루틴 트래커를 통해 한 달간의 루틴 수행 여부와\n'
-                '기록한 운동, 수면에 대한 주간 리포트로\n'
-                '일상생활의 가이드를 제공해요.',
-                style: textTheme.bodyMedium?.copyWith(height: 1.6),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: screenHeight * 0.028),
-        SizedBox(
-          //width: screenWidth * 0.66,
-          height: screenHeight * 0.64,
-          child: PageView.builder(
-            controller: imageController,
-            itemCount: 3, // 이미지 개수
-            itemBuilder: (context, index) {
-              return _buildAnimatedImage(
-                  index,
-                  [
-                    'assets/imgs/guide/guide_image_5.png',
-                    'assets/imgs/guide/guide_image_6.png',
-                    'assets/imgs/guide/guide_image_7.png'
-                  ],
-                  imageController);
-            },
-          ),
-        ),
+    return _buildContent(
+      textTheme: textTheme,
+      screenWidth: screenWidth,
+      screenHeight: screenHeight,
+      imageController: imageController,
+      title: '피드백 제공',
+      subTitle: '은 스트레스 관리를 위한 피드백을 제공합니다.',
+      body: '루틴 트래커를 통해 한 달간의 루틴 수행 여부와\n'
+          '기록한 운동, 수면에 대한 주간 리포트로\n'
+          '일상생활의 가이드를 제공해요.',
+      images: [
+        'assets/imgs/guide/guide_image_5.png',
+        'assets/imgs/guide/guide_image_6.png',
+        'assets/imgs/guide/guide_image_7.png'
       ],
     );
   }
 
   // Todo: 이용 가이드 4 - 정서적 교감
-  Widget _buildGuide4(
+  Widget _guide4(
       screenWidth, screenHeight, textTheme, PageController imageController) {
-    return Column(
-      children: [
-        Container(
-          height: screenHeight * 0.201,
-          child: Column(
-            children: [
-              Text(
-                '정서적 교감',
-                style: textTheme.headlineLarge,
-              ),
-              SizedBox(height: screenHeight * 0.028),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Freeing',
-                      style: textTheme.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.w600)),
-                  Text(
-                    '은 사용자를 응원합니다.',
-                    style: textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-              SizedBox(height: screenHeight * 0.028),
-              Text(
-                '취미 활동 기록, 감정일기 작성을 통한\n'
-                'AI 편지 기능을 제공합니다.\n'
-                '따뜻한 위로로 하루를 마무리하도록 도울게요.',
-                style: textTheme.bodyMedium?.copyWith(height: 1.6),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: screenHeight * 0.028),
-        SizedBox(
-          //width: screenWidth * 0.66,
-          height: screenHeight * 0.64,
-          child: PageView.builder(
-            controller: imageController,
-            itemCount: 3, // 이미지 개수
-            itemBuilder: (context, index) {
-              return _buildAnimatedImage(
-                  index,
-                  [
-                    'assets/imgs/guide/guide_image_9.png',
-                    'assets/imgs/guide/guide_image_10.png',
-                    'assets/imgs/guide/guide_image_11.png'
-                  ],
-                  imageController);
-            },
-          ),
-        ),
+    return _buildContent(
+      textTheme: textTheme,
+      screenWidth: screenWidth,
+      screenHeight: screenHeight,
+      imageController: imageController,
+      title: '정서적 교감',
+      subTitle: '은 사용자를 응원합니다.',
+      body: '취미 활동 기록, 감정일기 작성을 통한\n'
+          'AI 편지 기능을 제공합니다.\n'
+          '따뜻한 위로로 하루를 마무리하도록 도울게요.',
+      images: [
+        'assets/imgs/guide/guide_image_9.png',
+        'assets/imgs/guide/guide_image_10.png',
+        'assets/imgs/guide/guide_image_11.png'
       ],
     );
   }
 
   // Todo: 로그인 하러 가기
-  Widget _buildGoToLogin(screenWidth, screenHeight, textTheme) {
+  Widget _goToLogin(screenWidth, screenHeight, textTheme) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -379,11 +305,9 @@ class _GuideScreenState extends State<GuideScreen> {
           width: screenWidth * 0.6,
           text: '로그인 하기',
           onPressed: () {
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                     Login()),
+              MaterialPageRoute(builder: (context) => Login()),
             );
           },
         ),

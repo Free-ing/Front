@@ -204,13 +204,17 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
         preferredSize: Size(double.infinity, 4.0),
         child: Container(
           width: screenWidth * 0.51,
-          child: LinearProgressIndicator(
-            value: _progress,
-            backgroundColor: BASIC_GREY,
-            valueColor: AlwaysStoppedAnimation<Color>(ORANGE),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(2.0), // 양 끝을 둥글게 설정
+            child: LinearProgressIndicator(
+              value: _progress,
+              backgroundColor: BASIC_GREY,
+              valueColor: AlwaysStoppedAnimation<Color>(ORANGE),
+            ),
           ),
         ),
       ),
+
       body: Expanded(
         child: PageView.builder(
           physics: const NeverScrollableScrollPhysics(),
@@ -273,7 +277,7 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
         ),
         SizedBox(height: screenHeight * 0.04),
         _pageControlButton(labels: labels),
-        SizedBox(height: screenHeight * 0.053),
+        SizedBox(height: screenHeight * 0.04),
       ],
     );
   }
@@ -428,28 +432,27 @@ class _SurveyHobbyScreenState extends State<SurveyHobbyScreen> {
         ),
         SizedBox(height: screenHeight * 0.15),
         Expanded(
-          child: SizedBox(
-            width: screenWidth,
-            child: Center(
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                physics: NeverScrollableScrollPhysics(),
-                children: List.generate(
-                  3,
-                  (index) {
-                    final labels = label;
-                    return Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
-                        child: CircleSurveyButton(
-                          label: labels[index],
-                          onSelected: () => handleButtonSelected(index),
-                          isSelected: selectedIndex == index,
-                        ));
-                  },
-                ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              CircleSurveyButton(
+                label: label[0],
+                onSelected: () => handleButtonSelected(0),
+                isSelected: selectedIndex == 0,
               ),
-            ),
+
+              CircleSurveyButton(
+                label: label[1],
+                onSelected: () => handleButtonSelected(1),
+                isSelected: selectedIndex == 1,
+              ),
+
+              CircleSurveyButton(
+                label: label[2],
+                onSelected: () => handleButtonSelected(2),
+                isSelected: selectedIndex == 2,
+              ),
+            ],
           ),
         ),
         SizedBox(height: screenHeight * 0.04),

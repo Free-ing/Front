@@ -15,7 +15,8 @@ import 'package:intl/intl.dart';
 class StressResultScreen extends StatefulWidget {
   final Widget? replacementScreen;
   final int surveyId;
-  const StressResultScreen({super.key, required this.surveyId, this.replacementScreen});
+  const StressResultScreen(
+      {super.key, required this.surveyId, this.replacementScreen});
 
   @override
   State<StressResultScreen> createState() => _StressResultScreenState();
@@ -72,7 +73,7 @@ class _StressResultScreenState extends State<StressResultScreen> {
     } else {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
       print('jsonData error ${jsonData['error']}');
-      throw Exception('일일 감정 일기 기록 조회 실패 ${response.statusCode}');
+      throw Exception('스트레스 측정 결과 조회 실패 ${response.statusCode}');
     }
   }
 
@@ -108,9 +109,11 @@ class _StressResultScreenState extends State<StressResultScreen> {
         : ChartLayout(
             title: '스트레스 측정 결과',
             chartWidget: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.03,
-                  vertical: screenHeight * 0.03),
+              padding: EdgeInsets.only(
+                top: screenHeight * 0.03,
+                left: screenWidth * 0.03,
+                right: screenWidth * 0.03,
+              ),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -147,30 +150,40 @@ class _StressResultScreenState extends State<StressResultScreen> {
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Center(
-                                child: Text(
-                                  totalScore.toString(),
-                                  style: const TextStyle(
-                                    fontSize: 26,
-                                    color: Colors.white,
-                                    shadows: [
-                                      Shadow(
-                                          // bottomLeft
-                                          offset: Offset(-1, -1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // bottomRight
-                                          offset: Offset(1, -1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // topRight
-                                          offset: Offset(1, 1),
-                                          color: Colors.black),
-                                      Shadow(
-                                          // topLeft
-                                          offset: Offset(-1, 1),
-                                          color: Colors.black),
-                                    ],
-                                  ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      totalScore.toString().padLeft(2, ' '),
+                                      style: const TextStyle(
+                                        fontSize: 26,
+                                        color: Colors.white,
+                                        shadows: [
+                                          Shadow(
+                                              // bottomLeft
+                                              offset: Offset(-1, -1),
+                                              color: Colors.black),
+                                          Shadow(
+                                              // bottomRight
+                                              offset: Offset(1, -1),
+                                              color: Colors.black),
+                                          Shadow(
+                                              // topRight
+                                              offset: Offset(1, 1),
+                                              color: Colors.black),
+                                          Shadow(
+                                              // topLeft
+                                              offset: Offset(-1, 1),
+                                              color: Colors.black),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      '/33',
+                                      style: textTheme.bodySmall,
+                                    )
+                                  ],
                                 ),
                               ),
                             ),

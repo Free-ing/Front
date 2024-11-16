@@ -364,12 +364,12 @@ class _MoodCalendarState extends State<MoodCalendar> {
       child: Container(
         width: screenWidth,
         height: (rows > 5)
-            ? screenHeight * 0.41
+            ? screenHeight * 0.415
             : (rows > 4)
-                ? screenHeight * 0.34
-                : screenHeight * 0.28,
+                ? screenHeight * 0.35
+                : screenHeight * 0.285,
         padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.01, vertical: screenHeight * 0.014),
+            horizontal: screenWidth * 0.01, vertical: screenHeight * 0.015),
         decoration: BoxDecoration(
           color: LIGHT_IVORY,
           borderRadius: BorderRadius.circular(15),

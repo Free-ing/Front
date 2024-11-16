@@ -189,7 +189,7 @@ class LogButton extends StatelessWidget {
         padding: const EdgeInsets.all(11),
         child: Image.asset(
           'assets/imgs/home/record_icon.png',
-          //width: ,
+          width: MediaQuery.of(context).size.width * 0.05,
           //height: MediaQuery.of(context).size.height * 0.03,
           fit: BoxFit.contain,
         ),

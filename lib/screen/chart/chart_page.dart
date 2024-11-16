@@ -31,6 +31,7 @@ class ChartPage extends StatelessWidget {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
+            scrolledUnderElevation: 0,
             automaticallyImplyLeading: false,
             //centerTitle: true,
             title: Padding(
@@ -45,7 +46,7 @@ class ChartPage extends StatelessWidget {
               //crossAxisSpacing: screenWidth*0.03,
               //mainAxisSpacing: screenWidth*0.03,
               crossAxisCount: 2,
-              childAspectRatio: screenWidth * 0.38 / 180,
+              childAspectRatio: 160 / 180,
               children: [
                 _chartCard(
                   imageUrl: 'assets/imgs/chart/stress_chart.png',
@@ -120,7 +121,7 @@ class ChartPage extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              _routineImage(imageUrl: imageUrl),
+              _routineImage(imageUrl: imageUrl, screenWidth: MediaQuery.of(context).size.width),
               _routineTitle(context: context, title: title),
             ],
           ),
@@ -129,15 +130,15 @@ class ChartPage extends StatelessWidget {
     );
   }
 
-  Widget _routineImage({required String imageUrl}) {
+  Widget _routineImage({required String imageUrl, required double screenWidth}) {
     return Positioned(
       bottom: 0,
       right: 0,
       child: Image.asset(
         imageUrl,
         fit: BoxFit.contain,
-        width: 130,
-        height: 130,
+        width:  screenWidth * 0.3,
+        height:  screenWidth * 0.3,
       ),
     );
   }

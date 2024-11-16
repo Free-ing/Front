@@ -163,6 +163,7 @@ class _SleepCardState extends State<SleepCard> {
         ),
         margin: EdgeInsets.all(12),
         child: Container(
+
           padding: EdgeInsets.all(2),
           decoration: BoxDecoration(
             color: Colors.white,

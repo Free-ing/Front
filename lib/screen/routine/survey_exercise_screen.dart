@@ -201,10 +201,13 @@ class _SurveyExerciseScreenState extends State<SurveyExerciseScreen> {
         preferredSize: const Size(double.infinity, 4.0),
         child: Container(
           width: screenWidth * 0.51,
-          child: LinearProgressIndicator(
-            value: _progress,
-            backgroundColor: BASIC_GREY,
-            valueColor: const AlwaysStoppedAnimation<Color>(ORANGE),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(2),
+            child: LinearProgressIndicator(
+              value: _progress,
+              backgroundColor: BASIC_GREY,
+              valueColor: const AlwaysStoppedAnimation<Color>(ORANGE),
+            ),
           ),
         ),
       ),
