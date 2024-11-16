@@ -72,8 +72,8 @@ class ScreenLayout extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.06, vertical: screenHeight * 0.02),
+        padding: EdgeInsets.only(
+            left: screenWidth * 0.06, right: screenWidth * 0.06, top: screenHeight * 0.02),
         child: body,
       ),
     );
