@@ -56,88 +56,89 @@ class _FloatingActionMenuState extends State<FloatingActionMenu>
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
-        // AnimatedContainer(
-        //   duration: Duration(milliseconds: 300),
-        //   height: isMenuOpen ? screenHeight * 0.22 : 0, // 충분한 공간을 미리 확보
-        //   child: SingleChildScrollView(
-        //     child: Column(
-        //       mainAxisSize: MainAxisSize.min,
-        //       crossAxisAlignment: CrossAxisAlignment.end,
-        //       children: [
-        //         Opacity(
-        //           opacity: isMenuOpen ? 1.0 : 0.0,
-        //           child: _buildMenuButton(
-        //             context: context,
-        //             label: "AI에게 추천받기",
-        //             onPressed: () {
-        //               Navigator.of(context).push(MaterialPageRoute(
-        //                   builder: (BuildContext context) =>
-        //                       SelectRecommendCategory()));
-        //             },
-        //           ),
-        //         ),
-        //         SizedBox(height: screenHeight * 0.01),
-        //         Opacity(
-        //           opacity: isMenuOpen ? 1.0 : 0.0,
-        //           child: _buildMenuButton(
-        //             context: context,
-        //             label: "직접 추가하기",
-        //             onPressed: () {
-        //               Navigator.of(context).push(MaterialPageRoute(
-        //                   builder: (BuildContext context) =>
-        //                       AddRoutineScreen()));
-        //             },
-        //           ),
-        //         ),
-        //         SizedBox(height: screenHeight * 0.01),
-        //       ],
-        //     ),
-        //   ),
-        // ),
         AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          height: screenHeight * 0.168,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              SlideTransition(
-                position: _menu1Animation,
-                child: AnimatedOpacity(
+          height: isMenuOpen ? screenHeight * 0.226 : 0, // 충분한 공간을 미리 확보
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Opacity(
                   opacity: isMenuOpen ? 1.0 : 0.0,
-                  duration: Duration(milliseconds: 300),
                   child: _buildMenuButton(
                     context: context,
                     label: "AI에게 추천받기",
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            SelectRecommendCategory(),
-                      ));
+                          builder: (BuildContext context) =>
+                              SelectRecommendCategory()));
                     },
                   ),
                 ),
-              ),
-              SizedBox(height: screenHeight * 0.01),
-              SlideTransition(
-                position: _menu2Animation,
-                child: AnimatedOpacity(
+                SizedBox(height: screenHeight * 0.01),
+                Opacity(
                   opacity: isMenuOpen ? 1.0 : 0.0,
-                  duration: Duration(milliseconds: 300),
                   child: _buildMenuButton(
                     context: context,
                     label: "직접 추가하기",
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => AddRoutineScreen(),
-                      ));
+                          builder: (BuildContext context) =>
+                              AddRoutineScreen()));
                     },
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: screenHeight * 0.01),
+              ],
+            ),
           ),
         ),
+
+        // AnimatedContainer(
+        //   duration: Duration(milliseconds: 300),
+        //   height: screenHeight * 0.168,
+        //   child: Column(
+        //     mainAxisSize: MainAxisSize.min,
+        //     crossAxisAlignment: CrossAxisAlignment.end,
+        //     children: [
+        //       SlideTransition(
+        //         position: _menu1Animation,
+        //         child: AnimatedOpacity(
+        //           opacity: isMenuOpen ? 1.0 : 0.0,
+        //           duration: Duration(milliseconds: 300),
+        //           child: _buildMenuButton(
+        //             context: context,
+        //             label: "AI에게 추천받기",
+        //             onPressed: () {
+        //               Navigator.of(context).push(MaterialPageRoute(
+        //                 builder: (BuildContext context) =>
+        //                     SelectRecommendCategory(),
+        //               ));
+        //             },
+        //           ),
+        //         ),
+        //       ),
+        //       SizedBox(height: screenHeight * 0.01),
+        //       SlideTransition(
+        //         position: _menu2Animation,
+        //         child: AnimatedOpacity(
+        //           opacity: isMenuOpen ? 1.0 : 0.0,
+        //           duration: Duration(milliseconds: 300),
+        //           child: _buildMenuButton(
+        //             context: context,
+        //             label: "직접 추가하기",
+        //             onPressed: () {
+        //               Navigator.of(context).push(MaterialPageRoute(
+        //                 builder: (BuildContext context) => AddRoutineScreen(),
+        //               ));
+        //             },
+        //           ),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
 
         //Todo: 플로팅 액션 버튼
         Padding(
