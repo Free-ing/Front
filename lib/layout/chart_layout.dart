@@ -132,6 +132,7 @@ class _ChartLayoutState extends State<ChartLayout> {
                         "assets/icons/calendar_icon.png",
                         width: 25,
                       ),
+                      highlightColor: Colors.grey[100],
                     ),
                   ),
                 ),

@@ -5,6 +5,7 @@ import 'package:freeing/common/service/ad_mob_service.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
+import 'package:freeing/screen/member/guide_screen.dart';
 import 'package:freeing/screen/setting/account_management_page.dart';
 import 'package:freeing/screen/setting/feedback_page.dart';
 import 'package:freeing/screen/setting/notice_page.dart';
@@ -213,9 +214,9 @@ class _SettingPageState extends State<SettingPage> {
                         SettingTextButton(
                           address: 'assets/icons/setting_manual.png',
                           text: '이용 설명서',
-                          targetPage: ReadyPage(
-                            appBarTitle: '이용 설명서',
-                          ),
+                          targetPage: GuideScreen(
+                            afterLogin: true,
+                          )
                         ),
                         SettingTextButton(
                           address: 'assets/icons/setting_inquiry.png',

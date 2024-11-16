@@ -63,6 +63,7 @@ class ScreenLayout extends StatelessWidget {
                     },
                     icon: Icon(Icons.delete_forever_outlined),
                     iconSize: 35.0,
+                    highlightColor: Colors.grey[100],
                   ),
                 ),
               ),

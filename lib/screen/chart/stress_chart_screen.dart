@@ -113,101 +113,25 @@ class _StressChartScreenState extends State<StressChartScreen> {
                 ),
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.06,
-                    vertical: screenHeight * 0.03),
+                padding: EdgeInsets.only(
+                    left: screenWidth * 0.06,
+                    right: screenWidth * 0.06,
+                    top: screenHeight * 0.036),
                 child: ListView.separated(
                   itemCount: groupedResults.length,
                   itemBuilder: (context, groupIndex) {
                     final group = groupedResults[groupIndex];
                     return Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                          EdgeInsets.symmetric(vertical: screenHeight * 0.018),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: group.map((result) {
-                          String formattedDate =
-                              result.createdDate.replaceAll('-', '.');
-                          Color resultColor;
-
-                          switch (result.stressLevel) {
-                            case '높음':
-                              resultColor = STRESS_HIGH;
-                              break;
-                            case '중간':
-                              resultColor = STRESS_MIDDLE;
-                              break;
-                            case '낮음':
-                              resultColor = STRESS_LOW;
-                              break;
-                            default:
-                              resultColor = Colors.white;
-                          }
-
-                          return Column(
-                            children: [
-                              SizedBox(
-                                width: screenWidth * 0.18,
-                                height: screenWidth * 0.18,
-                                child: OutlinedButton(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            StressResultScreen(
-                                          surveyId: result.surveyId,
-                                          replacementScreen:
-                                              StressChartScreen(),
-                                        ),
-                                      ),
-                                    )
-                                        .then(
-                                      (_) {
-                                        if (mounted) {
-                                          Navigator.of(context).pushReplacement(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      StressChartScreen()));
-                                        }
-                                      },
-                                    );
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    backgroundColor: resultColor,
-                                    side: const BorderSide(width: 1),
-                                  ),
-                                  child: Text(
-                                    result.totalScore.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 26,
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(
-                                            offset: Offset(-1, -1),
-                                            color: Colors.black),
-                                        Shadow(
-                                            offset: Offset(1, -1),
-                                            color: Colors.black),
-                                        Shadow(
-                                            offset: Offset(1, 1),
-                                            color: Colors.black),
-                                        Shadow(
-                                            offset: Offset(-1, 1),
-                                            color: Colors.black),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: screenHeight * 0.01),
-                              Text(
-                                formattedDate,
-                                style: textTheme.bodySmall
-                                    ?.copyWith(color: Colors.white),
-                              ),
-                            ],
+                          return _buildStressResults(
+                            textTheme: textTheme,
+                            screenWidth: screenWidth,
+                            screenHeight: screenHeight,
+                            result: result,
                           );
                         }).toList(),
                       ),
@@ -225,6 +149,83 @@ class _StressChartScreenState extends State<StressChartScreen> {
         ],
       ),
       onDateSelected: updateSelectedDate,
+    );
+  }
+
+  Widget _buildStressResults({
+    required TextTheme textTheme,
+    required double screenWidth,
+    required double screenHeight,
+    required StressTestResultsList result,
+  }) {
+    String formattedDate = result.createdDate.replaceAll('-', '.');
+    Color resultColor;
+
+    switch (result.stressLevel) {
+      case '높음':
+        resultColor = STRESS_HIGH;
+        break;
+      case '중간':
+        resultColor = STRESS_MIDDLE;
+        break;
+      case '낮음':
+        resultColor = STRESS_LOW;
+        break;
+      default:
+        resultColor = Colors.white;
+    }
+
+    return Column(
+      children: [
+        SizedBox(
+          width: screenWidth * 0.18,
+          height: screenWidth * 0.18,
+          child: OutlinedButton(
+            onPressed: () {
+              Navigator.of(context)
+                  .pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => StressResultScreen(
+                    surveyId: result.surveyId,
+                    replacementScreen: StressChartScreen(),
+                  ),
+                ),
+              )
+                  .then(
+                (_) {
+                  if (mounted) {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => StressChartScreen()));
+                  }
+                },
+              );
+            },
+            style: OutlinedButton.styleFrom(
+              padding: EdgeInsets.zero,
+              backgroundColor: resultColor,
+              side: const BorderSide(width: 1),
+            ),
+            child: Text(
+              result.totalScore.toString(),
+              style: const TextStyle(
+                fontSize: 26,
+                color: Colors.white,
+                shadows: [
+                  Shadow(offset: Offset(-1, -1), color: Colors.black),
+                  Shadow(offset: Offset(1, -1), color: Colors.black),
+                  Shadow(offset: Offset(1, 1), color: Colors.black),
+                  Shadow(offset: Offset(-1, 1), color: Colors.black),
+                ],
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: screenHeight * 0.01),
+        Text(
+          formattedDate,
+          style: textTheme.bodySmall?.copyWith(color: Colors.white),
+        ),
+      ],
     );
   }
 }
