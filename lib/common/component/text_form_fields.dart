@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/const/colors.dart';
 
-// 그림자 스타일을 정의하는 열거형
+// 그림자 스타일
 enum ShadowStyle {
   none,
   grayInner,
