@@ -752,7 +752,10 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
               ),
             ),
             //Image.asset(getImageAddress(sleepStatus)!),
-            Text(getStatus(sleepStatus)!, style: textTheme.labelMedium),
+            Container(
+                //margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
+                child:
+                    Text(getStatus(sleepStatus)!, style: textTheme.labelSmall)),
           ],
         ),
       ),
@@ -796,7 +799,7 @@ class _SleepReportScreenState extends State<SleepReportScreen> {
                   ),
                 ],
               ),
-              child: Text(memo)),
+              child: Container(margin: EdgeInsets.symmetric(vertical: screenHeight * 0.005),child: Text(memo))),
         ),
       ],
     );

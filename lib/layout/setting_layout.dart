@@ -64,10 +64,15 @@ class _SettingLayoutState extends State<SettingLayout> {
                       icon: Icon(Icons.arrow_back_ios_rounded),
                     ),
                   ),
-                  Text(
-                    widget.title,
-                    style: textTheme.headlineLarge,
-                    textAlign: TextAlign.center,
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.14),
+                    child: Text(
+                      widget.title,
+                      style: textTheme.headlineLarge,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
                   ),
                 ],
               ),
