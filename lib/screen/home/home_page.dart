@@ -13,11 +13,12 @@ import 'package:freeing/model/home/spirit_daily_routine.dart';
 import 'package:freeing/model/home/stress_level_response.dart';
 import 'package:freeing/navigationbar/custom_bottom_navigationbar.dart';
 import 'package:freeing/screen/home/hobby_record_bottom_sheet.dart';
-import 'package:freeing/screen/home/stress_survey_page.dart';
+import 'package:freeing/screen/home/first_stress_survey_page.dart';
 import 'package:intl/intl.dart';
 
 import '../../common/component/expansion_tile.dart';
 import '../../common/service/sleep_api_service.dart';
+import 'ad_stress_survey_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -531,7 +532,7 @@ class _HomePageState extends State<HomePage> {
       return const Center(child: Loading());
     }
     if (_stressLevelResponse == null) {
-      return StressSurveyPage();
+      return FirstStressSurveyPage();
     }
     final textTheme = Theme.of(context).textTheme;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -687,7 +688,7 @@ class _HomePageState extends State<HomePage> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          const StressSurveyPage()));
+                                                          AdStressSurveyPage(stressLevelResponse: _stressLevelResponse,)));
                                             },
                                             child: Text('측정 하기',
                                                 style: textTheme.bodySmall
@@ -695,7 +696,6 @@ class _HomePageState extends State<HomePage> {
                                                         fontWeight:
                                                             FontWeight.w500))),
                                       ),
-                                      // if (_stressLevelResponse != null)
                                       Container(
                                         margin: const EdgeInsets.only(
                                             left: 35.0, top: 2),
