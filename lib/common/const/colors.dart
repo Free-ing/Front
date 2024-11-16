@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // main 초록
-const PRIMARY_COLOR = Color(0xFFA2CE8A);
+const PRIMARY_COLOR = Color(0xFFA1CE8A);
 
 // 오렌지
 const ORANGE = Color(0xFFFAB457);
