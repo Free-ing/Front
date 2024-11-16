@@ -21,7 +21,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
   final tokenStorage = TokenStorage();
   List<SleepList> _sleepList = [];
   bool isSwitched = false;
-  bool? isRecordOn ;
+  bool? isRecordOn;
 
   // TODO: 수면 루틴 리스트 받아오는 서버 요청
   Future<List<SleepList>> fetchSleepList() async {
@@ -56,17 +56,16 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
 
   // 수면 기록 on/off 상태 불러오는 서버 요청
   Future<void> getRecordSleepStatus() async {
-    try{
+    try {
       bool recordStatus = await apiService.getRecordSleepStatus();
 
       // setState() 안에서 상태를 갱신
       setState(() {
         isRecordOn = recordStatus;
       });
-    } catch(e){
-      print('Error ${isRecordOn == true ? '켜기': '끄기' } 실패 $e');
+    } catch (e) {
+      print('Error ${isRecordOn == true ? '켜기' : '끄기'} 실패 $e');
     }
-
   }
 
   @override
@@ -96,7 +95,7 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
                 content:
                     '잠을 잔 시간, 자고 일어난 후의\n 상태를 기록해요!\n\n주간(월간) 통계와 피드백을 받을 수 있어요!'),
             const Spacer(),
-            toggle(isRecordOn: (isRecordOn == true ? true :false ) ),
+            toggle(isRecordOn: (isRecordOn == true ? true : false)),
           ],
         ),
         Container(
@@ -114,12 +113,11 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
             ),
             const QuestionMark(
                 title: '수면 루틴 만들기 설명',
-                content:
-                    '꿀잠을 위한 루틴을 만들어 보세요!\n\n추천해드리는걸 해도 되고,\n직접 세워봐도 좋아요!'),
+                content: '꿀잠을 위한 루틴을 만들어 보세요!\n\n추천해드리는걸 해도 되고,\n직접 세워봐도 좋아요!'),
           ],
         ),
         Container(
-          height: screenHeight * 0.535,
+          height: screenHeight * 0.529,
           child: GridView.builder(
             gridDelegate:
                 SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
@@ -163,10 +161,10 @@ class _toggleState extends State<toggle> {
 
   // 수면 기록 on/off 서버 요청
   Future<void> recordSleepOnOff(bool isRecordOn) async {
-    try{
+    try {
       await sleepApiService.sleepRecord(isRecordOn);
-    } catch(e){
-      print('Error ${isRecordOn ? '켜기': '끄기' } 실패');
+    } catch (e) {
+      print('Error ${isRecordOn ? '켜기' : '끄기'} 실패');
     }
   }
 

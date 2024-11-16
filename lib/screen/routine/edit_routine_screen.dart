@@ -65,6 +65,7 @@ class EditRoutineScreen extends StatefulWidget {
 class _EditRoutineScreenState extends State<EditRoutineScreen> {
   String? nameErrorText;
   String? timeErrorText;
+  String? repeatDayErrorText;
 
   List<WeekDay> weekDays = [];
   final _formKey = GlobalKey<FormState>();
@@ -129,13 +130,26 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     return '$formattedHour:$formattedMinute $period';
   }
 
+  //Todo: 반복 요일 설정 검사
+  void checkAndSetName(List<WeekDay> weekDays) {
+    bool allFalse = weekDays.every((weekday) => !weekday.isSelected);
+
+    if (allFalse) {
+      repeatDayErrorText = '반복 요일을 설정해주세요.';
+    } else {
+      print('Not all isSelected are false');
+    }
+  }
+
+
   //Todo: 서버 요청 (운동 루틴 수정)
   Future<void> _editExerciseRoutine() async {
-
+    checkAndSetName(weekDays);
 
     if (_formKey.currentState!.validate() &&
         _nameController.text.isNotEmpty &&
-        timeErrorText == null ) {
+        timeErrorText == null &&
+        repeatDayErrorText == null) {
       FocusScope.of(context).unfocus();
       final String exerciseName = _nameController.text;
       final String explanation = _explanationController.text;
@@ -207,9 +221,12 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
 
   //Todo: 서버 요청 (수면 루틴 수정)
   Future<void> _editSleepRoutine() async {
+    checkAndSetName(weekDays);
+
     if (_formKey.currentState!.validate() &&
         _nameController.text.isNotEmpty &&
-        timeErrorText == null) {
+        timeErrorText == null &&
+        repeatDayErrorText == null) {
       FocusScope.of(context).unfocus();
       final String sleepName = _nameController.text;
 
@@ -327,9 +344,12 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
 
   //Todo: 서버 요청 (마음 채우기 루틴 수정)
   Future<void> _editSpiritRoutine() async {
+    checkAndSetName(weekDays);
+
     if (_formKey.currentState!.validate() &&
         _nameController.text.isNotEmpty &&
-        timeErrorText == null) {
+        timeErrorText == null&&
+        repeatDayErrorText == null) {
       FocusScope.of(context).unfocus();
       final String spiritName = _nameController.text;
       final String explanation = _explanationController.text;
@@ -670,7 +690,17 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("반복 요일 설정", style: textTheme.bodyMedium),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("반복 요일 설정", style: textTheme.bodyMedium),
+            if (repeatDayErrorText != null)
+              Text(
+                repeatDayErrorText!,
+                style: textTheme.bodyMedium?.copyWith(color: Colors.red),
+              ),
+          ],
+        ),
         SizedBox(height: screenHeight * 0.01),
         Container(
           width: screenWidth,

@@ -31,6 +31,7 @@ class ChartPage extends StatelessWidget {
           backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
+            scrolledUnderElevation: 0,
             automaticallyImplyLeading: false,
             //centerTitle: true,
             title: Padding(

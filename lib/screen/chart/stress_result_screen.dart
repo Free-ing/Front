@@ -73,7 +73,7 @@ class _StressResultScreenState extends State<StressResultScreen> {
     } else {
       final jsonData = json.decode(utf8.decode(response.bodyBytes));
       print('jsonData error ${jsonData['error']}');
-      throw Exception('일일 감정 일기 기록 조회 실패 ${response.statusCode}');
+      throw Exception('스트레스 측정 결과 조회 실패 ${response.statusCode}');
     }
   }
 
