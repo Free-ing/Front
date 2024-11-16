@@ -82,67 +82,69 @@ class SleepTabBarViewState extends State<SleepTabBarView> {
     final screenHeight = MediaQuery.of(context).size.height;
     final textTheme = Theme.of(context).textTheme;
 
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              '수면 기록하기',
-              style: textTheme.titleLarge,
-            ),
-            const QuestionMark(
-                title: '수면 기록하기 설명',
-                content:
-                    '잠을 잔 시간, 자고 일어난 후의\n 상태를 기록해요!\n\n주간(월간) 통계와 피드백을 받을 수 있어요!'),
-            const Spacer(),
-            toggle(isRecordOn: (isRecordOn == true ? true : false)),
-          ],
-        ),
-        Container(
-          width: screenWidth,
-          child: const Divider(
-            color: Colors.black,
-            thickness: 1.0,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                '수면 기록하기',
+                style: textTheme.titleLarge,
+              ),
+              const QuestionMark(
+                  title: '수면 기록하기 설명',
+                  content:
+                      '잠을 잔 시간, 자고 일어난 후의\n 상태를 기록해요!\n\n주간(월간) 통계와 피드백을 받을 수 있어요!'),
+              const Spacer(),
+              toggle(isRecordOn: (isRecordOn == true ? true : false)),
+            ],
           ),
-        ),
-        Row(
-          children: [
-            Text(
-              '수면 루틴 만들기',
-              style: textTheme.titleLarge,
+          Container(
+            width: screenWidth,
+            child: const Divider(
+              color: Colors.black,
+              thickness: 1.0,
             ),
-            const QuestionMark(
-                title: '수면 루틴 만들기 설명',
-                content: '꿀잠을 위한 루틴을 만들어 보세요!\n\n추천해드리는걸 해도 되고,\n직접 세워봐도 좋아요!'),
-          ],
-        ),
-        Container(
-          height: screenHeight * 0.529,
-          child: GridView.builder(
-            gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-            itemCount: _sleepList.length,
-            itemBuilder: (context, index) {
-              final sleepList = _sleepList[index];
-              return SleepCard(
-                routineId: sleepList.routineId,
-                imageUrl: sleepList.imageUrl,
-                title: sleepList.sleepRoutineName,
-                monday: sleepList.monday,
-                tuesday: sleepList.tuesday,
-                wednesday: sleepList.wednesday,
-                thursday: sleepList.thursday,
-                friday: sleepList.friday,
-                saturday: sleepList.saturday,
-                sunday: sleepList.sunday,
-                startTime: sleepList.startTime,
-                endTime: sleepList.endTime,
-                status: sleepList.status,
-              );
-            },
           ),
-        ),
-      ],
+          Row(
+            children: [
+              Text(
+                '수면 루틴 만들기',
+                style: textTheme.titleLarge,
+              ),
+              const QuestionMark(
+                  title: '수면 루틴 만들기 설명',
+                  content: '꿀잠을 위한 루틴을 만들어 보세요!\n\n추천해드리는걸 해도 되고,\n직접 세워봐도 좋아요!'),
+            ],
+          ),
+          Container(
+            height: screenHeight * 0.535,
+            child: GridView.builder(
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              itemCount: _sleepList.length,
+              itemBuilder: (context, index) {
+                final sleepList = _sleepList[index];
+                return SleepCard(
+                  routineId: sleepList.routineId,
+                  imageUrl: sleepList.imageUrl,
+                  title: sleepList.sleepRoutineName,
+                  monday: sleepList.monday,
+                  tuesday: sleepList.tuesday,
+                  wednesday: sleepList.wednesday,
+                  thursday: sleepList.thursday,
+                  friday: sleepList.friday,
+                  saturday: sleepList.saturday,
+                  sunday: sleepList.sunday,
+                  startTime: sleepList.startTime,
+                  endTime: sleepList.endTime,
+                  status: sleepList.status,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
