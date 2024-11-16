@@ -206,7 +206,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                     child: Image.asset(index < _isExerciseChecked.length &&
                             _isExerciseChecked[index]
                         ? 'assets/icons/after_checkbox.png'
-                        : 'assets/icons/before_checkbox.png')),
+                        : 'assets/icons/before_checkbox.png', width: MediaQuery.of(context).size.width * 0.046)),
               ],
             ),
           );
@@ -269,7 +269,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                     child: Image.asset(
                         index < _isSleepChecked.length && _isSleepChecked[index]
                             ? 'assets/icons/after_checkbox.png'
-                            : 'assets/icons/before_checkbox.png')),
+                            : 'assets/icons/before_checkbox.png', width: MediaQuery.of(context).size.width * 0.046)),
               ],
             ),
           );
@@ -334,7 +334,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                     child: Image.asset(index < _isSpiritChecked.length &&
                             _isSpiritChecked[index]
                         ? 'assets/icons/after_checkbox.png'
-                        : 'assets/icons/before_checkbox.png')),
+                        : 'assets/icons/before_checkbox.png', width: MediaQuery.of(context).size.width * 0.046)),
               ],
             ),
           );
