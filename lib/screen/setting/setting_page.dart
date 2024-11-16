@@ -241,7 +241,6 @@ class _SettingPageState extends State<SettingPage> {
                           height: screenHeight * 0.02,
                         ),
                         /// 배너 광고
-                        // Image.asset('assets/imgs/setting/setting_add.png'),
                         _bannerAd == null
                             ? Container()
                             : Container(

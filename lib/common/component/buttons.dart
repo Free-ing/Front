@@ -423,7 +423,7 @@ class SettingTextButton extends StatelessWidget {
         child: Row(
           children: [
             //Icon(icon, color: Colors.black),
-            Image.asset(address),
+            Image.asset(address, width: screenWidth * 0.06),
             SizedBox(width: screenWidth * 0.03),
             Text(text,
                 style: textTheme.bodyMedium
