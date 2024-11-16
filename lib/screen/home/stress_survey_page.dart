@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/screen/home/home_page.dart';
+import 'package:freeing/screen/home/stress_survey_loading.dart';
 
 import '../../common/component/buttons.dart';
 import '../../common/component/loading.dart';
@@ -55,7 +56,7 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     if (_isLoading) {
-      return const Loading();
+      return const StressSurveyLoading();
     }
 
     return ScreenLayout(
