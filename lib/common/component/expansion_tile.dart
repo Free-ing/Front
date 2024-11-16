@@ -346,6 +346,8 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
 
   void showExercisePopUpMenu(BuildContext context, Offset position,
       ExerciseRoutineDetail exerciseRoutine) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -364,7 +366,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/icons/home_rest.png'),
+                Image.asset('assets/icons/home_rest.png', width: screenWidth * 0.046),
                 const SizedBox(
                   width: 10,
                 ),
@@ -397,7 +399,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/icons/home_explain.png'),
+                Image.asset('assets/icons/home_explain.png', width: screenWidth * 0.05),
                 const SizedBox(
                   width: 10,
                 ),
@@ -430,7 +432,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/icons/home_edit.png'),
+                Image.asset('assets/icons/home_edit.png', width: screenWidth * 0.05 ),
                 const SizedBox(
                   width: 10,
                 ),
@@ -1089,8 +1091,8 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
                           top: BorderSide(color: Colors.black, width: 1.0))
                       : const Border(),
                   borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
                   )),
               child: listsWidget(),
             ),
