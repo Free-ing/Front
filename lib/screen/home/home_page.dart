@@ -710,7 +710,7 @@ class _HomePageState extends State<HomePage> {
                                           : _stressLevelResponse!.recentStressLevel ==
                                                   '중간'
                                               ? 'assets/imgs/home/stress_medium_ex.png'
-                                              : 'assets/imgs/home/stress_low_ex.png')),
+                                              : 'assets/imgs/home/stress_low_ex.png'), width: screenWidth * 0.296,),
                                     const SizedBox(height: 3),
                                     RichText(
                                       text: TextSpan(
