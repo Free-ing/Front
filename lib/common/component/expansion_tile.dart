@@ -506,6 +506,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
 
   void showSleepPopUpMenu(
       BuildContext context, Offset position, SleepDailyRoutine sleepRoutine) {
+    final screenWidth = MediaQuery.of(context).size.width;
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -524,7 +525,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/icons/home_rest.png'),
+                Image.asset('assets/icons/home_rest.png', width: screenWidth * 0.046),
                 const SizedBox(
                   width: 10,
                 ),
@@ -557,7 +558,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/icons/home_edit.png'),
+                Image.asset('assets/icons/home_edit.png', width: screenWidth * 0.05),
                 const SizedBox(
                   width: 10,
                 ),
@@ -620,6 +621,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
 
   void showSpiritPopUpMenu(BuildContext context, Offset position,
       SpiritRoutineDetail spiritRoutine) {
+    final screenWidth = MediaQuery.of(context).size.width;
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -638,7 +640,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/icons/home_rest.png'),
+                Image.asset('assets/icons/home_rest.png', width: screenWidth * 0.046),
                 const SizedBox(
                   width: 10,
                 ),
@@ -671,7 +673,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/icons/home_explain.png'),
+                Image.asset('assets/icons/home_explain.png', width: screenWidth * 0.05),
                 const SizedBox(
                   width: 10,
                 ),
@@ -704,7 +706,7 @@ class _HomeExpansionTileBoxState extends State<HomeExpansionTileBox> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/icons/home_edit.png'),
+                Image.asset('assets/icons/home_edit.png', width: screenWidth * 0.05),
                 const SizedBox(
                   width: 10,
                 ),
