@@ -2,23 +2,28 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:freeing/layout/screen_layout.dart';
+import 'package:freeing/model/home/stress_level_response.dart';
 import 'package:freeing/screen/home/home_page.dart';
+import 'package:freeing/screen/home/stress_survey_loading.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../common/component/buttons.dart';
 import '../../common/component/loading.dart';
 import '../../common/component/toast_bar.dart';
 import '../../common/const/colors.dart';
+import '../../common/service/ad_mob_service.dart';
 import '../../common/service/home_api_service.dart';
 import '../chart/stress_result_screen.dart';
 
-class StressSurveyPage extends StatefulWidget {
-  const StressSurveyPage({super.key});
+class FirstStressSurveyPage extends StatefulWidget {
+
+  const FirstStressSurveyPage({super.key});
 
   @override
-  State<StressSurveyPage> createState() => _StressSurveyPageState();
+  State<FirstStressSurveyPage> createState() => _FirstStressSurveyPageState();
 }
 
-class _StressSurveyPageState extends State<StressSurveyPage> {
+class _FirstStressSurveyPageState extends State<FirstStressSurveyPage> {
   final homeApiService = HomeApiService();
   final List<int?> _selectedOptions = List<int?>.filled(11, null);
 
@@ -47,7 +52,6 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -55,7 +59,7 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     if (_isLoading) {
-      return const Loading();
+      return const StressSurveyLoading();
     }
 
     return ScreenLayout(
@@ -199,12 +203,50 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
 
   // 설문조사 값 서버에 전송
   Future<void> _submitSurvey() async {
+    InterstitialAd? _interstitialAd;
+
+    void _loadInterstitialAd() {
+      InterstitialAd.load(
+        adUnitId: AdMobService.interstitialAdUnitId!,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
+          _interstitialAd = ad;
+          _interstitialAd!.fullScreenContentCallback =
+              FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              ad.dispose();
+
+              // 광고가 닫히면 로딩 화면으로 이동
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const StressSurveyLoading(),
+                ),
+              );
+            },
+          );
+
+          /// 광고가 로드되면 표시
+          _interstitialAd!.show();
+        }, onAdFailedToLoad: (error) {
+          _interstitialAd = null;
+          // 광고 로드 실패 시 로딩 화면으로 이동
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const StressSurveyLoading(),
+            ),
+          );
+        }),
+      );
+    }
+
     // 모든 질문에 응답했는지 확인
     if (_selectedOptions.contains(null)) {
       setState(() {
         _isLoading = false;
       });
-      if(!_isDisposed){
+      if (!_isDisposed) {
         const ToastBarWidget(
           title: '모든 질문에 답변해 주세요.',
         ).showToast(context);
@@ -227,11 +269,11 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
       });
       // 서버에 POST 요청 보내기 (예제에서 testStress 함수를 호출하는 방식으로 가정)
       final response = await homeApiService.testStress(questionResponses);
-      print('상태 코드 출려어어어ㅓㄱ ${response.statusCode}');
+      //print('상태 코드 출려어어어ㅓㄱ ${response.statusCode}');
       if (response.statusCode == 201) {
         final responseBody = jsonDecode(response.body); // JSON 디코딩
         final surveyId = responseBody['surveyId'];
-        if(mounted){
+        if (mounted) {
           Navigator.of(context)
               .pushReplacement(
             MaterialPageRoute(
@@ -242,25 +284,24 @@ class _StressSurveyPageState extends State<StressSurveyPage> {
             ),
           )
               .then((_) {
-                if(mounted){
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => HomePage()));
-                }
+            if (mounted) {
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => HomePage()));
+            }
           });
         }
       } else if (response.statusCode == 400 &&
           response.body
               .contains("이미 오늘의 피드백이 생성되었습니다. 새로운 피드백은 내일 생성할 수 있습니다.")) {
-        if(!_isDisposed){
+        if (!_isDisposed) {
           const ToastBarWidget(
             title: '스트레스 검사는 하루에\n한번만 가능합니다.',
           ).showToast(context);
         }
-
       }
     } catch (e) {
-      if(!_isDisposed){
-        print('설문조사 전송 실패: $e');
+      if (!_isDisposed) {
+        //print('설문조사 전송 실패: $e');
       }
     } finally {
       setState(() {

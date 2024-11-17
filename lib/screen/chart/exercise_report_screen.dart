@@ -126,7 +126,7 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                     avgExerciseTime: exerciseReport!.avgExerciseTime,
                   ),
                   SizedBox(height: screenHeight * 0.028),
-
+                  SizedBox(height: screenHeight * 0.028),
                   /// 주간 운동 시간 그래프
                   _showWeeklyExerciseTime(
                       textTheme: textTheme,
@@ -134,7 +134,7 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                       screenHeight: screenHeight,
                       exerciseTimes: getExerciseTimes(exerciseReport!)),
                   SizedBox(height: screenHeight * 0.028),
-
+                  SizedBox(height: screenHeight * 0.028),
                   /// 루틴별 운동 시간
                   _showRoutineExerciseTime(
                     textTheme: textTheme,
@@ -143,7 +143,7 @@ class _ExerciseReportScreenState extends State<ExerciseReportScreen> {
                     routineData: exerciseReport!.exerciseRoutineDtoList,
                   ),
                   SizedBox(height: screenHeight * 0.028),
-
+                  SizedBox(height: screenHeight * 0.028),
                   /// 피드백
                   Container(
                     width: screenWidth,
