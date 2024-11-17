@@ -201,6 +201,7 @@ class _SignUpState extends State<SignUp> {
 
     return DefaultLayout(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Padding(
           padding: EdgeInsets.only(top: screenHeight * 0.03),
           child: Stack(
@@ -223,6 +224,7 @@ class _SignUpState extends State<SignUp> {
                 style: textTheme.headlineLarge,
                 textAlign: TextAlign.center,
               ),
+
             ],
           ),
         ),

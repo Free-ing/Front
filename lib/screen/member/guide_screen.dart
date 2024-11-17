@@ -99,6 +99,30 @@ class _GuideScreenState extends State<GuideScreen> {
             ),
           ),
         ),
+        // Positioned(
+        //   top: screenHeight * 0.6,
+        //   right: screenWidth * 0,
+        //   child: IconButton(
+        //     onPressed: () {},
+        //     icon: Icon(
+        //       Icons.arrow_forward_ios_rounded,
+        //       size: 35,
+        //       color: DARK_GREY,
+        //     ),
+        //   ),
+        // ),
+        // Positioned(
+        //   top: screenHeight * 0.6,
+        //   left: screenWidth * 0,
+        //   child: IconButton(
+        //     onPressed: () {},
+        //     icon: Icon(
+        //       Icons.arrow_back_ios_rounded,
+        //       size: 35,
+        //       color: DARK_GREY,
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
@@ -248,9 +272,9 @@ class _GuideScreenState extends State<GuideScreen> {
       imageController: imageController,
       title: '피드백 제공',
       subTitle: '은 스트레스 관리를 위한 피드백을 제공합니다.',
-      body: '루틴 트래커를 통해 한 달간의 루틴 수행 여부와\n'
-          '기록한 운동, 수면에 대한 주간 리포트로\n'
-          '일상생활의 가이드를 제공해요.',
+      body: '루틴 트래커를 통해 한 달간의 루틴 수행 여부를 확인하고,\n'
+          '운동 리포트와 수면 리포트를 통해\n'
+          '사용자가 수행한 루틴에 대한 피드백을 제공받을 수 있어요.',
       images: [
         'assets/imgs/guide/guide_image_5.png',
         'assets/imgs/guide/guide_image_6.png',

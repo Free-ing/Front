@@ -141,14 +141,27 @@ class _ResetPasswordState extends State<ResetPassword> {
         }
       });
     } else {
-      if(!_isEmailVerified){
-        DialogManager.showAlertDialog(context: context, title: '비밀번호 변경 실패', content: '이메일 인증을 해주세요.');
-      } else if(_passwordController.text.isEmpty || _passwordVerificationController.text.isEmpty){
-        DialogManager.showAlertDialog(context: context, title: '비밀번호 변경 실패', content: '비밀번호와 확인 비밀번호를\n 모두 입력해주세요.');
-      } else if(_passwordController.text.length <8 && _passwordVerificationController.text.length <8){
-        DialogManager.showAlertDialog(context: context, title: '비밀번호 변경 실패', content: '비밀번호는 8자 이상이여야 합니다.');
-      } else if (_passwordController.text != _passwordVerificationController.text){
-        DialogManager.showAlertDialog(context: context, title: '비밀번호 변경 실패', content: '비밀번호와 확인 비밀번호가 다릅니다.');
+      if (!_isEmailVerified) {
+        DialogManager.showAlertDialog(
+            context: context, title: '비밀번호 변경 실패', content: '이메일 인증을 해주세요.');
+      } else if (_passwordController.text.isEmpty ||
+          _passwordVerificationController.text.isEmpty) {
+        DialogManager.showAlertDialog(
+            context: context,
+            title: '비밀번호 변경 실패',
+            content: '비밀번호와 확인 비밀번호를\n 모두 입력해주세요.');
+      } else if (_passwordController.text.length < 8 &&
+          _passwordVerificationController.text.length < 8) {
+        DialogManager.showAlertDialog(
+            context: context,
+            title: '비밀번호 변경 실패',
+            content: '비밀번호는 8자 이상이여야 합니다.');
+      } else if (_passwordController.text !=
+          _passwordVerificationController.text) {
+        DialogManager.showAlertDialog(
+            context: context,
+            title: '비밀번호 변경 실패',
+            content: '비밀번호와 확인 비밀번호가 다릅니다.');
       }
     }
   }
@@ -162,6 +175,7 @@ class _ResetPasswordState extends State<ResetPassword> {
 
     return DefaultLayout(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         centerTitle: true,

@@ -9,6 +9,7 @@ import 'package:freeing/common/service/stress_api_service.dart';
 import 'package:freeing/layout/chart_layout.dart';
 import 'package:freeing/model/stress/stress_test_result.dart';
 import 'package:freeing/screen/chart/stress_chart_screen.dart';
+import 'package:freeing/screen/home/stress_survey_loading.dart';
 import 'package:freeing/screen/setting/setting_page.dart';
 import 'package:intl/intl.dart';
 
@@ -105,7 +106,7 @@ class _StressResultScreenState extends State<StressResultScreen> {
     }
 
     return isLoading
-        ? Loading()
+        ? StressSurveyLoading()
         : ChartLayout(
             title: '스트레스 측정 결과',
             chartWidget: Padding(
