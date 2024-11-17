@@ -650,21 +650,26 @@ class _HomePageState extends State<HomePage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text('이번주 스트레스 지수',
-                                              style: textTheme.bodyMedium
-                                                  ?.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 17)),
-                                          const QuestionMark(
-                                              title: '스트레스 검사',
-                                              content:
-                                                  'Freeing에서는 국립정신건강센터와 대한신경정신의학회가 개발한 \'한국인 스트레스 척도\'를 사용해 최근 2주간의 스트레스 상태를 평가합니다.\n\n11개의 문항에 대해 스트레스 증상을 0점에서 3점까지 응답하며, 총점을 계산해 스트레스 수준을 확인하며 총점은 33점입니다.\n\n0~10점: 낮은 수준의 스트레스\n11~20점: 중등도 이상의 스트레스\n21~33점: 매우 높은 중증 수준의 스트레스\n\n결과를 통해 자신의 스트레스 상태를 파악하고 필요시 관리 방법이나 전문가 상담을 받아보세요!')
-                                          //'만점은 33점입니다.\n\n0점 - 10점: 낮은 수준의 스트레스\n11점 - 20점: 중등도 이상의 스트레스\n21점 - 33점: 매우 높은 중증 수준의 스트레스')
-                                        ],
+                                      Container(
+                                        height: screenHeight * 0.048,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text('이번주 스트레스 지수',
+                                                style: textTheme.bodyMedium
+                                                    ?.copyWith(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 16,
+                                                )),
+                                            const QuestionMark(
+                                                title: '스트레스 검사',
+                                                content:
+                                                    'Freeing에서는 국립정신건강센터와 대한신경정신의학회가 개발한 \'한국인 스트레스 척도\'를 사용해 최근 2주간의 스트레스 상태를 평가합니다.\n\n11개의 문항에 대해 스트레스 증상을 0점에서 3점까지 응답하며, 총점을 계산해 스트레스 수준을 확인하며 총점은 33점입니다.\n\n0~10점: 낮은 수준의 스트레스\n11~20점: 중등도 이상의 스트레스\n21~33점: 매우 높은 중증 수준의 스트레스\n\n결과를 통해 자신의 스트레스 상태를 파악하고 필요시 관리 방법이나 전문가 상담을 받아보세요!')
+                                            //'만점은 33점입니다.\n\n0점 - 10점: 낮은 수준의 스트레스\n11점 - 20점: 중등도 이상의 스트레스\n21점 - 33점: 매우 높은 중증 수준의 스트레스')
+                                          ],
+                                        ),
                                       ),
                                       Container(
                                         width: screenWidth * 0.3,
@@ -688,7 +693,10 @@ class _HomePageState extends State<HomePage> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          AdStressSurveyPage(stressLevelResponse: _stressLevelResponse,)));
+                                                          AdStressSurveyPage(
+                                                            stressLevelResponse:
+                                                                _stressLevelResponse,
+                                                          )));
                                             },
                                             child: Text('측정 하기',
                                                 style: textTheme.bodySmall
@@ -697,12 +705,11 @@ class _HomePageState extends State<HomePage> {
                                                             FontWeight.w500))),
                                       ),
                                       Container(
-                                        margin: const EdgeInsets.only(
-                                            left: 35.0, top: 2),
+                                        margin: EdgeInsets.only(
+                                            left: 0.0,
+                                            top: screenHeight * 0.005),
                                         child: Text(
-                                            DateFormat('yyyy-MM-dd').format(
-                                                _stressLevelResponse!
-                                                    .createdDate),
+                                            '마지막 측정: ${DateFormat('yyyy-MM-dd').format(_stressLevelResponse!.createdDate)}',
                                             style: textTheme.labelSmall),
                                       )
                                     ],
@@ -712,15 +719,18 @@ class _HomePageState extends State<HomePage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     if (_stressLevelResponse != null)
-                                      Image.asset((_stressLevelResponse!
-                                                  .recentStressLevel ==
-                                              '높음'
-                                          ? 'assets/imgs/home/stress_high_ex.png'
-                                          : _stressLevelResponse!
-                                                      .recentStressLevel ==
-                                                  '중간'
-                                              ? 'assets/imgs/home/stress_medium_ex.png'
-                                              : 'assets/imgs/home/stress_low_ex.png'), width: screenWidth * 0.306,),
+                                      Image.asset(
+                                        (_stressLevelResponse!
+                                                    .recentStressLevel ==
+                                                '높음'
+                                            ? 'assets/imgs/home/stress_high_ex.png'
+                                            : _stressLevelResponse!
+                                                        .recentStressLevel ==
+                                                    '중간'
+                                                ? 'assets/imgs/home/stress_medium_ex.png'
+                                                : 'assets/imgs/home/stress_low_ex.png'),
+                                        width: screenWidth * 0.306,
+                                      ),
                                     const SizedBox(height: 3),
                                     RichText(
                                       text: TextSpan(
