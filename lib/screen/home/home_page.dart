@@ -706,8 +706,8 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       Container(
                                         margin: EdgeInsets.only(
-                                            left: 0.0,
-                                            top: screenHeight * 0.005),
+                                            left: 8.0,
+                                            top: screenHeight * 0.006),
                                         child: Text(
                                             '마지막 측정: ${DateFormat('yyyy-MM-dd').format(_stressLevelResponse!.createdDate)}',
                                             style: textTheme.labelSmall),
