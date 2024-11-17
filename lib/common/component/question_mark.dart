@@ -6,9 +6,15 @@ class QuestionMark extends StatelessWidget {
   final String content;
   final String? subContent;
   final TextAlign? textAlign;
+  final double? size;
 
   const QuestionMark(
-      {super.key, required this.title, required this.content, this.subContent, this.textAlign});
+      {super.key,
+      required this.title,
+      required this.content,
+      this.subContent,
+      this.textAlign,
+      this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +30,7 @@ class QuestionMark extends StatelessWidget {
       },
       icon: Image.asset(
         "assets/icons/question_icon.png",
-        width: 30,
+        width: size ?? 30,
       ),
     );
   }
