@@ -149,7 +149,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   boxShadow: boxShadows,
                 ),
                 child: TextFormField(
-                  textAlignVertical: screenHeight < screenHeight * 0.08 ? TextAlignVertical.center : null,
+                  textAlignVertical: TextAlignVertical.center,
+                  //textAlignVertical: screenHeight < screenHeight * 0.08 ? TextAlignVertical.center : null,
                   enabled: widget.enabled,
                   obscureText: widget.isPassword,
                   cursorColor: Color(0xFF8CB177),
@@ -174,11 +175,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                     border: InputBorder.none,
                     fillColor: Colors.transparent,
                     filled: true,
-                    //contentPadding:
-                    //    EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                    // contentPadding:
+                    //    EdgeInsets.only(right: 12, left: 12,  bottom : 15),
                     contentPadding: widget.suffixIcon != null
-                        ? EdgeInsets.symmetric(horizontal: 12, vertical: 5)
-                        : EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        ? EdgeInsets.only(right: 12, left: 12,  bottom : 10)
+                        : EdgeInsets.only(right: 12, left: 12,  bottom : 15),
 
                     suffixIcon: widget.suffixIcon,
                   ),
