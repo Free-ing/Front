@@ -1,12 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:freeing/layout/screen_layout.dart';
 import 'package:freeing/model/home/stress_level_response.dart';
 import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/home/stress_survey_loading.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 import '../../common/component/buttons.dart';
 import '../../common/component/loading.dart';
 import '../../common/component/toast_bar.dart';
@@ -16,9 +14,7 @@ import '../../common/service/home_api_service.dart';
 import '../chart/stress_result_screen.dart';
 
 class FirstStressSurveyPage extends StatefulWidget {
-
   const FirstStressSurveyPage({super.key});
-
   @override
   State<FirstStressSurveyPage> createState() => _FirstStressSurveyPageState();
 }
