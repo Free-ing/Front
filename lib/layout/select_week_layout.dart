@@ -244,7 +244,7 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
                         ),
                         backgroundColor:
                             isFutureWeek ? LIGHT_GREY : Colors.white,
-                        foregroundColor: Colors.white
+                        foregroundColor: ORANGE,
                       ),
                     ),
                   ),

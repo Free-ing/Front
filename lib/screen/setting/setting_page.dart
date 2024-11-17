@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/ad_mob_service.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
@@ -183,6 +184,7 @@ class _SettingPageState extends State<SettingPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15)),
                         backgroundColor: Colors.white,
+                        foregroundColor: ORANGE,
                       ),
                       child: Text(
                         '계정 관리',
@@ -212,12 +214,11 @@ class _SettingPageState extends State<SettingPage> {
                           targetPage: NoticePage(),
                         ),
                         SettingTextButton(
-                          address: 'assets/icons/setting_manual.png',
-                          text: '이용 설명서',
-                          targetPage: GuideScreen(
-                            afterLogin: true,
-                          )
-                        ),
+                            address: 'assets/icons/setting_manual.png',
+                            text: '이용 설명서',
+                            targetPage: GuideScreen(
+                              afterLogin: true,
+                            )),
                         SettingTextButton(
                           address: 'assets/icons/setting_inquiry.png',
                           text: '문의/버그 신고',
@@ -240,6 +241,7 @@ class _SettingPageState extends State<SettingPage> {
                         SizedBox(
                           height: screenHeight * 0.02,
                         ),
+
                         /// 배너 광고
                         _bannerAd == null
                             ? Container()

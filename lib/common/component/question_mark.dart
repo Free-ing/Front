@@ -30,7 +30,7 @@ class QuestionMark extends StatelessWidget {
       },
       icon: Image.asset(
         "assets/icons/question_icon.png",
-        width: size ?? 30,
+        width: 30,
       ),
     );
   }

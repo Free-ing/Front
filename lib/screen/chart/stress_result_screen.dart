@@ -104,131 +104,128 @@ class _StressResultScreenState extends State<StressResultScreen> {
         resultColor = Colors.white;
     }
 
-    return isLoading
-        ? Loading()
-        : ChartLayout(
-            title: '스트레스 측정 결과',
-            chartWidget: Padding(
-              padding: EdgeInsets.only(
-                top: screenHeight * 0.03,
-                left: screenWidth * 0.03,
-                right: screenWidth * 0.03,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            text: '$formattedDate\n',
-                            style: textTheme.titleSmall?.copyWith(
-                                height: 1.8, fontWeight: FontWeight.w600),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: '$name',
-                                style: textTheme.titleSmall?.copyWith(
-                                    height: 1.8, fontWeight: FontWeight.w600),
-                              ),
-                              TextSpan(
-                                text: '님의 스트레스 지수는\n$totalScore점 입니다.',
-                                style:
-                                    textTheme.titleSmall?.copyWith(height: 1.8),
-                              ),
-                            ],
-                          ),
+    return ChartLayout(
+      title: '스트레스 측정 결과',
+      chartWidget: Padding(
+        padding: EdgeInsets.only(
+          top: screenHeight * 0.03,
+          left: screenWidth * 0.03,
+          right: screenWidth * 0.03,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      text: '$formattedDate\n',
+                      style: textTheme.titleSmall
+                          ?.copyWith(height: 1.8, fontWeight: FontWeight.w600),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: '$name',
+                          style: textTheme.titleSmall?.copyWith(
+                              height: 1.8, fontWeight: FontWeight.w600),
                         ),
-                        Column(
-                          children: [
-                            Container(
-                              width: screenWidth * 0.18,
-                              height: screenWidth * 0.18,
-                              decoration: BoxDecoration(
-                                color: resultColor,
-                                border: Border.all(width: 1),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      totalScore.toString().padLeft(2, ' '),
-                                      style: const TextStyle(
-                                        fontSize: 26,
-                                        color: Colors.white,
-                                        shadows: [
-                                          Shadow(
-                                              // bottomLeft
-                                              offset: Offset(-1, -1),
-                                              color: Colors.black),
-                                          Shadow(
-                                              // bottomRight
-                                              offset: Offset(1, -1),
-                                              color: Colors.black),
-                                          Shadow(
-                                              // topRight
-                                              offset: Offset(1, 1),
-                                              color: Colors.black),
-                                          Shadow(
-                                              // topLeft
-                                              offset: Offset(-1, 1),
-                                              color: Colors.black),
-                                        ],
-                                      ),
-                                    ),
-                                    Text(
-                                      '/33',
-                                      style: textTheme.bodySmall,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: screenHeight * 0.01),
-                            Text(
-                              stressLevel,
-                              style: textTheme.titleSmall,
-                            ),
-                          ],
+                        TextSpan(
+                          text: '님의 스트레스 지수는\n$totalScore점 입니다.',
+                          style: textTheme.titleSmall?.copyWith(height: 1.8),
                         ),
                       ],
                     ),
-                    SizedBox(height: screenHeight * 0.028),
-                    Container(
-                      width: screenWidth,
-                      padding: EdgeInsets.all(screenWidth * 0.02),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(width: 1),
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        width: screenWidth * 0.18,
+                        height: screenWidth * 0.18,
+                        decoration: BoxDecoration(
+                          color: resultColor,
+                          border: Border.all(width: 1),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                totalScore.toString().padLeft(2, ' '),
+                                style: const TextStyle(
+                                  fontSize: 26,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                        // bottomLeft
+                                        offset: Offset(-1, -1),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // bottomRight
+                                        offset: Offset(1, -1),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // topRight
+                                        offset: Offset(1, 1),
+                                        color: Colors.black),
+                                    Shadow(
+                                        // topLeft
+                                        offset: Offset(-1, 1),
+                                        color: Colors.black),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                '/33',
+                                style: textTheme.bodySmall,
+                              )
+                            ],
+                          ),
+                        ),
                       ),
-                      child: Text(
-                        aiFeedback,
-                        style: textTheme.bodyMedium?.copyWith(height: 1.6),
+                      SizedBox(height: screenHeight * 0.01),
+                      Text(
+                        stressLevel,
+                        style: textTheme.titleSmall,
                       ),
-                    ),
-                    SizedBox(height: screenHeight * 0.028),
-                    GreenButton(
-                      width: screenWidth * 0.6,
-                      onPressed: () {
-                        //Navigator.of(context).pop();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => widget.replacementScreen!),
-                        );
-                      },
-                    ),
-                    SizedBox(height: screenHeight * 0.028),
-                  ],
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.028),
+              Container(
+                width: screenWidth,
+                padding: EdgeInsets.all(screenWidth * 0.02),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(width: 1),
+                ),
+                child: Text(
+                  aiFeedback,
+                  style: textTheme.bodyMedium?.copyWith(height: 1.6),
                 ),
               ),
-            ),
-            onDateSelected: (date) {},
-            selectMonth: false,
-          );
+              SizedBox(height: screenHeight * 0.028),
+              GreenButton(
+                width: screenWidth * 0.6,
+                onPressed: () {
+                  //Navigator.of(context).pop();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => widget.replacementScreen!),
+                  );
+                },
+              ),
+              SizedBox(height: screenHeight * 0.028),
+            ],
+          ),
+        ),
+      ),
+      onDateSelected: (date) {},
+      selectMonth: false,
+    );
   }
 }

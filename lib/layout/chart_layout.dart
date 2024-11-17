@@ -56,11 +56,11 @@ class _ChartLayoutState extends State<ChartLayout> {
             headerCurrentPageTextStyle: textTheme.headlineSmall?.copyWith(
               fontSize: 24,
               fontWeight: FontWeight.w300,
-              color: Colors.black,
+              color: Colors.white,
             ),
             headerSelectedIntervalTextStyle: textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w300,
-              color: Colors.black,
+              fontWeight: FontWeight.w400,
+              color: Colors.white,
             ),
           ),
           dialogSettings: PickerDialogSettings(
