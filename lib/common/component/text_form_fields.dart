@@ -174,8 +174,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                     border: InputBorder.none,
                     fillColor: Colors.transparent,
                     filled: true,
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    //contentPadding:
+                    //    EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                    contentPadding: widget.suffixIcon != null
+                        ? EdgeInsets.symmetric(horizontal: 12, vertical: 5)
+                        : EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+
                     suffixIcon: widget.suffixIcon,
                   ),
                 ),
@@ -465,7 +469,7 @@ class _GrayTextFormFieldWihTimerButtonState
           CustomTextFormField(
             controller: widget.controller,
             hintText: '인증번호를 입력해주세요.',
-            width: 254,
+            width: screenWidth * 0.85,
             keyboardType: TextInputType.number,
             enabled: widget.enabled,
             suffixIcon: Padding(
@@ -483,8 +487,8 @@ class _GrayTextFormFieldWihTimerButtonState
             width: 8,
           ),
           SizedBox(
-            width: 57.5,
-            height: 30,
+            width: screenWidth * 0.2,
+            height: screenHeight * 0.55,
             child: ElevatedButton(
               onPressed: widget.onButtonPressed,
               child: Text(
