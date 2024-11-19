@@ -149,7 +149,7 @@ class _SignUpState extends State<SignUp> {
           DialogManager.showAlertDialog(
               context: context,
               title: '회원가입 성공',
-              content: '축하드립니다! \n\n회원가입에 성공하셨습니다! \n\n로그인해주세요.',
+              content: '축하드립니다! \n\n회원가입에 성공하셨습니다! \n\n Freeing에 대해 알려드릴게요.',
               onConfirm: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(MaterialPageRoute(

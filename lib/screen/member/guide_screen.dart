@@ -310,7 +310,8 @@ class _GuideScreenState extends State<GuideScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Image.asset('assets/imgs/home/logo.png'),
+        Image.asset('assets/imgs/home/logo.png',
+            width: 200, height: 46, fit: BoxFit.contain),
         SizedBox(height: screenHeight * 0.05),
         RichText(
           text: TextSpan(

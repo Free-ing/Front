@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
+import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/token_storage.dart';
 import 'package:freeing/layout/setting_layout.dart';
 import 'package:freeing/screen/member/login.dart';
@@ -193,6 +194,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                         backgroundColor: Colors.white,
+                        foregroundColor: ORANGE,
                       ),
                       child: Text(
                         '비밀번호 변경',

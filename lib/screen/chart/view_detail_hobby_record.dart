@@ -48,6 +48,10 @@ class _ViewDetailHobbyRecordState extends State<ViewDetailHobbyRecord> {
       );
       if (response == 200) {
         _editMode = false;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HobbyGalleryScreen()),
+        );
         ToastBarWidget(
           title: '취미 기록이 수정되었습니다.',
           leadingImagePath: 'assets/imgs/mind/emotion_happy.png',
@@ -223,6 +227,7 @@ class _ViewDetailHobbyRecordState extends State<ViewDetailHobbyRecord> {
         height: screenHeight * 0.045,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
               child: Text(
@@ -234,10 +239,11 @@ class _ViewDetailHobbyRecordState extends State<ViewDetailHobbyRecord> {
             SizedBox(width: 50),
 
             /// 취미 기록 수정, 삭제
-            SizedBox(
+            Container(
               width: screenWidth * 0.07,
               child: _editMode
                   ? IconButton(
+                      padding: EdgeInsets.zero,
                       onPressed: () {
                         setState(() {
                           _editMode = false;
@@ -252,6 +258,7 @@ class _ViewDetailHobbyRecordState extends State<ViewDetailHobbyRecord> {
                       color: Colors.white,
                     )
                   : IconButton(
+                      padding: EdgeInsets.zero,
                       onPressed: () {
                         showMenu(context, widget.recordId);
                       },
