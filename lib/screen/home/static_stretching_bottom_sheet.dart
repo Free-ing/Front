@@ -76,7 +76,7 @@ class _StaticStretchingBottomSheetContentState
 
   //Todo: 1-2. 목 스트레칭(30초) - 오른쪽(30초)
   Widget _staticStretchingNeckRight() {
-    return StretchingContentReverse(
+    return StretchingContentOrigin(
       name: '목 스트레칭 - 오른쪽',
       imageUrl: 'assets/imgs/exercise/static_neck.png',
       description: '앉거나 서서 목을 천천히 한 쪽으로 기울여\n귀가 어깨에 가까워지도록 합니다.',

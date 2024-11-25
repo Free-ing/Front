@@ -554,7 +554,11 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                           : _selectSleep = true;
 
                       selectedValue == '운동'
-                          ? _selectExercise = true
+                          ? {
+                              _selectExercise = true,
+                              imageUrl =
+                                  'https://freeingimage.s3.ap-northeast-2.amazonaws.com/select_exercise.png'
+                            }
                           : _selectExercise = false;
 
                       selectedValue == '마음 채우기'
