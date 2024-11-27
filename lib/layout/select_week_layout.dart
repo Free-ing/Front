@@ -5,8 +5,10 @@ import 'package:freeing/common/service/ad_mob_service.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/show_chart_date.dart';
 import 'package:freeing/common/const/colors.dart';
+import 'package:freeing/common/service/exercise_api_service.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
 import 'package:freeing/layout/chart_layout.dart';
+import 'package:freeing/model/exercise/exercise_report_list.dart';
 import 'package:freeing/screen/setting/setting_page.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
@@ -31,10 +33,46 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
   RewardedInterstitialAd? _rewardedAd;
   bool _isRewardedAdReady = false;
 
+  List<ExerciseReportList> _exerciseReportList = [];
+
+  // Todo: 서버 요청 (운동 리포트 리스트 조회)
+  Future<List<ExerciseReportList>> _fetchExerciseReportList() async {
+    print('Fetching exercise report list');
+    final apiService = ExerciseAPIService();
+    final response = await apiService.getReportList(selectedDate);
+
+    print(response);
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(utf8.decode(response.bodyBytes));
+
+      if (jsonData is Map<String, dynamic>) {
+        List<dynamic> exerciseReportList = jsonData['result'];
+        _exerciseReportList.clear();
+        for (dynamic data in exerciseReportList) {
+          ExerciseReportList exerciseReportList =
+              ExerciseReportList.fromJson(data as Map<String, dynamic>);
+          _exerciseReportList.add(exerciseReportList);
+        }
+      }
+      print(_exerciseReportList);
+      return _exerciseReportList;
+    } else {
+      throw Exception('운동 리포트 리스트 가져오기 실패 ${response.statusCode}');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _initializeData();
+    if (widget.title == '운동') {
+      _fetchExerciseReportList().then((reports) {
+        setState(() {
+          _exerciseReportList = reports;
+        });
+      });
+    }
   }
 
   Future<void> _initializeData() async {
@@ -75,8 +113,8 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
       _rewardedAd!.show(
           onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
         print('보상형 광고 보상 획득: ${reward.amount} ${reward.type}');
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => widget.routePage(startDate, endDate)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => widget.routePage(startDate, endDate)));
       });
       _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
         onAdDismissedFullScreenContent: (ad) async {
@@ -90,8 +128,8 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
       );
     } else {
       print('보상형 광고가 로드되지 않음');
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => widget.routePage(startDate, endDate)));
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => widget.routePage(startDate, endDate)));
     }
   }
 
@@ -200,27 +238,70 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
                                   content: '해당 주차가 마무리되지 않아\n저장된 리포트가 없습니다.');
                             }
                           : () {
-                              DialogManager.showImageDialog(
-                                context: context,
-                                userName: _name,
-                                topic: '${widget.title} 리포트',
-                                image: 'assets/imgs/etc/report_mascot.png',
-                                onConfirm: () async {
-                                  DateTime startDate = week.first;
-                                  DateTime endDate = week.last;
-                                  if (_isRewardedAdReady) {
-                                    Navigator.pop(context);
-                                    await _showRewardedAd(startDate, endDate);
-                                  } else {
-                                    debugPrint('광고가 아직 로드되지 않았습니다');
-                                    Navigator.pop(context);
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                widget.routePage(startDate, endDate)));
-                                  }
-                                },
-                              );
+                              DateTime startDate = week.first;
+                              DateTime endDate = week.last;
+
+                              if (widget.title == '운동') {
+                                bool reportExists =
+                                    _exerciseReportList.any((report) {
+                                  return report.startDate ==
+                                      startDate && report.endDate == endDate;
+                                });
+
+                                if (reportExists) {
+                                  DialogManager.showImageDialog(
+                                    context: context,
+                                    userName: _name,
+                                    topic: '${widget.title} 리포트',
+                                    image: 'assets/imgs/etc/report_mascot.png',
+                                    onConfirm: () async {
+                                      DateTime startDate = week.first;
+                                      DateTime endDate = week.last;
+                                      if (_isRewardedAdReady) {
+                                        Navigator.pop(context);
+                                        await _showRewardedAd(
+                                            startDate, endDate);
+                                      } else {
+                                        debugPrint('광고가 아직 로드되지 않았습니다');
+                                        Navigator.pop(context);
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    widget.routePage(
+                                                        startDate, endDate)));
+                                      }
+                                    },
+                                  );
+                                } else {
+                                  DialogManager.showAlertDialog(
+                                      context: context,
+                                      title: '운동 리포트 없음',
+                                      content: '운동 리포트가 생성되지 않았습니다.');
+                                }
+                              } else {
+                                DialogManager.showImageDialog(
+                                  context: context,
+                                  userName: _name,
+                                  topic: '${widget.title} 리포트',
+                                  image: 'assets/imgs/etc/report_mascot.png',
+                                  onConfirm: () async {
+                                    DateTime startDate = week.first;
+                                    DateTime endDate = week.last;
+                                    if (_isRewardedAdReady) {
+                                      Navigator.pop(context);
+                                      await _showRewardedAd(startDate, endDate);
+                                    } else {
+                                      debugPrint('광고가 아직 로드되지 않았습니다');
+                                      Navigator.pop(context);
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  widget.routePage(
+                                                      startDate, endDate)));
+                                    }
+                                  },
+                                );
+                              }
                             },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -87,7 +87,8 @@ class ExerciseAPIService {
     final tokenStorage = TokenManager();
     final accessToken = await tokenStorage.getAccessToken();
     final formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    final url = Uri.parse('$_baseUrl/exercise-service/$routineId?today=$formattedDate');
+    final url =
+        Uri.parse('$_baseUrl/exercise-service/$routineId?today=$formattedDate');
 
     print(status);
 
@@ -103,23 +104,14 @@ class ExerciseAPIService {
           'explanation': explanation,
           'sunday': sunday,
           'saturday': saturday,
-
           'friday': friday,
           'thursday': thursday,
-
           'wednesday': wednesday,
           'tuesday': tuesday,
-
           'monday': monday,
           'imageUrl': imageUrl,
-
-
-
-
-
           'startTime': startTime,
           'endTime': endTime,
-
           'status': status,
         },
       ),
@@ -214,6 +206,25 @@ class ExerciseAPIService {
     );
   }
 
+  //Todo: 월별 운동 리포트 리스트 조회
+  Future<http.Response> getReportList(DateTime selectedDate) async {
+    final year = selectedDate.year;
+    final month = selectedDate.month;
+    final tokenStorage = TokenManager();
+    final accessToken = await tokenStorage.getAccessToken();
+
+    final url = Uri.parse(
+        '$_baseUrl/exercise-service/report-list?year=$year&month=$month');
+
+    return http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+
   //Todo: 주간 운동 리포트 조회
   Future<http.Response> getExerciseReport(
       DateTime startDate, DateTime endDate) async {
@@ -234,6 +245,5 @@ class ExerciseAPIService {
         'Authorization': 'Bearer $accessToken',
       },
     );
-
   }
 }
