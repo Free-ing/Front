@@ -620,6 +620,10 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                         weekDays[i].isSelected = !weekDays[i].isSelected;
                         print(
                             '이미지 눌림 ${weekDays[i].day} ${weekDays[i].isSelected}');
+                        checkAndSetName(weekDays);
+                        if (weekDays[i].isSelected) {
+                          repeatDayErrorText = null;
+                        }
                       });
                     },
                     child: Stack(
@@ -741,7 +745,10 @@ class _AddRoutineScreenState extends State<AddRoutineScreen> {
                 print('시간 선택 눌림');
               });
             },
-            icon: const Icon(Icons.arrow_forward_ios),
+            icon: _timePickerOpen
+                ? Transform.rotate(
+                    angle: -89.5, child: Icon(Icons.arrow_forward_ios))
+                : Icon(Icons.arrow_forward_ios),
           )
         ],
       ),

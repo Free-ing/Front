@@ -141,7 +141,6 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
     }
   }
 
-
   //Todo: 서버 요청 (운동 루틴 수정)
   Future<void> _editExerciseRoutine() async {
     checkAndSetName(weekDays);
@@ -180,9 +179,10 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
       );
 
       if (response.statusCode == 200) {
-        if(mounted){
+        if (mounted) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const RoutinePage(index: 0)),
+            MaterialPageRoute(
+                builder: (context) => const RoutinePage(index: 0)),
           );
           const ToastBarWidget(
             title: '운동 루틴이 수정되었습니다.',
@@ -348,7 +348,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
 
     if (_formKey.currentState!.validate() &&
         _nameController.text.isNotEmpty &&
-        timeErrorText == null&&
+        timeErrorText == null &&
         repeatDayErrorText == null) {
       FocusScope.of(context).unfocus();
       final String spiritName = _nameController.text;
@@ -478,8 +478,8 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                           height: _timePickerOpen
                               ? screenWidth * 0.06
                               : _selectExercise
-                              ? screenHeight * 0.043
-                              : screenHeight * 0.095),
+                                  ? screenHeight * 0.043
+                                  : screenHeight * 0.095),
                       // 수면 선택 시 추가 공백 높이
                       SizedBox(
                           height: _selectSleep
@@ -491,10 +491,7 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                   ),
                 ),
                 // 추가하기 버튼
-                SizedBox(
-                    height: _selectHobby
-                        ? 0
-                        : screenHeight * 0.477),
+                SizedBox(height: _selectHobby ? 0 : screenHeight * 0.477),
                 GreenButton(
                   width: screenWidth * 0.6,
                   text: '수정하기',
@@ -722,6 +719,10 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                         weekDays[i].isSelected = !weekDays[i].isSelected;
                         debugPrint(
                             '이미지 눌림 ${weekDays[i].day} ${weekDays[i].isSelected}');
+                        checkAndSetName(weekDays);
+                        if (weekDays[i].isSelected) {
+                          repeatDayErrorText = null;
+                        }
                       });
                     },
                     child: Stack(
@@ -837,13 +838,15 @@ class _EditRoutineScreenState extends State<EditRoutineScreen> {
                   : ' 종료: ${_endTime!.hour}:${_endTime!.minute.toString().padLeft(2, '0')}',
               style: textTheme.bodySmall!.copyWith(color: TEXT_PURPLE)),
           IconButton(
-            onPressed: () {
-              setState(() {
-                _timePickerOpen = !_timePickerOpen;
-              });
-            },
-            icon: const Icon(Icons.arrow_forward_ios),
-          )
+              onPressed: () {
+                setState(() {
+                  _timePickerOpen = !_timePickerOpen;
+                });
+              },
+              icon: _timePickerOpen
+                  ? Transform.rotate(
+                      angle: -89.5, child: Icon(Icons.arrow_forward_ios))
+                  : Icon(Icons.arrow_forward_ios))
         ],
       ),
     );

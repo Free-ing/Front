@@ -515,6 +515,10 @@ class _AddRecommendedRoutineScreenState
                         weekDays[i].isSelected = !weekDays[i].isSelected;
                         debugPrint(
                             '이미지 눌림 ${weekDays[i].day} ${weekDays[i].isSelected}');
+                        checkAndSetName(weekDays);
+                        if (weekDays[i].isSelected) {
+                          repeatDayErrorText = null;
+                        }
                       });
                     },
                     child: Stack(
@@ -630,13 +634,15 @@ class _AddRecommendedRoutineScreenState
                   : ' 종료: ${_endTime!.hour}:${_endTime!.minute.toString().padLeft(2, '0')}',
               style: textTheme.bodySmall!.copyWith(color: TEXT_PURPLE)),
           IconButton(
-            onPressed: () {
-              setState(() {
-                _timePickerOpen = !_timePickerOpen;
-              });
-            },
-            icon: const Icon(Icons.arrow_forward_ios),
-          )
+              onPressed: () {
+                setState(() {
+                  _timePickerOpen = !_timePickerOpen;
+                });
+              },
+              icon: _timePickerOpen
+                  ? Transform.rotate(
+                      angle: -89.5, child: Icon(Icons.arrow_forward_ios))
+                  : Icon(Icons.arrow_forward_ios))
         ],
       ),
     );

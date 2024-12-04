@@ -79,7 +79,7 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AiLoadingScreen(category: '취미를'),
+                builder: (context) => AiLoadingScreen(category: widget.category),
               ),
             );
           },
@@ -172,7 +172,7 @@ class _SurveyResponseScreenState extends State<SurveyResponseScreen> {
           MaterialPageRoute(
             builder: (context) => SurveyResponseScreen(
               category: widget.category,
-              recommend: _recommendHobbyList,
+              recommend: _recommendExerciseList,
               answers: widget.answers,
               remain: widget.remain - 1,
             ),
