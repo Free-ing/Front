@@ -144,6 +144,14 @@ class _SelectWeekLayoutState extends State<SelectWeekLayout> {
     print('선택 날짜 $selectedDate');
 
     calculateWeeks();
+
+    if (widget.title == '운동') {
+      _fetchExerciseReportList().then((reports) {
+        setState(() {
+          _exerciseReportList = reports;
+        });
+      });
+    }
   }
 
   //Todo: 주차별 날짜 계산
