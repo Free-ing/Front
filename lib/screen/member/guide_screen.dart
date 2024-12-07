@@ -274,7 +274,7 @@ class _GuideScreenState extends State<GuideScreen> {
       subTitle: '은 스트레스 관리를 위한 피드백을 제공합니다.',
       body: '루틴 트래커를 통해 한 달간의 루틴 수행 여부를 확인하고,\n'
           '운동 리포트와 수면 리포트를 통해\n'
-          '사용자가 수행한 루틴에 대한 피드백을 제공받을 수 있어요.',
+          '수행한 루틴에 대한 피드백을 제공받을 수 있어요.',
       images: [
         'assets/imgs/guide/guide_image_5.png',
         'assets/imgs/guide/guide_image_6.png',
