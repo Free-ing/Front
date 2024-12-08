@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/common/service/token_manager.dart';
 import 'package:freeing/screen/routine/sleep_tabbar_view.dart';
 import '../../screen/member/login.dart';
 import '../../screen/routine/edit_routine_screen.dart';
 import '../const/colors.dart';
 import '../service/sleep_api_service.dart';
-import '../service/token_storage.dart';
 import 'dialog_manager.dart';
 
 class SleepCard extends StatefulWidget {
@@ -45,7 +45,7 @@ class SleepCard extends StatefulWidget {
 
 class _SleepCardState extends State<SleepCard> {
   final apiService = SleepAPIService();
-  final tokenStorage = TokenStorage();
+  final tokenStorage = TokenManager();
   bool isSwitched = false;
 
   // TODO: 수면 루틴 toggle on (활성화)

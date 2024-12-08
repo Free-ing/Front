@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:freeing/common/service/token_storage.dart';
+import 'package:freeing/common/service/token_manager.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:http/http.dart' as http;
 
@@ -9,7 +9,7 @@ import '../component/toast_bar.dart';
 import 'base_url.dart'; // 실제 API 서비스 임포트
 
 class AuthService {
-  final tokenStorage = TokenStorage();
+  final tokenStorage = TokenManager();
   final String _baseUrl = BaseUrl.baseUrl;
 
   // TODO: refreshtoken으로 accessToken 발급 but refreshtoken도 만료된 경우 다시 로그인

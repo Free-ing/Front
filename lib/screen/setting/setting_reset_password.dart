@@ -3,9 +3,9 @@ import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/component/text_form_fields.dart';
 import 'package:freeing/common/service/setting_api_service.dart';
+import 'package:freeing/common/service/token_manager.dart';
 import 'package:freeing/layout/setting_layout.dart';
 import 'package:freeing/screen/setting/forget_password_page.dart';
-import '../../common/service/token_storage.dart';
 import '../member/login.dart';
 
 class SettingResetPassword extends StatefulWidget {
@@ -41,7 +41,7 @@ class _SettingResetPasswordState extends State<SettingResetPassword> {
             title: '비밀번호 변경 성공',
             content: '비밀번호가 변경되었습니다.\n\n다시 로그인해주세요.',
             onConfirm: () async {
-              final tokenStorage = TokenStorage();
+              final tokenStorage = TokenManager();
               await tokenStorage.deleteAllTokens();
               Navigator.pushAndRemoveUntil(
                 context,

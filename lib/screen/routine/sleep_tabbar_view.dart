@@ -2,11 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/question_mark.dart';
-import '../../common/component/dialog_manager.dart';
+import 'package:freeing/common/service/token_manager.dart';
 import '../../common/component/sleep_card.dart';
 import '../../common/const/colors.dart';
 import '../../common/service/sleep_api_service.dart';
-import '../../common/service/token_storage.dart';
 import '../../model/sleep/sleep_list.dart';
 
 class SleepTabBarView extends StatefulWidget {
@@ -18,7 +17,7 @@ class SleepTabBarView extends StatefulWidget {
 
 class SleepTabBarViewState extends State<SleepTabBarView> {
   final apiService = SleepAPIService();
-  final tokenStorage = TokenStorage();
+  final tokenStorage = TokenManager();
   List<SleepList> _sleepList = [];
   bool isSwitched = false;
   bool? isRecordOn;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeing/common/service/token_manager.dart';
 import 'package:intl/intl.dart';
 import '../../common/component/bottom_sheet.dart';
 import '../../common/component/buttons.dart';
@@ -6,7 +7,6 @@ import '../../common/component/dialog_manager.dart';
 import '../../common/component/text_form_fields.dart';
 import '../../common/component/toast_bar.dart';
 import '../../common/service/home_bottom_sheet_api_service.dart';
-import '../../common/service/token_storage.dart';
 import '../member/login.dart';
 
 //Todo: 수면 기록
@@ -16,7 +16,7 @@ Future<bool> showSleepBottomSheet(BuildContext context, String title, String com
   final TextEditingController _sleepMemoController = TextEditingController();
   final HomeBottomSheetApiService _homeButtonSheetApiService =
   HomeBottomSheetApiService();
-  final tokenStorage = TokenStorage();
+  final tokenStorage = TokenManager();
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
   int selectedIndex = -1;

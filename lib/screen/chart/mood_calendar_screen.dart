@@ -8,7 +8,7 @@ import 'package:freeing/common/component/show_chart_date.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/const/colors.dart';
 import 'package:freeing/common/service/spirit_api_service.dart';
-import 'package:freeing/common/service/token_storage.dart';
+import 'package:freeing/common/service/token_manager.dart';
 import 'package:freeing/layout/chart_layout.dart';
 import 'package:freeing/model/spirit/emotion_diary.dart';
 import 'package:freeing/model/spirit/mood_monthly.dart';
@@ -27,7 +27,7 @@ class MoodCalendar extends StatefulWidget {
 }
 
 class _MoodCalendarState extends State<MoodCalendar> {
-  final tokenStorage = TokenStorage();
+  final tokenStorage = TokenManager();
   DateTime select = DateTime.now();
   late int selectedDate = DateTime.now().day;
   late int selectYear = DateTime.now().year;

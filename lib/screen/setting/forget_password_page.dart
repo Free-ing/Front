@@ -6,9 +6,7 @@ import 'package:freeing/layout/setting_layout.dart';
 import '../../common/component/buttons.dart';
 import '../../common/component/dialog_manager.dart';
 import '../../common/component/text_form_fields.dart';
-import '../../common/service/setting_api_service.dart';
 import '../../common/service/sign_up_service.dart';
-import '../../common/service/token_storage.dart';
 import '../member/login.dart';
 
 class ForgetPasswordPage extends StatefulWidget {

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:freeing/common/component/buttons.dart';
 import 'package:freeing/common/component/dialog_manager.dart';
 import 'package:freeing/common/const/colors.dart';
-import 'package:freeing/common/service/token_storage.dart';
+import 'package:freeing/common/service/token_manager.dart';
 import 'package:freeing/layout/setting_layout.dart';
 import 'package:freeing/screen/member/login.dart';
 import 'package:freeing/screen/setting/ready_page.dart';
@@ -59,7 +59,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
 
   // Todo: 로그아웃
   void logout(BuildContext context) async {
-    final tokenStorage = TokenStorage();
+    final tokenStorage = TokenManager();
     await tokenStorage.deleteAllTokens();
     Navigator.pushAndRemoveUntil(
       context,
@@ -77,7 +77,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
           title: '회원 탈퇴',
           content: '다음에 또 만나요',
           onConfirm: () async {
-            final tokenStorage = TokenStorage();
+            final tokenStorage = TokenManager();
             await tokenStorage.deleteAllTokens();
             Navigator.pushAndRemoveUntil(
                 context,

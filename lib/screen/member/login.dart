@@ -1,12 +1,10 @@
 import 'dart:convert';
 
-import 'package:delightful_toast/delight_toast.dart';
-import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/text_form_fields.dart';
 import 'package:freeing/common/component/toast_bar.dart';
 import 'package:freeing/common/service/login_service.dart';
-import 'package:freeing/common/service/token_storage.dart';
+import 'package:freeing/common/service/token_manager.dart';
 import 'package:freeing/layout/default_layout.dart';
 import 'package:freeing/screen/home/home_page.dart';
 import 'package:freeing/screen/member/reset_password.dart';
@@ -57,7 +55,7 @@ class _LoginState extends State<Login> {
           responseData.containsKey('refreshToken')) {
         final accessToken = responseData['accessToken'];
         final refreshToken = responseData['refreshToken'];
-        final tokenStorage = TokenStorage();
+        final tokenStorage = TokenManager();
         try {
           await tokenStorage.saveTokens(accessToken, refreshToken);
           print('토큰 저장 성공!!!');
