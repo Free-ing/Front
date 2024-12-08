@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeing/common/component/bottom_sheet.dart';
-import 'package:freeing/common/component/stretching_content_origin.dart';
-import 'package:freeing/common/component/stretching_content_reverse.dart';
+import 'package:freeing/common/component/stretching_content.dart';
 import 'package:freeing/layout/stretching_bottom_sheet_layout.dart';
 
 //Todo: 동적 스트레칭

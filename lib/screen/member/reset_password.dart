@@ -258,11 +258,7 @@ class _ResetPasswordState extends State<ResetPassword> {
               width: screenWidth,
               fit: BoxFit.fitWidth,
             ),
-            // Image.asset(
-            //   "assets/imgs/login/login_top.png",
-            //   width: screenWidth,
-            //   fit: BoxFit.fitWidth,
-            // ),
+           
           ],
         ),
       ),

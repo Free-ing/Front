@@ -99,30 +99,7 @@ class _GuideScreenState extends State<GuideScreen> {
             ),
           ),
         ),
-        // Positioned(
-        //   top: screenHeight * 0.6,
-        //   right: screenWidth * 0,
-        //   child: IconButton(
-        //     onPressed: () {},
-        //     icon: Icon(
-        //       Icons.arrow_forward_ios_rounded,
-        //       size: 35,
-        //       color: DARK_GREY,
-        //     ),
-        //   ),
-        // ),
-        // Positioned(
-        //   top: screenHeight * 0.6,
-        //   left: screenWidth * 0,
-        //   child: IconButton(
-        //     onPressed: () {},
-        //     icon: Icon(
-        //       Icons.arrow_back_ios_rounded,
-        //       size: 35,
-        //       color: DARK_GREY,
-        //     ),
-        //   ),
-        // ),
+        
       ],
     );
   }
